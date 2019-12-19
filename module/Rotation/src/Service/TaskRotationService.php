@@ -710,13 +710,30 @@ class TaskRotationService
                 ];
         }
         $values = $inputFilter->getValues();
-        $task = $this->em->find(Entity\Task::class,$values['task']);
+        $this->doCreateRotation($values);
+
+        $this->em->flush();
+        return [
+            'status'=>'success',
+            'valid' => true,
+            'rotation' => $inputFilter->getValues(),
+        ];
+    }
+
+    private function doCreateRotation(Array $data) : Entity\Rotation
+    {
+        if (is_int($data['task'])) {
+            $task = $this->em->find(Entity\Task::class,$data['task']);
+        } else {
+            $task = $data['task'];
+        }
+
         $rotation = new Entity\Rotation();
-        $rotation->setTask($task)->setStartDate(new DateTime($values['start_date']));
+        $rotation->setTask($task)->setStartDate(new DateTime($data['start_date']));
         $dql = 'SELECT p FROM InterpretersOffice\Entity\Person p WHERE p.id IN (:ids)';
         $people = $this->em->createQuery($dql)
-            ->setParameters(['ids'=> $values['members']])->getResult();
-        $reverse_ids = array_flip($values['members']);
+            ->setParameters(['ids'=> $data['members']])->getResult();
+        $reverse_ids = array_flip($data['members']);
         foreach ($people as $m) {
             $member = new Entity\RotationMember();
             $member->setRotation($rotation)->setPerson($m)
@@ -724,12 +741,8 @@ class TaskRotationService
             $rotation->addMember($member);
         }
         $this->em->persist($rotation);
-        $this->em->flush();
-        return [
-            'status'=>'success',
-            'valid' => true,
-            'rotation' => $inputFilter->getValues(),
-        ];
+
+        return $rotation;
     }
 
     public function createTask(Array $data)
@@ -755,10 +768,8 @@ class TaskRotationService
             $errors = $inputFilter->getMessages();
             if (isset($errors['rotation'])) {
                 if (key_exists('countable',$errors['rotation']) && key_exists('members',$errors['rotation'])) {
-                    $result['debug'] .= "fucking yes...";
                     if (isset($errors['rotation']['countable']['isEmpty']) && isset($errors['rotation']['members']['isEmpty']))
                     {
-                        $result['debug'] .= "fucking yes again...";
                         unset($errors['rotation']['countable']);
                     }
                 }
@@ -766,9 +777,26 @@ class TaskRotationService
             $result['validation_errors'] = $errors;
             return $result;
         } // else ...
-        
 
-        $result['data'] = $inputFilter->getValues();
+        $em = $this->em;
+        /** @var InterpretersOffice\Admin\Rotation\Entity\Task $task */
+        $task = new Entity\Task();
+        $values = $inputFilter->getValues();
+        $task->setName($values['name'])
+            ->setFrequency($values['frequency'])
+            ->setDuration($values['duration'])
+            ->setDayOfWeek($values['day_of_week'] ?? null)
+            ->setDescription($values['description'] ?? '');
+        $rotation_data = $values['rotation'];
+        $rotation_data['task'] = $task;
+        $rotation = $this->doCreateRotation($rotation_data);
+        $task->addRotation($rotation);
+        $em->persist($task);
+        $em->flush();
+        $result['debug'] = "so far so good";
+        $result['task_id'] = $task->getId();
+        $result['status'] = "success";
+        $result['data'] = $values;
 
         return $result;
     }
@@ -830,7 +858,7 @@ class TaskRotationService
 
         $result = $this->getRepository()->getAssignment($task,$date_obj);
 
-        return $this->assignmentToArray($result);
+        return $result ? $this->assignmentToArray($result) : null;
     }
 
     /**
@@ -1105,25 +1133,20 @@ class TaskRotationService
                 ];
             }
         }
-        // will this work, or fuck up the sequence?
-        $people = array_map(function ($p){
-            return [
-                'id' => $p->getPerson()->getId(),
-                'name' => $p->getPerson()->getFullName(),
-            ];
-        },$assignment['rotation']->toArray());
-
-        $assignment['rotation'] = $people;
-        //$assignment['rotation_id'] =
-        $assignment['start_date'] = $assignment['start_date']->format('Y-m-d');
+        if (isset($assignment['rotation'])) {
+            $people = array_map(function ($p){
+                return [
+                    'id' => $p->getPerson()->getId(),
+                    'name' => $p->getPerson()->getFullName(),
+                ];
+            },$assignment['rotation']->toArray());
+            $assignment['rotation'] = $people;
+        }
+        if (isset($assignment['start_date'])) {
+            $assignment['start_date'] = $assignment['start_date']->format('Y-m-d');
+        }
         if (!empty($assignment['substitution'])) {
             $sub = $assignment['substitution'];
-            // $subs = array_map(function($s){
-            //     return [
-            //         'substitution_id' => $sub->getId(),
-            //         'substitution_duration' => $sub->getDuration(),
-            //     ];
-            // },$assignment['substitution']);//)$assignment['substitution'];
             $assignment['substitution_id'] = $sub->getId();
             $assignment['substitution_duration'] = $sub->getDuration();
             // echo "DEBUG: HELLO! duration is ".$sub->getDuration()."\n";

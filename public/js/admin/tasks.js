@@ -10,6 +10,11 @@ const load_task_assignment = function(date){
     .then((res)=>{
           var formatted = new moment(res.date,"YYYY-MM-DD").format("ddd DD-MMM-YYYY");
           $(".task .assignment-date").text(`${formatted}: `).data({date:res.date});
+          if (! res.assigned) {
+              $(".assignment-person").html(`<span class="text-muted">nobody</span>`)
+              .data({id:null});
+              return;
+          }
           var html = "";
           var $default  = res["default"];
           if (res.assigned.id !== $default.id) {
@@ -17,9 +22,8 @@ const load_task_assignment = function(date){
           }
           html += `${res.assigned.name}`;
           $(".assignment-person").html(html).data({id:res.assigned.id});
-          // if (refresh_rotation) {
+          $(".text-muted.assignment-person").removeClass("text-muted");
           $(".rotation").html(res.rotation.map(e=>e.name).join("<br>"));
-          // }
           var start_date = new moment(res.start_date,"YYYY-MM-DD");
           $(".start_date").text(start_date.format("ddd DD-MMM-YYYY"))
           $(".start_date").data({start_date:res.start_date});
