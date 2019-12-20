@@ -4,6 +4,9 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
 ?>
 <div class="mx-auto" style="max-width:800px">
     <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    <div class="alert alert-warning" style="display:none">
+        <p id="error-message"></p>
+    </div>
     <form class="task-rotation" id="task-form" action="<?php echo $this->url('restful_tasks/post')?>" method="post">
         <div class="form-group form-row">
             <label class="col-form-label col-sm-3" for="task">

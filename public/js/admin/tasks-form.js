@@ -1,3 +1,8 @@
+/**
+ * event handlers for the Task creation and the Task-Rotation creation
+ * forms
+ */
+
 /*
 global $, fail, displayValidationErrors
 */
@@ -14,7 +19,6 @@ $(function(){
         minLength: 2,
         select: function( event, ui ) {
             event.preventDefault();
-            console.log(`append: ${ui.item.label}, id ${ui.item.value}`);
             if ($(`#members input[value="${ui.item.value}"]`).length) {
                 //alert("You already have this person in the rotation");
                 $(this).val("");
@@ -93,6 +97,7 @@ $(function(){
         }
 
     });
+
     $("#btn-confirm").on("click",function(e){
         e.preventDefault();
         var form = $("form.task-rotation");
@@ -113,7 +118,10 @@ $(function(){
         dow.attr({disabled});
     }).trigger("change");
 });
-
+/** half-assed quasi-validation. If it looks like it will validate, we
+will display a confirmation. If not, we just let them submit and
+let the server-side validation handle it.
+*/
 var looks_valid = function(form) {
     if (form.attr("id") === "task-form") {
         var ok = $("#start_date").val().trim() != ""
@@ -156,7 +164,6 @@ const render_form_confirmation = function(form) {
         var html = `<p>You are about to set the following rotation for
         <strong>${task}</strong> effective as of <strong>${date}</strong>:</p>
         ${list} <p>Continue?</p>`
-
     } else {
         var description = $("#description").val().trim() ?
             `<strong>${$("#description").val().trim()}</strong>`:"<em>(none)</em>";
@@ -180,6 +187,7 @@ const submit_task_form = function(form,confirmed){
     } else {
         console.log("looks NOT valid, or it is confirmed");
         var url = form.attr("action");
+        console.log(`submitting to ${url}`);
         $.post(url,form.serialize()).then(res=>{
             if (res.validation_errors) {
                 return displayValidationErrors(res.validation_errors);

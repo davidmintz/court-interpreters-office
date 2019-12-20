@@ -747,7 +747,7 @@ class TaskRotationService
 
     public function createTask(Array $data)
     {
-        $result = ['info' => 'not yet implemented','validation_errors'=>[]];
+        $result = [];
         $inputFilter = $this->getTaskInputFilter();
         // 'countable' is sort of a pseudo-input, same data as 'members'.
         // This hack is designed to get validators to run the way we want
