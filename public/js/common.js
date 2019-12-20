@@ -87,7 +87,7 @@ const displayValidationErrors = function(errors,options,verbose)
             }
         }
     });
-}
+};
 
 
 /**
