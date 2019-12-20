@@ -47,7 +47,7 @@ if (! $ids_to_import) {
 $id_to_begin_after = $opts->{'begin-after-id'};
 /** @var $db \PDO */
 $db = require(__DIR__."/connect.php");
-$now = date("M-d-y H:i:s");
+$now = date("d-M-Y H:i:s");
 // first: make sure all our non-courthouse locations have been inserted
 
 /* map old event-types to locations */
