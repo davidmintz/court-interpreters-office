@@ -764,7 +764,7 @@ class TaskRotationService
         $result['valid'] = $valid;
         $result['debug'] = '';
         if (! $valid) {
-            // but could result in silly duplicate error messages
+            // remove possible duplicate error messages
             $errors = $inputFilter->getMessages();
             if (isset($errors['rotation'])) {
                 if (key_exists('countable',$errors['rotation']) && key_exists('members',$errors['rotation'])) {
@@ -795,7 +795,7 @@ class TaskRotationService
         $em->flush();
         $result['debug'] = "so far so good";
         $result['task_id'] = $task->getId();
-        $result['status'] = "success";
+        $result['status'] = 'success';
         $result['data'] = $values;
 
         return $result;

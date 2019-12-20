@@ -183,9 +183,8 @@ const submit_task_form = function(form,confirmed){
         $.post(url,form.serialize()).then(res=>{
             if (res.validation_errors) {
                 return displayValidationErrors(res.validation_errors);
-            } // else
-            var redirect = `${window.basePath}/admin/rotations`;
-            console.log(res);
+            } // else...
+            document.location = `${window.basePath}/admin/rotations`;
         }).fail((res)=>{ fail(res); });
     }
 };
