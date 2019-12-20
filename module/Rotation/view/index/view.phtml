@@ -23,7 +23,7 @@ endif;
     if ($messenger->hasSuccessMessages()) :
         echo $messenger->render('success', ['alert','alert-success',], false);
     endif;
-    ?>    <div class="row">
+    ?><div class="row">
         <div class="col">
             <div class="row task" data-task_id="<?= $this->task->getId()?>"
               data-dow="<?=  $this->escapeHtml($this->task->getDayOfWeek())?>"

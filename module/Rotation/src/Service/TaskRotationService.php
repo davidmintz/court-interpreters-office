@@ -793,7 +793,6 @@ class TaskRotationService
         $task->addRotation($rotation);
         $em->persist($task);
         $em->flush();
-        $result['debug'] = "so far so good";
         $result['task_id'] = $task->getId();
         $result['status'] = 'success';
         $result['data'] = $values;
