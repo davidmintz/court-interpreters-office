@@ -40,7 +40,7 @@ class RestTaskController extends AbstractRestfulController
     public function create($data)
     {
 
-        $result = ['status'=> "not yet implemented"];//$this->service->createTask($data);
+        $result = $this->service->createTask($data);
         if (isset($result['status']) && 'success' == $result['status']) {
             $this->flashMessenger()->addSuccessMessage('A new task has been created.');
         }

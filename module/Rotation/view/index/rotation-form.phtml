@@ -13,7 +13,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
                 task
             </label>
             <div class="col-sm-6">
-                <select id="task" name="task" class="form-control">
+                <select id="task" name="rotation[task]" class="form-control">
                     <option label="" value=""></option>
                     <?php foreach ($this->tasks as $t) :?>
                     <option label="<?= $this->escapeHtml($t->getName()) ?>" value="<?=$t->getId()?>"<?php
@@ -45,7 +45,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
     <div class="modal-dialog" role="document" >
         <div class="modal-content">
             <div class="modal-header">
-                <h5 id="dialog-title">please confirm rotation</h5>
+                <h5 id="dialog-title">please confirm</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="close">
                     <span aria-hidden="true">&times;</span>
                 </button>

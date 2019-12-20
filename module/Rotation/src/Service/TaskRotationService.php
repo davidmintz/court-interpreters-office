@@ -81,6 +81,128 @@ class TaskRotationService
         $this->config = $config;
     }
 
+
+    public function getTaskInputFilter()
+    {
+        $inputFilter = new InputFilter\InputFilter();
+        $inputFilter->add($this->getRotationInputFilter(), 'rotation');
+        $inputFilter->add([
+            'name' => 'frequency',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> '"frequency" field is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'InArray',
+                    'options' => [
+                        'haystack' => [ "WEEK"], //"DAY",...
+                        'messages' => [
+                            'notInArray' => 'the only supported frequency is weekly'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+            ]
+        ]);
+        $inputFilter->add([
+            'name' => 'name',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> 'a name for the task is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => Validator\StringLength::class,
+                    'options' => [
+                        'min' => 4, 'max' =>30,
+                        'messages' => [
+                             Validator\StringLength::TOO_SHORT => 'task name has to be a minimum of %min% characters',
+                             Validator\StringLength::TOO_LONG => 'task name cannot exceed a maximum of %max% characters',
+                        ]
+                    ],
+                    'break_chain_on_failure' => true,
+                ]
+                // .....
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'description',
+            'required' => false,
+            //'allow_empty' => true,
+            'validators' => [
+                [
+                    'name' => Validator\StringLength::class,
+                    'options' => [
+                        'min' => 12, 'max' =>400,
+                        'messages' => [
+                             Validator\StringLength::TOO_SHORT => 'task description has to be a minimum of %min% characters',
+                             Validator\StringLength::TOO_LONG => 'task description cannot exceed a maximum of %max% characters',
+                        ]
+                    ],
+                    'break_chain_on_failure' => true,
+                ]
+            ],
+        ]);
+        $inputFilter->add([
+            'name' => 'day_of_week',
+            'required' => true,
+            //'allow_empty' => false,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> 'day of week is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'InArray',
+                    'options' => [
+                        'haystack' => range(0,6), //"DAY",...
+                        'messages' => [
+                            'notInArray' => 'day of week has be a value between 0 and 6',
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+            ],
+        ]);
+
+        $inputFilter->add([
+            'name' => 'duration',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> '"duration" field is required'],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'InArray',
+                    'options' => [
+                        'haystack' => [ "DAY", "WEEK"],
+                        'messages' => [
+                            'notInArray' => 'the only supported options for duration are "DAY" and "WEEK"'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+            ]
+        ]);
+
+        return $inputFilter;
+    }
     /**
      * returns input filter for Rotation entity
      *
@@ -564,11 +686,13 @@ class TaskRotationService
      */
     public function createRotation(Array $data)
     {
+        $input = $data['rotation'] ?? [];
+        $input['csrf'] = $data['csrf'] ?? '';
         $inputFilter = $this->getRotationInputFilter();
         // 'countable' is sort of a pseudo-input, same data as 'members'.
         // This hack is designed to get validators to run the way we want
-        $data['countable'] = $data['members'] ?? null;
-        $inputFilter->setData($data);
+        $input['countable'] = $input['members'] ?? null;
+        $inputFilter->setData($input);
         $valid = $inputFilter->isValid();
         if (! $valid) {
             // but could result in silly duplicate error messages
@@ -586,20 +710,8 @@ class TaskRotationService
                 ];
         }
         $values = $inputFilter->getValues();
-        $task = $this->em->find(Entity\Task::class,$values['task']);
-        $rotation = new Entity\Rotation();
-        $rotation->setTask($task)->setStartDate(new DateTime($values['start_date']));
-        $dql = 'SELECT p FROM InterpretersOffice\Entity\Person p WHERE p.id IN (:ids)';
-        $people = $this->em->createQuery($dql)
-            ->setParameters(['ids'=> $values['members']])->getResult();
-        $reverse_ids = array_flip($values['members']);
-        foreach ($people as $m) {
-            $member = new Entity\RotationMember();
-            $member->setRotation($rotation)->setPerson($m)
-                ->setOrder($reverse_ids[$m->getId()]);
-            $rotation->addMember($member);
-        }
-        $this->em->persist($rotation);
+        $this->doCreateRotation($values);
+
         $this->em->flush();
         return [
             'status'=>'success',
@@ -607,6 +719,87 @@ class TaskRotationService
             'rotation' => $inputFilter->getValues(),
         ];
     }
+
+    private function doCreateRotation(Array $data) : Entity\Rotation
+    {
+        if (is_int($data['task'])) {
+            $task = $this->em->find(Entity\Task::class,$data['task']);
+        } else {
+            $task = $data['task'];
+        }
+
+        $rotation = new Entity\Rotation();
+        $rotation->setTask($task)->setStartDate(new DateTime($data['start_date']));
+        $dql = 'SELECT p FROM InterpretersOffice\Entity\Person p WHERE p.id IN (:ids)';
+        $people = $this->em->createQuery($dql)
+            ->setParameters(['ids'=> $data['members']])->getResult();
+        $reverse_ids = array_flip($data['members']);
+        foreach ($people as $m) {
+            $member = new Entity\RotationMember();
+            $member->setRotation($rotation)->setPerson($m)
+                ->setOrder($reverse_ids[$m->getId()]);
+            $rotation->addMember($member);
+        }
+        $this->em->persist($rotation);
+
+        return $rotation;
+    }
+
+    public function createTask(Array $data)
+    {
+        $result = [];
+        $inputFilter = $this->getTaskInputFilter();
+        // 'countable' is sort of a pseudo-input, same data as 'members'.
+        // This hack is designed to get validators to run the way we want
+        if (isset($data['rotation']) && is_array($data['rotation'])) {
+            $data['rotation']['countable'] = $data['rotation']['members'] ?? null;
+            $data['rotation']['csrf'] = $data['csrf'] ?? null;
+            if (isset($data['duration']) && $data['duration'] == 'WEEK') {
+                $inputFilter->remove('day_of_week');
+            }
+        }
+        $inputFilter->get('rotation')->remove('task');
+        $inputFilter->setData($data);
+        $valid = $inputFilter->isValid();
+        $result['valid'] = $valid;
+        $result['debug'] = '';
+        if (! $valid) {
+            // remove possible duplicate error messages
+            $errors = $inputFilter->getMessages();
+            if (isset($errors['rotation'])) {
+                if (key_exists('countable',$errors['rotation']) && key_exists('members',$errors['rotation'])) {
+                    if (isset($errors['rotation']['countable']['isEmpty']) && isset($errors['rotation']['members']['isEmpty']))
+                    {
+                        unset($errors['rotation']['countable']);
+                    }
+                }
+            }
+            $result['validation_errors'] = $errors;
+            return $result;
+        } // else ...
+
+        $em = $this->em;
+        /** @var InterpretersOffice\Admin\Rotation\Entity\Task $task */
+        $task = new Entity\Task();
+        $values = $inputFilter->getValues();
+        $task->setName($values['name'])
+            ->setFrequency($values['frequency'])
+            ->setDuration($values['duration'])
+            ->setDayOfWeek($values['day_of_week'] ?? null)
+            ->setDescription($values['description'] ?? '');
+        $rotation_data = $values['rotation'];
+        $rotation_data['task'] = $task;
+        $rotation = $this->doCreateRotation($rotation_data);
+        $task->addRotation($rotation);
+        $em->persist($task);
+        $em->flush();
+        $result['task_id'] = $task->getId();
+        $result['status'] = 'success';
+        $result['data'] = $values;
+
+        return $result;
+    }
+
 
     /**
      * gets assignments for a date
@@ -664,7 +857,7 @@ class TaskRotationService
 
         $result = $this->getRepository()->getAssignment($task,$date_obj);
 
-        return $this->assignmentToArray($result);
+        return $result ? $this->assignmentToArray($result) : null;
     }
 
     /**
@@ -939,25 +1132,20 @@ class TaskRotationService
                 ];
             }
         }
-        // will this work, or fuck up the sequence?
-        $people = array_map(function ($p){
-            return [
-                'id' => $p->getPerson()->getId(),
-                'name' => $p->getPerson()->getFullName(),
-            ];
-        },$assignment['rotation']->toArray());
-
-        $assignment['rotation'] = $people;
-        //$assignment['rotation_id'] =
-        $assignment['start_date'] = $assignment['start_date']->format('Y-m-d');
+        if (isset($assignment['rotation'])) {
+            $people = array_map(function ($p){
+                return [
+                    'id' => $p->getPerson()->getId(),
+                    'name' => $p->getPerson()->getFullName(),
+                ];
+            },$assignment['rotation']->toArray());
+            $assignment['rotation'] = $people;
+        }
+        if (isset($assignment['start_date'])) {
+            $assignment['start_date'] = $assignment['start_date']->format('Y-m-d');
+        }
         if (!empty($assignment['substitution'])) {
             $sub = $assignment['substitution'];
-            // $subs = array_map(function($s){
-            //     return [
-            //         'substitution_id' => $sub->getId(),
-            //         'substitution_duration' => $sub->getDuration(),
-            //     ];
-            // },$assignment['substitution']);//)$assignment['substitution'];
             $assignment['substitution_id'] = $sub->getId();
             $assignment['substitution_duration'] = $sub->getDuration();
             // echo "DEBUG: HELLO! duration is ".$sub->getDuration()."\n";

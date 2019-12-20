@@ -217,9 +217,9 @@ class Task
      * @throws \InvalidArgumentException
      * @return Task
      */
-    public function setDayOfWeek(int $dow) : Task
+    public function setDayOfWeek(int $dow = null) : Task
     {
-        if (! in_array($dow,range(0,6))) {
+        if ($dow && ! in_array($dow,range(0,6))) {
             throw new \InvalidArgumentException("invalid value for day_of_week: $dow");
         }
         $this->day_of_week = $dow;

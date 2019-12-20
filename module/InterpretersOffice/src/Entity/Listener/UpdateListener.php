@@ -132,15 +132,16 @@ class UpdateListener implements
                 $channel = 'scheduling';
                 break;
             case 'InterpretersOffice\Admin\Rotation\Entity\RotationMember':
+            case 'InterpretersOffice\Admin\Rotation\Entity\Rotation':
+            case 'InterpretersOffice\Admin\Rotation\Entity\Task':
                 $channel = 'rotations';
+                $what = strtolower(substr($entity_class, strrpos($entity_class, '\\') + 1));
+                $message = "user $user created a new $what";
+                break;
             default:
                 $basename = strtolower(substr($entity_class, strrpos($entity_class, '\\') + 1));
                 $channel = "{$basename}s";
-                $message = sprintf(
-                    'user %s added a new %s',
-                    $user,
-                    $basename
-                );
+                $message = sprintf('user %s added a new %s', $user, $basename);
                 if (method_exists($entity, '__toString')) {
                     $message .= ": $entity";
                 } elseif (method_exists($entity, 'getFullName')) {
