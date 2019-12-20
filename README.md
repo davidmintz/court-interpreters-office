@@ -13,7 +13,7 @@ itself, are straightforward. In lay terms: you will need standard
 hardware and software for serving a web application. That means a computer on a network with its firewall
 configured to allow web traffic; installed on that computer, a properly configured web
 server such as [Apache](https://httpd.apache.org/); [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/) as a database server (others will likely work, but we haven't gone there yet); and the programming language
-[PHP](http://php.net/) version 7.2. On the client side, users will need no more than a
+[PHP](http://php.net/), minimum version 7.2. On the client side, users will need no more than a
 standard web browser and network access to the server where the application is installed.
 
 With [docker](https://www.docker.com/) having become such a thing, there's a good chance
@@ -46,11 +46,11 @@ You will be able to search your database based on all these criteria (date range
 
 An optional module allows users outside your Interpreters Office to log in and submit their requests themselves, a convenience to them that greatly reduces the amount of data entry required of the Interpreters and eliminates the opportunity for error.
 
-Another optional module I have in mind will generate claim forms for contract interpreter compensation and keep track of the money expended. The work flow currently happening in our organization is preposterously tedious, and this will help immensely.
+Another optional module I have in mind will generate claim forms for contract interpreter compensation and keep track of the money expended. The work flow currently happening in our organization is preposterously tedious, and some automation could help immensely.
 
 # acknowledgments
 
-Our server-side code is written in PHP 7.2 and relies heavily on [the Zend MVC Framework](http://framework.zend.com/) 3.x and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
+Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on [the Zend MVC Framework](http://framework.zend.com/) 3.x and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
 
 # the author
 
