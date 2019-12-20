@@ -88,10 +88,12 @@ $("form").on("click",".btn-remove-item",function(e){
 });
 var append_date = function(date,namespace){
     var m = moment(date,"MM/DD/YYYY");
-    var display = m.format("ddd DD-MMM-YYYY");
     var value = m.format("YYYY-MM-DD");
+    if ($(`#dates input[value="${value}"]`).length) {
+        return;
+    }
+    var display = m.format("ddd DD-MMM-YYYY");
     $("#dates .form-text").hide();
-    //var namespace = "request"; // figure this out...
     $("#dates .list-group").append(
         `<li style="font-size:90%;font-family:monospace" class="list-group-item pl-2 pr-1 py-1">
         <span class="float-left pt-1 align-middle">${display}</span>
@@ -101,6 +103,12 @@ var append_date = function(date,namespace){
         <input type="hidden" name="${namespace}[dates][]" value="${value}">
         </li>`
     );
+    var sorted = $("ul.list-group li").sort((a,b)=>{
+        var date1 = $(a).children("input").val();
+        var date2 = $(b).children("input").val();
+        if (date1 == date2) { return 0; } // should not be necessary
+        return date1 > date2 ? 1 : -1; });
+    $("#dates .list-group").html(sorted);
 };
 var enable_multidate = function(namespace){
     console.log("enabling multi-date");
