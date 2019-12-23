@@ -133,11 +133,13 @@ var enable_multidate = function(namespace){
     $("#div-multi-dates").slideDown();
     $("#date").attr({disabled:true});
 };
+
 var disable_multidate = function(){
     console.log("disable multi-date");
     $("#div-multi-dates").slideUp();
     $("#date").attr({disabled:false});
 };
+
 $(function(){
 
     const form = $("#request-form");

@@ -11,6 +11,7 @@ use Zend\View\Model\JsonModel;
 use Zend\Mvc\MvcEvent;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Zend\Http\Request;
+use Zend\StdLib\Parameters;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
@@ -19,6 +20,8 @@ use InterpretersOffice\Entity\User;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Service\DateCalculatorTrait;
 use InterpretersOffice\Requests\Form;
+
+
 
 
 /**
@@ -191,7 +194,20 @@ class WriteController extends AbstractActionController implements ResourceInterf
         return parent::onDispatch($e);
     }
 
-
+    /**
+     * handles submissions for multiple dates
+     *
+     * @param  FormRequestForm $form
+     * @param  Parameters      $params
+     * @return JsonModel
+     */
+    public function batchCreate(Form\RequestForm $form,Parameters $params)
+    {
+        $request = $params->get('request');
+        $request['date'] = \array_shift($request['dates']);
+        // something like that...
+        return new JsonModel(['debug' => 'implementation pending']);
+    }
 
     /**
      * creates a new Request
@@ -206,6 +222,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
             ['action' => 'create','auth' => $this->auth]
         );
         $view->form = $form;
+
         $entity = new Entity\Request();
         if (! $this->getRequest()->isPost()) {
             $repeat_id = $this->params()->fromRoute('id');
@@ -218,7 +235,17 @@ class WriteController extends AbstractActionController implements ResourceInterf
         $form->bind($entity);
 
         if ($this->getRequest()->isPost()) {
-            $form->setData($this->getRequest()->getPost());
+
+
+            /** @var Zend\Stdlib\Parameters $params */
+            $params = $this->getRequest()->getPost();
+            $r = $params->get('request'); // array
+            if (empty($r['date']) && ! empty($r['dates'])) {
+                // it's a multi-date Request
+                return $this->batchCreate($form,$params);
+
+            }
+            $form->setData($params);
             if (! $form->isValid()) {
                 return new JsonModel(['validation_errors' =>
                     $form->getMessages()]);
