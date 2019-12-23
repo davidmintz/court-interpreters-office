@@ -1,5 +1,5 @@
-var $, displayValidationErrors, appendJudge;
-
+var $, appendJudge;
+//displayValidationErrors,
 $(function(){
     /** fix the minumum height for (sliding) fieldsets */
     var h = $("#fieldset-personal-data").height();
