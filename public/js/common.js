@@ -47,7 +47,7 @@ const show_error_message = function(element_name, message, verbose){
     var element = $(`#${element_name}`);
     if (! element.length) {
         // try harder
-        var selector = "#" + field.replace(/([A-Z])/g,"_$1").toLowerCase();
+        var selector = "#" + element_name.replace(/([A-Z])/g,"_$1").toLowerCase();
         element = $(selector);
     }
     if (element.length) {
