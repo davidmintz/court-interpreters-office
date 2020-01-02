@@ -204,9 +204,50 @@ class WriteController extends AbstractActionController implements ResourceInterf
     public function batchCreate(Form\RequestForm $form,Parameters $params)
     {
         $request = $params->get('request');
-        $request['date'] = \array_shift($request['dates']);
-        // something like that...
-        return new JsonModel(['debug' => 'implementation pending']);
+        $dates = $request['dates'];
+        sort($dates);
+        $entities = [];
+        foreach($dates as $i => $date) {
+            $request['date'] = $date;
+            $params->set('request',$request);
+            $form->setData($params);
+            $entity = $form->getObject();
+            if (!$form->isValid()) {
+                return new JsonModel(['validation_errors' =>
+                        $form->getMessages()]);
+            } // else...
+            // post-validation: make sure it is not a near-exact duplicate
+            $repo = $this->objectManager->getRepository(Entity\Request::class);
+            if ($repo->findDuplicate($entity)) {
+                $date_and_time = (new \DateTime("{$params['date']} {$params['time']}"))->format('D d-M-Y h:i a');
+                return  new JsonModel(
+                    ['validation_errors' => ['request' =>
+                    ['duplicate' =>
+                        ["there is already an existing request for this date and time
+                        ($date_and_time), judge, type of event, defendant(s), docket, and language"
+                        ]
+                    ]]]
+                );
+            }
+            $form->postValidate($this);
+            $entities[] = $entity;
+            $entity = new Entity\Request();
+            $form->bind($entity);
+        }
+        foreach ($entities as $e) {
+            $this->objectManager->persist($e);
+        }
+        $count = count($entities);
+        $verbiage = $count > 1 ? "Your $count requests" : 'Your request';
+        $this->objectManager->flush();
+        $this->flashMessenger()->addSuccessMessage(
+            "$verbiage for interpreting services has been submitted. Thank you."
+        );
+
+        return  new JsonModel([
+            'status' => 'success',
+            'ids' => array_map(function($e){ return $e->getId();},$entities)
+        ]);
     }
 
     /**
@@ -235,8 +276,6 @@ class WriteController extends AbstractActionController implements ResourceInterf
         $form->bind($entity);
 
         if ($this->getRequest()->isPost()) {
-
-
             /** @var Zend\Stdlib\Parameters $params */
             $params = $this->getRequest()->getPost();
             $r = $params->get('request'); // array
@@ -256,7 +295,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
                 return  new JsonModel(
                     ['validation_errors' => ['request' =>
                     ['duplicate' =>
-                        ['there is already a request with this date, time,
+                        ['there is already an existing request for this date, time,
                         judge, type of event, defendant(s), docket, and language'
                         ]
                     ]]]
