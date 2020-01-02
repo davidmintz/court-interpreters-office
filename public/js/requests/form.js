@@ -53,7 +53,7 @@ switch (moment().day()) {
         minDate = "+2";
 }
 
-const datepicker_options = {
+var datepicker_options = {
     changeMonth: true,
     changeYear: true,
     selectOtherMonths : true,
@@ -82,63 +82,63 @@ const deftname_autocomplete_options = {
         }
     }
 };
-$("form").on("click",".btn-remove-item",function(e){
+$("form").on("click","li .btn-remove-item",function(e){
     e.preventDefault();
     $(this).closest("li").slideUp(function(){$(this).remove()});
 });
-var append_date = function(date,namespace){
-    var m = moment(date,"MM/DD/YYYY");
-    var value = m.format("YYYY-MM-DD");
-    if ($(`#dates input[value="${value}"]`).length) {
-        return;
-    }
-    var display = m.format("ddd DD-MMM-YYYY");
-    $("#dates .form-text").hide();
-    $("#dates .list-group").append(
-        `<li style="font-size:90%;font-family:monospace" class="list-group-item pl-2 pr-1 py-1 multidate">
-        <span class="float-left pt-1 align-middle">${display}</span>
-        <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this date">
-        <span class="fas fa-times" aria-hidden="true"></span>
-        <span class="sr-only">remove this date</span></button>
-        <input type="hidden" name="${namespace}[dates][]" value="${value}">
-        </li>`
-    );
-    var sorted = $("ul.list-group li.multidate").sort((a,b)=>{
-        var date1 = $(a).children("input").val();
-        var date2 = $(b).children("input").val();
-        if (date1 == date2) { return 0; } // should not be necessary
-        return date1 > date2 ? 1 : -1; });
-    $("#dates .list-group").html(sorted);
-};
-var enable_multidate = function(namespace){
-    console.log("enabling multi-date");
-    var div_exists = $("#div-multi-dates").length > 0;
-    var date_element = $("#date");
-    if (! div_exists) {
-        var form_row = date_element.closest("div.form-row");
-        form_row.after(
-        `<div style="display:none" id="div-multi-dates" class="form-group form-row">
-            <label for="dates" class="col-form-label col-sm-3 pr-1">dates</label>
-            <div id="dates" class="col-sm-4">
-                <p class="form-text text-muted mt-2">please select your dates</p>
-                <ul class="list-group"></ul>
-                <div id="error_dates" class="alert alert-warning validation-error" style="display:none"></div>
-            </div>
-            <div id="cal-multi-dates" class="col-sm-5"></div>
-        </div>`
-        );
-        var opts = Object.assign(datepicker_options,{onSelect: function(date){append_date(date,"request");}})
-        $("#cal-multi-dates").datepicker(opts);
-    }
-    $("#div-multi-dates").slideDown();
-    $("#date").attr({disabled:true});
-};
-
-var disable_multidate = function(){
-    console.log("disable multi-date");
-    $("#div-multi-dates").slideUp();
-    $("#date").attr({disabled:false});
-};
+// var append_date = function(date,namespace){
+//     var m = moment(date,"MM/DD/YYYY");
+//     var value = m.format("YYYY-MM-DD");
+//     if ($(`#dates input[value="${value}"]`).length) {
+//         return;
+//     }
+//     var display = m.format("ddd DD-MMM-YYYY");
+//     $("#dates .form-text").hide();
+//     $("#dates .list-group").append(
+//         `<li style="font-size:90%;font-family:monospace" class="list-group-item pl-2 pr-1 py-1 multidate">
+//         <span class="float-left pt-1 align-middle">${display}</span>
+//         <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this date">
+//         <span class="fas fa-times" aria-hidden="true"></span>
+//         <span class="sr-only">remove this date</span></button>
+//         <input type="hidden" name="${namespace}[dates][]" value="${value}">
+//         </li>`
+//     );
+//     var sorted = $("ul.list-group li.multidate").sort((a,b)=>{
+//         var date1 = $(a).children("input").val();
+//         var date2 = $(b).children("input").val();
+//         if (date1 == date2) { return 0; } // should not be necessary
+//         return date1 > date2 ? 1 : -1; });
+//     $("#dates .list-group").html(sorted);
+// };
+// var enable_multidate = function(namespace){
+//     console.log("enabling multi-date");
+//     var div_exists = $("#div-multi-dates").length > 0;
+//     var date_element = $("#date");
+//     if (! div_exists) {
+//         var form_row = date_element.closest("div.form-row");
+//         form_row.after(
+//         `<div style="display:none" id="div-multi-dates" class="form-group form-row">
+//             <label for="dates" class="col-form-label col-sm-3 pr-1">dates</label>
+//             <div id="dates" class="col-sm-4">
+//                 <p class="form-text text-muted mt-2">please select your dates</p>
+//                 <ul class="list-group"></ul>
+//                 <div id="error_dates" class="alert alert-warning validation-error" style="display:none"></div>
+//             </div>
+//             <div id="cal-multi-dates" class="col-sm-5"></div>
+//         </div>`
+//         );
+//         var opts = Object.assign(datepicker_options,{onSelect: function(date){append_date(date,"request");}})
+//         $("#cal-multi-dates").datepicker(opts);
+//     }
+//     $("#div-multi-dates").slideDown();
+//     $("#date").attr({disabled:true});
+// };
+//
+// var disable_multidate = function(){
+//     console.log("disable multi-date");
+//     $("#div-multi-dates").slideUp();
+//     $("#date").attr({disabled:false});
+// };
 
 $(function(){
 
@@ -158,7 +158,7 @@ $(function(){
         event_type_element.on("change",function(e){
             var type = $(this).children("option:selected").text();
             if ("trial" === type) {
-                enable_multidate("request");
+                enable_multidate("request",{datepicker: datepicker_options});
             } else {
                 disable_multidate();
             }

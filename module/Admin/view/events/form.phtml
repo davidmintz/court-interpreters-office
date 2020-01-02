@@ -110,7 +110,7 @@ $config = ['end_time' => true];
 <h2 class="text-center mb-3"><?php echo (string)$this->navigation('admin-breadcrumbs')->breadcrumbs() ;?></h2>
 <?php
 echo $this->form()->openTag($form); ?>
-<div class="form-row">
+<div class="form-row form-group">
     <label for="date" class="col-sm-2 col-form-label pr-1">date</label>
     <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('date'))?></div>
     <label for="time" class="col-sm-2 col-form-label pr-1">time</label>
@@ -126,13 +126,103 @@ echo $this->form()->openTag($form); ?>
         </div>
     </div>
 <?php endif;?>
+    </div>
 </div>
-
+<div class="form-row form-group">
+    <label for="language" class="col-sm-2 col-form-label pr-1">language</label>
+    <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('language'))?>
+    </div>
+    <label for="event_type" class="col-sm-2 col-form-label pr-1">event type</label>
+    <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('eventType'))?>
+    </div>
 </div>
-
-
-    <div class="col-12 text-center border">
+<div class="form-row form-group">
+    <label for="judge" class="col-sm-2 col-form-label pr-1">judge</label>
+    <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('judge'))?>
+    </div>
+    <label for="docket" class="col-sm-2 col-form-label pr-1">docket</label>
+    <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('docket'))?>
+    </div>
+</div><?php $element = $fieldset->get('parent_location'); ?>
+<div class="form-group form-row">
+    <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-2 col-form-label pr-1"><?php echo $element->getLabel()?></label>
+    <div class="col-sm-4"><?php
+            echo $this->formElement($element),
+                 $this->formElement($location_element),
+                 $this->formElementErrors($element) ?>
+    </div>
+    <label class="col-form-label pr-1 col-sm-2" for="hat">submitted by</label>
+    <div class="col-sm-4">
+    <?php
+        echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
+        <div class="input-group">
+            <?php echo $this->formElement($fieldset->get('submitter'));?>
+            <button data-toggle="popover" class="btn btn-info fas fa-question"  type="button" id="btn-submitter-help" hidden><span class="sr-only">help</span></button>
+        </div>
+        <div id="error_submitter" class="alert alert-warning validation-error" style="display:none"></div>
+    </div>
+</div>
+<div class="form-group form-row">
+    <label for="cancellation_reason" class="col-sm-2 col-form-label pr-1">cancellation</label>
+    <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('cancellationReason'))?>
+    </div>
+    <label class="col-form-label col-2" for="submission_date">submitted on</label>
+    <div class="col-4">
+        <div class="form-row">
+            <div class="col"><?php echo $this->formElement( $fieldset->get('submission_date')) ?></div>
+            <div class="col"><?php echo $this->formElement( $fieldset->get('submission_time')) ?></div>
+        </div>
+    </div>
+</div>
+<div class="form-group form-row">
+    <label class="col-form-label pr-1 col-sm-2" for="defendant-search">defendants</label>
+    <div class="col-sm-4">
+        <div class="input-group">
+            <?php echo $this->formElement($fieldset->get('defendant-search'));?>
+             <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
+             <?php /* empty element, so that they can delete the whole collection */
+             ?><input type="hidden" name="event[defendants][]" value="">
+        </div>
+        <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
         <?php
+        $defendants = $form->getObject()->getDefendants();
+        if ($defendants->count()) :
+            foreach ($defendants as $deft) :
+                echo $this->partial('partials/defendant', [
+                    'namespace' => 'event', 'id' => $deft->getId(), 'name' => (string)$deft
+                ]);
+            endforeach;
+        endif;
+        ?>
+        </ul>
+    </div>
+    <label class="col-sm-2 col-form-label pr-1" for="interpreter-select">interpreters</label>
+    <div class="col-sm-4">
+        <div class="input-group">
+            <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
+                <button class="btn btn-info fas fa-plus" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
+        </div>
+        <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
+        <?php  $count_interpreters = $form->getObject()->getInterpreterEvents()->count();
+        if ($count_interpreters) :
+            $helper = (new InterpreterElementCollection())->setView($this);
+            echo $helper($fieldset->get('interpreterEvents'));
+        endif;
+         ?></ul>
+    </div>
+</div>
+<div class="form-row form-group">
+    <label class="col-sm-2 col-form-label pr-1" for="comments">comments</label>
+    <div class="col-sm-4"><?php
+        echo $this->formElement($fieldset->get('comments'))?>
+    </div>
+    <label class="col-sm-2 col-form-label pr-1" for="admin_comments">comments (internal)</label>
+    <div class="col-sm-4"><?php
+        echo $this->formElement($fieldset->get('admin_comments'))?>
+    </div>
+</div>
+<div class="form-row">
+    <div class="col text-center"><?php
         $csrf = $form->get('csrf');
         echo $this->formHidden($fieldset->get('is_anonymous_judge'));
         echo $this->formHidden($fieldset->get('anonymousJudge'));
@@ -150,7 +240,7 @@ echo $this->form()->openTag($form); ?>
         <div class="alert alert-warning validation-error px-2" id="error_modified" style="text-align:left;display:none"></div>
         <?php
         echo $this->formSubmit($form->get('submit')); if ($this->id) :
-        ?><a id="btn-delete" role="button" data-toggle="modal" data-target="#modal-confirm-delete" href="<?php echo $this->url('events/edit', ['action' => 'delete','id' => $this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
+            ?><a id="btn-delete" role="button" data-toggle="modal" data-target="#modal-confirm-delete" href="<?php echo $this->url('events/edit', ['action' => 'delete','id' => $this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
         endif;?>
     </div>
 </div>

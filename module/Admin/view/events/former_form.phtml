@@ -1,0 +1,294 @@
+<?php
+use InterpretersOffice\Admin\Form\View\Helper\InterpreterElementCollection;
+
+$this->headTitle('admin | schedule | '.$this->layout()->action);
+//$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+$this->headScript()
+        //->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.js'))
+        ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+        //->appendFile($this->basePath('js/form-utilities.js'))
+        ->appendFile($this->basePath('js/event-form.js'));
+echo $this->errorMessage($this->errorMessage,$this->header);
+if ($this->errorMessage) :   return;  endif;
+
+$form = $this->form;
+if ($this->layout()->action == 'add') :
+    $action = $this->url('events/add');
+else :
+    $action = $this->url('events/edit', ['id' => $this->id]);
+    $this->headScript()->appendFile($this->basePath('js/event-delete.js'));
+endif;
+
+$form->setAttribute('class', 'form-event mx-auto')
+    ->setAttribute('style', 'max-width:950px')->setAttribute('action', $action);
+$form->add([
+    'name' => 'submit',
+    'type' => 'Zend\Form\Element\Submit',
+    'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
+])->setAttribute('method', 'post');
+
+$form->prepare();
+$fieldset = $form->get('event');
+
+/** @todo move this to somewhere else ! */
+foreach (['date','time','end_time','submission_time', 'submission_date'] as $time) :
+    if (! $fieldset->has($time)) :
+        continue;
+    endif;
+    $element = $fieldset->get($time);
+    $value = $element->getValue();
+    //renderer can't deal with DateTime objects
+    if ($value instanceof \DateTime) :
+        $format = strstr($time, 'time') ? 'g:i a' : 'm/d/Y' ;
+        $element->setValue($value->format($format));
+    endif;
+endforeach;
+
+$hatElement = $fieldset->get('anonymousSubmitter');
+if ($this->hat_id) :
+    $hatElement->setValue($hat_id);
+    $submitterElement = $fieldset->get('submitter');
+    $submitter = $submitterElement->getValue();
+    $options = $submitterElement->getValueOptions();
+    if ($submitter &&  1 <= sizeof($options)) :
+        $data = $fieldset->getObjectManager()
+            ->getRepository('InterpretersOffice\Entity\Person')
+            ->getPersonOptions($hat_id);
+        array_unshift($options, $data);
+        $submitterElement->setValueOptions($data);
+    endif;
+endif;
+$parent = $fieldset->get('parent_location')->getValue()
+    ?: $fieldset->get('location')->getValue();
+$location_element = $fieldset->get('location');
+$location_options = $location_element->getValueOptions();
+if ($parent && sizeof($location_options) <= 1) :
+
+    $repo = $fieldset->getObjectManager()
+        ->getRepository('InterpretersOffice\Entity\Location');
+    $data = $repo->getChildLocationValueOptions($parent);
+
+    $location_options = $location_element->getValueOptions();
+    array_unshift($location_options, $data);
+    $location_element->setValueOptions($location_options[0]);
+endif;
+$entity = $form->getObject();
+if ($entity->getLocation() && ! $entity->getLocation()->getParentLocation()) {
+    $fieldset->get('parent_location')->setValue($entity->getLocation()->getId());
+}
+
+foreach (['judge','anonymousJudge','location','parent_location','eventType','cancellationReason'] as $field) :
+    $element = $fieldset->get($field);
+    if (is_object($element->getValue())) :
+        $id = $element->getValue()->getId();
+        $element->setValue($id);
+    endif;
+endforeach;
+/** ============================================================ ! */
+// temporarily, let's just set this here
+$config = ['end_time' => true];
+?>
+<div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:22rem" class="card border ml-5 bg-light">
+    <div class="card-header">
+         <button type="button" title="close" class="btn btn-default close float-right m-1" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="card-title">defendant names</h4>
+        <!-- instructions (when search results are non-zero?)
+        <h6 class="card-subtitle text-muted">select a name to add to this event</h6> -->
+    </div>
+    <div class="card-body pl-3 mb-0">
+        <div class="card-text result">
+        </div>
+    </div>
+    <div class="mt-1 mb-2 mx-auto text-center">
+        <button title="add a new defendant name" id="btn-add-defendant-name" class="btn btn-primary btn-sm">
+            <span aria-hidden="true" class="fas fa-plus"></span> new defendant name
+        </button>
+    </div>
+</div>
+<h2 class="text-center mb-3"><?php echo (string)$this->navigation('admin-breadcrumbs')->breadcrumbs() ;?></h2>
+<?php
+echo $this->form()->openTag($form); ?>
+<div class="form-row">
+    <div class="col-md-6 border"><!-- left side -->
+    <?php
+    foreach (['date','time','eventType','judge', ] as $elementName) :
+        $element = $fieldset->get($elementName);
+        ?>
+        <div class="form-group form-row my-2">
+        <?php
+        if ('time' == $elementName && $config['end_time']) :
+            $end_time = $fieldset->get('end_time'); ?>
+                <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
+                <div class="col-sm-1 col-form-label pr-1">from</div>
+                <div class="col-sm-7"><?php echo $this->formElement($element),$this->formElementErrors($element)?></div>
+                <label for="<?php echo $end_time->getAttribute('id')?>" class="offset-sm-4 col-sm-1 col-form-label  pr-1">to</label>
+                <div class="col-sm-7"><?php  echo $this->formElement($end_time),$this->formElementErrors($end_time)?></div>
+        <?php else : ?>
+            <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
+            <div class="col-sm-8"><?php echo $this->formElement($element),
+                         $this->formElementErrors($element);?></div>
+        <?php endif; ?>
+        </div>
+    <?php endforeach;
+    $element = $fieldset->get('parent_location');?>
+        <div class="form-group form-row my-2">
+            <label for="<?php echo $element->getAttribute('id')?>" class="col-sm-4 col-form-label pr-1"><?php echo $element->getLabel()?></label>
+            <div class="col-sm-8"><?php
+                    echo $this->formElement($element),
+                         $this->formElement($location_element),
+                         $this->formElementErrors($element) ?>
+            </div>
+        </div>
+    <?php foreach (['docket', 'comments','admin_comments'] as $elementName) :
+        $element = $fieldset->get($elementName); ?>
+        <div class="form-group form-row my-2">
+            <label class="col-sm-4 col-form-label pr-1" for="<?php echo $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+            <div class="col-sm-8"><?php
+                echo $this->formElement($element), $this->formElementErrors($element) ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+    </div><!-- /left side -->
+    <div class="col-md-6"><!-- right side -->
+        <?php $element = $fieldset->get('language'); ?>
+        <div class="form-group form-row my-2">
+            <label class="col-sm-4 col-form-label pr-1" for="<?php echo $element->getAttribute('id') ?>"><?= $element->getLabel() ?></label>
+            <div class="col-sm-8"><?php
+                echo $this->formElement($element), $this->formElementErrors($element) ?>
+            </div>
+        </div>
+        <div class="form-group form-row my-2">
+            <label class="col-sm-4 col-form-label pr-1" for="interpreter-select">interpreters</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <?php echo $this->formElement($fieldset->get('interpreter-select'));?>
+                        <button class="btn btn-info fas fa-plus" title="assign the selected interpreter to this event" type="button" id="btn-add-interpreter"><span class="sr-only">add</span></button>
+                 </div>
+                <ul style="margin-top: .5em" id="interpreters-assigned" class="list-group interpreters-assigned">
+                    <?php
+                    $count_interpreters = $form->getObject()->getInterpreterEvents()->count();
+                    if ($count_interpreters) :
+                        $helper = (new InterpreterElementCollection())->setView($this);
+                        echo $helper($fieldset->get('interpreterEvents'));
+                    endif;
+                    ?>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group form-row my-2">
+            <label class="col-form-label pr-1 col-sm-4" for="defendant-search">defendants</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <?php echo $this->formElement($fieldset->get('defendant-search'));?>
+                     <button class="btn btn-info fas fa-search" title="search for defendant names" type="button" id="btn-defendant-search"><span class="sr-only">search</span></button>
+                     <?php /* empty element, so that they can delete the whole collection */
+                     ?><input type="hidden" name="event[defendants][]" value="">
+                </div>
+                <ul style="margin-top: .5em" id="defendant-names" class="list-group defendant-names">
+                <?php
+                $defendants = $form->getObject()->getDefendants();
+                if ($defendants->count()) :
+                    foreach ($defendants as $deft) :
+                        echo $this->partial('partials/defendant', [
+                            'namespace' => 'event', 'id' => $deft->getId(), 'name' => (string)$deft
+                        ]);
+                    endforeach;
+                endif;
+                ?>
+                </ul>
+            </div>
+        </div>
+        <div class="form-group form-row my-2">
+            <label class="col-form-label pr-1 col-sm-4" for="hat">submitted by</label>
+            <div class="col-sm-8">
+            <?php
+                echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
+                <div class="input-group">
+                    <?php $element = $fieldset->get('submitter');
+                    echo $this->formElement($element);?>
+                    <button data-toggle="popover" class="btn btn-info fas fa-question"  type="button" id="btn-submitter-help" hidden><span class="sr-only">help</span></button>
+                </div>
+                <div id="error_submitter" class="alert alert-warning validation-error" style="display:none"></div>
+            </div>
+        </div>
+        <div class="form-group form-row">
+            <label class="col-form-label col-4" for="submission_date">submitted on</label>
+            <div class="col-4"><?php $element_date = $fieldset->get('submission_date');
+              echo $this->formElement($element_date);?></div>
+            <label class="col-1 col-form-label text-right" for="end_time">at</label>
+            <div class="col-3"><?php $element_time = $fieldset->get('submission_time');
+            echo $this->formElement($element_time)?></div>
+            <div class="offset-4 col-4"><?php echo $this->formElementErrors($element_date);?></div>
+            <div class="col-4"><?php echo $this->formElementErrors($element_time);?></div>
+         </div>
+
+        <?php $element = $fieldset->get('cancellationReason');?>
+        <div class="form-group form-row my-2">
+            <label class="col-form-label pr-1 col-sm-4" for="<?php echo $element->getAttribute('id')?>">cancellation</label>
+            <div class="col-sm-8"><?php
+                  echo $this->formElement($element);?>
+            <?php echo $this->formElementErrors($element);?>
+            </div>
+        </div>
+    </div><!-- /col-md-6 -->
+    <div class="col-12 text-center">
+        <?php
+        $csrf = $form->get('csrf');
+        echo $this->formHidden($fieldset->get('is_anonymous_judge'));
+        echo $this->formHidden($fieldset->get('anonymousJudge'));
+        echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
+        echo $this->formHidden($fieldset->get('id'));
+        if ($form->has('modified')) {
+            $element = $form->get('modified');
+            $value = $element->getValue();
+            if (is_object($value)) {
+                $element->setValue($value->format('Y-m-d H:i:s'));
+            }
+            echo $this->formHidden($element);
+        }
+        ?>
+        <div class="alert alert-warning validation-error px-2" id="error_modified" style="text-align:left;display:none"></div>
+        <?php
+        echo $this->formSubmit($form->get('submit')); if ($this->id) :
+        ?><a id="btn-delete" role="button" data-toggle="modal" data-target="#modal-confirm-delete" href="<?php echo $this->url('events/edit', ['action' => 'delete','id' => $this->id])?>" button class="btn btn-warning btn-lg" id="btn-delete">delete</a><?php
+        endif;?>
+    </div>
+</div>
+<?php echo $this->form()->closeTag();
+if ($form->isElectronic()):
+?> <p class="text-muted">this was submitted electronically</p> <?php
+endif;
+?>
+<?php /** move this into a partial ? **/?>
+<div id="deftname-editor" class="modal" role="dialog" aria-labelledby="deft-editor-header" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deft-editor-header">edit defendant name</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer justify-content-center text-center">
+            <button id="deftname-editor-submit" type="button" class="btn btn-success mr-0">update</button><button type="button" class="btn btn-secondary ml-1" data-dismiss="modal">cancel</button>
+          </div>
+        </div>
+     </div>
+</div>
+<div id="modal-assign-interpreter" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header"></div>
+      <div class="modal-body"></div>
+      <div class="modal-footer justify-content-center text-center">
+        <button id="btn-yes-assign-interpreter" type="button" class="btn btn-success mr-0" data-dismiss="modal">yes</button><!--
+        --><button id="btn-no-assign-interpreter" type="button" class="btn btn-secondary ml-1" data-dismiss="modal">no</button>
+      </div>
+    </div>
+  </div>
+</div>
+<?php echo $this->partial('schedule/confirm-delete-modal.phtml',['count_interpreters'=>$count_interpreters]);
