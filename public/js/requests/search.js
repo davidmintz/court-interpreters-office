@@ -2,7 +2,7 @@
  * Sets up event listeners for /requests/search
  */
 
-var $, formatDocketElement, displayValidationErrors, moment;
+var $, formatDocketElement, moment;
 
 const timestamp_format = "YYYY-MM-DD HH:mm:ss";
 const seconds = 30;
