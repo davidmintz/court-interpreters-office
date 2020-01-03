@@ -13,6 +13,20 @@ Called when the datepicker is selected. The function receives the selected date
 as text and the datepicker instance as parameters.'this' refers to the associated
 input field.
 */
+var append_motd_date = function(dateText) {
+    dateObj = moment(dateText,"YYYY-MM-DD");
+    var dateString = dateObj.format("ddd DD-MMM-YYYY");
+    if ($(`#dates input[value="${dateText}"]`).length) {
+        // already exists
+        return;
+    }
+    var shit = `<div class="d-inline border border-info rounded mr-1 pl-2 text-monospace" style="font-size:90%">
+    <input type="hidden" name="dates[]" value="${dateText}">
+    ${dateString} <button class="btn btn-outline-secondary btn-sm btn-remove-item my-1 border-0" title="remove">
+    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove this defendant</span></button></div>`;
+    $("#dates").append(shit);
+};
+
 $(function(){
     var dp_defaults = {
         dateFormat:"yy-mm-dd",
@@ -23,6 +37,12 @@ $(function(){
         onSelect :  function(dateText,instance) {
             // type of note: either 'motd' or 'motw'
             var type = instance.id.substring(9);
+
+            var multidate_mode = $("#notes-form").data("multiDate");
+            //console.warn("multidate mode? "+ multidate_mode);
+            if (multidate_mode && type === "motd") {
+                return append_motd_date(dateText);
+            }
             // url to get note
             var url = `/admin/notes/date/${dateText}/${type}`;
             // div to put it in
@@ -88,6 +108,10 @@ $(function(){
     $("#tab-content-notes").on("click","#notes-form button.btn-success",function(e){
         var form = $("#notes-form");
         e.preventDefault();
+        if (form.data("multiDate")) {
+            console.warn("TO DO: implement multi-date editing");
+            return;
+        }
         var type = $("input[name='type']").val();
         var id = $(`input[name="id"]`).val();
         var url, method;
@@ -104,13 +128,9 @@ $(function(){
         }
         $.ajax({url, method, data : form.serialize()
         }).then((res)=>{
-
             if (res.status === "success") {
                 // implies a needless http request but it's expedient as hell
                 $(`#calendar-${type} a.ui-state-active`).trigger("click");
-                // $(`#btn-editor-${type}`).show();
-                // form.replaceWith(res[type].content);
-                console.warn("it actually worked!");
             }
             if (res.validation_errors) {
                 return displayValidationErrors(res.validation_errors);
@@ -133,11 +153,44 @@ $(function(){
         }).fail((res)=>{
             console.log(res);
         });
+    }) // cancel edit
+    .on("click","#btn-cancel-edit",function(e){
+        e.preventDefault();
+        var type = $("input[name='type']").val();
+        var multidate = $("#notes-form").data("multiDate");
+        if (multidate) {
+            // toggle it off
+            $("#btn-multi-date").trigger("click");
+        } else {
+            $(`#calendar-${type} a.ui-state-active`).trigger("click");
+        }
+    }) // toggle batch-editing mode
+    .on("click","#btn-multi-date",function(e){
+        e.preventDefault();
+        var form = $("#notes-form");
+        var div = $("div.multi-date");
+        form.data({multiDate: !form.data("multiDate")});
+        // state to which we have just changed
+        var enabled = form.data("multiDate");
+        if (enabled) {
+            div.removeAttr("hidden");
+            console.log("display/enable multi-date shit");
+            $("#notes-form textarea[name=content]").attr({disabled:true}).hide();
+
+        } else {
+            console.log("disable/hide multi-date shit");
+            $("#notes-form textarea").attr({disabled:false}).show();
+            div.attr({hidden:true});
+        }
+    }) // "remove" for multiple-date thingies
+    .on("click",".btn-remove-item",function(e){
+        e.preventDefault();
+        $(this).closest("div").remove();
     });
     $("#tabs-notes .nav-link").on("click",function(e){
         e.preventDefault();
         if ($(this).hasClass("active")) {
-           console.debug("this one is active already");
+           //console.debug("this one is active already");
            return;
         }
         console.log("if no MOT[DW], try harder");

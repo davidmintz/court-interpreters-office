@@ -1,8 +1,23 @@
 <?php $method = $this->action == 'create'?'POST':'PUT'?>
-<form data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $action?>" method="<?php echo $method?>">
+<form data-multi-date="0" data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $action?>" method="<?php echo $method?>">
     <div class="form-row">
         <!-- <label class="col-sm-2 col-form-label text-md-right pr-1" for="content">content</label> -->
         <div class="col">
+            <button title="enable|disable batch-editing of MOTDs" id="btn-multi-date" class="multi-date btn btn-outline-primary btn-sm" <?php if ($this->type != 'motd'): ?>hidden<?php endif;?>>toggle multi-date editing</button>
+            <div class="border rounded multi-date py-0 px-1" hidden>
+                <p class="text-muted mt-0">Choose the dates for which you want to edit the MOTD. <em>(Note that there is no automated method for reversing this operation, so please use caution.)</em></p>
+                <div class="d-flex flex-wrap"id="dates"></div>
+                <label for="text">text to insert: </label>
+                    <textarea class="form-control" name="text" id="text" cols="12" rows="2"></textarea>
+                <div class="form-row align-items-center">
+                    <label for="position" class="col-form-label col-auto">placement:</label>
+                    <div class="col-auto"><select class="custom-select" id="position" name="position">
+                        <option value="append">appended</option>
+                        <option value="prepend">prepended</option>
+                    </select></div>
+                    <div class="col-auto"> to existing MOTDs</div>
+                </div>
+            </div>
             <textarea class="form-control" name="content" id="content" placeholder="Enter text here" rows="6" cols="60"><?php
                 if ($this->note) : echo $this->note->getContent(); endif;
             ?></textarea>
@@ -16,7 +31,7 @@
             <input type="hidden" name="date" value="<?php echo $this->date->format('Y-m-d')?>">
             <input type="hidden" name="id" value="<?php echo $this->note ? $this->note->getId():''?>">
             <input id="csrf" type="hidden" name="csrf" value="<?php echo $this->csrf ?>">
-            <button type="button" class="btn btn-success">save</button>
+            <button type="button" class="btn btn-success">save</button> <button id="btn-cancel-edit" type="button" class="btn btn-outline-secondary">cancel</button>
         </div>
     </div>
 </form>
