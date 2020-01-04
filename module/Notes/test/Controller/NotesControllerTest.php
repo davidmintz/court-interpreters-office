@@ -70,7 +70,7 @@ class NotesControllerTest extends AbstractControllerTest
         $date_str = $when->format('Y-m-d');
         $this->dispatch('/admin/notes/create/motd/'.$date_str);
         $this->assertResponseStatusCode(200);
-        $this->assertQueryCount('form textarea',1);
+        $this->assertQuery('form textarea');
 
     }
 
