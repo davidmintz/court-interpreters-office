@@ -159,6 +159,7 @@ const append_date = function(date,namespace){
         return date1 > date2 ? 1 : -1; });
     $("#dates .list-group").html(sorted);
 };
+
 const enable_multidate = function(namespace,options)
 {
     console.log("enabling multi-date");
@@ -166,11 +167,12 @@ const enable_multidate = function(namespace,options)
     var div_exists = $("#div-multi-dates").length > 0;
     var date_element = $("#date");
     widths = {
-        event : { label : 2, dates : 4, calendar : 4
+        event : { label : 2, dates : 3, calendar : 4
         },
         request : {label : 3, dates : 4, calendar : 5},
     };
     if (! div_exists) {
+        console.log("WTF ?");
         var form_row = options.appendAfter || date_element.closest("div.form-row");
         form_row.after(
         `<div class="form-group form-row" style="display:none" id="div-multi-dates" >
@@ -180,10 +182,12 @@ const enable_multidate = function(namespace,options)
                 <ul class="list-group"></ul>
                 <div id="error_dates" class="alert alert-warning validation-error" style="display:none"></div>
             </div>
-            <div id="cal-multi-dates" class="col-sm-${widths[namespace].calendar}"></div>
+            <div id="cal-multi-dates" class="col-auto"><!-- sm-${widths[namespace].calendar} -->
+            </div>
+            <div class="col-sm-3 pl-1 ml-0" hidden><a id="btn-cancel-multi-date" href="#">disable multi-date selection</a></div>
         </div>`
         );
-        var opts = Object.assign(options.datepicker,{onSelect: function(date){append_date(date,namespace);}})
+        var opts = Object.assign(options.datepicker||{},{onSelect: function(date){append_date(date,namespace);}})
         $("#cal-multi-dates").datepicker(opts);
     }
     $("#div-multi-dates").slideDown();

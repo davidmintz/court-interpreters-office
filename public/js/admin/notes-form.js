@@ -37,9 +37,9 @@ $(function(){
         onSelect :  function(dateText,instance) {
             // type of note: either 'motd' or 'motw'
             var type = instance.id.substring(9);
-
+            // are we in batch-edit mode?
             var multidate_mode = $("#notes-form").data("multiDate");
-            //console.warn("multidate mode? "+ multidate_mode);
+
             if (multidate_mode && type === "motd") {
                 return append_motd_date(dateText);
             }

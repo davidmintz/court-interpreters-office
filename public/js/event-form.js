@@ -536,6 +536,28 @@ var eventForm = (function () {
     };
 
     /**
+     * enables mulite-date selection
+     *
+     * @param  {object} e event
+     * @return {void}
+     */
+    var init_multidate = function(e){
+        if (form.data().multiDate) { return };
+        $(this).attr({disabled:true});
+        form.data({multiDate:true});
+        enable_multidate("event",{});
+        if (!$("#btn-cancel-multi-date").is(":visible")) {
+            $("#btn-cancel-multi-date").parent().removeAttr("hidden");
+        }
+        var that = this;
+        $("#btn-cancel-multi-date").on("click",(e)=>{
+            disable_multidate();
+            form.data({multiDate:false});
+            $(that).removeAttr("disabled");
+        })
+    };
+
+    /**
      * gets and inserts markup for defendant name
      * @param {object} data
      */
@@ -574,6 +596,7 @@ var eventForm = (function () {
         $("body").on("mousedown",".popover-submitter-admin a",function(e){
             document.location = e.target.href;
         });
+        form.data({"multiDate":false});
         $("input.docket").on("change",formatDocketElement);
 
         $("input.date").datepicker({
@@ -582,6 +605,8 @@ var eventForm = (function () {
             selectOtherMonths : true,
             showOtherMonths : true
         });
+        // if it's a "create", initialize support for multi-date selection
+        $("#btn-multi-date").on("click",init_multidate);
 
         $("input.time").on("change",parseTime);
 
@@ -713,8 +738,7 @@ var eventForm = (function () {
                     });
                 var name = $("#interpreter-select option:selected").text();
                 $("#modal-assign-interpreter .modal-body").html(
-                    "Did you mean to assign interpreter <strong>"
-                    + name + "</strong> to this event?");
+                    `Did you mean to assign interpreter <strong>${name}</strong> to this event?`);
                 $("#modal-assign-interpreter").modal();
             }
         });
@@ -1025,7 +1049,7 @@ var defendantForm = (function(){
         $("#deftname-editor-submit").on("click",defendantUpdateSubmit);
 
     };
-    return { init : init };
+    return { init };
 })();
 
 $(document).ready(function()
