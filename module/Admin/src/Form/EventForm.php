@@ -127,12 +127,12 @@ class EventForm extends ZendForm implements
     */
     public function preValidate(EventInterface $e)
     {
-
+        $log = $e->getTarget()->getEvent()->getApplication()
+            ->getServiceManager()->get('log');
         $input = $e->getTarget()->getRequest()->getPost();
         $event = $input->get('event');
-        $this->interpreters_before = 
-            array_map(function($i){return $i->getId();},
-                $this->getObject()->getInterpreters());
+        $this->interpreters_before = array_map(function($i){
+               return $i->getId();},$this->getObject()->getInterpreters());
 
         /* there is one form control for the judge, but its value may
          * correspond to either the 'judge' or the 'anonymousJudge' property,
@@ -146,13 +146,19 @@ class EventForm extends ZendForm implements
                 'break_chain_on_failure' => true,
             ]);
             $judge_input = $this->getInputFilter()->get('event')->get('judge');
-            $judge_input->setAllowEmpty(false)->setRequired(true);
+            //$judge_input->setRequired(true);//->setAllowEmpty(false)
             $judge_input->getValidatorChain()->attach($validator);
+            $this->getInputFilter()->get('event')->remove('anonymousJudge');
+            $log->debug("added NotEmpty validator to the judge input, removed anon-judge input");
+
         } else {
+            // one or the other is non-empty
             $entity = $this->getObject();
             if ($event['is_anonymous_judge']) {
                 $event['anonymousJudge'] = $event['judge'];
-                $event['judge'] = '';
+                //$event['judge'] = '';
+                unset($event['judge']);
+                $this->getInputFilter()->get('event')->remove('judge');
                 if ($entity->getJudge()) {
                     $entity->setJudge(null);
                 }
@@ -160,7 +166,7 @@ class EventForm extends ZendForm implements
                 if ($entity->getAnonymousJudge()) {
                     $entity->setAnonymousJudge(null);
                 }
-                $event['anonymousJudge'] = '';
+                $this->getInputFilter()->get('event')->remove('anonymousJudge');
             }
         }
         if (! empty($event['end_time'])) {
@@ -173,8 +179,7 @@ class EventForm extends ZendForm implements
         // prevent Doctrine from wasting an update
         $this->filterDateTimeFields(
             ['date','time','end_time','submission_date','submission_time'],
-            $event,
-            'event'
+            $event, 'event'
         );
 
         // if the source of this Event was a Request, the metadata -- who
@@ -191,8 +196,8 @@ class EventForm extends ZendForm implements
             return;
         }
 
-        $log = $e->getTarget()->getEvent()->getApplication()->getServiceManager()->get('log');
-        
+
+
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null
         /** @todo untangle this and make error message specific to context */
@@ -216,26 +221,43 @@ class EventForm extends ZendForm implements
                     [ 'isEmpty' => "identity of submitter is required"],
                 'break_chain_on_failure' => true,
             ]);
-            $submitter_input->setAllowEmpty(false);
+            //$submitter_input->setAllowEmpty(false); // deprecated
             $submitter_input->getValidatorChain()->attach($validator);
             $log->debug(__METHOD__. " we attached a validator for non-anonymous hat type");
         }
         // if NO submitter but YES anonymous submitter, unset submitter
         elseif (empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
             unset($event['submitter']);
-            $submitter_input->setRequired(false)->setAllowEmpty(true);
-            
+            //$submitter_input->setRequired(false); //->setAllowEmpty(true);
+            $this->getInputFilter()->get('event')->remove('submitter');
+
         // if YES submitter and YES anonymous submitter, unset anon submitter
         }
-        
+
         elseif (! empty($event['submitter'])
             && ! empty($event['anonymousSubmitter'])) {
             unset($event['anonymousSubmitter']);
             $anon_submitter_input = $this->getInputFilter()->get('event')
-                ->get('anonymousSubmitter');
-            $anon_submitter_input->setRequired(false)->setAllowEmpty(true);
+                ->remove('anonymousSubmitter');
+            //$anon_submitter_input->setRequired(false)->setAllowEmpty(true);
         }
 
+        if (empty($event['date']) && isset($event['dates'])) {
+            $log->debug(__METHOD__. " multi-dates were submitted");
+            $this->getInputFilter()->get('event')->remove('date');
+            $this->getInputFilter()->get('event')->add([
+                'name'=>'dates',
+                'required' => true,
+                'validators'=>[
+                    new \Zend\Validator\NotEmpty([
+                        'messages' => ['isEmpty' => "events dates are required"],
+                        'break_chain_on_failure' => true,
+                    ]),
+                ],
+            ]);
+            $log->debug("tried to rig shit up");
+        }
+        //$shit = print_r($event,true); $log->debug($shit);
         $input->set('event', $event);
     }
 
@@ -376,12 +398,12 @@ class EventForm extends ZendForm implements
      */
     public function postValidate(EventInterface $e)
     {
-       
+
         $fieldset = $this->get('event');
         $input = $this->getInputFilter()->get('event')->get('interpreterEvents')->getValue();
         $interpreters_posted = $input ? array_column($input,'interpreter'): [];
         $entity = $this->getObject();
-        if (array_diff($interpreters_posted, $this->interpreters_before) 
+        if (array_diff($interpreters_posted, $this->interpreters_before)
             || array_diff( $this->interpreters_before,$interpreters_posted))
         {
             $entity->setModified(new \DateTime());

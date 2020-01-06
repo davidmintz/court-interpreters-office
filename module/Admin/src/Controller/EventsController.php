@@ -149,6 +149,7 @@ class EventsController extends AbstractActionController
         $data = $request->getPost();
         $input = $data->get('event');
         $form->bind($event);
+        /** @todo handle multiple dates! */
         $this->getEventManager()->trigger('pre.validate', $this,
             ['input' => $data,]);
         $form->setData($data);

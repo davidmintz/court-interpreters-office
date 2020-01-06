@@ -464,14 +464,14 @@ class EventFieldset extends AbstractEventFieldset
             ],
 
             'judge' => [
-                'required' => false,
-                'allow_empty' => true,
-            ],
-            'is_anonymous_judge' => [
-               'required' => true,
-               'allow_empty' => true,
+                'required' => true,
+                //'allow_empty' => true,
             ],
             'anonymousJudge' => [
+                'required' => true,
+                //'allow_empty' => true,
+            ],
+            'is_anonymous_judge' => [
                'required' => true,
                'allow_empty' => true,
             ],
