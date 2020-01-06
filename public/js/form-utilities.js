@@ -179,6 +179,7 @@ const enable_multidate = function(namespace,options)
             <label for="dates" class="col-form-label col-sm-${widths[namespace].label} pr-1">dates</label>
             <div id="dates" class="col-sm-${widths[namespace].dates}">
                 <p class="form-text text-muted mt-2">please select your dates</p>
+                <input type="hidden" name="${namespace}[dates]" value="">
                 <ul class="list-group"></ul>
                 <div id="error_dates" class="alert alert-warning validation-error" style="display:none"></div>
             </div>

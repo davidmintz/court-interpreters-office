@@ -230,10 +230,8 @@ class EventForm extends ZendForm implements
             unset($event['submitter']);
             //$submitter_input->setRequired(false); //->setAllowEmpty(true);
             $this->getInputFilter()->get('event')->remove('submitter');
-
-        // if YES submitter and YES anonymous submitter, unset anon submitter
         }
-
+        // if YES submitter and YES anonymous submitter, unset anon submitter
         elseif (! empty($event['submitter'])
             && ! empty($event['anonymousSubmitter'])) {
             unset($event['anonymousSubmitter']);
@@ -253,11 +251,40 @@ class EventForm extends ZendForm implements
                         'messages' => ['isEmpty' => "events dates are required"],
                         'break_chain_on_failure' => true,
                     ]),
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callBack' => function($value, $context) {
+                                return is_array($value);
+                            },
+                            'messages' => [
+                                'callbackValue' => 'event dates must be an array'
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callBack' => function($value, $context) {
+                                $validator = new \Zend\Validator\Date();
+                                foreach ($value as $date) {
+                                    if (!$validator->isValid($value)) {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            },
+                            'messages' => [
+                                'callbackValue' => 'malformed event date found'
+                            ],
+                        ],
+                    ],
                 ],
             ]);
             $log->debug("tried to rig shit up");
         }
-        //$shit = print_r($event,true); $log->debug($shit);
+        $shit = print_r($event,true); $log->debug($shit);
         $input->set('event', $event);
     }
 

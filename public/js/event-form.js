@@ -446,19 +446,25 @@ var eventForm = (function () {
             $("#anonymousJudge").val(judgeElement.val());
         }
 
+        // multi-date stuff
+        if (! form.data("multiDate")) {
+            $(`li.multidate, input[name="event[dates]"]`).remove();
+        }
+
         // and now...
         var data = form.serialize();
         var url = form.attr("action");
         $.post(url,data).done(function(response) {
             if (response.validation_errors) {
-                var errors = response.validation_errors;
-                if (errors.event) {
-                    displayValidationErrors(errors.event);
-                    delete errors.event;
-                }
-                if (Object.keys(errors).length) {
-                    displayValidationErrors(errors);
-                }
+                displayValidationErrors(response.validation_errors);
+                // var errors = response.validation_errors;
+                // if (errors.event) {
+                //     displayValidationErrors(errors.event);
+                //     delete errors.event;
+                // }
+                // if (Object.keys(errors).length) {
+                //     displayValidationErrors(errors);
+                // }
                 return;
             }
             document.location = `${window.basePath}/admin/schedule/view/${response.id}`;
