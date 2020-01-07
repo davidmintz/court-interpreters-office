@@ -1,0 +1,24 @@
+output from migrate command (no options):
+-----------
+Injecting Laminas\ZendFrameworkBridge module into /opt/www/court-interpreters-office/config/modules.config.php
+
+ [ERROR] - File is not in expected format; aborting injection
+
+
+ You will need to manually add an entry for "Laminas\ZendFrameworkBridge" in your module configuration.
+
+
+ [OK] Migration complete!
+
+
+ Next steps:
+ - Perform a diff to verify the changes made.
+ - Run "composer install".
+ - Run any tests (unit tests, integration tests, end-to-end tests, etc.).
+
+-----------
+
+sqlite database was corrupted. git checkout <path/to/db> fixed it.
+
+ran phpunit without manually added  "Laminas\ZendFrameworkBridge" to module config.
+all tests passed.
