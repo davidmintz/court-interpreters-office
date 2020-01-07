@@ -116,6 +116,7 @@ echo $this->form()->openTag($form); ?>
         <div class="input-group">
             <?php echo $this->formElement($fieldset->get('date'))?><?php if ('add' == $this->layout()->action):?><button class="btn btn-outline-info fas fa-plus" title="schedule for multiple dates" type="button" id="btn-multi-date"><span class="sr-only">mutiple dates</span></button><?php endif;?>
         </div>
+        <div class="alert alert-warning validation-error" id="error_date" style="display:none"></div>
     </div>
     <label for="time" class="col-sm-2 col-form-label pr-1">time</label>
     <div class="col-sm-4">

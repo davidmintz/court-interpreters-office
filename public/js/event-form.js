@@ -456,20 +456,11 @@ var eventForm = (function () {
         var url = form.attr("action");
         $.post(url,data).done(function(response) {
             if (response.validation_errors) {
-                displayValidationErrors(response.validation_errors);
-                // var errors = response.validation_errors;
-                // if (errors.event) {
-                //     displayValidationErrors(errors.event);
-                //     delete errors.event;
-                // }
-                // if (Object.keys(errors).length) {
-                //     displayValidationErrors(errors);
-                // }
-                return;
+                return displayValidationErrors(response.validation_errors);
             }
-            document.location = `${window.basePath}/admin/schedule/view/${response.id}`;
+            //document.location = `${window.basePath}/admin/schedule/view/${response.id}`;
         })
-            .fail(fail);
+        .fail(fail);
     };
 
     /**
@@ -549,6 +540,9 @@ var eventForm = (function () {
      */
     var init_multidate = function(e){
         if (form.data().multiDate) { return };
+        if ($("div#error_date:visible")) {
+            $("div#error_date").hide();
+        }
         $(this).attr({disabled:true});
         form.data({multiDate:true});
         enable_multidate("event",{});
@@ -650,8 +644,6 @@ var eventForm = (function () {
                 }
             );
         });
-
-
 
         /* ==================== */
         $("#slideout-toggle .close").on("click",

@@ -18,6 +18,8 @@ class EventSubmissionDateTime extends AbstractValidator
     const EVENT_PRECEDES_SUBMISSION_BY_TOO_MUCH =
             'eventPreceedsSubmissionByTooMuch';
 
+    const FUTURE_SUBMISSION_DATE_TIME = 'futureSubmissionDateTime';
+
     /**
      * max negative minutes between event and submission datetimes
      *
@@ -58,6 +60,8 @@ class EventSubmissionDateTime extends AbstractValidator
         self::EVENT_PRECEDES_SUBMISSION_BY_TOO_MUCH =>
             'submission date and time cannot be more than %max% minutes '
             . 'after the event',
+        self::FUTURE_SUBMISSION_DATE_TIME =>
+        'submission date and time cannot be in the future'
     ];
 
     /**
@@ -88,9 +92,23 @@ class EventSubmissionDateTime extends AbstractValidator
      */
     public function isValid($value, $context = null)
     {
-
+        if (!isset($context['date'])) { // multi-date mode
+            if (isset($context['dates']) && is_array($context['dates'])){
+                $dates = $context['dates'];
+                sort($dates);
+                $context['date'] = $dates[0];
+            } else {
+                // hmmm
+                return false;
+            }
+        }
         $event_datetime = new \DateTime($context['date'].' '.$context['time']);
         $submission_datetime = new \DateTime($value .' '.$context['submission_date']);
+        $now = new \DateTime();
+        if ($submission_datetime > $now) {
+            $this->error(self::FUTURE_SUBMISSION_DATE_TIME);
+            return false;
+        }
         $diff = $submission_datetime->diff($event_datetime);
         if (0 == $diff->invert) {
             // any non-negative value is good

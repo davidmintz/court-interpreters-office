@@ -142,7 +142,7 @@ const append_date = function(date,namespace){
         return;
     }
     var display = m.format("ddd DD-MMM-YYYY");
-    $("#dates .form-text").hide();
+    $("#dates .form-text, #dates .validation-error").hide();
     $("#dates .list-group").append(
         `<li style="font-size:90%;font-family:monospace" class="list-group-item pl-2 pr-1 py-1 multidate">
         <span class="float-left pt-1 align-middle">${display}</span>

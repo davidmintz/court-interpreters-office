@@ -149,7 +149,6 @@ class EventsController extends AbstractActionController
         $data = $request->getPost();
         $input = $data->get('event');
         $form->bind($event);
-        /** @todo handle multiple dates! */
         $this->getEventManager()->trigger('pre.validate', $this,
             ['input' => $data,]);
         $form->setData($data);
@@ -158,7 +157,15 @@ class EventsController extends AbstractActionController
                 ['validation_errors' => $form->getMessages()]
             );
         }
-        $this->entityManager->persist($event);
+        /** handle multiple dates */
+        if (isset($input['dates'])) {
+            if (count($input['dates']) > 1) {
+                return $this->batchCreate($input, $event);
+            } else {
+                $event->setDate(new \DateTime($input['dates'][0]));
+            }
+        }
+
         $this->entityManager->flush();
         $url = $this->getEvent()->getApplication()->getServiceManager()
         ->get('ViewHelperManager')->get('url')('events');
@@ -169,6 +176,52 @@ class EventsController extends AbstractActionController
         ));
 
         return new JsonModel(['status' => 'success','id' => $event->getId()]);
+    }
+
+    /**
+     * inserts multiple event entities
+     *
+     * @param  Array       $input
+     * @param  EntityEvent $event
+     * @return JsonModel
+     */
+    protected function batchCreate(Array $input,Entity\Event $event ) {
+
+        $event->setDate(new \DateTime(\array_shift($input['dates'])));
+        $this->entityManager->persist($event);
+        $dates = $input['dates'];
+        sort($dates);
+        foreach($dates as $d) {
+            $entity = new Entity\Event();
+            $entity->setDate(new \DateTime($d));
+            foreach(['time','docket','judge','language','eventType','location','anonymousJudge',
+            'submissionDate','submissionTime', 'submitter','anonymousSubmitter','endTime','cancellationReason',
+            'comments','adminComments',
+            ]  as $prop) {
+                $getter = 'get'.ucfirst($prop);
+                $datum = $event->$getter();
+                $setter = 'set'.ucfirst($prop);
+                $entity->$setter($datum);
+            }
+            foreach ($event->getDefendants() as $d) {
+                $entity->addDefendant($d);
+            }
+            foreach($event->getInterpreterEvents() as $ie) {
+                $entity->addInterpreterEvent($ie);
+            }
+            $this->entityManager->persist($entity);
+        }
+        $this->entityManager->flush();
+        $url = $this->getEvent()->getApplication()->getServiceManager()
+        ->get('ViewHelperManager')->get('url')('events');
+        $date = $event->getDate();
+        $this->flashMessenger()->addSuccessMessage(sprintf(
+            'This event has been added to the schedule for <a href="%s">%s</a> and %s other %s',
+            $url . $date->format('/Y/m/d'), $date->format('l d-M-Y'),
+            count($dates), (count($dates) > 1 ? 'dates':'date')
+        ));
+        
+        return new JsonModel(['status'=>'success','id'=> $event->getId()]);
     }
 
     /**

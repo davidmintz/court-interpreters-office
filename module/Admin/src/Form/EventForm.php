@@ -247,10 +247,13 @@ class EventForm extends ZendForm implements
                 'name'=>'dates',
                 'required' => true,
                 'validators'=>[
-                    new \Zend\Validator\NotEmpty([
-                        'messages' => ['isEmpty' => "events dates are required"],
+                    [
+                        'name'=>'NotEmpty',
+                        'options' => [
+                             'messages' => ['isEmpty'=> 'at least one date is required']
+                        ],
                         'break_chain_on_failure' => true,
-                    ]),
+                    ],
                     [
                         'name' => 'Callback',
                         'options' => [
@@ -267,9 +270,10 @@ class EventForm extends ZendForm implements
                         'name' => 'Callback',
                         'options' => [
                             'callBack' => function($value, $context) {
-                                $validator = new \Zend\Validator\Date();
+
+                                $validator = new \Zend\Validator\Date(['format'=>'Y-m-d']);
                                 foreach ($value as $date) {
-                                    if (!$validator->isValid($value)) {
+                                    if (!$validator->isValid($date)) {
                                         return false;
                                     }
                                 }
