@@ -74,16 +74,16 @@ class Substitution
 
     /**
      *
-     * @ORM\prePersist
+     * @ORM\PrePersist
      */
     public function prePersist()
     {
         $this->checkDate();
     }
-    
+
     /**
      *
-     * @ORM\preUpdate
+     * @ORM\PreUpdate
      */
     public function preUpdate()
     {
