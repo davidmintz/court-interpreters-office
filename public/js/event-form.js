@@ -458,7 +458,7 @@ var eventForm = (function () {
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors);
             }
-            //document.location = `${window.basePath}/admin/schedule/view/${response.id}`;
+            document.location = `${window.basePath}/admin/schedule/view/${response.id}`;
         })
         .fail(fail);
     };

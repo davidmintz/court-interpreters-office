@@ -165,7 +165,7 @@ class EventsController extends AbstractActionController
                 $event->setDate(new \DateTime($input['dates'][0]));
             }
         }
-
+        $this->entityManager->persist($event);
         $this->entityManager->flush();
         $url = $this->getEvent()->getApplication()->getServiceManager()
         ->get('ViewHelperManager')->get('url')('events');
@@ -220,7 +220,7 @@ class EventsController extends AbstractActionController
             $url . $date->format('/Y/m/d'), $date->format('l d-M-Y'),
             count($dates), (count($dates) > 1 ? 'dates':'date')
         ));
-        
+
         return new JsonModel(['status'=>'success','id'=> $event->getId()]);
     }
 
