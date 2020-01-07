@@ -86,11 +86,14 @@ class ClearCacheCommand extends Command
     {
         $io = new SymfonyStyle($input,$output);
         $path = dirname(__FILE__).'/../data/DoctrineModule/cache/*';
-        $output = system("rm -r $path", $exit_status);
+        system("rm -r $path", $exit_status);
         if ("0" != $exit_status) {
-            return $io->error("could not clear filesystem cache");
+            $io->error("could not clear filesystem cache");
+            return 1;
         }
         $io->success("Successfully cleared filesystem cache.");
+
+        return 0;
     }
 }
 
