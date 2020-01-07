@@ -1,9 +1,9 @@
 <?php /** module/Admin/src/Form/AbstractEventFieldset.php */
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Fieldset;
-use Zend\Form\Element;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Element;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
@@ -12,7 +12,7 @@ use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
 use InterpretersOffice\Entity;
 
-use Zend\Validator\Callback;
+use Laminas\Validator\Callback;
 use InterpretersOffice\Entity\Judge;
 use InterpretersOffice\Entity\Event;
 use InterpretersOffice\Entity\Repository\JudgeRepository;
@@ -151,9 +151,9 @@ abstract class AbstractEventFieldset extends Fieldset implements
                            'min' => 5,
                            'max' => 600,
                            'messages' => [
-                           \Zend\Validator\StringLength::TOO_LONG =>
+                           \Laminas\Validator\StringLength::TOO_LONG =>
                                'maximum length allowed is 600 characters',
-                            \Zend\Validator\StringLength::TOO_SHORT =>
+                            \Laminas\Validator\StringLength::TOO_SHORT =>
                                'minimum length allowed is 5 characters',
                            ]
                        ]
@@ -179,7 +179,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
     protected $elements = [
          [
              'name' => 'id',
-             'type' => 'Zend\Form\Element\Hidden',
+             'type' => 'Laminas\Form\Element\Hidden',
              'attributes' => ['id' => 'event_id'],
          ],
 
@@ -213,7 +213,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
          ],
          [
              'name' => 'docket',
-             'type' => 'Zend\Form\Element\Text',
+             'type' => 'Laminas\Form\Element\Text',
              'attributes' => [
                  'id' => 'docket',
                  'class' => 'docket form-control',
@@ -225,7 +225,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
          ],
          [
              'name' => 'defendant-search',
-             'type' => 'Zend\Form\Element\Text',
+             'type' => 'Laminas\Form\Element\Text',
              'attributes' => [
                  'id' => 'defendant-search',
                  'class' => 'form-control',
@@ -315,7 +315,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
     {
         $this->add([
             'name' => 'defendants',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'options' => [
                 'value_options' => [],
                 'disable_inarray_validator' => true,

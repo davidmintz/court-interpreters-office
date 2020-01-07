@@ -5,13 +5,13 @@
 
 namespace InterpretersOffice\Form;
 
-use Zend\Form\Element\Csrf;
-use Zend\InputFilter;
+use Laminas\Form\Element\Csrf;
+use Laminas\InputFilter;
 
 /**
  * trait to facilitate adding a CSRF element to a Form.
  *
- * yes, we could create subclasses of Zend\Form\Form and Zend\Form\Fieldset that
+ * yes, we could create subclasses of Laminas\Form\Form and Laminas\Form\Fieldset that
  * do this, and extend those instead. but this works, and Traits are cool.
  */
 trait CsrfElementCreationTrait
@@ -41,7 +41,7 @@ trait CsrfElementCreationTrait
         $this->add($element);
         $input = $this->getInputFilter()->get($name);
         $input->setAllowEmpty(false)->setRequired(true);
-        $validator = new \Zend\Validator\NotEmpty([
+        $validator = new \Laminas\Validator\NotEmpty([
                 'messages' => ['isEmpty' => "Security error: form is missing CSRF token"],
                 'break_chain_on_failure' => true,
             ]);

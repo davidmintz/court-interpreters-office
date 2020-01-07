@@ -1,11 +1,11 @@
 <?php /** module/Notes/src/Controller/NotesController.php */
 namespace InterpretersOffice\Admin\Notes\Controller;
 
-use Zend\Mvc\Controller\AbstractRestfulController;
+use Laminas\Mvc\Controller\AbstractRestfulController;
 //use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Notes\Service\NotesService;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 use InterpretersOffice\Entity\User;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
 use InterpretersOffice\Admin\Notes\Entity\MOTW;
@@ -189,7 +189,7 @@ class NotesController extends AbstractRestfulController
                 return $this->redirect()->toRoute('notes/create',['type'=>$type,'date'=>$date_string]);
             }
             $data = ['date'=> $note->getDate(), 'action'=>'edit','type'=>$type, 'note'=>$note,
-                'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()
+                'csrf' => (new \Laminas\Validator\Csrf('csrf'))->getHash()
             ];
             $view = new ViewModel($data);
             if ($this->getRequest()->isXMLHttpRequest()) {
@@ -217,7 +217,7 @@ class NotesController extends AbstractRestfulController
             return $this->redirect()->toRoute('notes/edit',['type'=>$type,'id'=>$existing->getId(),  'date'=>$date_string]);
         }
         $view = new ViewModel(['date'=>new \DateTime($date_string),'type'=>$type,
-        'csrf' => (new \Zend\Validator\Csrf('csrf'))->getHash()]);
+        'csrf' => (new \Laminas\Validator\Csrf('csrf'))->getHash()]);
         if ($this->getRequest()->isGet()) {
             if ($this->getRequest()->isXMLHttpRequest()) {
                 $view->setTerminal(true)->setTemplate('notes/partials/form');

@@ -3,7 +3,7 @@
 
 namespace InterpretersOffice\Form;
 
-use Zend\Filter\Word\UnderscoreToCamelCase;
+use Laminas\Filter\Word\UnderscoreToCamelCase;
 
 /**
  * Trait for removing date/time input elements whose values have
@@ -23,7 +23,7 @@ trait DateTimeElementFilterTrait
      * @param  array  $fieldNames   form element names to test
      * @param  array $input         array of input data
      * @param  string $fieldsetName name of fieldset
-     * @return \Zend\Form\Form      or subclass thereof
+     * @return \Laminas\Form\Form      or subclass thereof
      * @todo maybe make date/time formats settable, whether as an additional
      * option to pass in, or as a member variable. currently they are hard-coded.
      */

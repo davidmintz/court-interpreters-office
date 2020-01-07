@@ -14,11 +14,11 @@ use InterpretersOffice\Entity\Listener\EventEntityListener;
 
 // does not work:
 // AnnotationRegistry::registerAutoloadNamespace(
-//     'Zend\Form\Annotation',
-//     __DIR__.'/../vendor/zendframework/zend-form/src/Annotation'
+//     'Laminas\Form\Annotation',
+//     __DIR__.'/../vendor/laminas/laminas-form/src/Annotation'
 // );
 ///* does work:
-$path = __DIR__.'/../vendor/zendframework/zend-form/src/Annotation';
+$path = __DIR__.'/../vendor/laminas/laminas-form/src/Annotation';
 $files = glob("$path/*php");
 
 foreach ($files as $file) {
@@ -39,11 +39,11 @@ $config = Setup::createAnnotationMetadataConfiguration($entitiesPath, true, null
 $em = EntityManager::create($dbParams, $config);
 
 $listener = new Listener\InterpreterEntityListener();
-$eventManager = new Zend\EventManager\EventManager(new Zend\EventManager\SharedEventManager());
+$eventManager = new Laminas\EventManager\EventManager(new Laminas\EventManager\SharedEventManager());
 $listener->setEventManager($eventManager);
 
-$logger = new Zend\Log\Logger;
-$writer = new Zend\Log\Writer\Stream('php://output');
+$logger = new Laminas\Log\Logger;
+$writer = new Laminas\Log\Writer\Stream('php://output');
 $logger->addWriter($writer);
 $listener->setLogger($logger);
 

@@ -225,7 +225,7 @@ class RotationEntityTest extends TestCase
             }
         }
         // { date: "2020-12-15", task: 2, person: "198", duration: "DAY" }
-        $csrf = (new \Zend\Validator\Csrf)->getHash();
+        $csrf = (new \Laminas\Validator\Csrf)->getHash();
         $post = [ 'date' => $date->format('Y-m-d'),'task' => 2, //'person' => $per,
             'substitution' => $person,'person' => $default,
             'rotation_id' => $assignment['rotation_id'],

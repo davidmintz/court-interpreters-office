@@ -4,9 +4,9 @@
 
 namespace InterpretersOffice\Controller\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 use InterpretersOffice\Service\Authentication\Adapter as AuthAdapter;
 use InterpretersOffice\Controller\AuthController;
 use InterpretersOffice\Service\Listener\AuthenticationListener;

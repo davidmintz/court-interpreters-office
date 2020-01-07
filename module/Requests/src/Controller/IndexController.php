@@ -5,11 +5,11 @@
 
 namespace InterpretersOffice\Requests\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
@@ -19,8 +19,8 @@ use InterpretersOffice\Requests\Form\SearchForm;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Service\DateCalculatorTrait;
 
-use Zend\Mvc\MvcEvent;
-use Zend\Http\Request;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Http\Request;
 
 /**
  *  IndexController for Requests module
@@ -57,7 +57,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
     /**
      * session
      *
-     * @var \Zend\Session\Container
+     * @var \Laminas\Session\Container
      */
     protected $session;
 
@@ -83,7 +83,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $this->objectManager = $objectManager;
         $this->auth = $auth;
         $this->acl = $acl;
-        $this->session = new \Zend\Session\Container("requests");
+        $this->session = new \Laminas\Session\Container("requests");
 
     }
 
@@ -139,7 +139,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $id = $this->params()->fromRoute('id');
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         $this->entity = $repository->getRequest($id);
-        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+        $csrf = (new \Laminas\Validator\Csrf('csrf'))->getHash();
         if ($this->entity) {
             $write_access = $this->acl->isAllowed(
                 $this->user_entity,
@@ -179,7 +179,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $page = (int)$this->params()->fromQuery('page',1);
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
-        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+        $csrf = (new \Laminas\Validator\Csrf('csrf'))->getHash();
         if (!$query) {
             if ($this->session->search_defaults) {
                 $defaults = $this->session->search_defaults;
@@ -263,7 +263,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         }
 
         $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
-        $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+        $csrf = (new \Laminas\Validator\Csrf('csrf'))->getHash();
         $view = new ViewModel(compact('paginator', 'defendants', 'deadline', 'csrf'));
         $view->setTerminal($this->getRequest()->isXmlHttpRequest());
 

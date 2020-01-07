@@ -7,7 +7,7 @@ namespace ApplicationTest\Controller;
 
 //use InterpretersOffice\Admin\Controller\JudgesController;
 use ApplicationTest\AbstractControllerTest;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 

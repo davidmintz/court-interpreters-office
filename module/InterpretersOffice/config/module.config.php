@@ -5,11 +5,11 @@
 
 namespace InterpretersOffice;
 
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
 
-use Zend\ServiceManager\Factory\InvokableFactory;
-use Zend\Session\Config\SessionConfig;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\Session\Config\SessionConfig;
 
 use InterpretersOffice\View\Helper as ViewHelper;
 use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection;
@@ -103,13 +103,13 @@ return [
     'service_manager' => [
         'aliases' => [
           'entity-manager' => 'doctrine.entitymanager.orm_default',
-          'auth' => 'Zend\Authentication\AuthenticationService',
-          'log' => \Zend\Log\Logger::class,
+          'auth' => 'Laminas\Authentication\AuthenticationService',
+          'log' => \Laminas\Log\Logger::class,
         ],
         'factories' => [
-            'Zend\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',
+            'Laminas\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
-            \Zend\Log\Logger::class => Service\Factory\LogFactory::class,
+            \Laminas\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
             //Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
@@ -117,18 +117,18 @@ return [
 
             // don't quite understand this.
             /*
-            'Zend\Session\SessionManager'=>function($container) {
+            'Laminas\Session\SessionManager'=>function($container) {
                 echo "WTF?";
                 $options = $container->get('config')['session_manager'];
-                $config = new \Zend\Session\Config\SessionConfig($options);
-                return new \Zend\Session\SessionManager($config);
+                $config = new \Laminas\Session\Config\SessionConfig($options);
+                return new \Laminas\Session\SessionManager($config);
             },
             */
-            // 'Zend\Session\Config\ConfigInterface' => 'Zend\Session\Service\SessionConfigFactory',
+            // 'Laminas\Session\Config\ConfigInterface' => 'Laminas\Session\Service\SessionConfigFactory',
 
         ],
         'abstract_factories' => [
-            \Zend\Navigation\Service\NavigationAbstractServiceFactory::class,
+            \Laminas\Navigation\Service\NavigationAbstractServiceFactory::class,
         ],
 
     ],

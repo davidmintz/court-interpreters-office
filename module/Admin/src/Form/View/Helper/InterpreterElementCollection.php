@@ -2,8 +2,8 @@
 
 namespace InterpretersOffice\Admin\Form\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
-use Zend\Form\Element\Collection as ElementCollection;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\Form\Element\Collection as ElementCollection;
 
 /**
  * helper for rendering interpreters

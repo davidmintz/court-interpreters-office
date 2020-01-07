@@ -1,5 +1,5 @@
 <?php     $this->headTitle('requests | '.$this->layout()->action);?>
-<h2 class="text-center py-2 navigation"><?php echo $this->navigation('Zend\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
+<h2 class="text-center py-2 navigation"><?php echo $this->navigation('Laminas\Navigation\RequestsBreadcrumbs')->breadcrumbs() ?></h2>
 <?php echo $this->errorMessage($this->errorMessage);
     if ($this->errorMessage): return; endif;
 ?>

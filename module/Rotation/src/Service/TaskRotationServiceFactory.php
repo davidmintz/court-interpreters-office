@@ -2,7 +2,7 @@
 namespace InterpretersOffice\Admin\Rotation\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Rotation\Service\TaskRotationService;
 
 /**

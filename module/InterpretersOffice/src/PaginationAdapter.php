@@ -5,7 +5,7 @@
  */
 namespace InterpretersOffice;
 
-use Zend\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\Adapter\AdapterInterface;
 use Doctrine\ORM\Query;
 
 /**

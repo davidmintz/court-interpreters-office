@@ -5,12 +5,12 @@ declare(strict_types=1);
 
 namespace InterpretersOffice\Service;
 
-use Zend\Mail\Message;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Mime;
-use Zend\Mime\Part as MimePart;
-use Zend\Mail\Transport\TransportInterface;
-use Zend\View\Model\ViewModel;
+use Laminas\Mail\Message;
+use Laminas\Mime\Message as MimeMessage;
+use Laminas\Mime\Mime;
+use Laminas\Mime\Part as MimePart;
+use Laminas\Mail\Transport\TransportInterface;
+use Laminas\View\Model\ViewModel;
 use InterpretersOffice\Entity;
 
 /**

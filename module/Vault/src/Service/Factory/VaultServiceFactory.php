@@ -5,7 +5,7 @@
 
 namespace SDNY\Vault\Service\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
 use SDNY\Vault\Service\Vault;

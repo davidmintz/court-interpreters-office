@@ -8,8 +8,8 @@ namespace ApplicationTest\Controller;
 use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use Zend\Stdlib\Parameters;
-use Zend\Dom\Query;
+use Laminas\Stdlib\Parameters;
+use Laminas\Dom\Query;
 use InterpretersOffice\Entity;
 
 class UsersControllerTest extends AbstractControllerTest

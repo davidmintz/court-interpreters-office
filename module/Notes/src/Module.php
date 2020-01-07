@@ -3,10 +3,10 @@
 
 namespace InterpretersOffice\Admin\Notes;
 
-use Zend\EventManager\EventInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\View\ViewModel;
-use Zend\Session\Container;
+use Laminas\EventManager\EventInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\View\ViewModel;
+use Laminas\Session\Container;
 use InterpretersOffice\Admin\Notes\Service\NotesService;
 use function \date;
 /**

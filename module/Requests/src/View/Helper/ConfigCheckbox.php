@@ -3,8 +3,8 @@
 
 namespace InterpretersOffice\Requests\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
-use Zend\Form\ElementInterface;
+use Laminas\View\Helper\AbstractHelper;
+use Laminas\Form\ElementInterface;
 
 /**
  * helper for checkbox element for Request event-listener config form
@@ -25,7 +25,7 @@ TEMPLATE;
     /**
      * __invoke
      *
-     * @param  Zend\Form\ElementInterface $element
+     * @param  Laminas\Form\ElementInterface $element
      * @return string HTML
      */
     public function __invoke(ElementInterface $element)

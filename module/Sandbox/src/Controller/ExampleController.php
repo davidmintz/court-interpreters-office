@@ -5,10 +5,10 @@
 
 namespace InterpretersOffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-//use Zend\View\Renderer\PhpRenderer;
-//use Zend\Http\Response;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+//use Laminas\View\Renderer\PhpRenderer;
+//use Laminas\Http\Response;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
@@ -51,7 +51,7 @@ class ExampleController extends AbstractActionController
     {
 
         $text = new MimePart("\nthis is your plain text part of the message\n");
-        $text->type = \Zend\Mime\Mime::TYPE_TEXT;
+        $text->type = \Laminas\Mime\Mime::TYPE_TEXT;
         $text->charset = 'utf-8';
         $text->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 

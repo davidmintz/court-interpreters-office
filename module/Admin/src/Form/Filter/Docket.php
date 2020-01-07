@@ -5,7 +5,7 @@
 
 namespace InterpretersOffice\Admin\Form\Filter;
 
-use Zend\Filter\FilterInterface;
+use Laminas\Filter\FilterInterface;
 
 /**
  *

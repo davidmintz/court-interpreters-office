@@ -8,7 +8,7 @@ namespace InterpretersOffice\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use InterpretersOffice\Service\ProperNameParsingTrait;
 use InterpretersOffice\Entity\Person;
-use Zend\Paginator\Paginator as ZendPaginator;
+use Laminas\Paginator\Paginator as LaminasPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\Query;
@@ -126,7 +126,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      * returns a paginator of Person entities
      *
      * @param  Array  $terms search terms
-     * @return ZendPaginator
+     * @return LaminasPaginator
      */
     public function paginate(Array $terms)
     {
@@ -166,7 +166,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         $qb->setParameters($params)->orderBy('p.lastname, p.firstname');
         $query = $qb->getQuery();
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
         $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
 
         return $paginator;
@@ -221,7 +221,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         $query = $this->createQuery($dql)->setParameters($p)
             ->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
         $items_per_page = isset($parameters['items_per_page']) ?
             $parameters['items_per_page'] : 20;
         $paginator->setCurrentPageNumber($page)

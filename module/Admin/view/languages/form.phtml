@@ -25,7 +25,7 @@ endif;
 <?php endif;
 $form->add([
     'name' => 'submit',
-    'type' => 'Zend\Form\Element\Submit',
+    'type' => 'Laminas\Form\Element\Submit',
     'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')
     ->setAttribute('action', $actionAttrib)

@@ -6,11 +6,11 @@
 namespace InterpretersOffice\Service\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Log\Logger;
+use Laminas\Log\Writer\Stream;
 use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
-use Zend\Log\Filter\Priority as Filter;
+use Laminas\Log\Filter\Priority as Filter;
 
 /**
  * Factory for instantiating application's Logger instance.
@@ -24,7 +24,7 @@ class LogFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return Logger $log a Zend\Log\Logger instance
+     * @return Logger $log a Laminas\Log\Logger instance
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

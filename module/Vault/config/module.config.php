@@ -3,9 +3,9 @@
 
 namespace SDNY\Vault;
 
-use Zend\Router\Http\Literal;
+use Laminas\Router\Http\Literal;
 
-//use Zend\Router\Http\Segment;
+//use Laminas\Router\Http\Segment;
 
 return [
 
@@ -15,7 +15,7 @@ return [
         // set to false in a local configuration to disable
         'enabled' => true,
         // do not change this adapter
-        'adapter'       => 'Zend\Http\Client\Adapter\Curl',
+        'adapter'       => 'Laminas\Http\Client\Adapter\Curl',
 
         // override the following with your local configuration
         'vault_address' => 'https://vault.sdnyinterpreters.org:8200',

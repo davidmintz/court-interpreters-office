@@ -10,16 +10,16 @@ use InterpretersOffice\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
 
-use Zend\Paginator\Paginator as ZendPaginator;
-use Zend\Dom\Exception\RuntimeException;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+use Laminas\Dom\Exception\RuntimeException;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use InterpretersOffice\Admin\Form\DefendantForm;
 use InterpretersOffice\Entity\Defendant;
 
 
-use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
+use Laminas\Log\LoggerAwareInterface;
+use Laminas\Log\LoggerAwareTrait;
 
 /**
  * custom EntityRepository class for the Defendant entity.
@@ -116,7 +116,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
      *
      * @param string $search_term
      * @param int $page
-     * @return ZendPaginator
+     * @return LaminasPaginator
      */
     public function paginate($search_term, $page = 1)
     {
@@ -129,7 +129,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 ->setParameters($parameters)
                 ->setMaxResults(20);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
 
         return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
     }

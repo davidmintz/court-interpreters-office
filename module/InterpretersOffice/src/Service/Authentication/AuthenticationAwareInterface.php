@@ -3,7 +3,7 @@
 
 namespace InterpretersOffice\Service\Authentication;
 
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 
 /**
  * for factories to know when to inject the auth service

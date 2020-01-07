@@ -115,7 +115,7 @@ class JudgeFieldset extends PersonFieldset
         $this->add([
 
             'name' => 'defaultLocation',
-            'type' => 'Zend\Form\Element\Hidden',
+            'type' => 'Laminas\Form\Element\Hidden',
             'required' => true,
             'allow_empty' => true,
             'attributes' => [
@@ -148,7 +148,7 @@ class JudgeFieldset extends PersonFieldset
         // formerly a DoctrineModule\Form\Element\ObjectSelect, we're changing
         // it so we can cache results without having to write a custom repository
         $this->add([
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'flavor',
             'options' => [
                 'value_options' => $this->getJudgeFlavorOptions(),

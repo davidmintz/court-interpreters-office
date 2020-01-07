@@ -5,9 +5,9 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-//use Zend\ServiceManager\AbstractPluginManager;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+//use Laminas\ServiceManager\AbstractPluginManager;
 use InterpretersOffice\Form\Factory\FormFactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\EventType;

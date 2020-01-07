@@ -10,7 +10,7 @@ use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
 //we could not get namespace autoloading to work, but this does work:
-$path = __DIR__.'/../../../../vendor/zendframework/zend-form/src/Annotation/';
+$path = __DIR__.'/../../../../vendor/laminas/laminas-form/src/Annotation/';
 $files = glob("$path/*php");
 foreach ($files as $file) {
     if (strstr($file,'Object.php')) { continue; }

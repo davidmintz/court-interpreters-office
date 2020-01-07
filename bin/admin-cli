@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand as CreateSchemaCommand;
 
-use Zend\Validator\EmailAddress as EmailValidator;
+use Laminas\Validator\EmailAddress as EmailValidator;
 
 use InterpretersOffice\Entity;
 

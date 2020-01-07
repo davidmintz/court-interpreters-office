@@ -10,12 +10,12 @@ use InterpretersOffice\Admin\Rotation\Entity;
 use InterpretersOffice\Entity\Person;
 use InterpretersOffice\Admin\Rotation\Entity\Substitution;
 use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
-use Zend\EventManager\EventInterface;
-use Zend\View\Model\JsonModel;
+use Laminas\EventManager\EventInterface;
+use Laminas\View\Model\JsonModel;
 
-use Zend\InputFilter;
-use Zend\Validator;
-use Zend\Filter;
+use Laminas\InputFilter;
+use Laminas\Validator;
+use Laminas\Filter;
 
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 

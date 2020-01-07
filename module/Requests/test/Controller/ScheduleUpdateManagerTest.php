@@ -11,8 +11,8 @@ use ApplicationTest\FixtureManager;
 use ApplicationTest\FakeAuth;
 use ApplicationTest\DataFixture;
 
-use Zend\Dom;
-use Zend\Stdlib\Parameters;
+use Laminas\Dom;
+use Laminas\Stdlib\Parameters;
 
 use InterpretersOffice\Entity as IOEntity;
 

@@ -7,8 +7,8 @@ namespace ApplicationTest\Controller;
 use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use Zend\Stdlib\Parameters;
-use Zend\Dom\Document;
+use Laminas\Stdlib\Parameters;
+use Laminas\Dom\Document;
 use InterpretersOffice\Entity;
 
 /**

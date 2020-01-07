@@ -1,8 +1,8 @@
 #!/usr/bin/env php
 <?php
 require __DIR__.'/../../vendor/autoload.php';
-use Zend\Log\Logger;
-use Zend\Log\Writer\Stream as FileWriter;
+use Laminas\Log\Logger;
+use Laminas\Log\Writer\Stream as FileWriter;
 $log = new Logger();
 $log->addWriter(new FileWriter(__DIR__.'/log.dummy-data','w'));
 

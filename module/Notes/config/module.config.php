@@ -1,9 +1,9 @@
 <?php
 namespace InterpretersOffice\Admin\Notes;
 
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
-use Zend\Router\Http\Method;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
+use Laminas\Router\Http\Method;
 
 return [
 

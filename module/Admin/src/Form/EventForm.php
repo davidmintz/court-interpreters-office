@@ -3,17 +3,17 @@
 
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Form as ZendForm;
+use Laminas\Form\Form as LaminasForm;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\ListenerAggregateTrait;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\EventInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\EventManager\ListenerAggregateTrait;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventInterface;
 
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Filter\Word\DashToCamelCase;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Filter\Word\DashToCamelCase;
 
 use InterpretersOffice\Entity;
 
@@ -23,7 +23,7 @@ use InterpretersOffice\Form\DateTimeElementFilterTrait;
  * form for Event entity
  *
  */
-class EventForm extends ZendForm implements
+class EventForm extends LaminasForm implements
     ListenerAggregateInterface,
     InputFilterProviderInterface
 {
@@ -141,7 +141,7 @@ class EventForm extends ZendForm implements
          * event and sets the is_anonymous_judge flag.
          */
         if (empty($event['judge']) && empty($event['anonymousJudge'])) {
-            $validator = new \Zend\Validator\NotEmpty([
+            $validator = new \Laminas\Validator\NotEmpty([
                 'messages' => ['isEmpty' => "judge is required"],
                 'break_chain_on_failure' => true,
             ]);
@@ -216,7 +216,7 @@ class EventForm extends ZendForm implements
                 or
             (! $can_be_anonymous  and empty($event['submitter']))
         ) {
-            $validator = new \Zend\Validator\NotEmpty([
+            $validator = new \Laminas\Validator\NotEmpty([
                 'messages' =>
                     [ 'isEmpty' => "identity of submitter is required"],
                 'break_chain_on_failure' => true,
@@ -271,7 +271,7 @@ class EventForm extends ZendForm implements
                         'options' => [
                             'callBack' => function($value, $context) {
 
-                                $validator = new \Zend\Validator\Date(['format'=>'Y-m-d']);
+                                $validator = new \Laminas\Validator\Date(['format'=>'Y-m-d']);
                                 foreach ($value as $date) {
                                     if (!$validator->isValid($date)) {
                                         return false;
@@ -375,7 +375,7 @@ class EventForm extends ZendForm implements
                     'options' => [
                         'format' => 'Y-m-d H:i:s',
                         'messages' => [
-                            \Zend\Validator\Date::INVALID_DATE =>
+                            \Laminas\Validator\Date::INVALID_DATE =>
                                 'invalid modification timestamp'
                         ],
                     ]
@@ -398,7 +398,7 @@ class EventForm extends ZendForm implements
                     return $timestamp == $value;
                 },
                 'messages' => [
-                    \Zend\Validator\Callback::INVALID_VALUE =>
+                    \Laminas\Validator\Callback::INVALID_VALUE =>
                         'Database record was modified by another process after '
                         . 'you loaded the form. In order to avoid overwriting '
                     . 'someone else\'s changes, please start over.',
@@ -418,7 +418,7 @@ class EventForm extends ZendForm implements
     {
         $errors = $this->getMessages('modified');
         return $errors &&
-            key_exists(\Zend\Validator\Callback::INVALID_VALUE, $errors);
+            key_exists(\Laminas\Validator\Callback::INVALID_VALUE, $errors);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Admin\Notes\Service;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Notes\Service\NotesService;
 
 /** factory for NotesService */

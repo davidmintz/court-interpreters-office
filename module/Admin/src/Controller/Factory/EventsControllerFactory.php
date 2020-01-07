@@ -3,8 +3,8 @@
 
 namespace InterpretersOffice\Admin\Controller\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Authentication\AuthenticationServiceInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller\EventsController;
 
@@ -23,7 +23,7 @@ class EventsControllerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return Zend\Mvc\Controller\AbstractActionController
+     * @return Laminas\Mvc\Controller\AbstractActionController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
@@ -41,7 +41,7 @@ class EventsControllerFactory implements FactoryInterface
         $resolver->register($container->get(Listener\UpdateListener::class)->setAuth($auth));
 
         $sharedEvents = $container->get('SharedEventManager');
-        /** @var \Zend\Log\Logger $log */
+        /** @var \Laminas\Log\Logger $log */
         $log = $container->get('log');
         $sharedEvents->attach(
             EventsController::class,
@@ -157,7 +157,7 @@ class EventsControllerFactory implements FactoryInterface
                     'reason_for_cancellation' => $entity->getCancellationReason() ?
                         (string)$entity->getCancellationReason() : 'n/a',
                 ];
-                $session = new \Zend\Session\Container("event_updates");
+                $session = new \Laminas\Session\Container("event_updates");
                 $session->$id = $view_before;
                 $log->debug("stored entity state in session {$session->getName()}"
                      ." (id $id) for later reference");

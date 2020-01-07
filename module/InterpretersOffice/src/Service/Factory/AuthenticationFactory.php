@@ -6,8 +6,8 @@
 namespace InterpretersOffice\Service\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
-use Zend\Authentication\AuthenticationService;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\Authentication\AuthenticationService;
 use InterpretersOffice\Service\Authentication\Adapter as AuthenticationAdapter;
 
 /**

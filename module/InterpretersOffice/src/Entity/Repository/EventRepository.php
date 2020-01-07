@@ -6,7 +6,7 @@ namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
-use Zend\Paginator\Paginator as ZendPaginator;
+use Laminas\Paginator\Paginator as LaminasPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\QueryBuilder;
@@ -426,9 +426,9 @@ DQL;
      *
      * @param  Array   $query search parameters
      * @param  integer $page
-     * @return ZendPaginator|null
+     * @return LaminasPaginator|null
      */
-    public function search(Array $query, $page = 1) : ZendPaginator
+    public function search(Array $query, $page = 1) : LaminasPaginator
     {
         //printf("<pre>%s</pre>",print_r($query)); exit();
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -518,7 +518,7 @@ DQL;
         $query = $qb->getQuery();
         //$query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
 
         return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
     }

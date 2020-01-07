@@ -6,7 +6,7 @@ use InterpretersOffice\Requests\Controller\RequestsIndexController;
 use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
 
 class NotesControllerTest extends AbstractControllerTest

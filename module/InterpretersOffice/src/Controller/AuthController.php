@@ -4,10 +4,10 @@
 
 namespace InterpretersOffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
 use InterpretersOffice\Form\LoginForm;
 
 /**
@@ -91,12 +91,12 @@ class AuthController extends AbstractActionController
             $role = $user->role;
 
             // if they tried to load a page and were sent away, send them back
-            $session = new \Zend\Session\Container('Authentication');
+            $session = new \Laminas\Session\Container('Authentication');
 
             // echo "DEBUG:  auth OK. not redirecting....";
             // return new ViewModel(['form' => $form, 'title' => 'user login']);
             if ($request->isXmlHttpRequest()) {
-                $csrf = new \Zend\Form\Element\Csrf('csrf');
+                $csrf = new \Laminas\Form\Element\Csrf('csrf');
                 $token = $csrf->getValue();
                 return new JsonModel(['authenticated' => true,'csrf' => $token ]);
             }

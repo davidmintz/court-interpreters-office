@@ -10,4 +10,4 @@ This has produced mysterious side effects that affect testing. Things were blowi
 
 Things were still blowing up as the authentication does not seem to persist following a call to `login()`. Formerly it was sufficient to do this in the `setUp()` method but now we have to do it again, evidently following every call to `FixtureManager::getEntityManager()`. IOW the hypothesis is that now  `FixtureManager::getEntityManager()` blows away the authentication. Why? No clue.
 
-Other note to self:  when you get a fatal "no document registered" error when doing things with Zend\Dom it may be because the response status was 303 and the response body is an empty string.
+Other note to self:  when you get a fatal "no document registered" error when doing things with Laminas\Dom it may be because the response status was 303 and the response body is an empty string.

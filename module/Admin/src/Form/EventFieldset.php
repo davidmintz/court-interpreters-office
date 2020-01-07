@@ -3,9 +3,9 @@
 
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Fieldset;
-use Zend\Form\Element;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
+use Laminas\Form\Element;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -13,7 +13,7 @@ use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Form\Element\LanguageSelect;
 use InterpretersOffice\Entity;
 
-use Zend\Validator\Callback;
+use Laminas\Validator\Callback;
 use InterpretersOffice\Entity\Judge;
 use InterpretersOffice\Entity\Event;
 use InterpretersOffice\Entity\Repository\JudgeRepository;
@@ -224,7 +224,7 @@ class EventFieldset extends AbstractEventFieldset
             $value_options = $empty_option;
         }
         $this->add(
-            [   'type' => 'Zend\Form\Element\Select',
+            [   'type' => 'Laminas\Form\Element\Select',
             'name' => 'submitter',
             'options' => [
                 'label' => '',
@@ -299,7 +299,7 @@ class EventFieldset extends AbstractEventFieldset
         );
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'eventType',
             'options' => [
                 'label' => 'event type',
@@ -344,7 +344,7 @@ class EventFieldset extends AbstractEventFieldset
 
         // the (specific) "location" element
         $element_spec = [
-                'type' => 'Zend\Form\Element\Select',
+                'type' => 'Laminas\Form\Element\Select',
                 'name' => 'location',
                 'options' => [
                     'value_options' => [],
@@ -405,7 +405,7 @@ class EventFieldset extends AbstractEventFieldset
             [ 'value' => '','label' => '(required)','attributes' => ['label' => ' '] ]
         );
         $this->add([
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'judge',
             'options' => [
                 'label' => 'judge',
@@ -416,14 +416,14 @@ class EventFieldset extends AbstractEventFieldset
         ]);
         $this->add(
             [
-                'type' => 'Zend\Form\Element\Hidden',
+                'type' => 'Laminas\Form\Element\Hidden',
                 'name' => 'is_anonymous_judge',
                 'attributes' => ['id' => 'is_anonymous_judge'],
             ]
         );
         $this->add(
             [
-                'type' => 'Zend\Form\Element\Hidden',
+                'type' => 'Laminas\Form\Element\Hidden',
                 'name' => 'anonymousJudge',
                 'attributes' => ['id' => 'anonymousJudge'],
             ]
@@ -509,9 +509,9 @@ class EventFieldset extends AbstractEventFieldset
                             'min' => 5,
                             'max' => 600,
                             'messages' => [
-                            \Zend\Validator\StringLength::TOO_LONG =>
+                            \Laminas\Validator\StringLength::TOO_LONG =>
                                 'maximum length allowed is 600 characters',
-                             \Zend\Validator\StringLength::TOO_SHORT =>
+                             \Laminas\Validator\StringLength::TOO_SHORT =>
                                 'minimum length allowed is 5 characters',
                             ]
                         ]

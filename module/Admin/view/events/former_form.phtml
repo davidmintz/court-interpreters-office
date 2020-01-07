@@ -23,7 +23,7 @@ $form->setAttribute('class', 'form-event mx-auto')
     ->setAttribute('style', 'max-width:950px')->setAttribute('action', $action);
 $form->add([
     'name' => 'submit',
-    'type' => 'Zend\Form\Element\Submit',
+    'type' => 'Laminas\Form\Element\Submit',
     'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post');
 

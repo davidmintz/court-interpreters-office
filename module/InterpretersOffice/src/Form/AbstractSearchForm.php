@@ -1,8 +1,8 @@
 <?php /** module/InterpretersOffice/src/Form/SearchForm.php */
 namespace InterpretersOffice\Form;
 
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use InterpretersOffice\Form\Element\LanguageSelect;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
@@ -10,7 +10,7 @@ use InterpretersOffice\Admin\Form\Validator;
 use InterpretersOffice\Admin\Form\Filter;
 use InterpretersOffice\Entity;
 use Doctrine\Common\Persistence\ObjectManager;
-use Zend\Validator\Callback;
+use Laminas\Validator\Callback;
 
 class AbstractSearchForm extends Form implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
@@ -23,7 +23,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         parent::__construct('search-form',$options);
         $this->add([
             'name' => 'submit',
-            'type' => 'Zend\Form\Element\Hidden',
+            'type' => 'Laminas\Form\Element\Hidden',
             'attributes' => [
                 'value' => 1,
             ],
@@ -49,7 +49,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
 
         $this->add([
             'name' => 'docket',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'attributes' => [
                 'id' => 'docket',
                 'class' => 'docket form-control',
@@ -77,7 +77,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         );
         $this->add([
             'name' => 'date-from',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'attributes' => [
                 'id' => 'date-from',
                 'class' => 'date form-control',
@@ -86,7 +86,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         ]);
         $this->add([
             'name' => 'date-to',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'attributes' => [
                 'id' => 'date-to',
                 'class' => 'date form-control',
@@ -94,7 +94,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         ]);
         $this->add([
             'name' => 'defendant-name',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'attributes' => [
                 'id' => 'defendant-name',
                 'class' => 'form-control',
@@ -110,7 +110,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
             [ 'value' => '','attributes' => ['label' => ' '] ]
         );
         $this->add([
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'judge',
             'options' => [
                 'label' => 'judge',
@@ -121,7 +121,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
                 'id' => 'judge'],
         ]);
         $this->add([
-            'type' => 'Zend\Form\Element\Hidden',
+            'type' => 'Laminas\Form\Element\Hidden',
             'name' => 'pseudo_judge',
             'attributes' => [
                 'id' => 'pseudo_judge'],
@@ -135,7 +135,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         }
 
         $this->add([
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'order',
             'options' => [
                 'label' => 'sort by',

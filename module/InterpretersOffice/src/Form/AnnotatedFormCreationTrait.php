@@ -4,7 +4,7 @@
 
 namespace InterpretersOffice\Form;
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 /**
  * Trait that provides a convenience method for instantiating the

@@ -4,8 +4,8 @@
 
 namespace InterpretersOffice\Form;
 
-use Zend\Form\Form;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Form;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 /**
  * login form.
@@ -23,7 +23,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
         ///*
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'identity',
             'options' => [
                 'label' => 'username or email',
@@ -39,7 +39,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
         //*/
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Password',
+            'type' => 'Laminas\Form\Element\Password',
             'name' => 'password',
             'options' => [
                 'label' => 'password',
@@ -52,7 +52,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
             ],
             ]
         );
-        $csrf = new \Zend\Form\Element\Csrf('login_csrf');
+        $csrf = new \Laminas\Form\Element\Csrf('login_csrf');
         $csrf->setCsrfValidatorOptions(
             ['messages' => [
             'notSame' => 'security error: form submission failed CSRF token validation',
@@ -86,7 +86,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
                     [
                       'name' => 'NotEmpty',
                       'options' => [
-                           'messages' => [\Zend\Validator\NotEmpty::IS_EMPTY => 'identity is required'],
+                           'messages' => [\Laminas\Validator\NotEmpty::IS_EMPTY => 'identity is required'],
                         ],
                     ],
                 ],
@@ -101,7 +101,7 @@ class LoginForm extends Form implements InputFilterProviderInterface
                     [
                       'name' => 'NotEmpty',
                        'options' => [
-                           'messages' => [\Zend\Validator\NotEmpty::IS_EMPTY => 'password is required'],
+                           'messages' => [\Laminas\Validator\NotEmpty::IS_EMPTY => 'password is required'],
                         ],
                     ],
                 ],

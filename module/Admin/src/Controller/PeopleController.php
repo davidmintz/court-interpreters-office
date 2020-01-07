@@ -4,15 +4,15 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Paginator\Paginator;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\Paginator\Paginator;
 use InterpretersOffice\Form\PersonForm;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 
-use Zend\Session\Container as Session;
+use Laminas\Session\Container as Session;
 
 /**
  * controller for admin/people.
@@ -243,7 +243,7 @@ class PeopleController extends AbstractActionController
         $params = $this->params()->fromQuery();
         //print_r($params); exit();
         $this->session->defaults = $params;
-        /** @var \Zend\Paginator\Paginator $paginator */
+        /** @var \Laminas\Paginator\Paginator $paginator */
         $paginator = $repo->paginate($params);
         $view = (new ViewModel())
             ->setTerminal(true)

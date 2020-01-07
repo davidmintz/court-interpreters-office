@@ -5,12 +5,12 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\Event;
-use Zend\Session\Container as Session;
+use Laminas\Session\Container as Session;
 
 /**
  * ScheduleController
@@ -27,7 +27,7 @@ class ScheduleController extends AbstractActionController
     /**
      * session
      *
-     * @var Zend\Session\Container
+     * @var Laminas\Session\Container
      */
     protected $session;
 
@@ -112,8 +112,8 @@ class ScheduleController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $event = $this->entityManager->getRepository(Entity\Event::class)
            ->getView($id);
-        $csrf = (new \Zend\Validator\Csrf('csrf', ['timeout' => 600]))->getHash();
-        $session = new \Zend\Session\Container('event_updates');
+        $csrf = (new \Laminas\Validator\Csrf('csrf', ['timeout' => 600]))->getHash();
+        $session = new \Laminas\Session\Container('event_updates');
         $before = null;
         if ($session->{$event['id']}) {
             $before = $session->{$event['id']};

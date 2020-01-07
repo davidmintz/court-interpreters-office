@@ -7,16 +7,16 @@ use InterpretersOffice\Admin\Form\AbstractEventFieldset;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
 
 
-use Zend\Form\Form as ZendForm;
+use Laminas\Form\Form as LaminasForm;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Form\DateTimeElementFilterTrait;
-use  Zend\Mvc\Controller\AbstractActionController;
+use  Laminas\Mvc\Controller\AbstractActionController;
 /**
  * form for Request entity
  *
  */
-class RequestForm extends ZendForm
+class RequestForm extends LaminasForm
 {
 
      use CsrfElementCreationTrait, DateTimeElementFilterTrait;

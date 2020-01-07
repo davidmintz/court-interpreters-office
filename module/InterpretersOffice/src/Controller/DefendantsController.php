@@ -5,9 +5,9 @@
 
 namespace InterpretersOffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
 use Doctrine\ORM\EntityManager;
 
 use InterpretersOffice\Entity;
@@ -120,11 +120,11 @@ class DefendantsController extends AbstractActionController
     /**
      * creates and returns an InputFilter for a proper name
      *
-     * @return \Zend\InputFilter\InputFilter input filter for defendant name
+     * @return \Laminas\InputFilter\InputFilter input filter for defendant name
      */
     protected function getInputFilter()
     {
-        $filter = new \Zend\InputFilter\InputFilter();
+        $filter = new \Laminas\InputFilter\InputFilter();
         $filter->add([
             'name' => 'given_names',
             'required' => true,

@@ -25,7 +25,7 @@ $formAction = strstr($this->title, 'add') ? $this->url('users/add')
     : $this->url('users/edit', ['id' => $this->id ]);
 $form = $this->form;
 $form->add([
-    'name' => 'submit', 'type' => 'Zend\Form\Element\Submit',
+    'name' => 'submit', 'type' => 'Laminas\Form\Element\Submit',
     'attributes' =>  ['id' => 'btn-submit','value' => 'save',
         'class' => 'btn btn-success btn-lg'],
 ])->setAttributes(['class' => 'form-horizontal','action' => $formAction]);

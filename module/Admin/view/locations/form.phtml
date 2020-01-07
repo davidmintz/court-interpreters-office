@@ -17,7 +17,7 @@ endif;
 $form->setAttribute('action', $actionAttrib);
 $form->add([
     'name' => 'submit',
-    'type' => 'Zend\Form\Element\Submit',
+    'type' => 'Laminas\Form\Element\Submit',
         'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('data-redirect_url', $this->url("locations"));
 ?>

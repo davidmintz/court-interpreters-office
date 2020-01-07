@@ -45,7 +45,7 @@ return [
         'SDNY\Vault\Controller\VaultController' => null,
         Main\AuthController::class => null,
         // these refer to user resource ids. the User entity implements
-        // Zend\Permissions\Acl\Resource\ResourceInterface
+        // Laminas\Permissions\Acl\Resource\ResourceInterface
         'administrator' => null,
         'manager' => null,
         'submitter' => null,

@@ -65,7 +65,7 @@ return [
         'aliases' => [
             'acl' => Service\Acl::class,
             'interpreter-listener' => Listener\InterpreterEntityListener::class,
-            'admin-breadcrumbs' => 'Zend\Navigation\Admin_Breadcrumbs',
+            'admin-breadcrumbs' => 'Laminas\Navigation\Admin_Breadcrumbs',
         ],
     ],
 ];

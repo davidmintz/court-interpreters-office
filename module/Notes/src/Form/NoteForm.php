@@ -1,6 +1,6 @@
 <?php /** module/Notes/src/Form/NoteForm */
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 
 class NoteForm extends Form

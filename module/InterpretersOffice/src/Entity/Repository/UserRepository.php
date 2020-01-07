@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityRepository;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\ProperNameParsingTrait;
 
-use Zend\Paginator\Paginator as ZendPaginator;
+use Laminas\Paginator\Paginator as LaminasPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 
@@ -246,9 +246,9 @@ class UserRepository extends EntityRepository
      *
      * @param  string        $name_or_email
      * @param  Array         $options
-     * @return ZendPaginator
+     * @return LaminasPaginator
      */
-    public function paginate(string $name_or_email, Array $options) :ZendPaginator
+    public function paginate(string $name_or_email, Array $options) :LaminasPaginator
     {
         $page = isset($options['page']) ? $options['page']: 1;
         $parameters = $this->parseOptions($name_or_email,$options);
@@ -275,7 +275,7 @@ class UserRepository extends EntityRepository
         $qb->setParameters($parameters)->orderBy('p.lastname, p.firstname');
         $query = $qb->getQuery();
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
         $paginator
             ->setCurrentPageNumber($page)
             ->setItemCountPerPage(20);

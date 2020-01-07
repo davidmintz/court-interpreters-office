@@ -5,8 +5,8 @@
 
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -42,7 +42,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
             ->getCredentialOptions();
         $this->add([
             'name' => 'languageCredential',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'options' => [
                 'value_options' => ['' => ''] + $credential_options,
             ],

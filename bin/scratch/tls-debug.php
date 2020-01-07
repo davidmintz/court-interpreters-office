@@ -1,8 +1,8 @@
 <?php
 
 require __DIR__.'/../../vendor/autoload.php';
-use Zend\Http\Client;
-use Zend\Http\Response;
+use Laminas\Http\Client;
+use Laminas\Http\Response;
 $config = [
     'adapter'     => Client\Adapter\Curl::class,
     'curloptions'=>[
@@ -14,14 +14,14 @@ $config = [
 'ssl_key' => '/opt/vault/certs/auth.vault.localhost.key.pem',
 'ssl_cert' => '/opt/vault/certs/auth.vault.localhost.cert.pem',
 */
-/** @var Zend\Http\Client $client */
+/** @var Laminas\Http\Client $client */
 $client = new Client(
     null, $config
 );
 var_dump($config);
 $client->setMethod('POST')->setUri('https://vault.localhost:8200/v1/auth/cert/login');
 $client->getRequest()->getHeaders()->addHeaderLine('Accept: application/json');
-/** @var Zend\Http\Response $response */
+/** @var Laminas\Http\Response $response */
 $response = $client->send();
 
 /*$ curl \

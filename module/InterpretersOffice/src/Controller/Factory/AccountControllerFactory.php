@@ -4,13 +4,13 @@
 
 namespace InterpretersOffice\Controller\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Controller\AccountController;
 
 use InterpretersOffice\Service\AccountManager;
 use InterpretersOffice\Entity\Listener;
-use Zend\EventManager\EventInterface;
+use Laminas\EventManager\EventInterface;
 use InterpretersOffice\Entity\User;
 
 /**
@@ -37,7 +37,7 @@ class AccountControllerFactory implements FactoryInterface
         }
         $controller = (new AccountController($em, $auth))
             ->setAccountManager($container->get(AccountManager::class));
-        /** @var $sharedEvents Zend\EventManager\SharedEventManagerInterface */
+        /** @var $sharedEvents Laminas\EventManager\SharedEventManagerInterface */
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
         $sharedEvents->attach(

@@ -15,11 +15,11 @@ composer install
   Problem 1
     - The requested PHP extension ext-mbstring * is missing from your system. Install or enable PHP's mbstring extension.
   Problem 2
-    - Installation request for zendframework/zend-crypt 3.3.0 -> satisfiable by zendframework/zend-crypt[3.3.0].
-    - zendframework/zend-crypt 3.3.0 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
+    - Installation request for laminas/laminas-crypt 3.3.0 -> satisfiable by laminas/laminas-crypt[3.3.0].
+    - laminas/laminas-crypt 3.3.0 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
   Problem 3
-    - Installation request for zendframework/zend-math 3.2.0 -> satisfiable by zendframework/zend-math[3.2.0].
-    - zendframework/zend-math 3.2.0 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
+    - Installation request for laminas/laminas-math 3.2.0 -> satisfiable by laminas/laminas-math[3.2.0].
+    - laminas/laminas-math 3.2.0 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.
   Problem 4
     - Installation request for phpunit/phpunit 7.5.8 -> satisfiable by phpunit/phpunit[7.5.8].
     - phpunit/phpunit 7.5.8 requires ext-mbstring * -> the requested PHP extension mbstring is missing from your system.

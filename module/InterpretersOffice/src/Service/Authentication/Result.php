@@ -4,13 +4,13 @@
 
 namespace InterpretersOffice\Service\Authentication;
 
-use Zend\Authentication\Result as AuthResult;
+use Laminas\Authentication\Result as AuthResult;
 
 /**
- * extension of Zend\Authentication\Result just to provide another
+ * extension of Laminas\Authentication\Result just to provide another
  * constant/failure reason.
  *
- * @see \Zend\Authentication\Result
+ * @see \Laminas\Authentication\Result
  */
 class Result extends AuthResult
 {

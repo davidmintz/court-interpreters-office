@@ -14,7 +14,7 @@
  *
  * You may also create files matching the glob pattern `{,*.}{global,local}-development.php`.
  */
-use Zend\Mail;
+use Laminas\Mail;
 
 return [
     'view_manager' => [
@@ -36,7 +36,7 @@ return [
     //     'from_entity' => 'SDNY Interpreters Office',
     // ],
     //*/
-    /** configuration for Zend\Mail */
+    /** configuration for Laminas\Mail */
     'mail' => [
         'transport' => Mail\Transport\File::class,
         'transport_options' => [

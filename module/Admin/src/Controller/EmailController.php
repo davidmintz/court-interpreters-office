@@ -5,14 +5,14 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
-use Zend\Http\Response;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use Laminas\Http\Response;
 //use Doctrine\ORM\EntityManagerInterface;
 //use InterpretersOffice\Entity;
 //use InterpretersOffice\Entity\Event;
-//use Zend\Session\Container as Session;
+//use Laminas\Session\Container as Session;
 use InterpretersOffice\Admin\Service\EmailService;
 
 /**
@@ -60,13 +60,13 @@ class EmailController extends AbstractActionController
     public function emailEventAction()
     {
         if (! $this->getRequest()->isPost()) {
-            /** @var \Zend\Http\Response $response */
+            /** @var \Laminas\Http\Response $response */
             $response = $this->getResponse();
             $response->setStatusCode(405);
             return new JsonModel(['status' => 'error','message' => 'method not allowed']);
         }
         $csrf = $this->params()->fromPost('csrf', '');
-        if (! (new \Zend\Validator\Csrf('csrf', ['timeout' => 600]))->isValid($csrf)) {
+        if (! (new \Laminas\Validator\Csrf('csrf', ['timeout' => 600]))->isValid($csrf)) {
             return new JsonModel(['status' => 'error','validation_errors' =>
                 ['csrf' => 'security token is missing or expired']
             ]);
@@ -81,12 +81,12 @@ class EmailController extends AbstractActionController
     }
 }
 /* ----------
-$factory = new \Zend\InputFilter\Factory();
+$factory = new \Laminas\InputFilter\Factory();
 $inputFilter = $factory->createInputFilter([
 
     'to' => [
         'name' => 'to',
-        'type'=> 'Zend\InputFilter\CollectionInputFilter',
+        'type'=> 'Laminas\InputFilter\CollectionInputFilter',
         'required' => true,
         'allow_empty' => false,
         'email' => [
@@ -107,8 +107,8 @@ $inputFilter = $factory->createInputFilter([
                     'name' => 'EmailAddress',
                     'options' => [
                         'messages' => [
-                            \Zend\Validator\EmailAddress::INVALID => 'email address is required',
-                            \Zend\Validator\EmailAddress::INVALID_FORMAT => 'invalid email address',
+                            \Laminas\Validator\EmailAddress::INVALID => 'email address is required',
+                            \Laminas\Validator\EmailAddress::INVALID_FORMAT => 'invalid email address',
                         ],
                     ],
                     'break_chain_on_failure' => true,

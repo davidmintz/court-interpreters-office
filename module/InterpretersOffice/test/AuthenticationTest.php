@@ -10,12 +10,12 @@ use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use InterpretersOffice\Service\Authentication;
-use Zend\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationService;
 
 class AuthenticationTest extends AbstractControllerTest
 {
     /**
-     * @var Zend\Authentication\AuthenticationService
+     * @var Laminas\Authentication\AuthenticationService
      */
     protected $auth;
 

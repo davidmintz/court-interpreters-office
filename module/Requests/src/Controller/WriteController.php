@@ -5,14 +5,14 @@
 
 namespace InterpretersOffice\Requests\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Mvc\MvcEvent;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Http\Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Http\Request;
 use Zend\StdLib\Parameters;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
 use InterpretersOffice\Entity\CourtClosing;
@@ -66,7 +66,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
     /**
      * session
      *
-     * @var \Zend\Session\Container
+     * @var \Laminas\Session\Container
      */
     protected $session;
 
@@ -88,7 +88,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         $this->objectManager = $objectManager;
         $this->auth = $auth;
         $this->acl = $acl;
-        $this->session = new \Zend\Session\Container("requests");
+        $this->session = new \Laminas\Session\Container("requests");
     }
 
     /**
@@ -276,7 +276,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
         $form->bind($entity);
 
         if ($this->getRequest()->isPost()) {
-            /** @var Zend\Stdlib\Parameters $params */
+            /** @var Laminas\Stdlib\Parameters $params */
             $params = $this->getRequest()->getPost();
             $r = $params->get('request'); // array
             if (empty($r['date']) && ! empty($r['dates'])) {
@@ -386,7 +386,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
     {
         $id = $this->params()->fromRoute('id');
         $entity = $this->entity;
-        $validator = new \Zend\Validator\Csrf();
+        $validator = new \Laminas\Validator\Csrf();
         $csrf = $this->params()->fromPost('csrf');
         if (! $validator->isValid($csrf)) {
             return new JsonModel([

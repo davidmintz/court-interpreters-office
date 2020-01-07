@@ -14,8 +14,8 @@ use Doctrine\ORM\Tools\SchemaTool;
 use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
-use Zend\Authentication\Result;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Laminas\Authentication\Result;
+use Laminas\Authentication\AuthenticationServiceInterface;
 use ApplicationTest\FakeAuth;
 use ApplicationTest\FixtureSetupTest;
 
@@ -31,7 +31,7 @@ class SetupHelper extends AbstractControllerTest
 /**
  * we seem to need this to get us past FixtureSetupTest
  */
-class FakeAuth implements \Zend\Authentication\AuthenticationServiceInterface
+class FakeAuth implements \Laminas\Authentication\AuthenticationServiceInterface
 {
         public function hasIdentity()
         {
@@ -59,7 +59,7 @@ class FakeAuth implements \Zend\Authentication\AuthenticationServiceInterface
         }
         public function authenticate()
         {
-            return new ZendAuthenticationResult(1, $this->getIdentity());
+            return new LaminasAuthenticationResult(1, $this->getIdentity());
         }
 
         public function clearIdentity()
@@ -101,7 +101,7 @@ final class FixtureManager
         $entityManager = EntityManager::create($connectionParams, $config);
         $helper = new SetupHelper();
         $helper->setUp();
-        /** @var Zend\ServiceManager\ServiceManager $container */
+        /** @var Laminas\ServiceManager\ServiceManager $container */
         $container = $helper->getApplicationServiceLocator();
         $listener = $container->get('interpreter-listener');
         $event_entity_listener = $container->get(Listener\EventEntityListener::class);

@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Admin\Rotation\Controller;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Rotation\Controller\IndexController;
 use InterpretersOffice\Admin\Rotation\Service\TaskRotationService;
 use InterpretersOffice\Entity\Listener\UpdateListener;

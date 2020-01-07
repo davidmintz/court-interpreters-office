@@ -7,8 +7,8 @@ namespace ApplicationTest\Controller;
 
 use InterpretersOffice\Admin\Controller\PeopleController;
 use ApplicationTest\AbstractControllerTest;
-use Zend\Stdlib\Parameters;
-use Zend\Dom\Query;
+use Laminas\Stdlib\Parameters;
+use Laminas\Dom\Query;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use InterpretersOffice\Entity;

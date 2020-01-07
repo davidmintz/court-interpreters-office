@@ -3,10 +3,10 @@
 
 namespace InterpretersOffice\Requests\Form;
 
-use Zend\Stdlib\ArrayObject;
-use Zend\Hydrator\ArraySerializable;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Form\Fieldset;
+use Laminas\Stdlib\ArrayObject;
+use Laminas\Hydrator\ArraySerializable;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
 
 /**
  * fieldset for requests-configuration page

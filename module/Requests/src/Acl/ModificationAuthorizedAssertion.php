@@ -3,11 +3,11 @@
 
 namespace InterpretersOffice\Requests\Acl;
 
-use Zend\Permissions\Acl\Acl;
-use Zend\Permissions\Acl\Assertion\AssertionInterface;
-use Zend\Permissions\Acl\Role\RoleInterface;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Permissions\Acl\Acl;
+use Laminas\Permissions\Acl\Assertion\AssertionInterface;
+use Laminas\Permissions\Acl\Role\RoleInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 /**
  * Assertion to test if the User is authorized to modify the Request

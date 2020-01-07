@@ -4,7 +4,7 @@
 namespace InterpretersOffice\Entity\Listener\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
 
 //use InterpretersOffice\Admin\Service\ScheduleUpdateManager;

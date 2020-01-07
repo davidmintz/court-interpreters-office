@@ -1,5 +1,5 @@
 <?php namespace Sandbox;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 class Module
 {
     /**
@@ -12,7 +12,7 @@ class Module
         return include __DIR__.'/../config/module.config.php';
     }
 
-    public function onBootstrap(\Zend\EventManager\EventInterface $event)
+    public function onBootstrap(\Laminas\EventManager\EventInterface $event)
     {
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE,function($e){

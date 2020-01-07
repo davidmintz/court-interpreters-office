@@ -5,13 +5,13 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
 use InterpretersOffice\Admin\Form\JudgeForm;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
-use Zend\Session\Container as Session;
+use Laminas\Session\Container as Session;
 
 /**
  * JudgesController.
@@ -26,7 +26,7 @@ class JudgesController extends AbstractActionController
      */
     protected $entityManager;
 
-    /** @var Zend\Session\Container */
+    /** @var Laminas\Session\Container */
     private $session;
 
     /**

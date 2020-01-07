@@ -234,7 +234,7 @@ class LocationRepository extends EntityRepository implements CacheDeletionInterf
     /**
      * Fetches location options for request form.
      *
-     * This returns a data structure for Zend\Form\Element\Select with option
+     * This returns a data structure for Laminas\Form\Element\Select with option
      * groups. If the $hat is one that reports directly to a judge, the
      * assumption is that the interpreter is requested for an in-court
      * proceeding and the only types of location provided are courtrooms,

@@ -2,7 +2,7 @@
 
 namespace InterpretersOffice\Admin\Form\View\Helper;
 
-use Zend\Form\View\Helper\AbstractHelper;
+use Laminas\Form\View\Helper\AbstractHelper;
 
 /**
  * helper for displaying interpreter-languages
@@ -151,7 +151,7 @@ TEMPLATE;
                 $cred_options[$n]['attributes'] = ['disabled' => 'disabled'];
             }
         }
-        $credential_element = new \Zend\Form\Element\Select(
+        $credential_element = new \Laminas\Form\Element\Select(
             "interpreter[interpreterLanguages][$i][languageCredential]",
             ['value_options' => ['' => ' '] + $cred_options,]
         );

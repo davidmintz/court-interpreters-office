@@ -11,7 +11,7 @@ namespace InterpretersOffice\Form\Factory;
 interface FormFactoryInterface
 {
     /**
-     * creates a Zend\Form\Form instance.
+     * creates a Laminas\Form\Form instance.
      *
      * @param object|string $entityObjectOrClassname entity instance or classname
      * @param array         $options

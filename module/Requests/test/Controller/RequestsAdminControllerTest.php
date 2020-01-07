@@ -6,7 +6,7 @@ use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 //use ApplicationTest\FakeAuth;
 use ApplicationTest\DataFixture;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 
 use InterpretersOffice\Requests\Entity\Request;
 
@@ -57,7 +57,7 @@ use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
           $this->reset(true);
           $this->getRequest()->setMethod('POST')
             ->setPost(
-             new Parameters(['csrf'=>(new \Zend\Validator\Csrf('csrf'))->getHash()])
+             new Parameters(['csrf'=>(new \Laminas\Validator\Csrf('csrf'))->getHash()])
             );
           $this->dispatch($url);
           $response = $this->getResponse()->getBody();

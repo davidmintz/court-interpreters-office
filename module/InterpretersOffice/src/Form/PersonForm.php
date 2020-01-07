@@ -4,13 +4,13 @@
 
 namespace InterpretersOffice\Form;
 
-use Zend\Form\Form as ZendForm;
+use Laminas\Form\Form as LaminasForm;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Form for a Person entity.
  */
-class PersonForm extends ZendForm
+class PersonForm extends LaminasForm
 {
     use CsrfElementCreationTrait;
 

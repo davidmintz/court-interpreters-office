@@ -28,7 +28,7 @@ class SearchForm extends AbstractSearchForm
         );
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'eventType',
             'options' => [
                 'label' => 'event type',
@@ -39,14 +39,14 @@ class SearchForm extends AbstractSearchForm
         );
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Hidden',
+            'type' => 'Laminas\Form\Element\Hidden',
             'name' => 'interpreter_id',
             'attributes' => ['id' => 'interpreter_id'],
             ]
         );
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'interpreter',
             'attributes' => ['id' => 'interpreter',
                 'placeholder' => 'last name[, first name]',

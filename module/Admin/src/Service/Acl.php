@@ -4,10 +4,10 @@
  */
 namespace InterpretersOffice\Admin\Service;
 
-use Zend\Permissions\Acl\Acl as ZendAcl;
+use Laminas\Permissions\Acl\Acl as LaminasAcl;
 
-use Zend\EventManager\EventManagerAwareTrait;
-use Zend\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerAwareTrait;
+use Laminas\EventManager\EventManagerAwareInterface;
 
 /**
  * ACL
@@ -16,7 +16,7 @@ use Zend\EventManager\EventManagerAwareInterface;
  * explicitly if we call setEventManager on this ourselves
  *
  */
-class Acl extends ZendAcl implements EventManagerAwareInterface
+class Acl extends LaminasAcl implements EventManagerAwareInterface
 {
 
     use EventManagerAwareTrait;
@@ -96,8 +96,8 @@ class Acl extends ZendAcl implements EventManagerAwareInterface
      * Overrides the parent, the sole difference being that we trigger an
      * 'access-denied' event if applicable.
      *
-     * @param \Zend\Permissions\Acl\Role\RoleInterface|string            $role
-     * @param \Zend\Permissions\Acl\Resource\ResourceInterface|string    $resource
+     * @param \Laminas\Permissions\Acl\Role\RoleInterface|string            $role
+     * @param \Laminas\Permissions\Acl\Resource\ResourceInterface|string    $resource
      * @param string $privilege
      * @return bool true if authorized
      *

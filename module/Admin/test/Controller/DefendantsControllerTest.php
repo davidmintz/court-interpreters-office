@@ -8,10 +8,10 @@ use ApplicationTest\DataFixture;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Entity\Repository\DefendantRepository;
 use InterpretersOffice\Entity\Defendant;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 
-use Zend\Dom;
-use Zend\Log\Writer\Noop;
+use Laminas\Dom;
+use Laminas\Log\Writer\Noop;
 use Doctrine\ORM\EntityManager;
 
 class DefendantsControllerTest extends AbstractControllerTest
@@ -34,8 +34,8 @@ class DefendantsControllerTest extends AbstractControllerTest
         $this->repository = $this->em->getRepository(Entity\Defendant::class);
         //$this->repository
         //$container = $this->getApplicationServiceLocator();
-        $log = new \Zend\Log\Logger();
-        $log->addWriter(new \Zend\Log\Writer\Noop());
+        $log = new \Laminas\Log\Logger();
+        $log->addWriter(new \Laminas\Log\Writer\Noop());
         //$this->repository->setLogger($container->get('log'));
         $this->repository->setLogger($log);
         //$fixtureExecutor->execute(

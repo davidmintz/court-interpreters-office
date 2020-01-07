@@ -3,7 +3,7 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\View\Model\JsonModel;
+use Laminas\View\Model\JsonModel;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 
 /**

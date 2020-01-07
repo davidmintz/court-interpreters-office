@@ -27,7 +27,7 @@ class Module
      * @param  ZendEventManagerEventInterface $event
      * @return void
      */
-    public function onBootstrap(\Zend\EventManager\EventInterface $event)
+    public function onBootstrap(\Laminas\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
         $sharedEvents = $container->get('SharedEventManager');

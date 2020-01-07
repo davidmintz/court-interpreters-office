@@ -4,7 +4,7 @@
  * for importing events from our old database to the new
  */
 require(__DIR__.'/../../vendor/autoload.php');
-use Zend\Console\Getopt;
+use Laminas\Console\Getopt;
 
 $opts = new Getopt(
    [

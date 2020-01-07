@@ -9,13 +9,13 @@
  * This should be an array of module namespaces used in the application.
  */
 $modules = [
-    'Zend\Session',
-    'Zend\Mvc\Plugin\FlashMessenger',
+    'Laminas\Session',
+    'Laminas\Mvc\Plugin\FlashMessenger',
     'DoctrineModule',
     'DoctrineORMModule',
-    'Zend\Form',// yes necessary
-    'Zend\Router',
-    'Zend\Navigation',
+    'Laminas\Form',// yes necessary
+    'Laminas\Router',
+    'Laminas\Navigation',
     'InterpretersOffice',
     'InterpretersOffice\Admin',
     'InterpretersOffice\Admin\Notes',

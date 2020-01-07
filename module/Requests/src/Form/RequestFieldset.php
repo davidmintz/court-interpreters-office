@@ -49,7 +49,7 @@ class RequestFieldset extends AbstractEventFieldset
         parent::__construct($objectManager, $options);
         // sanity check
         if (! key_exists('auth', $options) or ! $options['auth']
-        instanceof \Zend\Authentication\AuthenticationServiceInterface ) {
+        instanceof \Laminas\Authentication\AuthenticationServiceInterface ) {
             throw new \Exception(
                 "constructor options to RequestFieldset must include 'auth'"
             );
@@ -74,7 +74,7 @@ class RequestFieldset extends AbstractEventFieldset
 
         $this->add([
             'name' => 'extra_defendants',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'options' => [
                 'value_options' => [],
                 'disable_inarray_validator' => true,
@@ -97,7 +97,7 @@ class RequestFieldset extends AbstractEventFieldset
         $options = $repo->getEventTypesForHat($hat);
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'eventType',
             'options' => [
                 'label' => 'event type',
@@ -125,7 +125,7 @@ class RequestFieldset extends AbstractEventFieldset
         array_unshift($options, ['label' => ' ','value' => '']);
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'location',
             'options' => [
                 'label' => 'location',
@@ -158,7 +158,7 @@ class RequestFieldset extends AbstractEventFieldset
         array_unshift($options, ['label' => ' ','value' => '']);
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'name' => 'judge',
             'options' => [
                 'label' => 'judge',
@@ -204,7 +204,7 @@ class RequestFieldset extends AbstractEventFieldset
                                     return false;
                                 }
                             },
-                            'messages' => [\Zend\Validator\Callback::INVALID_VALUE => "invalid time"]
+                            'messages' => [\Laminas\Validator\Callback::INVALID_VALUE => "invalid time"]
                         ],
                     ]
                 ],
@@ -260,9 +260,9 @@ class RequestFieldset extends AbstractEventFieldset
                             'min' => 5,
                             'max' => 600,
                             'messages' => [
-                            \Zend\Validator\StringLength::TOO_LONG =>
+                            \Laminas\Validator\StringLength::TOO_LONG =>
                                 'maximum length allowed is %max% characters',
-                             \Zend\Validator\StringLength::TOO_SHORT =>
+                             \Laminas\Validator\StringLength::TOO_SHORT =>
                                 'minimum length allowed is %min% characters',
                             ]
                         ]

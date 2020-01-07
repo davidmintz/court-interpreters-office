@@ -3,12 +3,12 @@
 namespace InterpretersOffice\Requests\Controller\Admin;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Authentication\AuthenticationService;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Stdlib\ArrayObject;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Stdlib\ArrayObject;
 use InterpretersOffice\Requests\Form\ConfigForm;
 use InterpretersOffice\Requests\Entity\Request;
 
@@ -70,7 +70,7 @@ class IndexController extends AbstractActionController
             $defendants = [];
         }
         $data = compact('pending', 'defendants');
-        $data['csrf'] = (new \Zend\Validator\Csrf('csrf'))->getHash();
+        $data['csrf'] = (new \Laminas\Validator\Csrf('csrf'))->getHash();
         if ($this->getRequest()->isXmlHttpRequest()) {
             return (new ViewModel($data))->setTerminal(true);
         }
@@ -85,7 +85,7 @@ class IndexController extends AbstractActionController
     {
         $form = new ConfigForm();
         $data = $form->data;
-        $object = new \Zend\Stdlib\ArrayObject($data);
+        $object = new \Laminas\Stdlib\ArrayObject($data);
         $form->bind($object);
         if ($this->getRequest()->isPost()) {
             $data = $this->getRequest()->getPost();
@@ -158,7 +158,7 @@ class IndexController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $entity = $this->objectManager->getRepository(Request::class)
             ->getRequest($id);
-        $validator = new \Zend\Validator\Csrf('csrf');
+        $validator = new \Laminas\Validator\Csrf('csrf');
         $token = $validator->getHash();
         return ['request' => $entity,'csrf' => $token];
     }
@@ -173,7 +173,7 @@ class IndexController extends AbstractActionController
     public function scheduleAction()
     {
         $request_id = $this->params()->fromRoute('id');
-        $validator = new \Zend\Validator\Csrf('csrf');
+        $validator = new \Laminas\Validator\Csrf('csrf');
         $token = $this->params()->fromPost('csrf');
         if (! $validator->isValid($token)) {
             return new JsonModel(['status' => 'error','message' =>

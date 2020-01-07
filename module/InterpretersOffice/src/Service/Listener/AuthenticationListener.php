@@ -4,8 +4,8 @@
 
 namespace InterpretersOffice\Service\Listener;
 
-use Zend\EventManager\Event;
-use Zend\Log\Logger;
+use Laminas\EventManager\Event;
+use Laminas\Log\Logger;
 use Doctrine\ORM\EntityManager;
 use InterpretersOffice\Entity\User;
 

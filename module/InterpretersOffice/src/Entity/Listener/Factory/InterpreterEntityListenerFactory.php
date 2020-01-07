@@ -5,7 +5,7 @@
 
 namespace InterpretersOffice\Entity\Listener\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 
 use InterpretersOffice\Entity\Listener\InterpreterEntityListener;

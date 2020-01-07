@@ -4,10 +4,10 @@
 namespace InterpretersOffice\Admin\Service\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
-use Zend\Log\Filter\Priority;
-use Zend\Log\Logger;
+use Laminas\Log\Filter\Priority;
+use Laminas\Log\Logger;
 
 /**
  * db log-writer factory

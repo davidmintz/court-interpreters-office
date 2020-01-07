@@ -2,7 +2,7 @@
 
 namespace InterpretersOffice\Admin\Form\Validator;
 
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 /**
  * validates the event end time

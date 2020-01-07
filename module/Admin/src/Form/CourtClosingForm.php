@@ -1,9 +1,9 @@
 <?php /** module/Admin/src/Form/CourtClosingForm.php  */
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Form as ZendForm;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\Validator\Callback;
+use Laminas\Form\Form as LaminasForm;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\Validator\Callback;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -15,7 +15,7 @@ use InterpretersOffice\Entity\CourtClosing;
 /**
  * CourtClosingForm
  */
-class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
+class CourtClosingForm extends LaminasForm implements InputFilterProviderInterface
 {
     use CsrfElementCreationTrait;
     use ObjectManagerAwareTrait;
@@ -212,9 +212,9 @@ class CourtClosingForm extends ZendForm implements InputFilterProviderInterface
                            'min' => 4,
                            'max' => 75,
                            'messages' => [
-                           \Zend\Validator\StringLength::TOO_LONG =>
+                           \Laminas\Validator\StringLength::TOO_LONG =>
                                'maximum length allowed is %max% characters',
-                            \Zend\Validator\StringLength::TOO_SHORT =>
+                            \Laminas\Validator\StringLength::TOO_SHORT =>
                                'minimum length allowed is %min% characters',
                            ],
                        ],

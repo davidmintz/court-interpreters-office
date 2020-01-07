@@ -2,7 +2,7 @@
 /** module/Admin/views/interpreters-office/admin/people/index.phtml
  *  viewscript for main people-administration page
  */
-use Zend\Form\Element;
+use Laminas\Form\Element;
 
 $defaults = array_merge(['hat' => '','active' => 1,'name' => '','page' => 1,'id' => null], $this->defaults ?: []);
 $hat_element = (new Element\Select(

@@ -5,7 +5,7 @@
 
 namespace InterpretersOffice\Entity\Listener\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Entity\Listener\UpdateListener;
 
@@ -33,7 +33,7 @@ class UpdateListenerFactory implements FactoryInterface
         // because it causes a infinite loop/fatal error --
         // functions nested > 256 levels. sounds like bullshit to me!
         // or a cyclic dependency thing.
-        // $auth = $container->get(\Zend\Authentication\AuthenticationService::class);
+        // $auth = $container->get(\Laminas\Authentication\AuthenticationService::class);
 
         return $listener;
     }

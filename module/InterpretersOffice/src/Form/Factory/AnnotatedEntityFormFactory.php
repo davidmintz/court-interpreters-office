@@ -11,12 +11,12 @@ use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
 use InterpretersOffice\Form\Validator\UniqueObject;
 //use DoctrineModule\Validator\UniqueObject;
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 use Doctrine\Common\Persistence\ObjectManager;
-use Zend\Form\Annotation\AnnotationBuilder;
+use Laminas\Form\Annotation\AnnotationBuilder;
 use InterpretersOffice\Form\Validator\ParentLocation as ParentLocationValidator;
-use Zend\InputFilter; //\Input;
-use Zend\Form\Element\Csrf;
+use Laminas\InputFilter; //\Input;
+use Laminas\Form\Element\Csrf;
 
 /**
  * Factory for creating forms for the entities that are relatively simple.
@@ -52,7 +52,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
     }
 
     /**
-     * creates a Zend\Form\Form.
+     * creates a Laminas\Form\Form.
      *
      * factory method to instantiate and, if needed, complete initialization
      * of a Form for creating or updating the entity
@@ -96,7 +96,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                     'name' => 'csrf',
                     'validators' => [
                         [
-                            'name' => 'Zend\Validator\NotEmpty',
+                            'name' => 'Laminas\Validator\NotEmpty',
                             'options' => [
                                 'messages' => [
                                     'isEmpty' => 'security error: missing CSRF token',
@@ -104,7 +104,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
                             ],
                         ],
                         [
-                            'name' => 'Zend\Validator\Csrf',
+                            'name' => 'Laminas\Validator\Csrf',
                             'options' => [
                                 'messages' => [
                                     'notSame' => 'security error: invalid CSRF token',
@@ -254,7 +254,7 @@ class AnnotatedEntityFormFactory implements FormFactoryInterface
         // location type is required
         $input = new InputFilter\Input('type');
         /** @todo just pass an array to the input filter? */
-        $notEmptyValidator = new \Zend\Validator\NotEmpty([
+        $notEmptyValidator = new \Laminas\Validator\NotEmpty([
             'messages' => [
                 'isEmpty' => 'location type is required',
             ],

@@ -3,7 +3,7 @@
 
 namespace InterpretersOffice\Requests\Form\Validator;
 
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 use InterpretersOffice\Service\DateCalculator;
 

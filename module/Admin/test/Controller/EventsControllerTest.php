@@ -6,9 +6,9 @@ use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 
 use InterpretersOffice\Entity;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 
-use Zend\Dom;
+use Laminas\Dom;
 
 class EventControllerTest extends AbstractControllerTest
 {

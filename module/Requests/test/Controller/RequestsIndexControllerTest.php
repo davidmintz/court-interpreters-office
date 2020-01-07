@@ -11,7 +11,7 @@ use ApplicationTest\AbstractControllerTest;
 
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 
 use InterpretersOffice\Requests\Entity\Request;
 

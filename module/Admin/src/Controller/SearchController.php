@@ -2,9 +2,9 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Form\SearchForm;
 use InterpretersOffice\Entity;
@@ -29,7 +29,7 @@ class SearchController extends AbstractActionController
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
-        $this->session = new \Zend\Session\Container("event_search");
+        $this->session = new \Laminas\Session\Container("event_search");
     }
 
     public function docketSearchAction()

@@ -5,10 +5,10 @@ namespace ApplicationTest\WebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\WebDriverBy as By;
-//use Zend\Stdlib\ArrayUtils;
+//use Laminas\Stdlib\ArrayUtils;
 use PHPUnit\Framework\TestCase;
 
-//use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+//use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * rough draft of a webdriver test. this whole thing is beset with
@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
  */
 class TestTest extends TestCase
 {
- //use Zend\Stdlib\ArrayUtils;
+ //use Laminas\Stdlib\ArrayUtils;
 
     /**
      * webdriver

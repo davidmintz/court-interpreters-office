@@ -5,7 +5,7 @@
 namespace InterpretersOffice\Form\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Form\PersonForm;
 
 /**

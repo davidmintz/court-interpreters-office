@@ -111,7 +111,7 @@ $i = $this->interpreter;
                 if (! $encrypted_dob) :
                     ?><span class="text-muted">&mdash;</span><?php
                 else :
-                    echo $this->formHidden((new \Zend\Form\Element\Hidden('encrypted_dob'))
+                    echo $this->formHidden((new \Laminas\Form\Element\Hidden('encrypted_dob'))
                             ->setAttributes(['id' => 'encrypted_dob'])
                             ->setValue($encrypted_dob));
 
@@ -130,7 +130,7 @@ $i = $this->interpreter;
                 if (! $encrypted_ssn) :
                     ?><span class="text-muted">&mdash;</span><?php
                 else :
-                    echo $this->formHidden((new \Zend\Form\Element\Hidden('encrypted_ssn'))
+                    echo $this->formHidden((new \Laminas\Form\Element\Hidden('encrypted_ssn'))
                             ->setAttributes(['id' => 'encrypted_ssn'])
                             ->setValue($encrypted_ssn));
 

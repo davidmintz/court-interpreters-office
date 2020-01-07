@@ -3,12 +3,12 @@
 
 namespace InterpretersOffice\Admin\Service;
 
-use Zend\EventManager\EventInterface;
-use Zend\Log\LoggerInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Filter\Word\DashToCamelCase;
-use Zend\View\Renderer\RendererInterface as Renderer;
-use Zend\View\Model\ViewModel;
+use Laminas\EventManager\EventInterface;
+use Laminas\Log\LoggerInterface;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Filter\Word\DashToCamelCase;
+use Laminas\View\Renderer\RendererInterface as Renderer;
+use Laminas\View\Model\ViewModel;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;

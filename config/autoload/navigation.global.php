@@ -348,7 +348,7 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-            'navigation' => Zend\Navigation\Service\DefaultNavigationFactory::class,
+            'navigation' => Laminas\Navigation\Service\DefaultNavigationFactory::class,
         ],
     ],
 ];

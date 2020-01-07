@@ -5,7 +5,7 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Zend\Paginator\Paginator as ZendPaginator;
+use Laminas\Paginator\Paginator as LaminasPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\EntityManagerInterface;
@@ -73,7 +73,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
      *
      * @param int $page
      *
-     * @return ZendPaginator
+     * @return LaminasPaginator
      */
     public function findAllWithPagination($page = 1)
     {
@@ -85,7 +85,7 @@ class LanguageRepository extends EntityRepository implements CacheDeletionInterf
         $query = $this->createQuery($dql)->setMaxResults(30);
 
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
         if (! count($paginator)) {
             return null;
         }

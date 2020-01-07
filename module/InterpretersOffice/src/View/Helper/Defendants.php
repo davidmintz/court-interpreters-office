@@ -3,7 +3,7 @@
 
 namespace InterpretersOffice\View\Helper;
 
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 /**
  * View helper for displaying defendant names

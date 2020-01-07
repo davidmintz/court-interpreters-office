@@ -2,34 +2,34 @@
 
 namespace InterpretersOffice\Service;
 
-use Zend\Mail;
-use Zend\View\Model\ViewModel;
-use Zend\EventManager\EventManagerAwareTrait;
-use Zend\EventManager\EventManagerAwareInterface;
+use Laminas\Mail;
+use Laminas\View\Model\ViewModel;
+use Laminas\EventManager\EventManagerAwareTrait;
+use Laminas\EventManager\EventManagerAwareInterface;
 
-use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
-use Zend\EventManager\EventInterface;
+use Laminas\Log\LoggerAwareInterface;
+use Laminas\Log\LoggerAwareTrait;
+use Laminas\EventManager\EventInterface;
 
-use Zend\Mail\Message;
-use Zend\Mime\Message as MimeMessage;
-use Zend\Mime\Mime;
-use Zend\Mime\Part as MimePart;
-use Zend\Mail\Transport\TransportInterface;
+use Laminas\Mail\Message;
+use Laminas\Mime\Message as MimeMessage;
+use Laminas\Mime\Mime;
+use Laminas\Mime\Part as MimePart;
+use Laminas\Mail\Transport\TransportInterface;
 
-use Zend\InputFilter\Factory;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\Validator;
+use Laminas\InputFilter\Factory;
+use Laminas\InputFilter\InputFilterInterface;
+use Laminas\Validator;
 
-use Zend\Http\PhpEnvironment\Request;
+use Laminas\Http\PhpEnvironment\Request;
 
-use Zend\View\Renderer\RendererInterface as Renderer;
+use Laminas\View\Renderer\RendererInterface as Renderer;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\AccountManager;
 use InterpretersOffice\Service\EmailTrait;
-use Zend\Session\Container as SessionContainer;
+use Laminas\Session\Container as SessionContainer;
 
 /**
  * manages user account service
@@ -146,7 +146,7 @@ class AccountManager implements LoggerAwareInterface
 
     /**
      * controller plugin manager
-     * @var \Zend\Mvc\Controller\PluginManager
+     * @var \Laminas\Mvc\Controller\PluginManager
      */
     private $pluginManager;
 
@@ -174,8 +174,8 @@ class AccountManager implements LoggerAwareInterface
      * @todo This is not peculiar to this class, but universal to the whole
      * application, so it should be moved someplace sensible. There is already
      * a Form/CsrfElementCreationTrait.php that is heavily used, but this CSRF
-     * spec has arisen from cases where we use Zend\InputFilter\InputFilter
-     * without any Zend\Form\Form
+     * spec has arisen from cases where we use Laminas\InputFilter\InputFilter
+     * without any Laminas\Form\Form
      *
      * @var array
      */
@@ -222,9 +222,9 @@ class AccountManager implements LoggerAwareInterface
     /**
      * sets PluginManager
      *
-     * @param \Zend\Mvc\Controller\PluginManager  $pluginManager
+     * @param \Laminas\Mvc\Controller\PluginManager  $pluginManager
      */
-    public function setPluginManager(\Zend\Mvc\Controller\PluginManager $pluginManager)
+    public function setPluginManager(\Laminas\Mvc\Controller\PluginManager $pluginManager)
     {
         $this->pluginManager = $pluginManager;
     }
@@ -272,10 +272,10 @@ class AccountManager implements LoggerAwareInterface
     /**
      * gets password input filter for reset
      *
-     * @param \Zend\Session\Container $session
+     * @param \Laminas\Session\Container $session
      * @return InputFilterInterface
      */
-    public function getPasswordInputFilter(\Zend\Session\Container $session)
+    public function getPasswordInputFilter(\Laminas\Session\Container $session)
     {
         if ($this->passwordInputFilter) {
             return $this->passwordInputFilter;
@@ -495,7 +495,7 @@ class AccountManager implements LoggerAwareInterface
      * to verify their email address.
      *
      * @param  Entity\User $user
-     * @param  Zend\Http\Request $request
+     * @param  Laminas\Http\Request $request
      * @return self
      */
     public function register(Entity\User $user, $request)

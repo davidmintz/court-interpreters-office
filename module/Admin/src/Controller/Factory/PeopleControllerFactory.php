@@ -3,7 +3,7 @@
 
 namespace InterpretersOffice\Admin\Controller\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Admin\Controller;
 use InterpretersOffice\Admin\Controller\PeopleController;
@@ -25,7 +25,7 @@ class PeopleControllerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return Zend\Mvc\Controller\AbstractActionController
+     * @return Laminas\Mvc\Controller\AbstractActionController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {

@@ -4,12 +4,12 @@
 
 namespace InterpretersOffice\Form\View\Helper;
 
-use Zend\Form\View\Helper\FormElementErrors as ZendFormElementErrors;
+use Laminas\Form\View\Helper\FormElementErrors as LaminasFormElementErrors;
 
 /**
  * class to override ZF3 FormElementErrors helper and use our own markup.
  */
-class FormElementErrors extends ZendFormElementErrors
+class FormElementErrors extends LaminasFormElementErrors
 {
     /** @var string markup for closing the element */
     protected $messageCloseString = '</div>';

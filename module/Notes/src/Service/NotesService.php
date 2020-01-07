@@ -4,22 +4,22 @@ declare(strict_types=1);
 namespace InterpretersOffice\Admin\Notes\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Zend\Authentication\AuthenticationServiceInterface as AuthService;
+use Laminas\Authentication\AuthenticationServiceInterface as AuthService;
 use InterpretersOffice\Admin\Notes\Entity\NoteInterface;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
 use InterpretersOffice\Admin\Notes\Entity\MOTW;
 use InterpretersOffice\Admin\Notes\Entity\MOTDRepository;
 use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
 use DateTime;
-use Zend\Session\Container as SessionContainer;
+use Laminas\Session\Container as SessionContainer;
 
-use Zend\InputFilter\InputFilter;
-use Zend\Validator;
-use Zend\Filter;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Validator;
+use Laminas\Filter;
 use InterpretersOffice\Entity;
 
 use Parsedown;
-use Zend\Filter\HtmlEntities;
+use Laminas\Filter\HtmlEntities;
 
 /**
  * manages MOTW|MOTDs

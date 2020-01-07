@@ -11,9 +11,9 @@ use ApplicationTest\AbstractControllerTest;
 
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use Zend\Stdlib\Parameters;
-use Zend\Dom\Document\Query;
-use Zend\Dom\Document;
+use Laminas\Stdlib\Parameters;
+use Laminas\Dom\Document\Query;
+use Laminas\Dom\Document;
 use InterpretersOffice\Requests\Entity\Request;
 
 /**
@@ -332,7 +332,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $this->assertQuery("input#time[value='$time']");
 
         $this->assertQuery("select#eventType option");
-        $q = new \Zend\Dom\Query($this->getResponse()->getBody());
+        $q = new \Laminas\Dom\Query($this->getResponse()->getBody());
         $options = $q->execute("select#eventType option");
         $this->assertTrue(count($options) > 5);
         $selected = null;

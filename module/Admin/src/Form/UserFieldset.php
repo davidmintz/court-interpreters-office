@@ -5,10 +5,10 @@
 
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\InputFilter\InputFilterProviderInterface;
-use Zend\InputFilter\Input;
+use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\Input;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -119,13 +119,13 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
     {
 
         $this->add([
-            'type' => 'Zend\Form\Element\Hidden',
+            'type' => 'Laminas\Form\Element\Hidden',
             'name' => 'id',
             'required' => true,
             'allow_empty' => true,
         ]);
         $this->add([
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'username',
             'options' => [
                 'label' => 'username',
@@ -164,7 +164,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
             ]
         );
         $this->add([
-            'type' => 'Zend\Form\Element\Checkbox',
+            'type' => 'Laminas\Form\Element\Checkbox',
             'name' => 'active',
             'required' => true,
             'allow_empty' => false,
@@ -218,7 +218,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         /* judge names */
         $this->add([
             'name' => 'judges',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'options' => [
                 //'empty_option' => '',
                 'value_options' => [],
@@ -235,7 +235,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
         $opts = $repository->getJudgeOptions();
         $this->add([
             'name' => 'judge-select',
-            'type' => 'Zend\Form\Element\Select',
+            'type' => 'Laminas\Form\Element\Select',
             'options' => [
                 'empty_option' => '',
                 'value_options' => $opts,
@@ -323,12 +323,12 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => 'Zend\Filter\Boolean'
+                        'name' => 'Laminas\Filter\Boolean'
                     ],
                 ],
                 'validators' => [
                     [
-                        'name' => 'Zend\Validator\Callback',
+                        'name' => 'Laminas\Validator\Callback',
                         'options' => [
                             'callback' => function ($value, $context) {
                                 $person_active = $context['person']['active'];
@@ -342,7 +342,7 @@ class UserFieldset extends Fieldset implements InputFilterProviderInterface, Obj
                                 return true;
                             },
                             'messages' => [
-                                \Zend\Validator\Callback::INVALID_VALUE
+                                \Laminas\Validator\Callback::INVALID_VALUE
                                 => 'user account-enabled and person "active" settings are inconsistent',
                             ],
                         ],

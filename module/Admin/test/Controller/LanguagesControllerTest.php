@@ -10,7 +10,7 @@ namespace ApplicationTest\Controller;
 
 use InterpretersOffice\Admin\Controller\LanguagesController;
 use ApplicationTest\AbstractControllerTest;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 use InterpretersOffice\Entity;

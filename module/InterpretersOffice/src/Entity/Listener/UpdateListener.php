@@ -15,12 +15,12 @@ use InterpretersOffice\Entity\InterpreterEvent;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
 //use InterpretersOffice\Module;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Log;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Log;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerAwareTrait;
 
 /**
  * entity listener for clearing caches

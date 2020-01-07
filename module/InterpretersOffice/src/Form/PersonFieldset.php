@@ -4,14 +4,14 @@
 
 namespace InterpretersOffice\Form;
 
-use Zend\Form\Fieldset;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Form\Fieldset;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Form\Validator\NoObjectExists as NoObjectExistsValidator;
 use InterpretersOffice\Form\Validator\UniqueObject;
-use Zend\Validator;
+use Laminas\Validator;
 use InterpretersOffice\Entity\Hat;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
 
@@ -32,7 +32,7 @@ class PersonFieldset extends Fieldset implements
     protected $elements = [
 
         'lastname' => [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'lastname',
             'options' => [
                 'label' => 'last name',
@@ -43,7 +43,7 @@ class PersonFieldset extends Fieldset implements
             ],
         ],
         'firstname' => [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'firstname',
             'options' => [
                 'label' => 'first name',
@@ -54,7 +54,7 @@ class PersonFieldset extends Fieldset implements
             ],
         ],
         'middlename' => [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'middlename',
             'options' => [
                 'label' => 'middle name/initial',
@@ -65,7 +65,7 @@ class PersonFieldset extends Fieldset implements
             ],
         ],
         'email' => [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'email',
             'attributes' => [
                 'class' => 'form-control',
@@ -76,7 +76,7 @@ class PersonFieldset extends Fieldset implements
             ],
         ],
         'office_phone' => [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'office_phone',
             'required' => true,
             'allow_empty' => true,
@@ -90,7 +90,7 @@ class PersonFieldset extends Fieldset implements
 
         ],
         'mobile_phone' => [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'mobile_phone',
             'required' => false,
             'allow_empty' => true,
@@ -104,7 +104,7 @@ class PersonFieldset extends Fieldset implements
 
         ],
         'active' => [
-            'type' => 'Zend\Form\Element\Checkbox',
+            'type' => 'Laminas\Form\Element\Checkbox',
             'name' => 'active',
             //'required' => true,
             //'allow_empty' => false,
@@ -120,7 +120,7 @@ class PersonFieldset extends Fieldset implements
             ],
         ],
         'id' => [
-            'type' => 'Zend\Form\Element\Hidden',
+            'type' => 'Laminas\Form\Element\Hidden',
             'name' => 'id',
             'required' => true,
             'allow_empty' => true,
@@ -362,7 +362,7 @@ class PersonFieldset extends Fieldset implements
                     //if we want to constrain the domain to values found in a
                     //config, this would be a good place to set that up
                     [
-                        'name' => 'Zend\Validator\EmailAddress',
+                        'name' => 'Laminas\Validator\EmailAddress',
                         'options' => [
                             'messages' => [
                                 Validator\EmailAddress::INVALID => 'email address is required',
@@ -395,7 +395,7 @@ class PersonFieldset extends Fieldset implements
                 ///*
                 'filters' => [
                     [
-                        'name' => 'Zend\Filter\Boolean'
+                        'name' => 'Laminas\Filter\Boolean'
                     ],
                 ],
                 //*/

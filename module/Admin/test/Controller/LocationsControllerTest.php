@@ -8,8 +8,8 @@ use ApplicationTest\AbstractControllerTest;
 use InterpretersOffice\Admin\Controller\LocationsController;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
-use Zend\Stdlib\Parameters;
-use Zend\Dom\Query;
+use Laminas\Stdlib\Parameters;
+use Laminas\Dom\Query;
 use InterpretersOffice\Entity;
 
 /**

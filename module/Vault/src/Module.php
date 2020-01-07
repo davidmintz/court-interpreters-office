@@ -23,9 +23,9 @@ class Module
     /**
      * for now, just making sure it's working
      *
-     * @param \Zend\Mvc\MvcEvent $event
+     * @param \Laminas\Mvc\MvcEvent $event
      */
-    public function onBootstrap(\Zend\Mvc\MvcEvent $event)
+    public function onBootstrap(\Laminas\Mvc\MvcEvent $event)
     {
         //$config = $event->getApplication()->getServiceManager()->get('config')['vault'];
     }

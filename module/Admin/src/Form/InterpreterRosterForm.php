@@ -3,7 +3,7 @@
 
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 use InterpretersOffice\Form\Element\LanguageSelect;
 
 /**
@@ -38,7 +38,7 @@ class InterpreterRosterForm extends Form
 
         $this->add(
             [
-                 'type' => 'Zend\Form\Element\Select',
+                 'type' => 'Laminas\Form\Element\Select',
                  'name' => 'active',
                  'options' => [
                     'value_options' => [
@@ -57,7 +57,7 @@ class InterpreterRosterForm extends Form
 
         $this->add(
             [
-                 'type' => 'Zend\Form\Element\Select',
+                 'type' => 'Laminas\Form\Element\Select',
                  'name' => 'security_clearance_expiration',
                  'options' => [
                     'value_options' => [
@@ -75,7 +75,7 @@ class InterpreterRosterForm extends Form
         );
         $this->add(
             [
-                 'type' => 'Zend\Form\Element\Text',
+                 'type' => 'Laminas\Form\Element\Text',
                  'name' => 'name',
                  'attributes' => [
                      'id' => 'name',

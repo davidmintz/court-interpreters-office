@@ -3,11 +3,11 @@
 
 namespace InterpretersOffice\Admin\Controller\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Entity\Listener;
 use Doctrine\ORM\Events;
-use Zend\Filter\Word\CamelCaseToDash as Filter;
+use Laminas\Filter\Word\CamelCaseToDash as Filter;
 
 
 /**
@@ -23,7 +23,7 @@ class BasicEntityControllerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return Zend\Mvc\Controller\AbstractActionController
+     * @return Laminas\Mvc\Controller\AbstractActionController
      */
     public function __invoke(
         ContainerInterface $container,

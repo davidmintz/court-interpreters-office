@@ -4,7 +4,7 @@
 
 namespace InterpretersOffice\Form\Validator;
 
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 /**
  * Description of LocationType.

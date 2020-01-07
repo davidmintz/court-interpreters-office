@@ -4,7 +4,7 @@ namespace InterpretersOffice\Requests\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Cache\CacheProvider;
-use Zend\Paginator\Paginator as ZendPaginator;
+use Laminas\Paginator\Paginator as LaminasPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use Doctrine\ORM\QueryBuilder;
@@ -170,7 +170,7 @@ class RequestRepository extends EntityRepository
         $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
         if (! count($paginator)) {
             return null;
         }
@@ -209,9 +209,9 @@ class RequestRepository extends EntityRepository
      *
      * @param  Array   $criteria search parameters
      * @param  integer $page
-     * @return ZendPaginator|null
+     * @return LaminasPaginator|null
      */
-    public function search(Array $criteria, int $page = 1) : ZendPaginator
+    public function search(Array $criteria, int $page = 1) : LaminasPaginator
     {
 
         $qb = $this->getBaseQuery();
@@ -259,7 +259,7 @@ class RequestRepository extends EntityRepository
         $query = $qb->setParameters($params)->getQuery();
         $query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
 
         return $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
         // $qb = $this->getEntityManager()->createQueryBuilder()
@@ -287,7 +287,7 @@ class RequestRepository extends EntityRepository
      * @param stdClass $user
      * @param int $page
      *
-     * @return ZendPaginator
+     * @return LaminasPaginator
      */
     public function list($user, $page = 1)
     {
@@ -320,7 +320,7 @@ class RequestRepository extends EntityRepository
             $query->setParameters($parameters);
         }
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
         if (! count($paginator)) {
             return null;
         }

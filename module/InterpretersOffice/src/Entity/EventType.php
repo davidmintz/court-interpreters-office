@@ -5,7 +5,7 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -35,7 +35,7 @@ class EventType
      * @ORM\ManyToOne(targetEntity="EventCategory")
      * @ORM\JoinColumn(nullable=false)
      *
-     * @Annotation\Type("Zend\Form\Element\Select")
+     * @Annotation\Type("Laminas\Form\Element\Select")
      * Annotation\Required({"required":"true" })
      * @Annotation\Filter({"name":"StripTags"})
      * @Annotation\Options({"label":"category",

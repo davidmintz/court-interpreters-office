@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use InterpretersOffice\Entity\Person;
 use InterpretersOffice\Entity\Interpreter;
 use InterpretersOffice\Entity\Interpretable;
-use Zend\Permissions\Acl\Resource\ResourceInterface;
+use Laminas\Permissions\Acl\Resource\ResourceInterface;
 
 /**
  * Request -- entity representing a request for interpreting services

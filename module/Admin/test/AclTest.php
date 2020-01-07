@@ -27,7 +27,7 @@ class AuthenticationTest extends AbstractControllerTest
         // set it up outside the MVC context because the event listeners assume
         // an authenticated user, which we do not have
         $this->acl = new Acl($config);
-        $this->acl->setEventManager(new \Zend\EventManager\EventManager());
+        $this->acl->setEventManager(new \Laminas\EventManager\EventManager());
     }
 
     public function testAclIsAvailableFromServiceManager()

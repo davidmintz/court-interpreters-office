@@ -4,9 +4,9 @@
 
 require __DIR__.'/../../vendor/autoload.php';
 
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Openssl;
-use Zend\Console\Getopt;
+use Laminas\Crypt\BlockCipher;
+use Laminas\Crypt\Symmetric\Openssl;
+use Laminas\Console\Getopt;
 
 $opts = new Getopt(
     [

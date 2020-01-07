@@ -4,16 +4,16 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Form\InterpreterForm;
 use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-use Zend\View\Model\JsonModel;
+use Laminas\View\Model\JsonModel;
 use InterpretersOffice\Admin\Form\InterpreterRosterForm;
-use Zend\Session\Container as Session;
-use Zend\Stdlib\Parameters;
+use Laminas\Session\Container as Session;
+use Laminas\Stdlib\Parameters;
 
 /**
  * controller for admin/interpreters.

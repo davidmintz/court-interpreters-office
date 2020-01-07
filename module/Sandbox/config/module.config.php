@@ -2,8 +2,8 @@
 
 namespace Sandbox;
 
-use Zend\Router\Http\Segment;
-use Zend\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
+use Laminas\Router\Http\Literal;
 
 return [
 

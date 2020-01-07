@@ -2,9 +2,9 @@
 
 namespace InterpretersOffice\Form\User;
 
-use Zend\Form\Form;
-use Zend\Validator\ValidatorChain;
-use Zend\Validator\Callback;
+use Laminas\Form\Form;
+use Laminas\Validator\ValidatorChain;
+use Laminas\Validator\Callback;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
@@ -162,14 +162,14 @@ class RegistrationForm extends Form
         // tweak error message for "hat" element -- so very awkward and ugly.
         $chain = $inputFilter->get('user')->get('person')->get('hat')
             ->getValidatorChain();
-        /** @var \Zend\Validator\NotEmpty $shit */
+        /** @var \Laminas\Validator\NotEmpty $shit */
         $shit = $chain->getValidators()[0]['instance'];
         $shit->setOptions(['messages' =>
             [ 'isEmpty' => 'job title or department is required' ]
         ]);
 
         // make sure there is not already an existing user account
-        /** @var Zend\Validator\ValidatorChain $chain */
+        /** @var Laminas\Validator\ValidatorChain $chain */
         $chain = $inputFilter->get('user')->get('person')->get('email')->getValidatorChain();
         $objectManager = $this->objectManager;
         $form = $this;

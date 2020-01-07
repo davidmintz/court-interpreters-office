@@ -4,10 +4,10 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Stdlib\RequestInterface as Request;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\Stdlib\RequestInterface as Request;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -56,7 +56,7 @@ class DefendantsController extends AbstractActionController
     {
         //$query = $this->entityManager->createQuery();
         //echo get_class($query);
-        //echo get_class($this->getRequest());//Zend\Http\PhpEnvironment\Request
+        //echo get_class($this->getRequest());//Laminas\Http\PhpEnvironment\Request
         return new ViewModel();
     }
 
@@ -68,7 +68,7 @@ class DefendantsController extends AbstractActionController
         $viewModel = new ViewModel();
         $form = new DefendantForm($this->entityManager, ['action' => 'create']);
         $viewModel->setVariables(['form' => $form, 'title' => 'add a defendant name']);
-        /** @var Zend\Http\PhpEnvironment\Request  $request */
+        /** @var Laminas\Http\PhpEnvironment\Request  $request */
         $request = $this->getRequest();
         $entity = new Entity\Defendant();
         $form->bind($entity);

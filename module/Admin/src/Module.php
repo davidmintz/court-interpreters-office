@@ -5,14 +5,14 @@
 
 namespace InterpretersOffice\Admin;
 
-use Zend\Mvc\MvcEvent;
-use Zend\Session\SessionManager;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Session\SessionManager;
 
 use InterpretersOffice\Admin\Controller;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
 use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 
-use Zend\Uri\UriFactory;
+use Laminas\Uri\UriFactory;
 
 /**
  * Module class for our InterpretersOffice\Admin module.
@@ -39,11 +39,11 @@ class Module
     /**
      * {@inheritdoc}
      *
-     * @param \Zend\EventManager\EventInterface $event
+     * @param \Laminas\EventManager\EventInterface $event
      * interesting discussion, albeit for ZF2
      * http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
      */
-    public function onBootstrap(\Zend\EventManager\EventInterface $event)
+    public function onBootstrap(\Laminas\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
         // $eventManager = $event->getApplication()->getEventManager();
@@ -62,8 +62,8 @@ class Module
          // $fp = fopen($path,'w');
          // ftruncate($fp,0);
          // fclose($fp);
-         // $log = new \Zend\Log\Logger();
-         // $log->addWriter(new \Zend\Log\Writer\Stream($path,'a'));
+         // $log = new \Laminas\Log\Logger();
+         // $log->addWriter(new \Laminas\Log\Writer\Stream($path,'a'));
          // $sql_logger = new \InterpretersOffice\Service\SqlLogger($log);
          // $em = $container->get('entity-manager');
          // $em->getConfiguration()->setSQLLogger($sql_logger);
@@ -86,7 +86,7 @@ class Module
             $container->get(SessionManager::class);
         }
 
-        /** catch  Zend\Session\Exception\RuntimeException validation failure */
+        /** catch  Laminas\Session\Exception\RuntimeException validation failure */
         try {
             // try something a little different
             $auth = $container->get('auth');
@@ -98,13 +98,13 @@ class Module
                     if (in_array($user->role, ['administrator','manager','staff',])) {
                         $viewModel->navigation_menu = 'default';
                     } elseif ('submitter' == $user->role) {
-                        $viewModel->navigation_menu = 'Zend\Navigation\Requests';
+                        $viewModel->navigation_menu = 'Laminas\Navigation\Requests';
                     }
                 }
             } else {
                 $user = null;
             }
-        } catch (\Zend\Session\Exception\RuntimeException $e) {
+        } catch (\Laminas\Session\Exception\RuntimeException $e) {
              return $this->getRedirectionResponse($event);
         }
         $db_writer = $container->get(DbWriter::class);
@@ -192,7 +192,7 @@ class Module
             // 'session_containers' => [...] config lets you get away with this:
             // $session = $container->get('Authentication') ;
             // except that phpunit tests blow up.
-            $session = new \Zend\Session\Container('Authentication');
+            $session = new \Laminas\Session\Container('Authentication');
             $is_xhr = $request->isXmlHttpRequest();
             if ($is_xhr) {
                 $http_referrer = $request->getServer()->get('HTTP_REFERER');
@@ -221,7 +221,7 @@ class Module
              return $this->getRedirectionResponse($event);
         }
         /** try to prevent us from timing out */
-        $session = new \Zend\Session\Container('Authentication');
+        $session = new \Laminas\Session\Container('Authentication');
         if (! $session->last_access or $session->last_access < time() - 60) {
             $session->last_access = time();
         }
@@ -304,7 +304,7 @@ class Module
      *
      * @param MvcEvent $event
      *
-     * @return Zend\Http\PhpEnvironment\Response
+     * @return Laminas\Http\PhpEnvironment\Response
      */
     public function getRedirectionResponse(MvcEvent $event)
     {

@@ -6,11 +6,11 @@ use InterpretersOffice\Entity\Interpreter;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerAwareTrait;
 
-use Zend\Log\LoggerAwareInterface;
-use Zend\Log\LoggerInterface;
+use Laminas\Log\LoggerAwareInterface;
+use Laminas\Log\LoggerInterface;
 
 use SDNY\Vault\Service\Vault;
 
@@ -27,7 +27,7 @@ class InterpreterEntityListener implements EventManagerAwareInterface, LoggerAwa
     /**
      * log
      *
-     * @var Zend\Log\LoggerInterface
+     * @var Laminas\Log\LoggerInterface
      */
     protected $log;
 

@@ -10,18 +10,18 @@ use InterpretersOffice\Service\ObjectManagerAwareTrait;
 use InterpretersOffice\Admin\Service\EmailService;
 //use Doctrine\ORM\EntityManagerInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
-use Zend\Validator\EmailAddress;
-use Zend\View\Renderer\RendererInterface as Renderer;
-use Zend\View\Model\ViewModel;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Laminas\Validator\EmailAddress;
+use Laminas\View\Renderer\RendererInterface as Renderer;
+use Laminas\View\Model\ViewModel;
+use Laminas\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Request\Entity\Request;
-use Zend\Mime\Mime;
-use Zend\Mime\Part as MimePart;
-use Zend\EventManager\EventManagerAwareTrait;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\Log\LoggerAwareTrait;
-use Zend\Log\LoggerAwareInterface;
+use Laminas\Mime\Mime;
+use Laminas\Mime\Part as MimePart;
+use Laminas\EventManager\EventManagerAwareTrait;
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\Log\LoggerAwareTrait;
+use Laminas\Log\LoggerAwareInterface;
 
 /**
  * sends email from the admin/schedule interface
@@ -68,7 +68,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
     /**
      * auth
      *
-     * @var \Zend\Authentication\AuthenticationServiceInterface
+     * @var \Laminas\Authentication\AuthenticationServiceInterface
      */
     private $auth;
 
@@ -225,8 +225,8 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
     /**
      * Validates and filters data for composing message.
      *
-     * This is crude, but using Zend\InputFilter\etc for this was too
-     * complicated and we don't want or need a Zend\Form\Form.
+     * This is crude, but using Laminas\InputFilter\etc for this was too
+     * complicated and we don't want or need a Laminas\Form\Form.
      *
      * @param  Array $data
      * @return Array
@@ -236,7 +236,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
         $validation_errors = ['to' => [], 'cc' => []];
         $alpha = $whitespace = null;
         $validator = new EmailAddress();
-        $whitespace = new \Zend\Filter\PregReplace(
+        $whitespace = new \Laminas\Filter\PregReplace(
                  ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
         if (! isset($data['to'])) {
             $validation_errors['to'][] = 'at least one "To" address is required';

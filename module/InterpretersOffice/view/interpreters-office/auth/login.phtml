@@ -17,7 +17,7 @@ foreach (['success','default','error','info','warning'] as $ns) {
 <div class="row">
     <div class="mx-auto">
             <!--<p style="margin:1em 0 2em 0;font-size:120%">Please log in to continue.</p>-->
-            <?php if ($this->status && $this->status != \Zend\Authentication\Result::SUCCESS) :?>
+            <?php if ($this->status && $this->status != \Laminas\Authentication\Result::SUCCESS) :?>
             <div class="alert alert-warning alert-dismissible">authentication failed: invalid identity and/or password. <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
             <?php else :?>
             <?php endif;?>

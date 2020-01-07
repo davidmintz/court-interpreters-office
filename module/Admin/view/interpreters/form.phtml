@@ -21,7 +21,7 @@ $formAction = $this->layout()->action == 'add' ? $this->url('interpreters/add')
 $form = $this->form;
 $form->add([
     'name' => 'submit',
-    'type' => 'Zend\Form\Element\Submit',
+    'type' => 'Laminas\Form\Element\Submit',
     'attributes' => ['value' => 'save','class' => 'btn btn-success btn-lg'],
 ])->setAttribute('method', 'post')
    ->setAttribute('action', $formAction)
@@ -159,7 +159,7 @@ endif;?>
                             ?><div class="input-group"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-info" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
                             <?php
                             echo $this->formElementErrors($element);
-                            $hidden = (new \Zend\Form\Element\Hidden('encrypted.'.$elementName))->setValue($encrypted);
+                            $hidden = (new \Laminas\Form\Element\Hidden('encrypted.'.$elementName))->setValue($encrypted);
                             echo $this->formHidden($hidden);
                             ?>
                         </div>

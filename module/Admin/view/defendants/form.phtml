@@ -6,7 +6,7 @@ $action = $this->layout()->action;
 ;
 $form->add([
     'name' => 'submit',
-    'type' => 'Zend\Form\Element\Submit',
+    'type' => 'Laminas\Form\Element\Submit',
     'attributes' => ['value' => 'save','id' => 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
 ])->setAttribute('method', 'post')->setAttribute('data-redirect_url', $this->url("admin-defendants"));
 

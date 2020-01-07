@@ -8,7 +8,7 @@
 return [
     // Additional modules to include when in development mode
     'modules' => [
-        'ZendDeveloperTools',
+        'Laminas\DeveloperTools',
     ],
     // Configuration overrides during development mode
     'module_listener_options' => [

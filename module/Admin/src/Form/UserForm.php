@@ -5,17 +5,17 @@
 
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Form;
+use Laminas\Form\Form;
 use InterpretersOffice\Form\PersonFieldset;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use InterpretersOffice\Admin\Form\UserFieldset;
-use Zend\Validator\EmailAddress;
-use Zend\Validator\ValidatorChain;
-use Zend\Validator\Callback;
-use Zend\Validator\NotEmpty;
-use Zend\InputFilter\Input;
+use Laminas\Validator\EmailAddress;
+use Laminas\Validator\ValidatorChain;
+use Laminas\Validator\Callback;
+use Laminas\Validator\NotEmpty;
+use Laminas\InputFilter\Input;
 
 use InterpretersOffice\Entity;
 

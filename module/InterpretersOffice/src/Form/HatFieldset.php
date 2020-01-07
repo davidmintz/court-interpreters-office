@@ -4,7 +4,7 @@
 
 namespace InterpretersOffice\Form;
 
-use Zend\Form\Fieldset;
+use Laminas\Form\Fieldset;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -31,7 +31,7 @@ class HatFieldset extends Fieldset implements ObjectManagerAwareInterface
         ->setObject(new Entity\Hat());
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'name',
             'attributes' => ['id' => 'name'],
              'options' => ['label' => 'Name of Hat'],
@@ -39,7 +39,7 @@ class HatFieldset extends Fieldset implements ObjectManagerAwareInterface
         );
 
         $this->add([
-            'type' => 'Zend\Form\Element\Checkbox',
+            'type' => 'Laminas\Form\Element\Checkbox',
             'name' => 'anonymous',
             'attributes' => ['id' => 'anonymous'],
             'options' => ['label' => 'allow anonymous?'],

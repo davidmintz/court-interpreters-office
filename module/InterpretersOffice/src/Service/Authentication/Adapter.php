@@ -7,7 +7,7 @@ namespace InterpretersOffice\Service\Authentication;
 
 use InterpretersOffice\Entity\User;
 use Doctrine\ORM\EntityManager;
-use Zend\Authentication\Adapter\AbstractAdapter;
+use Laminas\Authentication\Adapter\AbstractAdapter;
 
 /**
  * Authentication adapter.
@@ -58,7 +58,7 @@ class Adapter extends AbstractAdapter
         $identity = $query->getOneOrNullResult();
 
         if (! $identity) {
-            $this->authenticationResultInfo['code'] = \Zend\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
+            $this->authenticationResultInfo['code'] = \Laminas\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
 
             return $this->createAuthenticationResult();

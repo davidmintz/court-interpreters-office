@@ -7,7 +7,7 @@ namespace InterpretersOffice\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-use Zend\Paginator\Paginator as ZendPaginator;
+use Laminas\Paginator\Paginator as LaminasPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 
@@ -61,7 +61,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
      *
      * @param Array $params
      * @param int $page
-     * @return ZendPaginator|Array
+     * @return LaminasPaginator|Array
      */
     public function search($params, $page = 1)
     {
@@ -144,7 +144,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $query = $qb->getQuery()->useResultCache(true, null, 'interpreter-search-query');
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
 
-        $paginator = new ZendPaginator($adapter);
+        $paginator = new LaminasPaginator($adapter);
         //echo $qb->getDQL();
         $found = $paginator->getTotalItemCount();
         if (! $found) {

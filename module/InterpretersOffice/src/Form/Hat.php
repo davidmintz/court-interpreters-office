@@ -6,7 +6,7 @@ namespace InterpretersOffice\Form;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
-use Zend\Form\Form;
+use Laminas\Form\Form;
 
 /**
  * form for "Hat" entity. still incomplete.

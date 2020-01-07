@@ -3,16 +3,16 @@
 
 namespace InterpretersOffice\Admin\Form;
 
-use Zend\Form\Form as ZendForm;
+use Laminas\Form\Form as LaminasForm;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 
-//use Zend\EventManager\ListenerAggregateInterface;
-//use Zend\EventManager\ListenerAggregateTrait;
-//use Zend\EventManager\EventManagerInterface;
-//use Zend\EventManager\EventInterface;
+//use Laminas\EventManager\ListenerAggregateInterface;
+//use Laminas\EventManager\ListenerAggregateTrait;
+//use Laminas\EventManager\EventManagerInterface;
+//use Laminas\EventManager\EventInterface;
 
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
@@ -22,7 +22,7 @@ use InterpretersOffice\Service\ObjectManagerAwareTrait;
  * form for Event entity
  *
  */
-class DefendantForm extends ZendForm implements InputFilterProviderInterface
+class DefendantForm extends LaminasForm implements InputFilterProviderInterface
 {
 
      use CsrfElementCreationTrait;
@@ -55,7 +55,7 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
         $this->addCsrfElement('defendant_csrf');
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'surnames',
             'options' => [
                 'label' => 'surname(s)',
@@ -68,7 +68,7 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
         );
         $this->add(
             [
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
             'name' => 'given_names',
             'options' => [
                 'label' => 'given name(s)',
@@ -81,7 +81,7 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
         );
 
         $this->add([
-            'type' => 'Zend\Form\Element\Hidden',
+            'type' => 'Laminas\Form\Element\Hidden',
             'name' => 'id',
             'required' => true,
             'allow_empty' => true,
@@ -91,13 +91,13 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
         /* TO BE CONTINUED: if $option['action'] == update, more elements... */
         //if ($options['action'] == 'update') {
             $this->add([
-                'type' => 'Zend\Form\Element\Select',
+                'type' => 'Laminas\Form\Element\Select',
                 'name' => 'occurrences',
                 'attributes' => ['multiple' => 'multiple'],
 
             ]);
             $this->add([
-                'type' => 'Zend\Form\Element\Radio',
+                'type' => 'Laminas\Form\Element\Radio',
                 'name' => 'duplicate_resolution',
                 'attributes' => ['id' => 'duplicate_resolution'],
                 'options' => [
@@ -181,7 +181,7 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
     {
         $input = $this->getInputFilter()->get('occurrences')
             ->setRequired(true)->setAllowEmpty(false);
-        $validator = new \Zend\Validator\NotEmpty([
+        $validator = new \Laminas\Validator\NotEmpty([
             'messages' => ['isEmpty' => "at least one of the above must be selected"],
             'break_chain_on_failure' => true,
         ]);
@@ -199,7 +199,7 @@ class DefendantForm extends ZendForm implements InputFilterProviderInterface
     {
         $input = $this->getInputFilter()->get('duplicate_resolution')
             ->setRequired(true)->setAllowEmpty(false);
-        $validator = new \Zend\Validator\NotEmpty([
+        $validator = new \Laminas\Validator\NotEmpty([
             'messages' => ['isEmpty' => "at least one of the above must be selected"],
             'break_chain_on_failure' => true,
         ]);

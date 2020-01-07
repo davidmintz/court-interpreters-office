@@ -4,7 +4,7 @@
 namespace InterpretersOffice\Requests\Entity\Listener\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 
 /**

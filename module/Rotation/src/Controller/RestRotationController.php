@@ -3,9 +3,9 @@
 
 namespace InterpretersOffice\Admin\Rotation\Controller;
 
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Model\JsonModel;
-use Zend\Validator\Csrf;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\View\Model\JsonModel;
+use Laminas\Validator\Csrf;
 use InterpretersOffice\Admin\Rotation\Service\TaskRotationService;
 use InterpretersOffice\Admin\Rotation\Entity\Task;
 

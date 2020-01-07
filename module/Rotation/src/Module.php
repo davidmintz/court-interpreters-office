@@ -3,12 +3,12 @@
 
 namespace InterpretersOffice\Admin\Rotation;
 
-use Zend\EventManager\EventInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\View\ViewModel;
-use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
-use Zend\Navigation\Navigation;
+use Laminas\EventManager\EventInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\View\ViewModel;
+use Laminas\Session\Container;
+use Laminas\View\Model\JsonModel;
+use Laminas\Navigation\Navigation;
 use function \date;
 /**
  * Module class for our InterpretersOffice\Admin\Rotation module.
@@ -47,9 +47,9 @@ class Module {
         $eventManager = $event->getApplication()->getEventManager();
         // $eventManager->attach(MvcEvent::EVENT_ROUTE, function($e) use ($log,$container){
         //     $log->debug("event ROUTE listener running in ".__NAMESPACE__);
-        //     /** @var Zend\Navigation\Navigation $nav */
-        //     $nav = $container->get('Zend\Navigation\Default');
-        //     /** @var  Zend\Navigation\Page\Mvc $menu */
+        //     /** @var Laminas\Navigation\Navigation $nav */
+        //     $nav = $container->get('Laminas\Navigation\Default');
+        //     /** @var  Laminas\Navigation\Page\Mvc $menu */
         //     $menu = $nav->findOneBy('label', 'admin');
         //
         //     $menu->addPage([

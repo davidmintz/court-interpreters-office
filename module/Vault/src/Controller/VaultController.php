@@ -4,18 +4,18 @@
  */
 namespace SDNY\Vault\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\JsonModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\JsonModel;
 
 use SDNY\Vault\Service\Vault;
 use SDNY\Vault\Service\VaultException;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Laminas\Authentication\AuthenticationServiceInterface;
 
 
 
-//use Zend\Session\SessionManager;
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Openssl;
+//use Laminas\Session\SessionManager;
+use Laminas\Crypt\BlockCipher;
+use Laminas\Crypt\Symmetric\Openssl;
 
 /**
  *
@@ -35,7 +35,7 @@ class VaultController extends AbstractActionController
     /**
      * auth service
      *
-     * @var Zend\Authentication\AuthenticationServiceInterface
+     * @var Laminas\Authentication\AuthenticationServiceInterface
      */
     protected $auth;
 
@@ -67,7 +67,7 @@ class VaultController extends AbstractActionController
         if (! isset($params['csrf'])) {
             throw new VaultException("missing CSRF (security) token");
         }
-        $validator = new \Zend\Validator\Csrf(['name' => 'csrf']);
+        $validator = new \Laminas\Validator\Csrf(['name' => 'csrf']);
         if (! $validator->isValid($params['csrf'])) {
              throw new VaultException("invalid CSRF (security) token");
         }

@@ -5,13 +5,13 @@
 
 namespace InterpretersOffice\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Session\Container as Session;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Form\FormInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\Session\Container as Session;
+use Laminas\InputFilter\InputFilterInterface;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Form\FormInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Form\User\RegistrationForm;
@@ -259,7 +259,7 @@ class AccountController extends AbstractActionController
             return new ViewModel(['result' => $result,'token' => $token]);
         }
         // else, it's a POST
-        /** @var Zend\InputFilter\InputFilterInterface $filter */
+        /** @var Laminas\InputFilter\InputFilterInterface $filter */
         $filter = $this->accountManager->getPasswordInputFilter($session);
         $filter->setData($this->params()->fromPost());
         $valid = $filter->isValid();

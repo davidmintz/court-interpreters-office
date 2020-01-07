@@ -6,11 +6,11 @@
 
 namespace ApplicationTest;
 
-use Zend\Stdlib\ArrayUtils;
-use Zend\Stdlib\Parameters;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\Stdlib\Parameters;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
-use Zend\Dom\Document;
+use Laminas\Dom\Document;
 
 /**
  * base class for unit tests.

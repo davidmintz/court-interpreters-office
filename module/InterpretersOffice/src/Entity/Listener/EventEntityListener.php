@@ -4,14 +4,14 @@ namespace InterpretersOffice\Entity\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerAwareTrait;
 
-use Zend\Log\LoggerAwareInterface;
+use Laminas\Log\LoggerAwareInterface;
 
 use InterpretersOffice\Entity;
-use Zend\Log;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Laminas\Log;
+use Laminas\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Service\Authentication\CurrentUserTrait;
 use Doctrine\ORM\EntityManager;
 

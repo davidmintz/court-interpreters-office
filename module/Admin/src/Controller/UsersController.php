@@ -6,14 +6,14 @@ namespace InterpretersOffice\Admin\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\EventInterface;
-use Zend\Authentication\AuthenticationService;
-use Zend\View\Model\JsonModel;
-use Zend\Authentication\AuthenticationServiceInterface;
-use Zend\Session\Container as Session;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventInterface;
+use Laminas\Authentication\AuthenticationService;
+use Laminas\View\Model\JsonModel;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Laminas\Session\Container as Session;
 
 use InterpretersOffice\Admin\Form\UserForm;
 use InterpretersOffice\Entity;
@@ -52,7 +52,7 @@ class UsersController extends AbstractActionController implements Authentication
     /**
      * session
      *
-     * @var Zend\Session\Container
+     * @var Laminas\Session\Container
      */
     protected $session;
 
@@ -200,7 +200,7 @@ class UsersController extends AbstractActionController implements Authentication
             ]);
         }
 
-        $validator = new \Zend\Validator\EmailAddress();
+        $validator = new \Laminas\Validator\EmailAddress();
         $valid = $validator->isValid($email);
         if (! $valid) {
             return new JsonModel([
@@ -416,7 +416,7 @@ class UsersController extends AbstractActionController implements Authentication
                 ['errorMessage'=> 'Sorry, invalid request parameters']);
         }
         $this->session->params = $get;
-        /** @var Zend\Paginator\Paginator $paginator */
+        /** @var Laminas\Paginator\Paginator $paginator */
         $paginator = $repository->paginate($get['term'],
             ['search_by'=>$get['search_by'],
             'page'=>$this->params()->fromQuery('page',1)]);

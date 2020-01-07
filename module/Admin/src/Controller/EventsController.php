@@ -5,12 +5,12 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
-use Zend\EventManager\Event;
-use Zend\Authentication\AuthenticationServiceInterface;
+use Laminas\EventManager\Event;
+use Laminas\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Form;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
@@ -295,7 +295,7 @@ class EventsController extends AbstractActionController
         if (! $this->getRequest()->isPost()) {
             return $this->redirect()->toRoute('events');
         }
-        $validator = new \Zend\Validator\Csrf('csrf', ['timeout' => 600]);
+        $validator = new \Laminas\Validator\Csrf('csrf', ['timeout' => 600]);
         $token = $this->params()->fromPost('csrf');
         if (! $validator->isValid($token)) {
             return new JsonModel(['status' => 'error','message' =>
@@ -332,13 +332,13 @@ class EventsController extends AbstractActionController
     /**
      * generates markup for an interpreter
      *
-     * @return Zend\Http\PhpEnvironment\Response
+     * @return Laminas\Http\PhpEnvironment\Response
      * @throws \RuntimeException
      */
     public function interpreterTemplateAction()
     {
         $helper = new Form\View\Helper\InterpreterElementCollection();
-        $factory = new \Zend\InputFilter\Factory();
+        $factory = new \Laminas\InputFilter\Factory();
         $inputFilter = $factory->createInputFilter(
             $helper->getInputFilterSpecification()
         );
@@ -371,7 +371,7 @@ class EventsController extends AbstractActionController
             $result = $repository->getInterpreterOptionsForLanguage($language_id);
         }
         if ($this->params()->fromQuery('csrf')) {
-            $csrf = (new \Zend\Validator\Csrf('csrf'))->getHash();
+            $csrf = (new \Laminas\Validator\Csrf('csrf'))->getHash();
             $result = [
                 'options' => $result,
                 'csrf' => $csrf,

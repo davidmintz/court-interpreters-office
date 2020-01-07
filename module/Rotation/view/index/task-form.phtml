@@ -70,7 +70,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/tasks-form.js'));
                 <button type="button" id="btn-save" name="button" class="btn btn-success">save</button>
             </div>
         </div>
-        <?php $hash = (new \Zend\Validator\Csrf(['timeout'=>6000]))->getHash() ?>
+        <?php $hash = (new \Laminas\Validator\Csrf(['timeout'=>6000]))->getHash() ?>
         <input type="hidden" name="csrf" value="<?=$hash?>">
     </form>
 </div>

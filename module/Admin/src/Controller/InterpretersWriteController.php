@@ -2,17 +2,17 @@
 
 namespace InterpretersOffice\Admin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Mvc\MvcEvent;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\MvcEvent;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Form\InterpreterForm;
 use InterpretersOffice\Entity;
 use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Admin\Form\View\Helper\LanguageElementCollection as
     LanguageCollectionHelper;
-use Zend\Stdlib\Parameters;
+use Laminas\Stdlib\Parameters;
 use SDNY\Vault\Service\VaultException;
 use SDNY\Vault\Service\Vault;
 
@@ -156,9 +156,9 @@ class InterpretersWriteController extends AbstractActionController
     {
         /* // very annoying: '201' is considered a 4-digit year
         $value = '04/23/201';
-        $validator = new \Zend\Validator\Date([
+        $validator = new \Laminas\Validator\Date([
            'format' => 'm/d/Y',
-           'messages' => [\Zend\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+           'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
         ]);*/
         //var_dump($validator->isValid($value));
 
@@ -176,7 +176,7 @@ class InterpretersWriteController extends AbstractActionController
             'dob' => $entity->getDob(),
             'ssn' => $entity->getSsn(),
         ];
-        /** @var \Zend\Form\Form $form */
+        /** @var \Laminas\Form\Form $form */
         $form = new InterpreterForm(
             $this->entityManager,
             ['action' => 'update','vault_enabled' => $this->vault_enabled,
@@ -188,7 +188,7 @@ class InterpretersWriteController extends AbstractActionController
         $viewModel->setVariables(['form' => $form, 'id' => $id,
             'has_related_entities' => $repo->hasRelatedEntities($entity),
             // for the re-authentication dialog
-            'login_csrf' => (new \Zend\Form\Element\Csrf('login_csrf'))
+            'login_csrf' => (new \Laminas\Form\Element\Csrf('login_csrf'))
                         ->setAttribute('id', 'login_csrf')
             ]);
         if ($has_related_entities) {
@@ -233,7 +233,7 @@ class InterpretersWriteController extends AbstractActionController
     /**
      * were the dob and ssn fields modified?
      * @param Array $values_before the dob and ssn used when form was loaded
-     * @param $input \Zend\Stdlib\Parameters
+     * @param $input \Laminas\Stdlib\Parameters
      * @return boolean
      */
     public function getEncryptedFieldsWereModified(
@@ -320,7 +320,7 @@ class InterpretersWriteController extends AbstractActionController
      /**
      * renders HTML fragment for an interpreter language
      *
-     * @return Zend\Http\PhpEnvironment\Response
+     * @return Laminas\Http\PhpEnvironment\Response
      */
     public function languageFieldsetAction()
     {

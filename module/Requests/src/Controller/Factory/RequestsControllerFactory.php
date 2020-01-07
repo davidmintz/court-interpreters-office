@@ -3,7 +3,7 @@
 
 namespace InterpretersOffice\Requests\Controller\Factory;
 
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Interop\Container\ContainerInterface;
 use InterpretersOffice\Requests\Controller;
 use InterpretersOffice\Entity\Listener;
@@ -37,11 +37,11 @@ class RequestsControllerFactory implements FactoryInterface
      * @param string             $requestedName
      * @param array              $options
      *
-     * @return \Zend\Mvc\Controller\AbstractActionController
+     * @return \Laminas\Mvc\Controller\AbstractActionController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        // @var \Zend\Log\Logger $log */
+        // @var \Laminas\Log\Logger $log */
         //$log = $container->get('log');
 
         $entityManager = $container->get('entity-manager');

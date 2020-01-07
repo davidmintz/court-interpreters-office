@@ -1,6 +1,6 @@
 <?php
 namespace InterpretersOffice\Admin\Rotation;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Segment;
 return [
 
     'rotations' => [

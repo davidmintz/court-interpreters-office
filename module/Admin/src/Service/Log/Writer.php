@@ -2,7 +2,7 @@
 
 namespace InterpretersOffice\Admin\Service\Log;
 
-use Zend\Log\Writer\AbstractWriter;
+use Laminas\Log\Writer\AbstractWriter;
 
 /**
  * Writer for logging application-event messages
@@ -53,7 +53,7 @@ class Writer extends AbstractWriter
     }
 
     /**
-     * implements Zend\Log\Writer\WriterInterface
+     * implements Laminas\Log\Writer\WriterInterface
      *
      * @param  Array  $event
      * @return void

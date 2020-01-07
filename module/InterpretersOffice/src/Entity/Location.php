@@ -5,7 +5,7 @@
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Zend\Form\Annotation;
+use Laminas\Form\Annotation;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
@@ -103,7 +103,7 @@ class Location
      * whether the location is "active" or not (i.e., archival).
      *
      * @ORM\Column(type="boolean",options={"nullable":false,"default":true})
-     * @Annotation\Type("Zend\Form\Element\Radio")
+     * @Annotation\Type("Laminas\Form\Element\Radio")
      * @Annotation\Attributes({"class":"form-control","value":1})
      * @Annotation\Options({"label":"is this location actively in use?",
      *  "value_options" : {"1":"yes","0":"no"}

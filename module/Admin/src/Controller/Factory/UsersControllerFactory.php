@@ -3,7 +3,7 @@
 namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Controller\UsersController;
 
 /**

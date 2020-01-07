@@ -1,7 +1,7 @@
 <?php /** based on https://stackoverflow.com/questions/14884572/zend-framework-2-navigation-menu-twitter-bootstrap-integration */
 $route = $this->layout()->routeMatch;?>
 <ul class="navbar-nav mr-auto"><?php
-/* @var $page Zend\Navigation\Page\Mvc */
+/* @var $page Laminas\Navigation\Page\Mvc */
 foreach ($this->container as $page) :
     $label = $page->getLabel();
     $active = false;

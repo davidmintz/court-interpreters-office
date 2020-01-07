@@ -6,7 +6,7 @@ use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
 use ApplicationTest\DataFixture;
 
-use Zend\Dom\Query;
+use Laminas\Dom\Query;
 
 use InterpretersOffice\Service\AccountManager;
 
@@ -85,7 +85,7 @@ class AccountControllerTest extends AbstractControllerTest
         $post['user']['person']['hat'] = $hat_id;
         $post['user']['judges'][] = $judge_id;
         $post['user']['id']='';
-        /** @var $sharedEvents Zend\EventManager\SharedEventManagerInterface */
+        /** @var $sharedEvents Laminas\EventManager\SharedEventManagerInterface */
         //$sharedEvents = $this->getApplicationServiceLocator()->get('SharedEventManager');
         //$this->prophet = $accountManager = $this->prophesize(AccountManager::class);
         // $sharedEvents->attach('InterpretersOffice\Controller\AccountController',
@@ -99,7 +99,7 @@ class AccountControllerTest extends AbstractControllerTest
         $this->assertTrue($obj->status === "success");
         // $accountManager->register(
         //     \Prophecy\Argument::type(\InterpretersOffice\Entity\User::class),
-        //     \Prophecy\Argument::type(\Zend\Http\PhpEnvironment\Request::class))
+        //     \Prophecy\Argument::type(\Laminas\Http\PhpEnvironment\Request::class))
         //     ->shouldBeCalled();
 
         /** @var $accountManager \InterpretersOffice\Service\AccountManager */

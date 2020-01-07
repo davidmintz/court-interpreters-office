@@ -5,15 +5,15 @@
 
 namespace SDNY\Vault\Service;
 
-use Zend\Http\Client;
+use Laminas\Http\Client;
 
-use Zend\Crypt\BlockCipher;
-use Zend\Crypt\Symmetric\Openssl;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
+use Laminas\Crypt\BlockCipher;
+use Laminas\Crypt\Symmetric\Openssl;
+use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerAwareTrait;
 
 /**
- * Extension of Zend\Http\Client for communciating with Hashicorp Vault
+ * Extension of Laminas\Http\Client for communciating with Hashicorp Vault
  *
  * The purpose is enable us to store sensitive data in MySQL using symmetrical
  * encryption while avoiding having to store the encryption key in plain text
