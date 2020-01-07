@@ -107,12 +107,12 @@ $(function(){
     /** form submission handler for edit|create form */
     $("#tab-content-notes").on("click","#notes-form button.btn-success",function(e){
         var form = $("#notes-form");
-        e.preventDefault();
-        if (form.data("multiDate")) {
-            console.warn("TO DO: implement multi-date editing");
-            return;
-        }
         var type = $("input[name='type']").val();
+        e.preventDefault();
+        if (type === 'motd' && form.data("multiDate")) {
+            console.warn("TO DO: implement multi-date editing");
+            //return;
+        }
         var id = $(`input[name="id"]`).val();
         var url, method;
         if (id) {

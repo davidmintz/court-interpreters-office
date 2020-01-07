@@ -57,6 +57,10 @@ class NotesController extends AbstractRestfulController
      */
     public function update($id, $data)
     {
+        $type =  $this->params()->fromRoute('type');
+        if ($type == 'motd' && isset($data['dates'])) {
+            return $this->batchEdit($data,$id);
+        }
         $service = $this->notesService;
         $inputFilter = $service->getInputFilter();
         $inputFilter->setData($data);
@@ -66,12 +70,24 @@ class NotesController extends AbstractRestfulController
                 'validation_errors' => $errors,
             ]);
         }
-        $type =  $this->params()->fromRoute('type');
+
 
         return new JsonModel(
             $service->update($type, (int)$id, $inputFilter->getValues())
         );
 
+    }
+
+    /**
+     *
+     * @param  Array  $data
+     * @param  int $id
+     * @return JsonModel
+     */
+    protected function batchEdit(Array $data, int $id = null): JsonModel
+    {
+        //$data['info'] = "shit is not yet implemented";
+        return new JsonModel($this->notesService->batchEdit($data, $id));
     }
 
     /**
@@ -82,6 +98,10 @@ class NotesController extends AbstractRestfulController
      */
     public function create($data)
     {
+        $type =  $this->params()->fromRoute('type');
+        if ($type == 'motd' && isset($data['dates'])) {
+            return $this->batchEdit($data,$id);
+        }
         $service = $this->notesService;
         $inputFilter = $service->getInputFilter();
         $inputFilter->remove('modified');

@@ -63,7 +63,7 @@ class NotesService
     /**
      * whether to fetch task-assignments with MOT[DW]
      *
-     * @var book
+     * @var boolean
      */
     private $include_task_rotation;
 
@@ -347,6 +347,29 @@ class NotesService
         $this->em->flush();
 
         return [$type => $entity, 'status'=>'success'];
+    }
+    /**
+     * batch-processes MOTDs for multiple dates
+     *
+     * work in progress.
+     *
+     * @param  Array  $data
+     * @param  int $id
+     * @return Array
+     */
+    public function batchEdit(Array $data, int $id = null) : Array
+    {
+        /** @todo modify the inputfilter?? */
+        $filter = $this->getInputFilter();
+        $dates = $data['dates'] ?? null;
+        if (! $dates) {
+            // bla bla yadda yadda
+
+        }
+        if (isset($data['date'])) { // which it should be
+
+        }
+        return ['data'=>$data,'status'=>'not yet implemented','shit'=> 'eat me'];
     }
 
     public function create(Array $data) : Array
