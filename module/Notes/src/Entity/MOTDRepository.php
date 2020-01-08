@@ -88,6 +88,19 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
     }
 
     /**
+     * gets MOTDs for $dates
+     *
+     * @param  Array $dates array of strings in YYYY-MM-DD format
+     * @return Array
+     */
+    public function getBatch(Array $dates): Array
+    {
+        $DQL = 'SELECT e FROM '.MOTD::class. ' e INDEX BY e.date WHERE e.date IN (:dates) ORDER BY e.date';
+        $q = $this->getEntityManager()->createQuery($DQL)->setParameters(['dates'=>$dates]);
+
+        return $q->getResult();
+    }
+    /**
      * gets basic DQL querybuilder for MOTD|MOTW
      *
      * @param  string $type

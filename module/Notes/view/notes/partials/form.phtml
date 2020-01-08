@@ -1,13 +1,16 @@
 <?php $method = $this->action == 'create'?'POST':'PUT'?>
 <form data-multi-date="0" data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $action?>" method="<?php echo $method?>">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" hidden>
+        <button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>
+    </div>
     <div class="form-row">
         <!-- <label class="col-sm-2 col-form-label text-md-right pr-1" for="content">content</label> -->
         <div class="col">
             <button title="enable|disable batch-editing of MOTDs" id="btn-multi-date" class="multi-date btn btn-outline-primary btn-sm" <?php if ($this->type != 'motd'): ?>hidden<?php endif;?>>toggle multi-date editing</button>
             <div class="border rounded multi-date py-0 px-1" hidden>
                 <p class="text-muted mt-0">Choose the dates for which you want to edit the MOTD. <em>(Note that there is no automated method for reversing this operation, so please use caution.)</em></p>
-                <div class="d-flex flex-wrap"id="dates">
-                    <input name="dates" value="" type="hidden">
+                <div class="d-flex flex-wrap" id="dates">
+                    <input name="dates" value="" type="hidden" disabled>
                 </div>
                 <label for="text">text to insert: </label>
                     <textarea class="form-control" name="text" id="text" cols="12" rows="2"></textarea>

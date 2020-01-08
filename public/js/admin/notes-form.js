@@ -20,7 +20,7 @@ var append_motd_date = function(dateText) {
         // already exists
         return;
     }
-    var shit = `<div class="d-inline border border-info rounded mr-1 pl-2 text-monospace" style="font-size:90%">
+    var shit = `<div class="d-inline border border-info rounded mr-1 pl-2 text-monospace motd-date" style="font-size:90%">
     <input type="hidden" name="dates[]" value="${dateText}">
     ${dateString} <button class="btn btn-outline-secondary btn-sm btn-remove-item my-1 border-0" title="remove">
     <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove this defendant</span></button></div>`;
@@ -97,7 +97,6 @@ $(function(){
         e.preventDefault();
         var btn = $(this);
         var path = this.href.split("/").slice(3).join("/");
-        console.warn("doing shit: load form for "+`/${path}`);
         var content_div = btn.prev("div");
         $.get(`/${path}`).then(function(html){
             btn.hide();
@@ -106,35 +105,53 @@ $(function(){
     });
     /** form submission handler for edit|create form */
     $("#tab-content-notes").on("click","#notes-form button.btn-success",function(e){
+        e.preventDefault();
         var form = $("#notes-form");
         var type = $("input[name='type']").val();
-        e.preventDefault();
-        if (type === 'motd' && form.data("multiDate")) {
-            console.warn("TO DO: implement multi-date editing");
-            //return;
+        var is_multidate = type === 'motd' && form.data("multiDate");
+        if (is_multidate) {
+            console.warn("doing multi-date editing, enabling hidden date input");
+            $(`#dates input[type="hidden"]`).removeAttr("disabled");
+        } else {
+            console.warn("NOT multi-date editing, disabling hidden date input");
+            $(`#dates input[type="hidden"]`).attr({disabled:true});
         }
         var id = $(`input[name="id"]`).val();
         var url, method;
         if (id) {
             // update
-            console.log("doing an update ");
+            console.log("doing an update?");
             url = `/admin/notes/update/${type}/${id}`;
             method = 'PUT';
         } else {
             // create
-            console.log("do a create");
+            console.log("doing a create?");
             url = `/admin/notes/create/${type}`;
             method = 'POST';
         }
         $.ajax({url, method, data : form.serialize()
         }).then((res)=>{
-            if (res.status === "success") {
-                // implies a needless http request but it's expedient as hell
-                $(`#calendar-${type} a.ui-state-active`).trigger("click");
-            }
             if (res.validation_errors) {
                 return displayValidationErrors(res.validation_errors);
             }
+            if (res.status === "success") {
+                if (! is_multidate) {
+                    // the datepicker could be inconsistent with the form
+                    var dp = $(`#calendar-${type}`);
+                    var dp_date = moment(dp.datepicker("getDate")).format("YYYY-MM-DD");
+                    var form_date = $("input[name=date]").val();
+                    if (dp_date !== form_date) {
+                        dp.datepicker("setDate",form_date);
+                    }
+                    $(`#calendar-${type} a.ui-state-active`).trigger("click");
+                } else { // this is multi-date edit mode, toggle back
+                    $("#btn-multi-date").trigger("click");
+                    var count = $(".motd-date").length;
+                    $("form .alert-success").prepend(`<p>Successfully created/updated MOTDs for ${count} dates.</p>`).removeAttr("hidden");
+                    //console.log(res);
+                }
+            }
+
             if (res.status === "error") {
                 var error_div = $(`<div>`).addClass("alert alert-warning validation-error");
                 // a modification timestamp mismatch?
@@ -149,7 +166,6 @@ $(function(){
                 }
                 form.prepend(error_div);
             }
-
         }).fail((res)=>{
             console.log(res);
         });
@@ -158,8 +174,7 @@ $(function(){
         e.preventDefault();
         var type = $("input[name='type']").val();
         var multidate = $("#notes-form").data("multiDate");
-        if (multidate) {
-            // toggle it off
+        if (multidate) { // toggle it off
             $("#btn-multi-date").trigger("click");
         } else {
             $(`#calendar-${type} a.ui-state-active`).trigger("click");
@@ -193,7 +208,7 @@ $(function(){
            //console.debug("this one is active already");
            return;
         }
-        console.log("if no MOT[DW], try harder");
+        console.log("if no MOT[DW], try harder?");
         /**
          * to do here:
          * figure out which tab we're dealing with

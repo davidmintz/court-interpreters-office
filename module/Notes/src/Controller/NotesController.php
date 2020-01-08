@@ -59,7 +59,7 @@ class NotesController extends AbstractRestfulController
     {
         $type =  $this->params()->fromRoute('type');
         if ($type == 'motd' && isset($data['dates'])) {
-            return $this->batchEdit($data,$id);
+            return $this->batchEdit($data);
         }
         $service = $this->notesService;
         $inputFilter = $service->getInputFilter();
@@ -70,7 +70,6 @@ class NotesController extends AbstractRestfulController
                 'validation_errors' => $errors,
             ]);
         }
-
 
         return new JsonModel(
             $service->update($type, (int)$id, $inputFilter->getValues())
@@ -84,10 +83,9 @@ class NotesController extends AbstractRestfulController
      * @param  int $id
      * @return JsonModel
      */
-    protected function batchEdit(Array $data, int $id = null): JsonModel
+    protected function batchEdit(Array $data): JsonModel
     {
-        //$data['info'] = "shit is not yet implemented";
-        return new JsonModel($this->notesService->batchEdit($data, $id));
+        return new JsonModel($this->notesService->batchEdit($data));
     }
 
     /**
@@ -99,12 +97,15 @@ class NotesController extends AbstractRestfulController
     public function create($data)
     {
         $type =  $this->params()->fromRoute('type');
+        $data['type'] = $type;
         if ($type == 'motd' && isset($data['dates'])) {
-            return $this->batchEdit($data,$id);
+            return $this->batchEdit($data);
         }
         $service = $this->notesService;
         $inputFilter = $service->getInputFilter();
         $inputFilter->remove('modified');
+        $service->addDateValidation($inputFilter,$type);
+
         $inputFilter->setData($data);
         if (! $inputFilter->isValid()) {
             $errors = $inputFilter->getMessages();
@@ -113,7 +114,7 @@ class NotesController extends AbstractRestfulController
             ]);
         }
 
-        return new JsonModel($service->create($data));
+        return new JsonModel($service->create($inputFilter->getValues()));
     }
 
     /**

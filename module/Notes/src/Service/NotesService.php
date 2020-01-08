@@ -241,10 +241,85 @@ class NotesService
                     ],
                 ],
             ]);
+            $inputFilter->add([
+                'name' => 'type',
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => Validator\NotEmpty::class,
+                        'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => "message type is required",
+                            ],
+                        ],
+                    ],
+                    [
+                        'name' => Validator\InArray::class,
+                        'options' => [
+                            'haystack' => ['motd','motw'],
+                            'messages' => [
+                                Validator\InArray::NOT_IN_ARRAY =>
+                                 'invalid type: %value%',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+                'filters' => [
+                    [ 'name' => 'StringTrim'],
+                    [ 'name' => 'StringToLower'],
+                ],
+            ]);
             $this->inputFilter = $inputFilter;
         }
 
         return $this->inputFilter;
+    }
+
+    /**
+     * adds date validation
+     *
+     * @param  InputFilter $inputFilter
+     * @param  string      $type either 'motd' or 'motw'
+     * @return InputFilter
+     */
+    public function addDateValidation(InputFilter $inputFilter,string $type) : InputFilter
+    {
+        $validators = [
+            [
+                'name' => 'NotEmpty',
+                'options' => ['messages'=>['isEmpty'=>'date is required']],
+                'break_chain_on_failure' => true,
+            ],
+            [
+                'name' => 'Date',
+                'options' => ['messages'=>['dateInvalidDate'=>'date is invalid']],
+                'break_chain_on_failure' => true,
+            ],
+        ];
+        if ($type == 'motd') {
+            $spec = [
+                'name' => 'date',
+                'required' => true,
+                'validators' => $validators,
+            ];
+        } elseif ($type == 'motw') {
+            $validators[]= [
+                'name' =>'Callback',
+                'options' => [
+                    'messages' => ['callbackValue' => 'date for MOTD should be a Monday'],
+                    'callBack' => function($value){
+                        return 1 == (new \DateTime($value))->format('N');
+                    },
+                ],
+            ];
+            $spec = ['name' => 'week_of','required' => true, 'validators'=>$validators];
+        } else {
+            throw new \RuntimeException("invalid entity type: '$type'");
+        }
+        $inputFilter->add($spec);
+
+        return $inputFilter;
     }
 
     /**
@@ -302,12 +377,12 @@ class NotesService
         return $this->session;
     }
 
-    public function getMOTD($id)
+    public function getMOTD($id) :? NoteInterface
     {
         return $this->getRepository()->find($id);
     }
 
-    public function getMOTW($id)
+    public function getMOTW($id) :? NoteInterface
     {
         return $this->em->getRepository(MOTW::class)
             ->find($id);
@@ -321,7 +396,7 @@ class NotesService
      * @param  Array  $data
      * @return Array
      */
-    public function update(string $type, int $id, Array $data)
+    public function update(string $type, int $id, Array $data) : Array
     {
         $entity = $this->{'get'.\strtoupper($type)}($id); // legible, huh?
         if (!$entity) {
@@ -350,7 +425,7 @@ class NotesService
         return [$type => $entity, 'status'=>'success'];
     }
 
-    public function createBatchEditInputFilter()
+    public function createBatchEditInputFilter() : InputFilter
     {
         $inputFilter = new InputFilter();
         $inputFilter->add([
@@ -392,7 +467,7 @@ class NotesService
             ],
             'filters' =>  [
                 [ 'name' => Filter\StringTrim::class,],
-                // we strip trailing spaces before line break, and use css for
+                // strip trailing spaces before line break, and use css for
                 // linebreaks within block-level elements
                 ['name' => Filter\PregReplace::class,
                 'options'=> [
@@ -420,6 +495,18 @@ class NotesService
                         },
                         'messages' => [
                             'callbackValue' => 'MOTD dates must be an array'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value) {
+                            return count($value) <= 20;
+                        },
+                        'messages' => [
+                            'callbackValue' => 'more than 20 MOTDs at once is ill-advised'
                         ],
                     ],
                     'break_chain_on_failure' => true,
@@ -459,18 +546,18 @@ class NotesService
                         ],
                         'break_chain_on_failure' => true,
                     ],
+                    [
+                        'name' => 'InArray',
+                        'options' => [
+                            'haystack' => ['append','prepend'],
+                            'messages' => [
+                                'notInArray' => 'position must be either "append" or "prepend"'
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
                 ],
-            ]
-        );
-        // nothing else seems to avoid array-to-string conversion notice
-        $inputFilter->get('position')->getValidatorChain()->attach(
-            new  Validator\InArray([
-                'messages' => [
-                    Validator\InArray::NOT_IN_ARRAY =>
-                        'position must be either "append" or "prepend"'
-                ],
-                'haystack' => ['append','prepend'],
-            ])
+            ],
         );
 
         return $inputFilter;
@@ -485,9 +572,9 @@ class NotesService
      * @param  int $id
      * @return Array
      */
-    public function batchEdit(Array $data, int $id = null) : Array
+    public function batchEdit(Array $data) : Array
     {
-        $result = ['data'=>$data,'status'=>'not yet implemented','shit'=> 'eat me'];;
+
         $batchFilter = $this->createBatchEditInputFilter();
         // first validate the multi-date input
         $batchFilter->setData($data);
@@ -495,10 +582,49 @@ class NotesService
             $result['validation_errors'] = $batchFilter->getMessages();
             return $result;
         }
-        // now get MOTDs for $data['dates']
-
-        // and validate each
-
+        $result = ['data'=>$batchFilter->getValues()];
+        // get MOTDs for $data['dates']
+        $dates = $batchFilter->getValue('dates');
+        $entities = $this->getRepository()->getBatch($dates);
+        $inputFilter = $this->getInputFilter()->setValidationGroup('content');
+        $text = $batchFilter->getValue('text');
+        $position = $batchFilter->getValue('position');
+        $created = $updated = 0;
+        foreach ($dates as $d) {
+            if (isset($entities[$d])) {
+                $motd = $entities[$d];
+            } else {
+                $motd = new MOTD();
+            }
+            if ($position == 'append') {
+                $content = $motd->getContent() . PHP_EOL . $text;
+            } else {
+                $content =  $text . PHP_EOL . $motd->getContent();
+            }
+            $inputFilter->setData(['content'=>$content]);
+            if (! $inputFilter->isValid()) {
+                $result['validation_errors'] = $inputFilter->getMessages();
+                return $result;
+            } // else ...
+            $user = $this->em->getRepository(Entity\User::class)->find($this->user->id);
+            $now = new DateTime();
+            $motd->setContent($this->escape($inputFilter->getValue('content')))
+                ->setModifiedBy($user)
+                ->setModified($now);
+            if (! $motd->getId()) {
+                // new entity
+                $motd->setDate(new DateTime($d))
+                    ->setCreated($now)->setCreatedBy($user);
+                $this->em->persist($motd);
+                $created++;
+            } else {
+                $updated++;
+            }
+        }
+        $this->em->flush();
+        $result['status'] = 'success';
+        $result['created'] = $created;
+        $result['updated'] = $updated;
 
         return $result;
     }

@@ -41,7 +41,7 @@ class MOTD implements JsonSerializable, NoteInterface
      * @ORM\Column(type="string",nullable=false,length=2000)
      * @var string
      */
-    private $content;
+    private $content = '';
 
     /**
     * timestamp of motd creation.
