@@ -1,7 +1,7 @@
 # InterpretersOffice
 is a web application for managing busy court interpreters offices (in the English-speaking United States judicial system).
 
-As of now this app is not yet production-ready, but I am working on it. The intention is to make it available to any court interpreter offices that are interested in using it. The motivation is that there is to my knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote (and which sprang into being precisely because of this dearth of alternatives), and it works great, but needs updating and has too many baked-in features that are peculiar only to our Interpreters Office's needs. So this project will be far and away the world's finest federal court interpreter management system (true, the competition is scarce).
+As of now this app is not quite production-ready, but I am working on it. The intention is to make it available to any court interpreter offices that are interested in using it. The motivation is that there is to my knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote (and which sprang into being precisely because of this dearth of alternatives), and it works great, but needs updating and has too many baked-in features that are peculiar only to our Interpreters Office's needs. So this project will be far and away the world's finest federal court interpreter management system (true, the competition is scarce).
 
 InterpretersOffice is designed primarily with the US District Court system in mind, but I'm trying to keep it flexible enough for use in state courts as well. We should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is the language of the court.
 
@@ -50,7 +50,7 @@ Another optional module I have in mind will generate claim forms for contract in
 
 # acknowledgments
 
-Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on [the Zend MVC Framework](http://framework.zend.com/) 3.x and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
+Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
 
 # the author
 
