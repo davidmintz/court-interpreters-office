@@ -16,7 +16,12 @@ $form->setAttribute('class', 'form-event mx-auto')
 $form->prepare();
 //<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() </h2>//
 ?>
-<?php echo $this->form()->openTag($form);
+<?php
+echo $this->form()->openTag($form);
+if (is_object($form->getObject()->getHoliday())) {
+    $holiday_id = $form->getObject()->getHoliday()->getId();
+    $form->get('holiday')->setValue($holiday_id);
+}
     $date = $form->get('date')->getValue();
 if ($date instanceof \DateTime) {
     $form->get('date')->setValue($date->format('m/d/Y'));
