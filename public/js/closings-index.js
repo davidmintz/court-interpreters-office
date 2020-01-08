@@ -1,4 +1,4 @@
-var $, displayValidationErrors;
+var $;//, displayValidationErrors;
 
 $(function(){
     // load closings for the year the clicked
@@ -33,11 +33,9 @@ $(function(){
                 return el;
             });
             list.html(items);
-            //console.debug("shit is real, count is "+ items.length);
             $(`#total-${year}`).text(items.length);
             if (toggle) { //&& (! list.is(":visible")
                 list.slideDown();
-                //console.log("we said slideDown()!");
             }
         });
     });
