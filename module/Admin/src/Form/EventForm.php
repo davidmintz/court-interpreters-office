@@ -196,8 +196,6 @@ class EventForm extends LaminasForm implements
             return;
         }
 
-
-
         // heads up:  setData() has yet to happen. therefore your elements
         // like anonymousSubmitter etc will be null
         /** @todo untangle this and make error message specific to context */
