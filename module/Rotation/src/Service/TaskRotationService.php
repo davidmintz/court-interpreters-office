@@ -81,8 +81,12 @@ class TaskRotationService
         $this->config = $config;
     }
 
-
-    public function getTaskInputFilter()
+    /**
+     * returns inputfilter for Task entity
+     *
+     * @return InputFilter\InputFilter
+     */
+    public function getTaskInputFilter() : InputFilter\InputFilter
     {
         $inputFilter = new InputFilter\InputFilter();
         $inputFilter->add($this->getRotationInputFilter(), 'rotation');
