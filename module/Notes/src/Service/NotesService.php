@@ -19,6 +19,7 @@ use Laminas\Filter;
 use InterpretersOffice\Entity;
 
 use Parsedown;
+use Zend\Validator\InArray;
 use Laminas\Filter\HtmlEntities;
 
 /**
@@ -348,6 +349,133 @@ class NotesService
 
         return [$type => $entity, 'status'=>'success'];
     }
+
+    public function createBatchEditInputFilter()
+    {
+        $inputFilter = new InputFilter();
+        $inputFilter->add([
+            'name' => 'csrf',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => Validator\NotEmpty::class,
+                    'options' => [
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => "required security token is missing",
+                        ]
+                    ],
+                ],
+                [
+                    'name' => Validator\Csrf::class,
+                    'options' => [
+                        'messages' =>
+                            [
+                                'notSame' => 'Security error: invalid/expired CSRF token.'
+                                .' Please reload the page and try again.',
+                            ],
+                        'timeout' => 600,
+                    ],
+                ],
+            ]
+        ]);
+        $inputFilter->add([
+            'name'=>'text','required'=>true,
+            'validators' => [
+                [
+                    'name' => Validator\NotEmpty::class,
+                    'options' => [
+                        'messages' => [
+                            Validator\NotEmpty::IS_EMPTY => "text is required",
+                        ]
+                    ],
+                ],
+            ],
+            'filters' =>  [
+                [ 'name' => Filter\StringTrim::class,],
+                // we strip trailing spaces before line break, and use css for
+                // linebreaks within block-level elements
+                ['name' => Filter\PregReplace::class,
+                'options'=> [
+                    'pattern' => '/( {2,})(\R)/m',
+                    'replacement' => "$2",
+                    ],
+                ],
+            ]
+        ]);
+        $inputFilter->add([
+            'name'=>'dates','required'=>true,
+            'validators' => [
+                [
+                    'name'=>'NotEmpty',
+                    'options' => [
+                         'messages' => ['isEmpty'=> 'at least one date is required']
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) {
+                            return is_array($value);
+                        },
+                        'messages' => [
+                            'callbackValue' => 'MOTD dates must be an array'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Callback',
+                    'options' => [
+                        'callBack' => function($value, $context) {
+
+                            $validator = new Validator\Date(['format'=>'Y-m-d']);
+                            foreach ($value as $date) {
+                                if (!$validator->isValid($date)) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        },
+                        'messages' => [
+                            'callbackValue' => 'malformed MOTD date found'
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $inputFilter->add(
+            [
+                'name'=>'position',
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => Validator\NotEmpty::class,
+                        'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => "position is required",
+                            ]
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+            ]
+        );
+        // nothing else seems to avoid array-to-string conversion notice
+        $inputFilter->get('position')->getValidatorChain()->attach(
+            new  Validator\InArray([
+                'messages' => [
+                    Validator\InArray::NOT_IN_ARRAY =>
+                        'position must be either "append" or "prepend"'
+                ],
+                'haystack' => ['append','prepend'],
+            ])
+        );
+
+        return $inputFilter;
+    }
+
     /**
      * batch-processes MOTDs for multiple dates
      *
@@ -359,17 +487,20 @@ class NotesService
      */
     public function batchEdit(Array $data, int $id = null) : Array
     {
-        /** @todo modify the inputfilter?? */
-        $filter = $this->getInputFilter();
-        $dates = $data['dates'] ?? null;
-        if (! $dates) {
-            // bla bla yadda yadda
-
+        $result = ['data'=>$data,'status'=>'not yet implemented','shit'=> 'eat me'];;
+        $batchFilter = $this->createBatchEditInputFilter();
+        // first validate the multi-date input
+        $batchFilter->setData($data);
+        if (! $batchFilter->isValid()) {
+            $result['validation_errors'] = $batchFilter->getMessages();
+            return $result;
         }
-        if (isset($data['date'])) { // which it should be
+        // now get MOTDs for $data['dates']
 
-        }
-        return ['data'=>$data,'status'=>'not yet implemented','shit'=> 'eat me'];
+        // and validate each
+
+
+        return $result;
     }
 
     public function create(Array $data) : Array
@@ -476,7 +607,7 @@ class NotesService
     }
 
     /**
-     * sets $include_task_rotation flag
+     * gets $include_task_rotation flag
      *
      * @return bool
      */

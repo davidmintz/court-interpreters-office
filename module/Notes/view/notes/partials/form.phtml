@@ -6,14 +6,16 @@
             <button title="enable|disable batch-editing of MOTDs" id="btn-multi-date" class="multi-date btn btn-outline-primary btn-sm" <?php if ($this->type != 'motd'): ?>hidden<?php endif;?>>toggle multi-date editing</button>
             <div class="border rounded multi-date py-0 px-1" hidden>
                 <p class="text-muted mt-0">Choose the dates for which you want to edit the MOTD. <em>(Note that there is no automated method for reversing this operation, so please use caution.)</em></p>
-                <div class="d-flex flex-wrap"id="dates"></div>
+                <div class="d-flex flex-wrap"id="dates">
+                    <input name="dates" value="" type="hidden">
+                </div>
                 <label for="text">text to insert: </label>
                     <textarea class="form-control" name="text" id="text" cols="12" rows="2"></textarea>
                 <div class="form-row align-items-center">
                     <label for="position" class="col-form-label col-auto">placement:</label>
                     <div class="col-auto"><select class="custom-select" id="position" name="position">
-                        <option value="append">appended</option>
-                        <option value="prepend">prepended</option>
+                        <option value="append">append</option>
+                        <option value="prepend">prepend</option>
                     </select></div>
                     <div class="col-auto"> to existing MOTDs</div>
                 </div>
