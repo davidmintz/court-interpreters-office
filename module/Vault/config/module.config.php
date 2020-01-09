@@ -18,7 +18,7 @@ return [
         'adapter'       => 'Laminas\Http\Client\Adapter\Curl',
 
         // override the following with your local configuration
-        'vault_address' => 'https://vault.sdnyinterpreters.org:8200',
+        'vault_address' => 'https://office.localhost:8200',
         //'sslcafile'     => '/usr/share/ca-certificates/ca-chain.cert.pem',
 
         // these settings must match the TLS authentication configured in Vault

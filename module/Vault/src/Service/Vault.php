@@ -240,7 +240,7 @@ class Vault extends Client implements EventManagerAwareInterface
         $this->getRequest()->getHeaders()
                 ->addHeaderLine("X-Vault-Token: $this->token")
                 ->addHeaderLine("X-Vault-Wrap-TTL: 10s");
-        $endpoint = $this->vault_address . '/auth/token/create/read-cipher';
+        $endpoint = $this->vault_address . '/auth/token/create/read-secret';
         $this->getRequest()->setContent(json_encode(
             [
                 // maybe reconsider these settings
@@ -276,6 +276,7 @@ class Vault extends Client implements EventManagerAwareInterface
         $this->setMethod('POST')->setUri($endpoint)->send();
 
         $response = $this->responseToArray($this->getResponse()->getBody());
+
         if ($this->isError($response)) {
             $this->getEventManager()->trigger(__FUNCTION__, $this, [
                 'message' => 'failed to unwrap response'
@@ -285,6 +286,7 @@ class Vault extends Client implements EventManagerAwareInterface
         if (isset($response['auth'])) {
             $this->setAuthToken($response['auth']['client_token']);
         }
+
         return $response;
     }
 
@@ -311,6 +313,7 @@ class Vault extends Client implements EventManagerAwareInterface
             throw new VaultException($response['errors'][0]);
         }
         $this->setAuthToken($response['wrap_info']['token']);
+
         return $this;
     }
 
@@ -326,11 +329,13 @@ class Vault extends Client implements EventManagerAwareInterface
     public function getEncryptionKey()
     {
         if (! $this->key) {
-            $this->authenticateTLSCert()
+            $x = $this->authenticateTLSCert()
                 ->requestCipherAccessToken()
                 ->unwrap();
+
             $this->requestWrappedEncryptionKey();
-            $this->key = $this->unwrap()['data']['cipher'];
+            // it's a bit weird that this is hard-coded like this
+            $this->key = $this->unwrap()['data']['data']['cipher'];
         }
 
         return $this->key;
