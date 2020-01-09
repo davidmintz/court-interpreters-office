@@ -557,7 +557,7 @@ class NotesService
                         'break_chain_on_failure' => true,
                     ],
                 ],
-            ],
+            ]
         );
 
         return $inputFilter;
