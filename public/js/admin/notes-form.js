@@ -110,10 +110,8 @@ $(function(){
         var type = $("input[name='type']").val();
         var is_multidate = type === 'motd' && form.data("multiDate");
         if (is_multidate) {
-            console.warn("doing multi-date editing, enabling hidden date input");
             $(`#dates input[type="hidden"]`).removeAttr("disabled");
         } else {
-            console.warn("NOT multi-date editing, disabling hidden date input");
             $(`#dates input[type="hidden"]`).attr({disabled:true});
         }
         var id = $(`input[name="id"]`).val();
