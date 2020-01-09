@@ -61,8 +61,7 @@ class InterpreterLanguageFieldset extends Fieldset implements InputFilterProvide
      */
     public function getInputFilterSpecification()
     {
-        //exit(sprintf("nice to know %s was called<br>\n",__METHOD__));
-        $repository = $this->getObjectManager()->getRepository(Entity\Language::class);
+        //$repository = $this->getObjectManager()->getRepository(Entity\Language::class);
         //$certified_languages = $repository->findAllCertifiedLanguages();
         $spec = [
             'languageCredential' => [
