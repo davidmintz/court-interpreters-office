@@ -2,6 +2,7 @@
 /**
  * module/Vault/src/Service/Vault.php
  */
+declare(strict_types=1);
 
 namespace SDNY\Vault\Service;
 
@@ -11,6 +12,12 @@ use Laminas\Crypt\BlockCipher;
 use Laminas\Crypt\Symmetric\Openssl;
 use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\EventManager\EventManagerAwareTrait;
+
+use function basename;
+use function key_exists;
+use function json_encode;
+use function json_decode;
+use function is_string;
 
 /**
  * Extension of Laminas\Http\Client for communciating with Hashicorp Vault
@@ -94,16 +101,28 @@ class Vault extends Client implements EventManagerAwareInterface
     private $path_to_secret;
 
     /**
+     * path to access token
+     *
+     * @var string
+     */
+    private $path_to_access_token;
+
+    /**
      * constructor
      *
      * @param array $config
      */
     public function __construct(array $config)
     {
+        foreach (['vault_address','path_to_secret','path_to_access_token'] as $setting) {
+            if (! isset($config[$setting]) or ! is_string($config[$setting])) {
+                throw new \RuntimeException("missing/invalid configuration value for '$setting'");
+            } else {
+                $this->$setting = $config[$setting];
+            }
+        }
+        $this->vault_address .= $this->prefix;
 
-        $this->vault_address = $config['vault_address'] . $this->prefix;
-        $this->path_to_secret = isset($config['path_to_secret']) ?
-            $config['path_to_secret'] : null;
         $curloptions = [];
         foreach ($config as $key => $value) {
             if (key_exists($key, self::$curlopt_keys)) {
@@ -123,7 +142,7 @@ class Vault extends Client implements EventManagerAwareInterface
      *
      * @return Array
      */
-    public function health()
+    public function health() : Array
     {
         $this->setMethod('GET')
             ->setUri($this->vault_address .'/sys/health')
@@ -138,9 +157,11 @@ class Vault extends Client implements EventManagerAwareInterface
      *
      * @param string
      */
-    public function setPathToSecret($path)
+    public function setPathToSecret($path) : Vault
     {
         $this->path_to_secret = $path;
+
+        return $this;
     }
 
     /**
@@ -148,7 +169,7 @@ class Vault extends Client implements EventManagerAwareInterface
      *
      * @return string
      */
-    public function getPathToSecret()
+    public function getPathToSecret() : string
     {
         return $this->path_to_secret;
     }
@@ -158,7 +179,7 @@ class Vault extends Client implements EventManagerAwareInterface
      *
      * @return string
      */
-    public function getVaultAddress()
+    public function getVaultAddress() : string
     {
         return $this->vault_address;
     }
@@ -170,7 +191,7 @@ class Vault extends Client implements EventManagerAwareInterface
      * @param Array $response
      * @return boolean true if error
      */
-    public function isError(array $response)
+    public function isError(array $response) : bool
     {
         return key_exists('errors', $response);
     }
@@ -181,7 +202,7 @@ class Vault extends Client implements EventManagerAwareInterface
      *
      * @return \SDNY\Vault\Service\Vault
      */
-    public function reset()
+    public function reset() : Vault
     {
         parent::reset();
         $this->getRequest()
@@ -202,7 +223,7 @@ class Vault extends Client implements EventManagerAwareInterface
      * @return Vault
      * @throws VaultException
      */
-    public function authenticateTLSCert()
+    public function authenticateTLSCert() : Vault
     {
         try {
             $this->setMethod('POST')
@@ -234,13 +255,13 @@ class Vault extends Client implements EventManagerAwareInterface
      * @return Vault
      * @throws VaultException
      */
-    public function requestCipherAccessToken()
+    public function requestCipherAccessToken() : Vault
     {
         //printf("DEBUG: \$this->token has been set to: $this->token in %s\n",__FUNCTION__);
         $this->getRequest()->getHeaders()
                 ->addHeaderLine("X-Vault-Token: $this->token")
                 ->addHeaderLine("X-Vault-Wrap-TTL: 10s");
-        $endpoint = $this->vault_address . '/auth/token/create/read-secret';
+        $endpoint = $this->vault_address . $this->path_to_access_token; //'/auth/token/create/read-secret';
         $this->getRequest()->setContent(json_encode(
             [
                 // maybe reconsider these settings
@@ -248,6 +269,7 @@ class Vault extends Client implements EventManagerAwareInterface
                 'num_uses' => 3,
                ]
         ));
+        //printf("\n DEBUG: %s\n","endpoint: $endpoint");
         $this->setMethod('POST')->setUri($endpoint)->send();
         $response = $this->responseToArray($this->getResponse()->getBody());
         if ($this->isError($response)) {
@@ -257,6 +279,7 @@ class Vault extends Client implements EventManagerAwareInterface
             throw new VaultException($response['errors'][0]);
         }
         $this->token = $response['wrap_info']['token'];
+
         return $this;
     }
 
@@ -267,7 +290,7 @@ class Vault extends Client implements EventManagerAwareInterface
      * @param string $token
      * @return array
      */
-    public function unwrap()
+    public function unwrap() : Array
     {
         $this->reset();
 
@@ -297,11 +320,9 @@ class Vault extends Client implements EventManagerAwareInterface
      * @return Vault
      * @throws VaultException
      */
-    public function requestWrappedEncryptionKey()
+    public function requestWrappedEncryptionKey() : Vault
     {
-        if (! $this->path_to_secret) {
-            throw new VaultException('path to secret has to be set before calling '.__FUNCTION__);
-        }
+
         $endpoint = $this->vault_address . $this->path_to_secret;
         $this->getRequest()->getHeaders()->addHeaderLine("X-Vault-Wrap-TTL: 10s");
         $this->setMethod('GET')->setUri($endpoint)->send();
@@ -326,7 +347,7 @@ class Vault extends Client implements EventManagerAwareInterface
      * @return Vault
      * @throws VaultException
      */
-    public function getEncryptionKey()
+    public function getEncryptionKey() : string
     {
         if (! $this->key) {
             $x = $this->authenticateTLSCert()
@@ -334,8 +355,19 @@ class Vault extends Client implements EventManagerAwareInterface
                 ->unwrap();
 
             $this->requestWrappedEncryptionKey();
-            // it's a bit weird that this is hard-coded like this
-            $this->key = $this->unwrap()['data']['data']['cipher'];
+            $data = $this->unwrap()['data'];
+            if (key_exists('cipher',$data)) {
+                $this->key = $data['cipher'];
+            } else {
+                // it may be nested a level deeper, depending on Vault version
+                $name = basename($this->path_to_secret);
+                if (key_exists($name,$data)){
+                    $this->key = $data[$name]['cipher'];
+                }
+            }
+            if (! is_string($this->key)) {
+                throw new VaultException(__FUNCTION__ . ' could not get encryption/decryption key');
+            }
         }
 
         return $this->key;
@@ -346,7 +378,7 @@ class Vault extends Client implements EventManagerAwareInterface
      *
      * @return BlockCipher
      */
-    protected function getBlockCipher()
+    protected function getBlockCipher() : BlockCipher
     {
         if (! $this->blockCipher) {
             $this->blockCipher = new BlockCipher(new Openssl());
@@ -361,10 +393,11 @@ class Vault extends Client implements EventManagerAwareInterface
      * @throws VaultException
      * @return string
      */
-    public function decrypt($string)
+    public function decrypt(string $string) : string
     {
         $cipher = $this->getBlockCipher();
         $cipher->setKey($this->getEncryptionKey());
+
         return $cipher->decrypt($string);
     }
 
@@ -375,7 +408,7 @@ class Vault extends Client implements EventManagerAwareInterface
      * @return string
      * @throws VaultException
      */
-    public function encrypt($string)
+    public function encrypt($string) : string
     {
         $key = $this->getEncryptionKey();
         $cipher = $this->getBlockCipher();
@@ -390,12 +423,13 @@ class Vault extends Client implements EventManagerAwareInterface
      * @param string $token
      * @return \SDNY\Service\Vault
      */
-    public function setAuthToken($token)
+    public function setAuthToken(string $token) : Vault
     {
         $this->getRequest()
             ->getHeaders()
             ->addHeaderLine("X-Vault-Token:$token");
         $this->token = $token;
+
         return $this;
     }
     /**
@@ -403,7 +437,7 @@ class Vault extends Client implements EventManagerAwareInterface
      *
      * @return string
      */
-    public function getAuthToken()
+    public function getAuthToken() : string
     {
         return $this->token;
     }
@@ -414,9 +448,8 @@ class Vault extends Client implements EventManagerAwareInterface
      * @param string $json
      * @return Array
      */
-    public function responseToArray($json)
+    public function responseToArray(string $json) : Array
     {
-
         return json_decode($json, true);
     }
 
@@ -432,7 +465,7 @@ class Vault extends Client implements EventManagerAwareInterface
      * @param string $password
      * @return array Vault response as array
      */
-    public function authenticateUser($user, $password)
+    public function authenticateUser(string $user, string $password) : Array
     {
         $uri = $this->vault_address . "/auth/userpass/login/$user";
         $this->getRequest()->setContent(json_encode(['password' => $password]));
@@ -440,6 +473,5 @@ class Vault extends Client implements EventManagerAwareInterface
 
         return $this->responseToArray($this->getResponse()->getBody());
     }
-
 
 }

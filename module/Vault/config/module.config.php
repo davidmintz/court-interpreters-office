@@ -17,15 +17,20 @@ return [
         // do not change this adapter
         'adapter'       => 'Laminas\Http\Client\Adapter\Curl',
 
-        // override the following with your local configuration
+        // ==== override the following in your local configuration =====//
         'vault_address' => 'https://office.localhost:8200',
         //'sslcafile'     => '/usr/share/ca-certificates/ca-chain.cert.pem',
+
+        // path for application to get token with access to secret
+        'path_to_access_token' => '/auth/token/create/read-secret',
+        // path to secret within Vault
+        'path_to_secret' => '/path/to/your/secret', // including leading slash
 
         // these settings must match the TLS authentication configured in Vault
         'ssl_key' => '/path/to/your/key.pem',
         'ssl_cert' => '/path/to/your/cert.pem',
-        // path to secret within Vault
-        'path_to_secret' => '/path/to/your/secret', // including leading slash
+        // ===================================== //
+
 
     ],
     'service_manager' => [

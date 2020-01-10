@@ -24,7 +24,8 @@ class VaultInitializationTest extends AbstractControllerTest
 
     public function testVaultCanBeInstantiatedDirectly()
     {
-        $vault = new VaultClient(['vault_address' => 'whatever']);
+        $config = $this->getApplicationServiceLocator()->get('config')['vault'];
+        $vault = new VaultClient($config);
         $this->assertTrue(is_object($vault));
         $this->assertInstanceOf(VaultClient::class, $vault);
     }
