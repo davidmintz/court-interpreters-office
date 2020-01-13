@@ -512,7 +512,8 @@ DQL;
                 $qb->orderBy('e.date', 'DESC')->addOrderBy('e.time', 'ASC');
             }
         } else {
-            $qb->orderBy('e.date', 'ASC')->addOrderBy('e.time', 'ASC');
+            // on second thought let's try making latest-first the default
+            $qb->orderBy('e.date', 'DESC')->addOrderBy('e.time', 'ASC');
         }
         $qb->setParameters($params);
         $query = $qb->getQuery();
