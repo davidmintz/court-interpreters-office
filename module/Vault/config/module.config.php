@@ -12,10 +12,11 @@ return [
 // override this with your local configuration
 
     'vault' => [
-        // set to false in a local configuration to disable
-        'enabled' => true,
         // do not change this adapter
         'adapter'       => 'Laminas\Http\Client\Adapter\Curl',
+
+        // to enable, set to true in your local configuration
+        'enabled' => false,
 
         // ==== override the following in your local configuration =====//
         'vault_address' => 'https://office.localhost:8200',
