@@ -8,15 +8,77 @@ form { max-width: 900px;}
 .multi-input div:last-of-type { padding-left: 0px; }
 .multi-input label:last-of-type { text-align:right ; padding-right: 1em; padding-left: 0; }
 <?php $this->headStyle()->captureEnd();
-//echo $this->headStyle() ;
-//
 
-$user = $this->identity() ?>
-<h2>admin</h2>
-<p>hello user <?php echo $user->username ?> in role <?php echo $user->role ?></p>
-<p>This is the admin overview page.</p>
-<p>Note to self:  <a href="https://neilime.github.io/zf-assets-bundle/">neilime.github.io/zf-assets-bundle</a> is worth a look.</p>
-<div style="display:none">
+//$user = $this->identity() ?>
+
+<div style="max-width:900px" class="mx-auto">
+    <h2>admin | overview</h2>
+    <div class="row mt-3">
+        <div class="col list-group">
+            <div class="list-group-item">
+                <a href="<?= $this->url('events')?>">scheduling</a><br>
+                schedule of court interpreter events
+            </div>
+            <div class="list-group-item">
+                <a href="<?= $this->url('interpreters')?>">interpreters</a><br>
+                roster of interpreters
+            </div>
+            <div class="list-group-item">
+                <a href="<?= $this->url('judges')?>">judges</a><br>
+                roster of judges
+            </div>
+            <div class="list-group-item">
+                <a href="<?= $this->url('users')?>">users</a><br>
+                user account management
+            </div>
+            <div class="list-group-item">
+                <a href="<?= $this->url('people')?>">people</a><br>
+                contact information for people in general
+            </div>
+            <div class="list-group-item">
+                <a href="<?= $this->url('languages')?>">languages</a><br>
+                languages required in your court
+            </div>
+        </div>
+        <div class="col list-group">
+
+            <div class="list-group-item">
+                <a href="<?= $this->url('court-closings')?>">court closings</a><br>
+                list of court holidays and ad-hoc closings
+            </div>
+            <div class="list-group-item">
+                <a href="<?= $this->url('locations')?>">locations</a><br>
+                locations where interpreting services are rendered
+            </div>
+            <div class="list-group-item">
+                <a href="<?= $this->url('admin-defendants')?>">defendant/etc names</a><br>
+                names of non-English-speaking consumers of interpreting services
+            </div>
+            <div class="list-group-item">
+                <a href="<?= $this->url('event-types')?>">event-types</a><br>
+                types of court proceedings and ancillary events that involve interpreters
+            </div>
+        </div>
+        <div class="col list-group">
+            <div class="list-group-item">
+                thing one
+            </div>
+            <div class="list-group-item">
+                thing two
+            </div>
+            <div class="list-group-item">
+                thing three
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div hidden>
+    <p>Note to self:  <a href="https://neilime.github.io/zf-assets-bundle/">neilime.github.io/zf-assets-bundle</a> is worth a look.</p>
 <!-- doodle -->
 <h3>scratch</h3>
 <div class="row">
