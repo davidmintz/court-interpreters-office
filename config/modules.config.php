@@ -11,6 +11,7 @@
 $modules = [
     'Laminas\Session',
     'Laminas\Mvc\Plugin\FlashMessenger',
+    // 'Laminas\ZendFrameworkBridge',
     'DoctrineModule',
     'DoctrineORMModule',
     'Laminas\Form',// yes necessary
