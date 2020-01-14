@@ -1,9 +1,9 @@
 <?php
 
 /** module/InterpretersOffice/src/Entity/Repository/ResultCachingQueryTrait.php */
-
+declare(strict_types=1);
 namespace InterpretersOffice\Entity\Repository;
-
+use Doctrine\Orm\Query;
 /**
  * trait for easing creating of queries that use result caching.
  */
@@ -18,7 +18,7 @@ trait ResultCachingQueryTrait
      *
      * @return Doctrine\Orm\Query
      */
-    public function createQuery($dql, $cache_id = null, $lifetime = 0)
+    public function createQuery(string $dql, string $cache_id = null, int $lifetime = 0) : Query
     {
         $query = $this->getEntityManager()->createQuery($dql);
         $query->useResultCache(true, $lifetime, $cache_id);
