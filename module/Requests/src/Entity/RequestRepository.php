@@ -457,7 +457,7 @@ class RequestRepository extends EntityRepository
             ];
         }
         $event = new Entity\Event();
-        foreach (['Date','Time','Judge','Docket','Language','EventType','Comments'] as $prop) {
+        foreach (['Date','Time','Judge','Docket','Language','EventType','Comments','Location'] as $prop) {
             $event->{'set'.$prop}($request->{'get'.$prop}());
         }
         $event->addDefendants($request->getDefendants());
