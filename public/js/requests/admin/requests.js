@@ -12,7 +12,7 @@ var schedule_request_callback = function(response) {
     .parent().show();
 };
 
-var show_error_message = function(response) {
+var show_request_error_message = function(response) {
     var div = $("#message-error");
     if (0 === div.length) {
         div = $("<div/>").attr({id:"message-error"})

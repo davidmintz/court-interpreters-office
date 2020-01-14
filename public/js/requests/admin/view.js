@@ -1,4 +1,4 @@
-var moment, schedule_request_callback, show_error_message;
+var moment, schedule_request_callback, show_request_error_message;
 $(function(){
     $("#btn-schedule-request").on("click",function(){
         var data = $(this).data();
@@ -10,7 +10,7 @@ $(function(){
                 $("#btn-schedule-request").remove();
             }
             if (response.status === "error") {
-                show_error_message(response);
+                show_request_error_message(response);
                 if (response.message.match(/already.*schedule/i)) {
                     $(this).remove();
                 }
