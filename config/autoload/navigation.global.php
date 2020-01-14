@@ -22,6 +22,10 @@ return [
                 'pages' => [
                     [
                         'label' => 'schedule',
+                        'route' => 'events/display',
+                    ],
+                    [
+                        'label' => 'schedule',
                         'route' => 'events',
                         'pages' => [
                             [
