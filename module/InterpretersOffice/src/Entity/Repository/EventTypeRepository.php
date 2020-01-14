@@ -55,7 +55,7 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
     {
         $dql = 'SELECT t FROM InterpretersOffice\Entity\EventType t ORDER BY t.name';
 
-        return $this->createQuery($dql, 0, 'event-types-all')->getResult();
+        return $this->createQuery($dql, 'event-types-all', 0)->getResult();
     }
 
     /**
