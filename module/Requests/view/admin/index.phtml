@@ -17,14 +17,14 @@ $this->headTitle("requests for court interpreting services")
     <a class="nav-link active" id="pending-requests-tab" data-toggle="tab" href="#pending-requests" role="tab" aria-controls="pending-requests" aria-selected="true">pending</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="more-stuff-tab" data-toggle="tab" href="#more-stuff" role="tab" aria-controls="more-stuff" aria-selected="false">more stuff</a>
+    <a class="nav-link" id="scheduled-requests-tab" data-toggle="tab" href="#scheduled-requests" role="tab" aria-controls="scheduled-requests" aria-selected="false">scheduled</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="other-stuff-tab" data-toggle="tab" href="#other-stuff" role="tab" aria-controls="other-stuff" aria-selected="false">other stuff</a>
+    <a class="nav-link" id="past-requests-tab" data-toggle="tab" href="#past-requests" role="tab" aria-controls="past-requests" aria-selected="false">previous</a>
   </li>
 </ul>
 <div class="tab-content" id="tab-content">
-    <div class="tab-pane fade show active pt-2" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
+    <div class="tab-pane fade show active py-3" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
 <?php if ($this->pending):
         $count = $this->pending->getTotalItemCount();
         $what = 'request';
@@ -35,14 +35,12 @@ $this->headTitle("requests for court interpreting services")
         $count = "no";
         $what = 'requests';
     endif;
-            ?><p>
-                <?php printf('You have <span id="requests-pending">%s %s</span> pending',$count,$what);?>
-            </p>
+            ?><p><?php printf('You have <span id="requests-pending">%s %s</span> pending',$count,$what);?></p>
         <table class="table table-bordered">
             <thead></thead>
             <tbody data-csrf="<?php echo $this->csrf?>">
         <?php if ($this->pending):?>
-        <?php foreach ($this->pending as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
+            <?php foreach ($this->pending as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
             <tr class="request" data-id="<?php echo $r['id']?>">
                 <td><?php echo $r['date']->format('d-M-Y')?></td>
                 <td><?php echo $r['time']->format('g:i a')?></td>
@@ -60,18 +58,23 @@ $this->headTitle("requests for court interpreting services")
                   </div>
                 </td>
             </tr>
-        <?php endforeach; endif;?>
+            <?php endforeach; endif;?>
             </tbody>
         </table>
     </div>
-  <div class="tab-pane fade py-3" id="more-stuff" role="tabpanel" aria-labelledby="profile-tab">
+  <div class="tab-pane fade py-3" id="scheduled-requests" role="tabpanel" aria-labelledby="scheduled-requests-tab">
       <p>
-          Consequat occaecat ullamco amet non eiusmod nostrud dolore irure incididunt est duis anim sunt officia. Fugiat velit proident aliquip nisi incididunt nostrud exercitation proident est nisi. Irure magna elit commodo anim ex veniam culpa eiusmod id nostrud sit cupidatat in veniam ad. Eiusmod consequat eu adipisicing minim anim aliquip cupidatat culpa excepteur quis. Occaecat sit eu exercitation irure Lorem incididunt nostrud.</div>
+          scheduled requests to go here
       </p>
-  <div class="tab-pane fade" id="other-stuff" role="tabpanel" aria-labelledby="other-stuff-tab">other shit</div>
+  </div>
+  <div class="tab-pane fade py-3" id="past-requests" role="tabpanel" aria-labelledby="past-requests-tab">
+      <p>
+         previous requests to go here
+      </p>
+  </div>
 </div>
 
-<p></p>
+
 <?php // print_r($r) //
 /*
 Array

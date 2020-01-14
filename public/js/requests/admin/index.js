@@ -88,4 +88,12 @@ $(function(){
         });
     };
     setTimeout(refresh,requests_refresh_interval);
+
+    // https://getbootstrap.com/docs/4.4/components/navs/#events
+    $("#scheduled-requests-tab").on("show.bs.tab",function(e){
+        console.log("time to load future requests...")
+    });
+    $("#past-requests-tab").on("show.bs.tab",function(e){
+        console.log("time to load past requests...")
+    });
 });

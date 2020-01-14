@@ -17,7 +17,7 @@ $style .= "width:{$size['width']};height:{$size['height']}";
     <div class="card-header">MOTD: <?php echo $date_obj->format('D d-M-Y')?><button type="button" class="close" data-hide="motd" aria-label="close">
     <span aria-hidden="true">&times;</span>
   </button></div>
-    <div class="card-body pt-1" style="overflow:auto"?>
+    <div class="card-body pt-1" style="overflow:auto">
         <?php if ($this->assignments && isset($this->assignments['motd'])):
             ?><div class="border rounded px-2 py-1"><?php
             foreach($this->assignments['motd'] as $task => $assignment):

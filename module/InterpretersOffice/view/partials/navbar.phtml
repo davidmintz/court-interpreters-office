@@ -15,7 +15,7 @@ foreach ($this->container as $page) :
     if ($label == 'search'): // this one is a special case ?><?php //if ($active):.. //endif;?>
         <li class="nav-item dropdown <?php if ($active): ?> active<?php endif;?>" id="nav-search"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">search</a>
             <div class="dropdown-menu"  style="max-width:250px;min-width:200px" >
-                <div class="px-2" method="get">
+                <div class="px-2">
                     <div class="input-group">
                         <input class="form-control" type="text" name="docket" placeholder="docket #" value="">
                         <div class="input-group-append">
