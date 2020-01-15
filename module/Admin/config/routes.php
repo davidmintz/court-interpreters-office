@@ -827,5 +827,17 @@ return  [
                 ],
             ],
         ],
+        'admin_config' => [
+            'type' => Segment::class,
+            'may_terminate' => true,
+            'options' => [
+                'route' => '/admin/configuration',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\ConfigController::class,
+                    'action' => 'index',
+                ],
+            ],
+        ],
     ],
  ];

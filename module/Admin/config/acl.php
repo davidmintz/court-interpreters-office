@@ -22,6 +22,7 @@ return [
     'resources' => [
         // 'resource name (controller)' => 'parent resource'
         Admin\LanguagesController::class => null,
+        Admin\ConfigController::class => null,
         Admin\EventTypesController::class => Admin\LanguagesController::class,
         Admin\LocationsController::class => Admin\LanguagesController::class,
         Admin\EventsController::class => null,
