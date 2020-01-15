@@ -3,7 +3,11 @@
  * @param  {object} event
  * @return {void}
  */
-var parseTime = function(event)
+
+/* global $, moment */
+
+
+var parseTime = function(event) // eslint-disable-line no-unused-vars
 {
     var timeElement = $(event.target);
     var div = timeElement.closest("div.form-group");
@@ -68,7 +72,7 @@ var DocketRegExp = /^(?:s-?[1-9] *)?((?:19|20)?\d{2})[- .]*(c(?:r(?:im)?|i?v)|m(
  * @param  {object} event
  * @return {jQuery} event's target element
  */
-var formatDocketElement = function(event)
+var formatDocketElement = function(event) // eslint-disable-line no-unused-vars
 {
     var element = $(event.target);
     var div = element.closest("div.form-group");
@@ -126,14 +130,14 @@ var formatDocketElement = function(event)
     return element;
 };
 
-var toggleSelectClass = function(event) {
+var toggleSelectClass = function() { // eslint-disable-line no-unused-vars
     var element = $(this);
     if (element.val()) {
         element.removeClass("text-muted");
     } else {
         element.addClass("text-muted");
     }
-}
+};
 
 const append_date = function(date,namespace){
     var m = moment(date,"MM/DD/YYYY");
@@ -160,13 +164,13 @@ const append_date = function(date,namespace){
     $("#dates .list-group").html(sorted);
 };
 
-const enable_multidate = function(namespace,options)
+const enable_multidate = function(namespace,options) // eslint-disable-line no-unused-vars
 {
     console.log("enabling multi-date");
     $("form").on("click","li.multidate .btn-remove-item",(event)=>event.preventDefault());
     var div_exists = $("#div-multi-dates").length > 0;
     var date_element = $("#date");
-    widths = {
+    var widths = {
         event : { label : 2, dates : 3, calendar : 4
         },
         request : {label : 3, dates : 4, calendar : 5},
@@ -175,7 +179,7 @@ const enable_multidate = function(namespace,options)
         console.log("WTF ?");
         var form_row = options.appendAfter || date_element.closest("div.form-row");
         form_row.after(
-        `<div class="form-group form-row" style="display:none" id="div-multi-dates" >
+            `<div class="form-group form-row" style="display:none" id="div-multi-dates" >
             <label for="dates" class="col-form-label col-sm-${widths[namespace].label} pr-1">dates</label>
             <div id="dates" class="col-sm-${widths[namespace].dates}">
                 <p class="form-text text-muted mt-2">please select your dates</p>
@@ -188,15 +192,15 @@ const enable_multidate = function(namespace,options)
             <div class="col-sm-3 pl-1 ml-0" hidden><a id="btn-cancel-multi-date" href="#">disable multi-date selection</a></div>
         </div>`
         );
-        var opts = Object.assign(options.datepicker||{},{onSelect: function(date){append_date(date,namespace);}})
+        var opts = Object.assign(options.datepicker||{},{onSelect: function(date){append_date(date,namespace);}});
         $("#cal-multi-dates").datepicker(opts);
     }
     $("#div-multi-dates").slideDown();
     $("#date").attr({disabled:true});
 };
 
-const disable_multidate = function(){
-    console.log("disable multi-date");
+const disable_multidate = function(){ // eslint-disable-line no-unused-vars
+    //console.log("disable multi-date");
     $("#div-multi-dates").slideUp();
     $("#date").attr({disabled:false});
 };
@@ -204,5 +208,5 @@ const disable_multidate = function(){
 // maybe keep this here?
 $("form").on("click","li .btn-remove-item",function(e){
     e.preventDefault();
-    $(this).closest("li").slideUp(function(){$(this).remove()});
+    $(this).closest("li").slideUp(function(){$(this).remove();});
 });
