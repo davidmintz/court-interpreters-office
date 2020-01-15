@@ -1,4 +1,4 @@
-var $;//, displayValidationErrors;
+/* global  $, displayValidationErrors, moment */
 
 $(function(){
     // load closings for the year the clicked
@@ -7,7 +7,7 @@ $(function(){
         console.log("click event on "+$(this).attr("href"));
         var link = $(this);
         var year = link.text();
-        var href = link.attr('href');
+        var href = link.attr("href");
         var list = link.parent().children("ul");
         var toggle = (params && params.toggle === false) ? false : true;
         // console.log("our toggle parameter: "+(toggle ? "true":"false"));
@@ -48,12 +48,12 @@ $(function(){
     };
 
     $("#btn-add").on("click",function(){
-        $("#form-modal .modal-body").load('/admin/court-closings/add form',
-        function() {
-            $("#form-label").text("add a court closing");
-            $("#btn-delete").hide();
-            $("#form-modal").modal({ focus : false, backdrop : false });
-        });
+        $("#form-modal .modal-body").load("/admin/court-closings/add form",
+            function() {
+                $("#form-label").text("add a court closing");
+                $("#btn-delete").hide();
+                $("#form-modal").modal({ focus : false, backdrop : false });
+            });
     });
     $("#form-modal").on("shown.bs.modal",function(){
         $("#date").datepicker(datepickerOptions);
@@ -62,8 +62,8 @@ $(function(){
     // load the editing form when the closing label is clicked
     $(".court-closings").on("click","li ul li a",function(event){
         event.preventDefault();
-        var url = $(this).attr('href');
-        $("#form-modal .modal-body").load(url +' form',
+        var url = $(this).attr("href");
+        $("#form-modal .modal-body").load(url +" form",
             function(){
                 $("#form-label").text("edit court closing");
                 $("#btn-delete").show();
@@ -86,7 +86,7 @@ $(function(){
         }
     });
 
-    $('#form-modal').on("click","#btn-delete", function(){
+    $("#form-modal").on("click","#btn-delete", function(){
         if (! confirm("Are you sure you want to delete this closing?")) {
             return;
         }
@@ -103,20 +103,20 @@ $(function(){
         console.log("submitting to "+url);
         var action = url.indexOf("add") === -1 ? "updated" : "added";
         $.post(url,form.serialize())
-        .fail(fail)
-        .done(function(response) { success(response, action); });
+            .fail(fail)
+            .done(function(response) { success(response, action); });
     });
 
     /** error handler */
     var fail = function(response){
-        var html = `<p>Sorry, we've encountered an unexpected error.`;
+        var html = "<p>Sorry, we've encountered an unexpected error.";
         if (response.responseJSON && response.responseJSON.message) {
             html += ` The message was: ${response.responseJSON.message}`;
         }
-        html += `</p><p>Please consult your site administrator for help</p>`;
-        $("#status").removeClass('alert-success')
-        .addClass('alert-warning').html(html)
-        .show();
+        html += "</p><p>Please consult your site administrator for help</p>";
+        $("#status").removeClass("alert-success")
+            .addClass("alert-warning").html(html)
+            .show();
     };
 
     /** callback on successful request -- irrespective of validation errors */
@@ -164,9 +164,9 @@ $(function(){
             );
         }
     };
-    boink = function(){
-        $("#date").val("01/01/2020");
-        $("#holiday").val(1);
-        $("#btn-save").click();
-    };
+    // var boink = function(){
+    //     $("#date").val("01/01/2020");
+    //     $("#holiday").val(1);
+    //     $("#btn-save").click();
+    // };
 });
