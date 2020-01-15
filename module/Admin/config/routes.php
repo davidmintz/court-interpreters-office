@@ -4,7 +4,7 @@ namespace InterpretersOffice\Admin;
 use Laminas\Router\Http\Segment;
 use Laminas\Router\Http\Literal;
 use InterpretersOffice\Admin\Controller\CourtClosingsController;
-
+use InterpretersOffice\Requests\Controller\Admin\IndexController as RequestsConfigController;
 //$today = new \DateTime();
 
 return  [
@@ -827,7 +827,7 @@ return  [
                 ],
             ],
         ],
-        'admin_config' => [
+        'configuration' => [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
@@ -838,6 +838,19 @@ return  [
                     'action' => 'index',
                 ],
             ],
+            'child_routes' => [
+                'requests' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/requests',
+                        'defaults' => [
+                            'controller' => RequestsConfigController::class,
+                            'action' => 'config',
+
+                        ],
+                    ],
+                ],
+            ]
         ],
     ],
  ];

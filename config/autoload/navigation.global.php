@@ -20,6 +20,7 @@ return [
                 'label' => 'admin',
                 'route' => 'admin',
                 'pages' => [
+            
                     [
                         'label' => 'schedule',
                         'route' => 'events/display',
@@ -192,7 +193,18 @@ return [
                                 'route' => 'court-closings/edit'
                             ],
                         ]
-                    ]
+                    ],
+                    // see what would happen if we move this to the Requests config
+                    'configuration' =>[
+                        'label' => 'configuration',
+                        'route' => 'configuration',
+                        'pages' => [
+                            // [
+                            //     'label' => 'requests',
+                            //     'route' => 'configuration/requests',
+                            // ]
+                        ],
+                    ],
                 ],
             ],
         ],

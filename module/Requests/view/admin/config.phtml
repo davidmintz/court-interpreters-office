@@ -6,15 +6,13 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
     if ($this->errorMessage) :   return;  endif;
 ?>
 <main style="max-width:900px"  class="mx-auto">
-    <h3 id="top">
-        <?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?>
-    </h3>
-    <p class="pr-3 my-3">The Requests module does not allow users who submit requests
-        to change the Interpreters' schedule themselves. When users modify their requests, however, you usually
-        have to take action &mdash; update the schedule, contact interpreters.
-        To avoid having to do these repetitive tasks manually, and to ensure that necessary action is taken
-        promptly, the Requests module observes certain events and handles them for you automatically.
-        This form allows a user with sufficient privileges to enable or disable these behaviors. For further
+    <h3 id="top"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs();?></h3>
+    <p class="pr-3 my-3">The InterpretersOffice Requests module does not allow users who submit requests
+        to change the Interpreters' schedule directly. But when users modify their requests,
+        you frequently do have to take action, e.g., update the schedule, contact interpreters.
+        To alleviate this burden and to ensure that necessary action is taken
+        promptly, the Requests module can handle these tasks for you automatically.
+        This form allows an administrator to configure these behaviors. For further
         explanation please <a href="#user-guide-requests-config">see below</a>.
     </p>
 
@@ -23,12 +21,10 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
     <table class="table mb-3 table-bordered">
         <thead>
             <tr>
-                <th>user event<!--<br><span class="text-muted font-weight-light">(what the user did with the request)</span>--></th>
-                <th>language
-                    <!-- <br><span class="text-muted font-weight-light">(language for which interpreter was requested)</span> -->
-                </th>
+                <th>user event</th>
+                <th>language</th>
                 <th>type of event</th>
-                <th>action<!-- <br><span class="text-muted font-weight-light">(what to do automatically)</span> --></th>
+                <th>action</th>
             </tr>
         </thead>
         <tbody>
@@ -36,8 +32,7 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td class="text-monospace" rowspan="3">cancel</td>
                 <td rowspan="2">Spanish</td>
                 <td>in-court</td>
-                <td><?php
-                $fs = $this->form->get('cancel');
+                <td><?php $fs = $this->form->get('cancel');
                 $base = 'in-court.spanish.';
                 $element = $fs->get($base.'delete-scheduled-event');
                 echo $this->configCheckbox($element);
@@ -185,10 +180,12 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
             <span aria-hidden="true">&times;</span>
           </button>
       </div>
+      <?php if ($this->update_allowed): ?><p class="alert alert-warning border border-danger text-danger">
+          You should not change the default settings unless you're sure you know what you're doing.
+      </p><?php endif ?>
         <button <?php if (! $this->update_allowed): ?> disabled title="current user is not authorized to modify these settings" style="cursor:not-allowed"<?php endif ?> type="button" id="save" name="button" class="btn btn-success btn-lg border">save configuration</button>
         <?php $display = $this->customized_settings && $this->update_allowed ? 'inline':'none' ?>
         <button type="button" id="restore-defaults" class="btn btn-success btn-lg border" style="display:<?php echo $display?>;">restore defaults</button>
-
     </div>
     </form>
     <hr class="my-4">
@@ -254,14 +251,14 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
     <p>Requests module is designed to (1) alleviate the burden of error-prone, repetitive tasks; (2) encourage
         users to submit (or cancel) their requests in timely fashion; and (3) ensure that people receive timely email
         notification of events they need to know about. The overuse of email notification, however, creates its own problems. By configuring these behaviors yourself, you can, if you wish, experiment to find
-        the best balance for your situation. But we recommend you start with the defaults and give them a try before tweaking.
+        the best balance for your situation. But we strongly recommend you run with the defaults for some time before tweaking.
     </p>
 
-    <p>We also provide this interface to your configuration so you can <em>see</em> what the system is doing; you may never
+    <p>We also provide this interface to your configuration so you can <em>see</em> what the system is doing. You may never
     feel any need to <em>change</em> it.</p>
     <p>Enabling automatic updating of scheduled events &mdash; to keep them consistent with the users' requests &mdash; is <em>strongly
         recommended</em>; we know of no good reason to do otherwise. The configuration option is nevertheless provided for those who
-        want a maximum degree of hands-on control.
+        want a maximum degree of control.
     </p>
     <p><a href="#top">top</a></p>
 </main>

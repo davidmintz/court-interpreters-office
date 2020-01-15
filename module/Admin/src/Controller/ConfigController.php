@@ -17,7 +17,7 @@ class ConfigController extends AbstractActionController
 {
     public function indexAction()
     {
-        return false;
+        return [];
     }
 
 }

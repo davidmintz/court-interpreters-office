@@ -76,10 +76,10 @@ return [
                         'route' => 'admin-requests',
                         'expand' => false,
                         'pages' => [
-                            [
-                                'label'=>'configuration',
-                                'route'=>'admin-requests/config',
-                            ],
+                            // [
+                            //     'label'=>'configuration',
+                            //     'route'=>'admin-requests/config',
+                            // ],
                             [
                                 'label' => 'view details',
                                 'route' => 'admin-requests/view',
@@ -87,8 +87,20 @@ return [
                             ],
                         ],
                     ],
+                    // see what would happens if we move this to the Requests config
+                    'configuration' =>[
+                        'label' => 'configuration',
+                        'route' => 'configuration',
+                        'pages' => [
+                            [
+                                'label' => 'requests',
+                                'route' => 'configuration/requests',
+                            ]
+                        ],
+                    ],
                 ],
             ],
+
         ],
         'RequestsBreadcrumbs' =>
         [
