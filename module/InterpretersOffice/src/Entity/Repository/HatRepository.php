@@ -75,6 +75,7 @@ class HatRepository extends EntityRepository
         }
         $dql = 'SELECT h, r FROM InterpretersOffice\Entity\Hat h JOIN h.role r ';
         switch ($auth_user_role) {
+            case 'staff': break;
             case 'anonymous': // e.g., user registration
             case 'submitter':
                 $dql .= 'WHERE r.name = \'submitter\'';

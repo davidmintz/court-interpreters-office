@@ -44,7 +44,7 @@ class RoleRepository extends EntityRepository
             )
             ->getResult();
         }
-        if (! in_array($auth_user_role, ['administrator','manager'])) {
+        if (! in_array($auth_user_role, ['administrator','manager','staff'])) {
             throw new \RuntimeException('invalid auth_user_role parameter '
                     . $auth_user_role);
         }
