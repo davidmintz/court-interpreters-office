@@ -22,10 +22,11 @@ const client = axios.create({
     baseURL : "https://nysd.uscourts.gov"
 });
 
-const get_judge_links = function(flavor){
+const get_judge_links = function(flavor, page){
     return new Promise(
         resolve => {
-            client.get(`/judges/${flavor}-judges`,{httpsAgent})
+            if (! page) { page = "0"; }
+            client.get(`/judges/${flavor}-judges?page=${page}`,{httpsAgent})
             .then((response) => {
                 var dom = new JSDOM(response.data);
                 var links = dom.window.document.querySelectorAll(".judges-view-result a");
@@ -64,7 +65,9 @@ const parse_judge_info = function(url){
 var data = {USMJ: {}, USDJ: {}};
 
 (async function() {
-    var usdj_links = await get_judge_links("district");
+    var usdj_links = Array.from(await get_judge_links("district",0));
+    var page_2 = Array.from(await get_judge_links("district",1));
+    usdj_links.push(...page_2);
     for (var i = 0; i < usdj_links.length; i++) {
         var name = usdj_links[i].textContent.trim().replace(/^Hon. /,"");
         var url = usdj_links[i].href;
