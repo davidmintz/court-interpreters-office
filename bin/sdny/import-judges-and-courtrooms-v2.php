@@ -37,7 +37,7 @@ $flavors['Magistrate'] = $flavors['USMJ'];
 
 $active = 1;
 $courthouses =  $db->query('SELECT name,id FROM locations WHERE type_id = '.TYPE_COURTHOUSE)->fetchAll(PDO::FETCH_KEY_PAIR);
-$courthouses['300 Quarropas'] = $courthouses['White Plains'];  // alias
+
 
 
 // ctrm-cthouse => location_id
@@ -89,13 +89,13 @@ while ($row = $old_db_judges_q->fetch(\PDO::FETCH_ASSOC) ){
     $old_judge_data[$row['full_name']] = $row;
 }
 foreach ($data as $flavor => $judge) {
-    // this shit is broken now.
+
     foreach ($judge as $name => $location) {
         $judge_params = [];
         $person_params = [];
         $found = false;
         debug("examining name: %s ... ",$name);
-        $parts = explode(" ",$name);
+        $parts = preg_split('/ (?!(Jr.|III))/',$name);
         if (key_exists($name,$old_judge_data)) {
             $found = true;
             echo "found: $name\n";
@@ -126,48 +126,49 @@ foreach ($data as $flavor => $judge) {
                 echo "FUCK! multiple matches found for: $name\n";
                 print_r($matches);
             }
-            if (! $judge_key) { continue; }
+            if (! $judge_key) {
+                echo "WARNING: '$name' apparently has no counterpart in interpreters database, not attempting insert\n";
+                continue;
+            }
             echo("closest match to '$name': $judge_key\n");
             $found = true;
             // assume whatever is in the middle is the middle name
-            
-        }
-        if ($found) {
+            if (count($parts) > 2) {
+                $maybe_middlename = $parts[1];
+            } else {
+                $maybe_middlename = '';
+            }
+            $person_params = [
+                'hat_id' => $hat_id,
+                'active' => 1,
+                'lastname' => $maybe_lastname,
+                'firstname' => $maybe_firstname,
+                'middlename' => $maybe_middlename,
+            ];
 
         }
-        continue;
-        // e.g: [Swain, Laura Taylor] => 17C, 500 Pearl
-        list($lastname,$given_names) = preg_split('/, +/',$name);
-        if (strstr($given_names,' ')) {
-            list($firstname,$middlename) = preg_split('/ +/',$given_names);
-        } else {
-            $firstname = $given_names;
-            $middlename = '';
+        if (!$found) {
+            echo "WARNING: '$name' apparently has no match in the old database\n";
         }
-        // BUT!
-        if (preg_match('/^[A-Z]\. +\S+$/',"$firstname $middlename")) {
-            $firstname .= " $middlename";
-            $middlename = '';
+
+        if (!$location) {
+            echo "DEBUG: no location for '$name'\n";
         }
-        // a special case
-        if ($lastname == 'Pauley III') {
-            $lastname = 'Pauley'; // keep it simple
-        }
-        list($courtroom, $courthouse) = preg_split('/, +/',$location);
         // check the location
-        if ($courthouse == '300 Quarropas') {
-            $courthouse = 'White Plains';
+        $key = $location ? "$location[courtroom]-$location[courthouse]": false;
+        if ($key) {
+            $location_id = key_exists($key,$courtrooms) ? $courtrooms[$key] : false;
+        } else {
+            $location_id = null;
         }
-        $key = "$courtroom-$courthouse";
-        $location_id = key_exists($key,$courtrooms) ? $courtrooms[$key] : false;
-        if (! $location_id) {
+        if (! $location_id && $location) {
             // location not found, needs to be inserted
             debug(sprintf("inserting new location at line %d",__LINE__));
             try {
                 $location_insert->execute([
                     ':type_id'=>  TYPE_COURTROOM,
-                    ':name' => $courtroom,
-                    ':parent_location_id' => $courthouses[$courthouse],
+                    ':name' => $location['courtroom'],
+                    ':parent_location_id' => $courthouses[$location['courthouse']],
                 ]);
                 $locations_inserted++;
                 $location_id =  $db->query('SELECT last_insert_id()')->fetchColumn();
@@ -179,11 +180,17 @@ foreach ($data as $flavor => $judge) {
             }
         }
         // see if the judge already exists
-        $judge_select->execute(compact('lastname','firstname','middlename'));
+        $judge_select->execute(
+            [
+                'lastname' => $person_params['lastname'],
+                'firstname' => $person_params['firstname'],
+                'middlename' => $person_params['middlename'],
+            ]
+        );
         $judge_found = $judge_select->fetch(PDO::FETCH_ASSOC);
 
         if ($judge_found) {
-            debug(sprintf("founding existing judge %s at line %d",$judge_found['lastname'],__LINE__));
+            printf("founding existing judge %s at line %d\n",$judge_found['lastname'],__LINE__);
             // check the flavor
             if ($flavors[$flavor] == $judge_found['flavor_id']) {
                 // we very likely have this one already in the db, so no insert
@@ -194,8 +201,8 @@ foreach ($data as $flavor => $judge) {
                 );
             }
             // see if location needs an update
-            if ($judge_found['location'] != $courtroom
-                    or $judge_found['parent_location'] != $courthouse) {
+            if ($location && ($judge_found['location'] != $location['courtroom']
+                    or $judge_found['parent_location'] != $location['courthouse'])) {
                 if (!$judge_update) {
                     $judge_update = $db->prepare(
                        'UPDATE judges SET default_location_id = :location_id '
@@ -207,12 +214,9 @@ foreach ($data as $flavor => $judge) {
                 );
             }
         } else {
-            // judge NOT found, needs to be inserted
             try {
-                //debug("inserting new judge ($lastname) at ".__LINE__);
-                $person_insert->execute(
-                    compact('hat_id','lastname','firstname','middlename','active')
-                );
+                printf("inserting new judge ({$person_params['lastname']}) at %d\n",__LINE__);
+                $person_insert->execute($person_params);
                 $id = $db->query('SELECT last_insert_id()')->fetchColumn();
 
                 $judge_insert->execute([
@@ -225,13 +229,13 @@ foreach ($data as $flavor => $judge) {
 
             } catch (PDOException $e) {
                 printf("insert FAILED: %s\n",$e->getMessage());
+                throw $e;
             }
         }
     }
 }
 /* now, the dead judges */
-
-exit(__LINE__.":  stopping here for now");
+echo(__LINE__.": inserted $judges_inserted active judges, $locations_inserted locations\n");
 // find judges from old database that are NOT in the new one
 $judge_sql = 'SELECT lastname, firstname, middlename, flavor, IF(judges.active="Y",1,0) AS active '
         . 'FROM dev_interpreters.judges WHERE CONCAT(lastname,"-",firstname) '
@@ -281,7 +285,7 @@ try {
 // and add an additional anonymous_judge: Magistrate with default location White Plains
 try {
     $db->exec(sprintf('INSERT INTO anonymous_judges (name, default_location_id) VALUES ("magistrate","%s")',$courthouses['White Plains']));
-    printf("finished inserting %d courtrooms, %d judges\n",
+    printf("\nfinished inserting %d courtrooms, %d judges\n",
         $locations_inserted,$judges_inserted);
 }  catch (\Exception $e) {
     if ($e->getCode() == 23000) {

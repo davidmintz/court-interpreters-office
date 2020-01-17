@@ -5,6 +5,7 @@
  */
 
 $json = file_get_contents("php://stdin");
+/** @var \PDO $db "office" database */
 $db = require(__DIR__."/connect.php");
 
 $data = json_decode($json,JSON_OBJECT_AS_ARRAY);
@@ -52,6 +53,7 @@ $location_insert = $db->prepare(
 
 $location_select = $db->prepare('SELECT id FROM locations WHERE name = :name and type_id = :type_id');
 
+/* for later use to see if a judge already exists in the database  */
 $judge_select = $db->prepare('SELECT p.id, p.lastname, p.firstname, p.middlename, '
         . 'f.flavor, f.id AS flavor_id, l.id AS location_id, l.name as location, '
         . 'pl.name as parent_location FROM people p JOIN judges j ON p.id = j.id '
@@ -66,7 +68,7 @@ $locations_inserted = 0;
 $judges_inserted = 0;
 
 foreach ($data as $flavor => $judge) {
-
+    // this shit is broken now.
     foreach ($judge as $name => $location) {
 
         // e.g: [Swain, Laura Taylor] => 17C, 500 Pearl

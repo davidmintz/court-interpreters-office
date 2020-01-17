@@ -73,6 +73,8 @@ var data = {USMJ: {}, USDJ: {}};
         var url = usdj_links[i].href;
         // alas, there is no reliable way of parsing out first, middle and
         // last names any longer. it formerly was '<surnames>, <forenames and/or initials>'
+        // but we do know they are sorted alphabetically. that might make it possible to
+        // infer from a name's position which part is the surname.
         console.error(`fetching ${url} for: ${name}, USDJ`);
         data.USDJ[name] = await parse_judge_info(url);
     }
