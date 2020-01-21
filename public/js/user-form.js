@@ -70,10 +70,12 @@ $(document).ready(function(){
         var hat = hat_element.children(":selected").text();
         var is_interpreter = hat_element.children(":selected").text()
             .match(/staff.+interpreter/i);
+        var form = $("#user-form");
+        var url = form.attr("action");
         if (person_id || ! is_interpreter) { // then don't bother searching
             console.log("maybe we have a person id, or a non-interpreter");
-            var data = $("#user-form").serialize();
-            return $.post(document.location.href,data, postcallback);
+            var data = form.serialize();
+            return $.post(url,data, postcallback);
         }
         /*
         else...
@@ -103,10 +105,9 @@ $(document).ready(function(){
                     if (person_id) {
                         person_id_element.val(person_id);
                         var data = $("#user-form").serialize();
-                        return $.post(document.location.href,data);
+                        return $.post(url,data);
                     }
                 } else { // else, there is an issue
-
                     return postcallback(
                         { validation_errors :
                     { user :
@@ -154,7 +155,7 @@ $(document).ready(function(){
 });
 
 var postcallback = function(response) {
-    console.log("postcallback running ");
+    console.debug("postcallback running ");
     if (response.validation_errors) {
         return displayValidationErrors(response.validation_errors);
     }
