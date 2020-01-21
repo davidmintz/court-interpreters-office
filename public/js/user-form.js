@@ -138,10 +138,9 @@ $(document).ready(function(){
         if (!window.confirm("Delete this user from the database?")) {
             return;
         }
-        var id = $("input[name=\"user[id]\"]").val();
-        console.warn(`boink! delete ${id}`);
+        var id = $(`input[name="user[id]"]`).val();
         $.post(`${window.basePath}/admin/users/delete/${id}`)
-            .done(function(res){
+            .then(function(res){
                 console.warn(res.message);
                 if (res.status !== "success" && res.message) {
                     $("div.status-message p").text(res.message)
@@ -149,8 +148,7 @@ $(document).ready(function(){
                     return;
                 }
                 return postcallback(res);
-            })
-            .fail(fail);
+            }).fail(fail);
     });
 });
 
