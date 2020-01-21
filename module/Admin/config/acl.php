@@ -26,9 +26,9 @@ return [
         Admin\EventTypesController::class => Admin\LanguagesController::class,
         Admin\LocationsController::class => Admin\LanguagesController::class,
         Admin\EventsController::class => null,
-        Admin\UsersController::class => Admin\EventsController::class,
+        Admin\UsersController::class => null,//Admin\EventsController::class,
         Admin\PeopleController::class => Admin\UsersController::class,
-        Admin\JudgesController::class => Admin\EventsController::class,
+        Admin\JudgesController::class => Admin\UsersController::class,//Admin\EventsController::class,
         Admin\InterpretersController::class => Admin\EventsController::class,
         Admin\InterpretersWriteController::class => Admin\EventsController::class,
         Admin\DefendantsController::class => Admin\EventsController::class,
@@ -69,6 +69,7 @@ return [
             Admin\IndexController::class => null,
             Admin\LanguagesController::class => null,
             Admin\EventsController::class => null,
+            Admin\UsersController::class => null,
             // ??
             'SDNY\Vault\Controller\VaultController' => null,
             Main\AuthController::class => ['logout'],
@@ -77,6 +78,8 @@ return [
         'staff' => [
             Admin\IndexController::class => ['index'],
             Main\AuthController::class => ['logout'],
+            Admin\EventsController::class => null,
+            //Admin\LanguagesController::class => ['index'],
         ],
         'administrator' => null,
         'anonymous' => [

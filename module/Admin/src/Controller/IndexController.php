@@ -19,7 +19,9 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
-
-        return new ViewModel(['title' => 'admin']);
+        // debug
+        $container = $this->getEvent()->getApplication()->getServiceManager();
+        $acl_config = $container->get('config')['acl'];
+        return new ViewModel(['acl_config'=>$acl_config, 'acl'=>$container->get("acl")]);
     }
 }

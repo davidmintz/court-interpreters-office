@@ -13,6 +13,36 @@ form { max-width: 900px;}
 
 <div style="max-width:900px" class="mx-auto">
     <h2>administration</h2>
+    <pre><?php
+    /** @var \InterpretersOffice\Admin\Service\Acl $acl */
+    $acl = $this->acl;
+    //print_r(get_class_methods($acl));
+    $roles = $acl->getRoles();
+    $resources = $acl->getResources();
+    // print_r($roles);
+    // print_r($resources);
+    ?>
+    </pre>
+    <table class="table" hidden>
+        <tr>
+            <th>resource</th>
+            <?php foreach ($roles as $role) { ?><th><?=$role?></th>
+    <?php }
+    ?></tr><?php
+    foreach($resources as $resource) { break;
+        ?><tr>
+            <td><?=str_replace('InterpretersOffice\\','',$resource)?></td>
+            <?php foreach ($roles as $role) { ?>
+                <td><?php
+                $access = $acl->isAllowed($role,$resource,'index') ? "allowed":"denied";
+                echo $access;
+                ?></td>
+            <?php  }?>
+        </tr><?php
+    }
+
+    ?></table>
+
     <div class="row mt-3">
         <div class="col list-group">
             <div class="list-group-item">
