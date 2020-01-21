@@ -119,7 +119,7 @@ class Module {
                     }
                 } //else {$log->debug("fetched neither motd nor motw for {$settings['date']}");}
                 if ($render_notes) {
-                    $log->warn("\$render_notes: TRUE, triggering NOTES_RENDER in ".__METHOD__);
+                    $log->debug("\$render_notes: TRUE, triggering NOTES_RENDER in ".__METHOD__);
                     // i.e., we are rendering a view that includes MOT[DW]
                     // and so give the Rotations listener an opportunity
                     $events = $event->getApplication()->getEventManager();

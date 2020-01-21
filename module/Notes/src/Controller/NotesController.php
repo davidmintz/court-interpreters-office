@@ -148,7 +148,7 @@ class NotesController extends AbstractRestfulController
             /** @todo addIdentifiers() just once e.g., in an onBootstrap */
             $events->addIdentifiers(['Notes']);
             $this->getEvent()->getApplication()->getServiceManager()
-                ->get('log')->warn('triggering NOTES_RENDER in NotesController');
+                ->get('log')->debug('triggering NOTES_RENDER in NotesController');
             $note_types = $type == 'ALL' ? ['motd','motw'] : [strtolower($type)];
             $events->trigger('NOTES_RENDER','Notes',[
                 'date' => new \DateTime($date),
