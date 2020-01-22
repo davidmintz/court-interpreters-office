@@ -1004,7 +1004,7 @@ var defendantForm = (function(){
         //console.debug("we are in defendantUpdateSubmit, about to post");
         $.post(url,defendantForm.serialize(),
             defendantFormSubmitCallback,"json")
-            .success(function(){
+            .then(function(){
                 getEventModificationTime(event_id);
             });
     };

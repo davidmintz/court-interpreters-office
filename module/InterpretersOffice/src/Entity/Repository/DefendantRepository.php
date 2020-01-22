@@ -399,7 +399,8 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 case 'literal':
                     $sql = 'UPDATE defendants_events SET defendant_id = ?
                     WHERE defendant_id = ? AND event_id IN (?)';
-                    $result['events_affected'] = $db->executeUpdate(
+                    $result['events_affected'] = $em->getConnection()
+                        ->executeUpdate(
                         $sql,
                         [$existing_name->getId(), $defendant->getId(),
                         array_column($event_ids, 'id')],
@@ -408,7 +409,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                         ]
                     );
                     $logger->debug("running partial update with literal match");
-                    if (! $defendant->hasRelatedEntities()) {
+                    if (! $this->hasRelatedEntities($defendant->getId())) {
                         $logger->debug("no related entities for $defendant at ".__LINE__);
                         $em->remove($defendant);
                     } else {
