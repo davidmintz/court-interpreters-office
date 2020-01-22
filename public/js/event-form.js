@@ -995,18 +995,15 @@ var defendantForm = (function(){
         // we repeat ourself... |-:
         var id = $("#deftname-editor input[name=id]").val();
         //console.debug("id is what? "+id);
-        var url = "/admin/defendants/edit/"+ id +"?context=events";
+        var url = `/admin/defendants/edit/${id}?context=events`;
         // we may need to supply an event id
         var event_id = $(`input[name="event[id]"]`).val() || false;
         if (event_id) {
             url += "&event_id="+event_id;
         }
         //console.debug("we are in defendantUpdateSubmit, about to post");
-        $.post(url,defendantForm.serialize(),
-            defendantFormSubmitCallback,"json")
-            .then(function(){
-                getEventModificationTime(event_id);
-            });
+        $.post(url, defendantForm.serialize(), defendantFormSubmitCallback,"json")
+        .then(function(){getEventModificationTime(event_id);});
     };
 
     var init = function() {
