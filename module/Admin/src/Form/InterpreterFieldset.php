@@ -88,7 +88,7 @@ class InterpreterFieldset extends PersonFieldset
         // fingerprint date
         $this->add(
             [
-             'name' => 'fingerprintDate',
+            'name' => 'fingerprintDate',
             'type' => 'Laminas\Form\Element\Text',
             'attributes' => [
                 'id' => 'fingerprint_date',
@@ -147,6 +147,7 @@ class InterpreterFieldset extends PersonFieldset
              ],
             ]
         );
+
         // home phone
         $this->add([
             'name' => 'home_phone',
@@ -341,7 +342,7 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
          ];
-         // @todo:  more validation stuff?
+         /** optional fields */
 
          // dates
          $spec['fingerprintDate'] = [

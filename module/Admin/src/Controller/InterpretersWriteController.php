@@ -41,26 +41,13 @@ class InterpretersWriteController extends AbstractActionController
     protected $entityManager;
 
     /**
-     * path to form template
-     *
-     * @var string
-     */
-    protected $form_template = 'interpreters-office/admin/interpreters/form.phtml';
-
-    /**
      * ViewModel
      *
      * @var ViewModel
      */
     protected $viewModel;
 
-    /**
-     * form configuration
-     *
-     * @var Array
-     */
-    //protected $formConfig = [];
-
+    
    /**
      * constructor.
      *
