@@ -258,9 +258,7 @@ class UsersController extends AbstractActionController implements Authentication
         $user = new Entity\User();
         if ($person) {
             $this->events->trigger(
-                'load-person',
-                $this,
-                compact('person', 'form')
+                'load-person', $this, compact('person', 'form')
             );
             $user->setPerson($person);
             $form->get('user')->get('person')->setObject($person);
@@ -306,8 +304,8 @@ class UsersController extends AbstractActionController implements Authentication
     {
 
         $id = $this->params()->fromRoute('id');
-        $viewModel = (new ViewModel(['title' => 'edit a user','id' => $id]))
-                ->setTemplate('interpreters-office/admin/users/form');
+        $viewModel = new ViewModel(['title' => 'edit a user','id' => $id]);
+
         $entity = $this->params()->fromRoute('entity','user');
         $repo = $this->entityManager->getRepository('InterpretersOffice\Entity\User');
         $user = $repo->getUser($id, $entity);
