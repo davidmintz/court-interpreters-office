@@ -376,14 +376,18 @@ return [
     'acl' => [
         'resources' => [
             'InterpretersOffice\Requests\Controller\Admin\IndexController' =>
-            'InterpretersOffice\Admin\Controller\EventsController',
+            'InterpretersOffice\Admin\Controller\LanguagesController',
+        ],
+        'allow' => [
+            'staff' => [
+                'InterpretersOffice\Requests\Controller\Admin\IndexController' => ['config'],
+            ],
         ],
         'deny' => [
             'manager' => [
-                'InterpretersOffice\Requests\Controller\Admin\IndexController'
-                    => ['updateConfig'],
-                ]
-        ]
+                'InterpretersOffice\Requests\Controller\Admin\IndexController' => ['updateConfig'],
+            ],
+        ],
     ],
 
     'view_helpers' => [

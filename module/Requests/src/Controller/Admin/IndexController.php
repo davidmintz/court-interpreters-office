@@ -95,7 +95,7 @@ class IndexController extends AbstractActionController
             ->get('acl');
         $role = $this->auth->getIdentity()->role;
         $allowed = $acl->isAllowed($role, self::class, 'updateConfig');
-
+        //echo "FUCK? $role allowed? ".($allowed ? "true":"false");
         return new ViewModel(['form' => $form,'update_allowed' => $allowed,
             'customized_settings' =>
                 file_exists($this->config_dir.'/custom.event-listeners.json')
