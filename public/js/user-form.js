@@ -72,13 +72,17 @@ $(document).ready(function(){
             .match(/staff.+interpreter/i);
         var form = $("#user-form");
         var url = form.attr("action");
+        if (document.location.pathname.includes("/person/")) {
+            // we arrived via the "people" page
+            url = `/admin/users/edit/${id}`;
+        }
+
         if (person_id || ! is_interpreter) { // then don't bother searching
-            console.log("maybe we have a person id, or a non-interpreter");
+            //console.log("maybe we have a person id, or a non-interpreter");
             var data = form.serialize();
             return $.post(url,data, postcallback);
         }
-        /*
-        else...
+        /* ...else...
         they are creating a user account for a staff court interpreter,
         but have not provided the id for an existing person (by loading the
         form with the person id as route parameter), so we'll try to find one
