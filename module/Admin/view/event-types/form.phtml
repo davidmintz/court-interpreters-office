@@ -10,9 +10,12 @@ else :
     $entity = $form->getObject();
     $actionAttrib = $this->url('event-types/edit', ['id' => $entity->getId()]);
     $form->setAttribute('data-event-type_name', $entity->getName());
+    $category_id = $entity->getCategory()->getId();
+    $form->get('category')->setValue($category_id);
 endif;
 $form->setAttribute('action', $actionAttrib)
     ->setAttribute('data-redirect_url', $this->url('event-types'));
+
 ?>
 <div class="center-block mx-auto" style="max-width:600px"><!-- wrapper -->
     <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
