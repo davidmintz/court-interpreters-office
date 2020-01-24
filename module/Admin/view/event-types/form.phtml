@@ -10,24 +10,21 @@ else :
     $entity = $form->getObject();
     $actionAttrib = $this->url('event-types/edit', ['id' => $entity->getId()]);
     $form->setAttribute('data-event-type_name', $entity->getName());
-    $category_id = $entity->getCategory()->getId();
-    $form->get('category')->setValue($category_id);
+    // $category_id = $entity->getCategory()->getId();
+    // $form->get('category')->setValue($category_id);
 endif;
 $form->setAttribute('action', $actionAttrib)
     ->setAttribute('data-redirect_url', $this->url('event-types'));
-
 ?>
 <div class="center-block mx-auto" style="max-width:600px"><!-- wrapper -->
     <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-
 <?php
 echo $this->errorMessage($this->errorMessage);
 if ($this->errorMessage): ?></div><?php return; endif;
 
 if ($action == 'add') : ?>
-    <p>Use this form to add a new event type. Please be careful
-      to avoid adding a type that is a subtype of, or partially redundant with,
-      one that already exists.</p>
+    <p class="alert alert-info">Please be careful to avoid adding an event-type that is a subtype of, or 
+        partially redundant with, one that already exists.</p>
 <?php endif;
 $form->add([
     'name' => 'submit',
@@ -44,6 +41,9 @@ echo $this->formLabel($name),$this->formElement($name),$this->formElementErrors(
 </div>
 <div class="form-group"><?php
 $category = $form->get('category');
+if (is_object($category->getValue())):
+    $category->setValue($category->getValue()->getId());
+endif;
 echo $this->formLabel($category),$this->formSelect($category),$this->formElementErrors($category);
 ?>
 </div>
