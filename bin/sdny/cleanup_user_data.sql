@@ -9,7 +9,7 @@ UPDATE request_users SET group_id = 1, email = 'frank_cangelosi@nysd.uscourts.go
 UPDATE events SET req_by = 267, lastmod = lastmod WHERE req_by = 360 AND req_class = 5;
 DELETE FROM request_users WHERE id = 360;
 UPDATE request_users SET group_id = 1, email = 'gloria_daley@nysd.uscourts.gov' WHERE id = 267;
-UPDATE request_users SET email = lower(REPLACE(email,"unverified.","")) WHERE email LIKE "unverified%";
+UPDATE request_users SET email = lower(REPLACE(email,"unverified.","")) WHERE email LIKE "unverified.%";
 
 DELETE cj FROM  clerks_judges cj LEFT JOIN request_users u ON cj.user_id = u.id WHERE u.id IS NULL;
 
