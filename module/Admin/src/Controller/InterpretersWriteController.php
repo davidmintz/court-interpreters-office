@@ -18,6 +18,8 @@ use SDNY\Vault\Service\Vault;
 
 use InterpretersOffice\Admin\Controller\DeletionTrait;
 
+use InterpretersOffice\Admin\Form;
+
 /**
  * controller for admin/interpreters create|update|delete
  *
@@ -47,17 +49,21 @@ class InterpretersWriteController extends AbstractActionController
      */
     protected $viewModel;
 
-    
+    /** @var Form\InterpreterForm */
+    private $form;
+
+
    /**
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param boolean $vault_enabled
      */
-    public function __construct(EntityManagerInterface $entityManager, $vault_enabled)
+    public function __construct(EntityManagerInterface $entityManager, Form\InterpreterForm $form, bool $vault_enabled)
     {
 
         $this->entityManager = $entityManager;
+        $this->form = $form;
         $this->vault_enabled = $vault_enabled;
         $this->viewModel = new ViewModel(['vault_enabled' => $vault_enabled]);
     }
@@ -164,12 +170,13 @@ class InterpretersWriteController extends AbstractActionController
             'ssn' => $entity->getSsn(),
         ];
         /** @var \Laminas\Form\Form $form */
-        $form = new InterpreterForm(
-            $this->entityManager,
-            ['action' => 'update','vault_enabled' => $this->vault_enabled,
-                //'form_config' => $this->formConfig,
-            ]
-        );
+        // $form = new InterpreterForm(
+        //     $this->entityManager,
+        //     ['action' => 'update','vault_enabled' => $this->vault_enabled,
+        //         //'form_config' => $this->formConfig,
+        //     ]
+        // );
+        $form = $this->form;
         $form->bind($entity);
         $has_related_entities = $repo->hasRelatedEntities($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id,

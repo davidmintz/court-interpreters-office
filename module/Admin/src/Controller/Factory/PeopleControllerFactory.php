@@ -12,6 +12,8 @@ use InterpretersOffice\Service\Authentication\AuthenticationAwareInterface;
 use InterpretersOffice\Entity\Listener;
 use SDNY\Vault\Service\Vault;
 
+use InterpretersOffice\Admin\Form;
+
 /**
  * Factory for instantiating Controllers that manage Person, its subclasses, or
  * User entities.
@@ -36,7 +38,8 @@ class PeopleControllerFactory implements FactoryInterface
             $config = $container->get('config');
             $vault_config = isset($config['vault']) ? $config['vault'] : ['enabled' => false ];
             $vault_enabled = $vault_config['enabled'];
-            $controller = new $requestedName($em, $vault_enabled);
+            $form = $container->get(Form\InterpreterForm::class);
+            $controller = new $requestedName($em, $form, $vault_enabled);
 
             $listener = $container->get('interpreter-listener');
             $resolver = $em->getConfiguration()->getEntityListenerResolver();
