@@ -59,12 +59,12 @@ class InterpretersWriteController extends AbstractActionController
      * @param EntityManagerInterface $entityManager
      * @param boolean $vault_enabled
      */
-    public function __construct(EntityManagerInterface $entityManager, Form\InterpreterForm $form, bool $vault_enabled)
+    public function __construct(EntityManagerInterface $entityManager, Form\InterpreterForm $form)
     {
         $this->entityManager = $entityManager;
         $this->form = $form;
-        $this->vault_enabled = $vault_enabled;
-        $this->viewModel = new ViewModel(['vault_enabled' => $vault_enabled]);
+        $this->vault_enabled = $form->getOption('vault_enabled');
+        $this->viewModel = new ViewModel(['vault_enabled' => $this->vault_enabled]);
     }
 
      /**

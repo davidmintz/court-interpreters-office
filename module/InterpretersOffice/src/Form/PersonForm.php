@@ -31,6 +31,8 @@ class PersonForm extends LaminasForm
      */
     protected $fieldsetClass = PersonFieldset::class;
 
+    protected $options;
+
     /**
      * constructor.
      *
@@ -40,10 +42,13 @@ class PersonForm extends LaminasForm
     public function __construct(ObjectManager $objectManager, $options = null)
     {
         parent::__construct($this->formName, $options);
+        $this->options = $options;
         $fieldset = new $this->fieldsetClass($objectManager, $options);
         $this->add($fieldset);
         $this->addCsrfElement();
     }
 
-
+    public function getOption($name) {
+        return $this->options[$name] ?? null;
+    }
 }
