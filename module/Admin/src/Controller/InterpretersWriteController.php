@@ -170,12 +170,6 @@ class InterpretersWriteController extends AbstractActionController
             'ssn' => $entity->getSsn(),
         ];
         /** @var \Laminas\Form\Form $form */
-        // $form = new InterpreterForm(
-        //     $this->entityManager,
-        //     ['action' => 'update','vault_enabled' => $this->vault_enabled,
-        //         //'form_config' => $this->formConfig,
-        //     ]
-        // );
         $form = $this->form;
         $form->bind($entity);
         $has_related_entities = $repo->hasRelatedEntities($entity);
@@ -256,13 +250,14 @@ class InterpretersWriteController extends AbstractActionController
         //try {
         $action = $this->params()->fromQuery('action');
         $params = $this->params()->fromPost();//['interpreter'];
-        $form = new InterpreterForm(
-            $this->entityManager,
-            ['action' => $action,
-            'vault_enabled' => $this->vault_enabled,
-            //'form_config' => $this->formConfig,
-            ]
-        );
+        $form = $this->form;
+        // new InterpreterForm(
+        //     $this->entityManager,
+        //     ['action' => $action,
+        //     'vault_enabled' => $this->vault_enabled,
+        //     //'form_config' => $this->formConfig,
+        //     ]
+        // );
         $request = $this->getRequest();
         $form->setData($request->getPost());
         if (key_exists('interpreter', $params)) {
