@@ -366,7 +366,6 @@ class InterpreterFieldset extends PersonFieldset
                             'options' => [
                                 'callback' => function ($value, $context) {
                                     // it can't be in the future
-
                                     list($M, $D, $Y) = explode('/', $value);
                                     $date = "$Y-$M-$D";
                                     $max = date('Y-m-d');
