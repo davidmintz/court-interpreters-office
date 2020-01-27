@@ -36,13 +36,15 @@ UPDATE people SET hat_id = 3 WHERE hat_id = 1 AND id NOT IN
 SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 INSERT INTO interpreters (
-id, security_clearance_date, contract_expiration_date,fingerprint_date, oath_date,
+id, security_clearance_date, contract_expiration_date,fingerprint_date,
+bop_form_submission_date, oath_date,
 comments, address1, address2, city, state, zip, home_phone, country
 )
 (SELECT interp_id,
     IF (security_clearance <> "0000-00-00",security_clearance,NULL),
     IF (contract_expiration = "0000-00-00",NULL,contract_expiration),
     IF (fingerprinted = "0000-00-00",NULL,fingerprinted),
+    IF (bop_forms_submitted = "0000-00-00",NULL,bop_forms_submitted),
     IF (oath = "0000-00-00",NULL,oath),
     notes, address1, address2, city, state, zip, home, "United States"
 
