@@ -65,6 +65,7 @@ class InterpreterFieldset extends PersonFieldset
              'attributes' => [
                  'id' => 'BOP_form_submission_date',
                  'class' => 'date form-control',
+                 'placeholder' => 'date BOP security clearance form was submitted',
              ],
               'options' => [
                  'label' => 'BOP form submitted',
@@ -89,7 +90,7 @@ class InterpreterFieldset extends PersonFieldset
             'attributes' => [
                 'id' => 'security_clearance_date',
                 'class' => 'date form-control',
-                'placeholder' => 'date clearance was received',
+                'placeholder' => 'date security clearance was received',
             ],
              'options' => [
                 'label' => 'security clearance date',
