@@ -18,6 +18,8 @@ use SDNY\Vault\Service\Vault;
 
 use InterpretersOffice\Admin\Controller\DeletionTrait;
 
+use InterpretersOffice\Admin\Form;
+
 /**
  * controller for admin/interpreters create|update|delete
  *
@@ -47,19 +49,22 @@ class InterpretersWriteController extends AbstractActionController
      */
     protected $viewModel;
 
-    
+    /** @var Form\InterpreterForm */
+    private $form;
+
+
    /**
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
      * @param boolean $vault_enabled
      */
-    public function __construct(EntityManagerInterface $entityManager, $vault_enabled)
+    public function __construct(EntityManagerInterface $entityManager, Form\InterpreterForm $form)
     {
-
         $this->entityManager = $entityManager;
-        $this->vault_enabled = $vault_enabled;
-        $this->viewModel = new ViewModel(['vault_enabled' => $vault_enabled]);
+        $this->form = $form;
+        $this->vault_enabled = $form->getOption('vault_enabled');
+        $this->viewModel = new ViewModel(['vault_enabled' => $this->vault_enabled]);
     }
 
      /**
@@ -99,13 +104,7 @@ class InterpretersWriteController extends AbstractActionController
     public function addAction()
     {
         $viewModel = $this->viewModel;
-        $form = new InterpreterForm(
-            $this->entityManager,
-            [  'action' => 'create',
-               'vault_enabled' => $this->vault_enabled,
-              // 'form_config' => $this->formConfig,
-            ]
-        );
+        $form = $this->form;
         $viewModel->form = $form;
         $request = $this->getRequest();
         $entity = new Entity\Interpreter();
@@ -147,10 +146,7 @@ class InterpretersWriteController extends AbstractActionController
            'format' => 'm/d/Y',
            'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
         ]);*/
-        //var_dump($validator->isValid($value));
-
         $viewModel = $this->viewModel;
-
         $id = $this->params()->fromRoute('id');
         $repo = $this->entityManager->getRepository(Entity\Interpreter::class);
         $entity = $repo->find($id);
@@ -159,17 +155,9 @@ class InterpretersWriteController extends AbstractActionController
                 ['errorMessage' => "interpreter with id $id not found"]
             );
         }
-        $values_before = [
-            'dob' => $entity->getDob(),
-            'ssn' => $entity->getSsn(),
-        ];
+
         /** @var \Laminas\Form\Form $form */
-        $form = new InterpreterForm(
-            $this->entityManager,
-            ['action' => 'update','vault_enabled' => $this->vault_enabled,
-                //'form_config' => $this->formConfig,
-            ]
-        );
+        $form = $this->form;
         $form->bind($entity);
         $has_related_entities = $repo->hasRelatedEntities($entity);
         $viewModel->setVariables(['form' => $form, 'id' => $id,
@@ -189,47 +177,24 @@ class InterpretersWriteController extends AbstractActionController
             }
             return $viewModel;
         }
-        $input = $request->getPost();
-        $form->setData($input);
+
+        $form->setData($request->getPost());
         if (! $form->isValid()) {
-            return new JsonModel(
-                ['validation_errors'=>$form->getMessages()]
-            );
-            // whether the encrypted fields should be obscured (again)
-            // or not depends on whether they changed them
-            // $viewModel->obscure_values =
-            //   ! $this->getEncryptedFieldsWereModified($values_before, $input);
-            // return $viewModel;
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
         try {
             $this->entityManager->flush();
         } catch (VaultException $e) {
             return new JsonModel([
-                'status'=>'error',
-                'error' => $e->getMessage(),
+                'status'=>'error', 'error' => $e->getMessage(),
             ]);
         }
         $this->flashMessenger()->addSuccessMessage(sprintf(
-            'The interpreter <strong>%s %s</strong> has been updated.',
-            $entity->getFirstname(),
-            $entity->getLastname()
+            'Data for interpreter <strong>%s %s</strong> has been updated.',
+            $entity->getFirstname(),  $entity->getLastname()
         ));
 
         return new JsonModel(['status'=>'success']);
-    }
-    /**
-     * were the dob and ssn fields modified?
-     * @param Array $values_before the dob and ssn used when form was loaded
-     * @param $input \Laminas\Stdlib\Parameters
-     * @return boolean
-     */
-    public function getEncryptedFieldsWereModified(
-        array $values_before,
-        Parameters $input
-    ) {
-        return $input->get('dob') != $values_before['dob']
-                or
-                $input->get('ssn') != $values_before['ssn'];
     }
 
     /**
@@ -246,16 +211,9 @@ class InterpretersWriteController extends AbstractActionController
         if (! $this->getRequest()->isXmlHttpRequest()) {
             $this->redirect()->toRoute('interpreters');
         }
-        //try {
         $action = $this->params()->fromQuery('action');
-        $params = $this->params()->fromPost();//['interpreter'];
-        $form = new InterpreterForm(
-            $this->entityManager,
-            ['action' => $action,
-            'vault_enabled' => $this->vault_enabled,
-            //'form_config' => $this->formConfig,
-            ]
-        );
+        $params = $this->params()->fromPost();
+        $form = $this->form;
         $request = $this->getRequest();
         $form->setData($request->getPost());
         if (key_exists('interpreter', $params)) {

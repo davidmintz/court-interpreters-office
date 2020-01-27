@@ -61,6 +61,7 @@ return [
             Service\ScheduleUpdateManager::class =>  Service\Factory\ScheduleUpdateManagerFactory::class,
             Service\EmailService::class =>  Service\Factory\EmailServiceFactory::class,
             Service\Log\Writer::class =>  Service\Factory\DbLogWriterFactory::class,
+            Form\InterpreterForm::class => Form\InterpreterFormFactory::class,
 
         ],
         'aliases' => [
