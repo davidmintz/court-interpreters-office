@@ -49,5 +49,6 @@ return [
     // this one's a bit weird...
     'interpreters-office/admin/email/templates' => __DIR__ . '/../../InterpretersOffice/view/interpreters-office/email/templates.phtml',
     'interpreters-office/admin/config/index' => __DIR__ . '/../view/configuration/index.phtml',
+    'interpreters-office/admin/config/forms' => __DIR__ . '/../view/configuration/forms.phtml',
 
 ];

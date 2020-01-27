@@ -850,6 +850,17 @@ return  [
                         ],
                     ],
                 ],
+                'forms' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/forms',
+                        'defaults' => [
+                            //'controller' => ConfigController::class,
+                            'action' => 'forms',
+
+                        ],
+                    ],
+                ],
             ]
         ],
     ],

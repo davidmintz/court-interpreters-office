@@ -20,7 +20,7 @@ return [
                 'label' => 'admin',
                 'route' => 'admin',
                 'pages' => [
-            
+
                     [
                         'label' => 'schedule',
                         'route' => 'events/display',
@@ -199,10 +199,10 @@ return [
                         'label' => 'configuration',
                         'route' => 'configuration',
                         'pages' => [
-                            // [
-                            //     'label' => 'requests',
-                            //     'route' => 'configuration/requests',
-                            // ]
+                            [
+                                'label' => 'forms',
+                                'route' => 'configuration/forms',
+                            ]
                         ],
                     ],
                 ],

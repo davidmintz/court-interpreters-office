@@ -1,0 +1,53 @@
+<?php /**  module/Admin/view/configuration/forms.phtml  */
+$this->headTitle('admin | config | forms');
+$this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
+?>
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<?php if ($this->errorMessage): echo $this->errorMessage($this->errorMessage) ?>
+<?php return; endif ?>
+<form id="config-form" class="mx-auto" style="max-width:700px" action="/admin/configuration/forms" method="post">
+    <h3>optional data fields</h3>
+    <p class="alert border border-info">Use this form to enable or disable certain form fields.
+        For example, you can disable the event form's <em class="text-nowrap">end time</em> if you do not want to
+        record the time at which interpreter-events end.</p>
+    <fieldset>
+        <legend>interpreter form</legend>
+        <?php
+        $filter = new \Laminas\Filter\Word\CamelCaseToSeparator(' ');
+        foreach ($this->config->interpreters->optional_elements as $name => $value) :
+            $display_name = strtolower($filter->filter($name));
+            if (strstr($display_name, 'bop')) {
+                $display_name = str_replace('bop','BOP',$display_name);
+            }
+        ?>
+        <div class="form-row form-group">
+            <div class="col">
+                <div class="custom-control custom-switch">
+                    <input name="interpreters[<?=$name?>]" value="0" type="hidden">
+                    <input name="interpreters[<?=$name?>]" value="1" type="checkbox" class="custom-control-input" id="<?=$name?>" checked=checked>
+                    <label class="custom-control-label" for="<?=$name?>">enable <?=$display_name?></label>
+                </div>
+            </div>
+        </div>
+        <?php endforeach ?>
+    </fieldset>
+    <fieldset>
+        <legend>event form</legend>
+        <?php foreach ($this->config->events->optional_elements as $name => $value) :
+            $display_name = strtolower($filter->filter($name));
+            ?>
+            <div class="form-row form-group">
+                <div class="col">
+                    <div class="custom-control custom-switch">
+                        <input name="events[<?=$name?>]" value="0" type="hidden">
+                        <input name="events[<?=$name?>]" value="1" type="checkbox" class="custom-control-input" id="<?=$name?>" checked=checked>
+                        <label class="custom-control-label" for="<?=$name?>">enable <?=$display_name?></label>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach ?>
+    </fieldset>
+    <div class="form-row form-group">
+        <button class="btn btn-success" type="button" name="button">save configuration</button>
+    </div>
+</form>
