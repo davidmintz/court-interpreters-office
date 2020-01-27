@@ -155,10 +155,7 @@ class InterpretersWriteController extends AbstractActionController
                 ['errorMessage' => "interpreter with id $id not found"]
             );
         }
-        $values_before = [
-            'dob' => $entity->getDob(),
-            'ssn' => $entity->getSsn(),
-        ];
+
         /** @var \Laminas\Form\Form $form */
         $form = $this->form;
         $form->bind($entity);
@@ -183,16 +180,13 @@ class InterpretersWriteController extends AbstractActionController
 
         $form->setData($request->getPost());
         if (! $form->isValid()) {
-            return new JsonModel(
-                ['validation_errors'=>$form->getMessages()]
-            );
+            return new JsonModel(['validation_errors'=>$form->getMessages()]);
         }
         try {
             $this->entityManager->flush();
         } catch (VaultException $e) {
             return new JsonModel([
-                'status'=>'error',
-                'error' => $e->getMessage(),
+                'status'=>'error', 'error' => $e->getMessage(),
             ]);
         }
         $this->flashMessenger()->addSuccessMessage(sprintf(
@@ -201,20 +195,6 @@ class InterpretersWriteController extends AbstractActionController
         ));
 
         return new JsonModel(['status'=>'success']);
-    }
-    /**
-     * were the dob and ssn fields modified?
-     * @param Array $values_before the dob and ssn used when form was loaded
-     * @param $input \Laminas\Stdlib\Parameters
-     * @return boolean
-     */
-    public function getEncryptedFieldsWereModified(
-        array $values_before,
-        Parameters $input
-    ) {
-        return $input->get('dob') != $values_before['dob']
-                or
-                $input->get('ssn') != $values_before['ssn'];
     }
 
     /**
