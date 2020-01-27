@@ -28,7 +28,7 @@ class InterpreterFormFactory implements FactoryInterface
         $action = strstr($uri,'/edit/') ? "update":"create";
         // is the Vault thing enabled?
         $config = $container->get('config');
-        $vault_config = isset($config['vault']) ?? ['enabled' => false ];
+        $vault_config = $config['vault'] ?? [ 'enabled' => false ];
         return new InterpreterForm(
             $container->get('entity-manager'),
             ['action' => $action, 'vault_enabled' =>  $vault_config['enabled']]
