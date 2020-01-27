@@ -146,10 +146,7 @@ class InterpretersWriteController extends AbstractActionController
            'format' => 'm/d/Y',
            'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
         ]);*/
-        //var_dump($validator->isValid($value));
-
         $viewModel = $this->viewModel;
-
         $id = $this->params()->fromRoute('id');
         $repo = $this->entityManager->getRepository(Entity\Interpreter::class);
         $entity = $repo->find($id);
@@ -183,17 +180,12 @@ class InterpretersWriteController extends AbstractActionController
             }
             return $viewModel;
         }
-        $input = $request->getPost();
-        $form->setData($input);
+
+        $form->setData($request->getPost());
         if (! $form->isValid()) {
             return new JsonModel(
                 ['validation_errors'=>$form->getMessages()]
             );
-            // whether the encrypted fields should be obscured (again)
-            // or not depends on whether they changed them
-            // $viewModel->obscure_values =
-            //   ! $this->getEncryptedFieldsWereModified($values_before, $input);
-            // return $viewModel;
         }
         try {
             $this->entityManager->flush();
@@ -204,9 +196,8 @@ class InterpretersWriteController extends AbstractActionController
             ]);
         }
         $this->flashMessenger()->addSuccessMessage(sprintf(
-            'The interpreter <strong>%s %s</strong> has been updated.',
-            $entity->getFirstname(),
-            $entity->getLastname()
+            'Data for interpreter <strong>%s %s</strong> has been updated.',
+            $entity->getFirstname(),  $entity->getLastname()
         ));
 
         return new JsonModel(['status'=>'success']);
@@ -240,17 +231,9 @@ class InterpretersWriteController extends AbstractActionController
         if (! $this->getRequest()->isXmlHttpRequest()) {
             $this->redirect()->toRoute('interpreters');
         }
-        //try {
         $action = $this->params()->fromQuery('action');
-        $params = $this->params()->fromPost();//['interpreter'];
+        $params = $this->params()->fromPost();
         $form = $this->form;
-        // new InterpreterForm(
-        //     $this->entityManager,
-        //     ['action' => $action,
-        //     'vault_enabled' => $this->vault_enabled,
-        //     //'form_config' => $this->formConfig,
-        //     ]
-        // );
         $request = $this->getRequest();
         $form->setData($request->getPost());
         if (key_exists('interpreter', $params)) {
