@@ -45,6 +45,71 @@ class InterpreterFieldset extends PersonFieldset
      */
     protected $original_encrypted_values;
 
+    private $optional_elements = [
+
+        'fingerprintDate' => [
+            'name' => 'fingerprintDate',
+            'type' => 'Laminas\Form\Element\Text',
+            'attributes' => [
+                'id' => 'fingerprint_date',
+                'class' => 'date form-control',
+            ],
+             'options' => [
+                'label' => 'fingerprinted on',
+                'format' => 'Y-m-d',
+             ],
+         ],
+         'BOPFormSubmissionDate' => [
+             'name' => 'BOPFormSubmissionDate',
+             'type' => 'Laminas\Form\Element\Text',
+             'attributes' => [
+                 'id' => 'BOP_form_submission_date',
+                 'class' => 'date form-control',
+             ],
+              'options' => [
+                 'label' => 'BOP form submitted',
+                 'format' => 'Y-m-d',
+              ],
+         ],
+         'oathDate' => [
+             'name' => 'oathDate',
+             'type' => 'Laminas\Form\Element\Text',
+             'attributes' => [
+                 'id' => 'oath_date',
+                 'class' => 'date form-control',
+             ],
+              'options' => [
+                 'label' => 'oath taken',
+                 'format' => 'Y-m-d',
+             ],
+         ],
+         'securityClearanceDate' => [
+            'name' => 'securityClearanceDate',
+            'type' => 'Laminas\Form\Element\Text',
+            'attributes' => [
+                'id' => 'security_clearance_date',
+                'class' => 'date form-control',
+                'placeholder' => 'date clearance was received',
+            ],
+             'options' => [
+                'label' => 'security clearance date',
+                'format' => 'Y-m-d',
+             ],
+         ],
+         'contractExpirationDate' => [
+             'name' => 'contractExpirationDate',
+             'type' => 'Laminas\Form\Element\Text',
+             'attributes' => [
+                 'id' => 'contract_expiration_date',
+                 'class' => 'date form-control',
+             ],
+              'options' => [
+                 'label' => 'contract expires',
+                 'format' => 'Y-m-d',
+              ],
+          ],
+    ];
+
     /**
      * constructor.
      *
@@ -64,7 +129,6 @@ class InterpreterFieldset extends PersonFieldset
             ],
         ]);
         $this->add(
-
             new \InterpretersOffice\Form\Element\LanguageSelect(
                 'language-select',
                 [
@@ -84,69 +148,13 @@ class InterpreterFieldset extends PersonFieldset
                 ]
             )
         );
-
-        // fingerprint date
-        $this->add(
-            [
-            'name' => 'fingerprintDate',
-            'type' => 'Laminas\Form\Element\Text',
-            'attributes' => [
-                'id' => 'fingerprint_date',
-                'class' => 'date form-control',
-            ],
-             'options' => [
-                'label' => 'fingerprinted on',
-                'format' => 'Y-m-d',
-             ],
-            ]
-        );
-
-        // security clearance date
-        $this->add(
-            [
-             'name' => 'securityClearanceDate',
-            'type' => 'Laminas\Form\Element\Text',
-            'attributes' => [
-                'id' => 'security_clearance_date',
-                'class' => 'date form-control',
-                 'placeholder' => 'date clearance was received',
-            ],
-             'options' => [
-                'label' => 'security clearance date',
-                'format' => 'Y-m-d',
-             ],
-            ]
-        );
-        // contract expiration date
-        $this->add(
-            [
-             'name' => 'contractExpirationDate',
-            'type' => 'Laminas\Form\Element\Text',
-            'attributes' => [
-                'id' => 'contract_expiration_date',
-                'class' => 'date form-control',
-            ],
-             'options' => [
-                'label' => 'contract expires',
-                'format' => 'Y-m-d',
-             ],
-            ]
-        );
-        // date oath taken
-        $this->add(
-            [
-            'name' => 'oathDate',
-            'type' => 'Laminas\Form\Element\Text',
-            'attributes' => [
-                'id' => 'oath_date',
-                'class' => 'date form-control',
-            ],
-             'options' => [
-                'label' => 'oath taken',
-                'format' => 'Y-m-d',
-             ],
-            ]
-        );
+        if (! empty($options['optional_elements'])) {
+            foreach ($this->optional_elements as $name => $spec) {
+                if (! empty($options['optional_elements'][$name])) {
+                    $this->add($spec);
+                }
+            }
+        }
 
         // home phone
         $this->add([
@@ -344,41 +352,44 @@ class InterpreterFieldset extends PersonFieldset
          ];
          /** optional fields */
 
-         // dates
-         $spec['fingerprintDate'] = [
-             'allow_empty' => true,
-                    'required' => false,
-                    'filters' => [
-                        [
-                            'name' => 'StringTrim',
-                        ],
-                    ],
-                    'validators' => [
-                        [
-                            'name' => 'Laminas\Validator\Date',
-                            'options' => [
-                                'format' => 'm/d/Y',
-                                'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
-                            ],
-                            'break_chain_on_failure' => true,
-                        ],
-                        [ 'name' => 'Callback',
-                            'options' => [
-                                'callback' => function ($value, $context) {
-                                    // it can't be in the future
-                                    list($M, $D, $Y) = explode('/', $value);
-                                    $date = "$Y-$M-$D";
-                                    $max = date('Y-m-d');
-                                   // $min = (new \DateTime("-3 years"))->format('Y-m-d');
-                                    return $date <= $max;
-                                },
-                                'messages' => [
-                                    \Laminas\Validator\Callback::INVALID_VALUE => 'fingerprint date cannot be set to a future date',
-                                ],
-                            ],
-                        ],
-                    ]
-                ];
+         if ($this->has('fingerprintDate')) {
+             $spec['fingerprintDate'] = [
+                 'allow_empty' => true,
+                 'required' => false,
+                 'filters' => [
+                     [
+                         'name' => 'StringTrim',
+                     ],
+                 ],
+                 'validators' => [
+                     [
+                         'name' => 'Laminas\Validator\Date',
+                         'options' => [
+                             'format' => 'm/d/Y',
+                             'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                         ],
+                         'break_chain_on_failure' => true,
+                     ],
+                     [
+                         'name' => 'Callback',
+                         'options' => [
+                             'callback' => function ($value, $context) {
+                                 // it can't be in the future
+                                 list($M, $D, $Y) = explode('/', $value);
+                                 $date = "$Y-$M-$D";
+                                 $max = date('Y-m-d');
+                                 // $min = (new \DateTime("-3 years"))->format('Y-m-d');
+                                 return $date <= $max;
+                             },
+                             'messages' => [
+                                 \Laminas\Validator\Callback::INVALID_VALUE => 'fingerprint date cannot be set to a future date',
+                             ],
+                         ],
+                     ],
+                 ],
+             ];
+         }
+        if ($this->has('securityClearanceDate')) {
             $spec['securityClearanceDate'] = [
              'allow_empty' => true,
              'required'  => false,
@@ -396,8 +407,9 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                     'break_chain_on_failure' => true,
                  ],
-                 [ 'name' => 'Callback',
-                        'options' => [
+                 [
+                    'name' => 'Callback',
+                    'options' => [
                             'callback' => function ($value, $context) {
                                 // it can't be in the future
                                 // and it can't be unreasonably long ago
@@ -414,58 +426,63 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
             ];
+        }
+        if ($this->has('contractExpirationDate')) {
             $spec['contractExpirationDate'] = [
-            'allow_empty' => true,
-            'required' => false,
-            'filters' => [
-                [
-                    'name' => 'StringTrim',
-                ],
-            ],
-            'validators' => [
-                [
-                    'name' => 'Laminas\Validator\Date',
-                    'options' => [
-                        'format' => 'm/d/Y',
-                        'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                'allow_empty' => true,
+                'required' => false,
+                'filters' => [
+                    [
+                        'name' => 'StringTrim',
                     ],
-                    'break_chain_on_failure' => true,
                 ],
-                [ 'name' => 'Callback',
-                    'options' => [
-                        'callback' => function ($value, $context) {
-                            list($M, $D, $Y) = explode('/', $value);
-                            $date = "$Y-$M-$D";
-                            $max = (new \DateTime("+2 years"))->format('Y-m-d');
-                            $min = (new \DateTime("-5 years"))->format('Y-m-d');
-                            return $date >= $min && $date <= $max;
-                        },
-                        'messages' => [
-                            \Laminas\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and today',
+                'validators' => [
+                    [
+                        'name' => 'Laminas\Validator\Date',
+                        'options' => [
+                            'format' => 'm/d/Y',
+                            'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callback' => function ($value, $context) {
+                                list($M, $D, $Y) = explode('/', $value);
+                                $date = "$Y-$M-$D";
+                                $max = (new \DateTime("+2 years"))->format('Y-m-d');
+                                $min = (new \DateTime("-5 years"))->format('Y-m-d');
+                                return $date >= $min && $date <= $max;
+                            },
+                            'messages' => [
+                                \Laminas\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and today',
+                            ],
                         ],
                     ],
                 ],
-            ],
             ];
+        }
+        if ($this->has('oathDate')) {
             $spec['oathDate'] = [
-            'allow_empty' => true,
-            'required'  => false,
-            'filters' => [
-                [
-                    'name' => 'StringTrim',
-                ],
-            ],
-             'validators' => [
-                [
-                    'name' => 'Laminas\Validator\Date',
-                    'options' => [
-                        'format' => 'm/d/Y',
-                        'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                'allow_empty' => true,
+                'required'  => false,
+                'filters' => [
+                    [
+                        'name' => 'StringTrim',
                     ],
-                    'break_chain_on_failure' => true,
                 ],
-                 ///*
-                [ 'name' => 'Callback',
+                'validators' => [
+                    [
+                        'name' => 'Laminas\Validator\Date',
+                        'options' => [
+                            'format' => 'm/d/Y',
+                            'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    ///*
+                    [ 'name' => 'Callback',
                     'options' => [
                         'callback' => function ($value, $context) {
                             // it can't be in the future
@@ -473,7 +490,7 @@ class InterpreterFieldset extends PersonFieldset
                             list($M, $D, $Y) = explode('/', $value);
                             $date = "$Y-$M-$D";
                             $max = (new \DateTime())->format('Y-m-d');
-                           // $min = (new \DateTime("-6 years"))->format('Y-m-d');
+                            // $min = (new \DateTime("-6 years"))->format('Y-m-d');
                             return $date <= $max;
                         },
                         'messages' => [
@@ -482,8 +499,9 @@ class InterpreterFieldset extends PersonFieldset
                     ],
                 ],
 
-             ],
-            ];
+            ],
+        ];
+        }
          // encrypted fields
             $spec['dob'] = [
              'allow_empty' => true,
