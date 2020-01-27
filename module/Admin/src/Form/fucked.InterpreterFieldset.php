@@ -65,7 +65,6 @@ class InterpreterFieldset extends PersonFieldset
              'attributes' => [
                  'id' => 'BOP_form_submission_date',
                  'class' => 'date form-control',
-                 'placeholder' => 'date BOP security clearance form was submitted',
              ],
               'options' => [
                  'label' => 'BOP form submitted',
@@ -82,7 +81,7 @@ class InterpreterFieldset extends PersonFieldset
               'options' => [
                  'label' => 'oath taken',
                  'format' => 'Y-m-d',
-             ],
+              ],
          ],
          'securityClearanceDate' => [
             'name' => 'securityClearanceDate',
@@ -90,7 +89,7 @@ class InterpreterFieldset extends PersonFieldset
             'attributes' => [
                 'id' => 'security_clearance_date',
                 'class' => 'date form-control',
-                'placeholder' => 'date security clearance was received',
+                'placeholder' => 'date clearance was received',
             ],
              'options' => [
                 'label' => 'security clearance date',
@@ -371,65 +370,63 @@ class InterpreterFieldset extends PersonFieldset
                          ],
                          'break_chain_on_failure' => true,
                      ],
-                     [
-                         'name' => 'Callback',
-                         'options' => [
-                             'callback' => function ($value, $context) {
-                                 // it can't be in the future
-                                 list($M, $D, $Y) = explode('/', $value);
-                                 $date = "$Y-$M-$D";
-                                 $max = date('Y-m-d');
-                                 // $min = (new \DateTime("-3 years"))->format('Y-m-d');
-                                 return $date <= $max;
-                             },
-                             'messages' => [
-                                 \Laminas\Validator\Callback::INVALID_VALUE => 'fingerprint date cannot be set to a future date',
-                             ],
-                         ],
-                     ],
-                 ],
-             ];
-         }
-        if ($this->has('securityClearanceDate')) {
-            $spec['securityClearanceDate'] = [
-             'allow_empty' => true,
-             'required'  => false,
-             'filters' => [
-                [
-                    'name' => 'StringTrim',
-                ],
-              ],
-             'validators' => [
-                 [
-                    'name' => 'Laminas\Validator\Date',
-                    'options' => [
-                        'format' => 'm/d/Y',
-                         'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
-                    ],
-                    'break_chain_on_failure' => true,
-                 ],
-                 [
-                    'name' => 'Callback',
-                    'options' => [
-                            'callback' => function ($value, $context) {
-                                // it can't be in the future
-                                // and it can't be unreasonably long ago
-                                list($M, $D, $Y) = explode('/', $value);
-                                $date = "$Y-$M-$D";
-                                $max = date('Y-m-d');
-                                $min = (new \DateTime("-5 years"))->format('Y-m-d');
-                                return $date >= $min && $date <= $max;
-                            },
-                            'messages' => [
-                                \Laminas\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and today',
+                     [ 'name' => 'Callback',
+                     'options' => [
+                         'callback' => function ($value, $context) {
+                             // it can't be in the future
+                             list($M, $D, $Y) = explode('/', $value);
+                             $date = "$Y-$M-$D";
+                             $max = date('Y-m-d');
+                             // $min = (new \DateTime("-3 years"))->format('Y-m-d');
+                             return $date <= $max;
+                         },
+                         'messages' => [
+                             \Laminas\Validator\Callback::INVALID_VALUE => 'fingerprint date cannot be set to a future date',
                             ],
                         ],
+                     ],
+                 ]
+             ];
+         }
+         if ($this->has('securityClearanceDate')) {
+             $spec['securityClearanceDate'] = [
+                'allow_empty' => true,
+                'required'  => false,
+                'filters' => [
+                    [
+                        'name' => 'StringTrim',
                     ],
                 ],
-            ];
-        }
-        if ($this->has('contractExpirationDate')) {
-            $spec['contractExpirationDate'] = [
+                'validators' => [
+                    [
+                        'name' => 'Laminas\Validator\Date',
+                        'options' => [
+                            'format' => 'm/d/Y',
+                            'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [ 'name' => 'Callback',
+                    'options' => [
+                        'callback' => function ($value, $context) {
+                            // it can't be in the future
+                            // and it can't be unreasonably long ago
+                            list($M, $D, $Y) = explode('/', $value);
+                            $date = "$Y-$M-$D";
+                            $max = date('Y-m-d');
+                            $min = (new \DateTime("-5 years"))->format('Y-m-d');
+                            return $date >= $min && $date <= $max;
+                        },
+                        'messages' => [
+                            \Laminas\Validator\Callback::INVALID_VALUE => 'date has to be between five years ago and today',
+                        ],
+                    ],
+                    ],
+                ],
+             ];
+         }
+         if ($this->has('contractExpirationDate')) {
+             $spec['contractExpirationDate'] = [
                 'allow_empty' => true,
                 'required' => false,
                 'filters' => [
@@ -446,8 +443,7 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                         'break_chain_on_failure' => true,
                     ],
-                    [
-                        'name' => 'Callback',
+                    [ 'name' => 'Callback',
                         'options' => [
                             'callback' => function ($value, $context) {
                                 list($M, $D, $Y) = explode('/', $value);
@@ -462,251 +458,217 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                 ],
-            ];
-        }
-        if ($this->has('oathDate')) {
-            $spec['oathDate'] = [
-                'allow_empty' => true,
-                'required'  => false,
-                'filters' => [
-                    [
-                        'name' => 'StringTrim',
+             ];
+             if ($this->has('oathDate')) {
+                    $spec['oathDate'] = [
+                        'allow_empty' => true,
+                        'required'  => false,
+                        'filters' => [
+                        [
+                            'name' => 'StringTrim',
+                        ],
                     ],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Laminas\Validator\Date',
+                    'validators' => [
+                        [
+                            'name' => 'Laminas\Validator\Date',
+                            'options' => [
+                                'format' => 'm/d/Y',
+                                'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                            ],
+                            'break_chain_on_failure' => true,
+                        ],
+                        ///*
+                        [ 'name' => 'Callback',
                         'options' => [
-                            'format' => 'm/d/Y',
-                            'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                            'callback' => function ($value, $context) {
+                                // it can't be in the future
+                                // and it can't be unreasonably long ago
+                                list($M, $D, $Y) = explode('/', $value);
+                                $date = "$Y-$M-$D";
+                                $max = (new \DateTime())->format('Y-m-d');
+                                // $min = (new \DateTime("-6 years"))->format('Y-m-d');
+                                return $date <= $max;
+                                },
+                                'messages' => [
+                                \Laminas\Validator\Callback::INVALID_VALUE => 'oath date cannot be set in the future',
+                                    ],
+                                ],
+                            ],
                         ],
-                        'break_chain_on_failure' => true,
-                    ],
-                    ///*
-                    [ 'name' => 'Callback',
-                    'options' => [
-                        'callback' => function ($value, $context) {
-                            // it can't be in the future
-                            // and it can't be unreasonably long ago
-                            list($M, $D, $Y) = explode('/', $value);
-                            $date = "$Y-$M-$D";
-                            $max = (new \DateTime())->format('Y-m-d');
-                            // $min = (new \DateTime("-6 years"))->format('Y-m-d');
-                            return $date <= $max;
-                        },
-                        'messages' => [
-                            \Laminas\Validator\Callback::INVALID_VALUE => 'oath date cannot be set in the future',
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        }
-        if ($this->has('BOPFormSubmissionDate')) {
-            $spec['BOPFormSubmissionDate'] = [
-                'allow_empty' => true,
-                'required'  => false,
-                'filters' => [
+                    ];
+
+                }
+                    // encrypted fields
+                    $spec['dob'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    'filters' => [
                     [
-                        'name' => 'StringTrim',
-                    ],
-                ],
-                'validators' => [
-                    [
-                        'name' => 'Laminas\Validator\Date',
-                        'options' => [
-                            'format' => 'm/d/Y',
-                            'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
-                        ],
-                        'break_chain_on_failure' => true,
-                    ],
-                    ///*
-                    [ 'name' => 'Callback',
-                    'options' => [
-                        'callback' => function ($value, $context) {
-                            // it can't be in the future
-                            list($M, $D, $Y) = explode('/', $value);
-                            $date = "$Y-$M-$D";
-                            $max = (new \DateTime())->format('Y-m-d');
-                            return $date <= $max;
-                        },
-                        'messages' => [
-                            \Laminas\Validator\Callback::INVALID_VALUE => 'form submission date cannot be set in the future',
-                        ],
-                    ],
-                ],
-            ],
-        ];
-        }
-         // encrypted fields
-            $spec['dob'] = [
-             'allow_empty' => true,
-             'required'  => false,
-              'filters' => [
-                [
                     'name' => 'StringTrim',
-                ],
-              ],
-             'validators' => [
-                 [
+                    ],
+                    ],
+                    'validators' => [
+                    [
                     'name' => 'Laminas\Validator\Date',
                     'options' => [
-                        'format' => 'Y-m-d',
-                         'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                    'format' => 'Y-m-d',
+                    'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
                     ],
                     'break_chain_on_failure' => true,
-                 ],
-                 [ 'name' => 'Callback',
+                    ],
+                    [ 'name' => 'Callback',
                     'options' => [
-                        'callback' => function ($date, $context) {
-                            // it can't be in the future
-                            // and it can't be unreasonably long ago
-                            $max = (new \DateTime("-18 years"))->format('Y-m-d');
-                            $min = (new \DateTime("-100 years"))->format('Y-m-d');
-                            return $date >= $min && $date <= $max;
-                        },
-                        'messages' => [
-                            \Laminas\Validator\Callback::INVALID_VALUE => 'date of birth has to be between 18 and 100 years ago',
-                        ],
+                    'callback' => function ($date, $context) {
+                        // it can't be in the future
+                        // and it can't be unreasonably long ago
+                        $max = (new \DateTime("-18 years"))->format('Y-m-d');
+                        $min = (new \DateTime("-100 years"))->format('Y-m-d');
+                        return $date >= $min && $date <= $max;
+                    },
+                    'messages' => [
+                    \Laminas\Validator\Callback::INVALID_VALUE => 'date of birth has to be between 18 and 100 years ago',
                     ],
-                 ],
-             ],
-             'filters' => [
+                    ],
+                    ],
+                    ],
+                    'filters' => [
                     [
-                        'name' => 'StringTrim',
+                    'name' => 'StringTrim',
                     ],
                     [
-                       'name' => 'Callback',
-                        'options' => [
-                            'callback' => function ($value) {
-                                if (! preg_match('|^\d\d/\d\d/\d{4}$|', $value)) {
-                                    return $value;
-                                }
-                                list($M, $D, $Y) = explode('/', $value);
-                                return "$Y-$M-$D";
-                            },
-                        ],
+                    'name' => 'Callback',
+                    'options' => [
+                    'callback' => function ($value) {
+                        if (! preg_match('|^\d\d/\d\d/\d{4}$|', $value)) {
+                            return $value;
+                        }
+                        list($M, $D, $Y) = explode('/', $value);
+                        return "$Y-$M-$D";
+                    },
                     ],
-                ],
-            ];
-            $spec['ssn'] = [
-             'allow_empty' => true,
-             'required'  => false,
-              'validators' => [
-                [
+                    ],
+                    ],
+                    ];
+                    $spec['ssn'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    'validators' => [
+                    [
                     'name' => 'StringLength',
                     'options' => [
-                        'min' => 9,
-                        'max' => 9,
-                         'messages' => [
-                                \Laminas\Validator\StringLength::TOO_SHORT => 'ssn must contain nine digits',
-                                \Laminas\Validator\StringLength::TOO_LONG => 'ssn number cannot exceed nine digits',
-                         ],
+                    'min' => 9,
+                    'max' => 9,
+                    'messages' => [
+                    \Laminas\Validator\StringLength::TOO_SHORT => 'ssn must contain nine digits',
+                    \Laminas\Validator\StringLength::TOO_LONG => 'ssn number cannot exceed nine digits',
                     ],
-                ],
-              ],
-             'filters' => [
-                ['name' => 'StringTrim'],
-                ['name' => 'Digits', ],
-             ],
-            ];
-
-            $spec['home_phone'] = [
-             'allow_empty' => true,
-             'required'  => false,
-              'validators' => [
-                    $this->phone_validator_spec,
-                ],
-                'filters' => [
+                    ],
+                    ],
+                    ],
+                    'filters' => [
                     ['name' => 'StringTrim'],
                     ['name' => 'Digits', ],
-                ],
-            ];
-         /*
-          * `contract_expiration_date` date DEFAULT NULL,
-            `comments` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
-            `address1` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
-            `address2` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
-            `city` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
-            `state` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
-            `zip` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
-            `country` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
-          */
-         // address data
-            $spec['address1'] = [
-             'allow_empty' => true,
-             'required'  => false,
-              'filters' => [
+                    ],
+                    ];
+
+                    $spec['home_phone'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    'validators' => [
+                    $this->phone_validator_spec,
+                    ],
+                    'filters' => [
+                    ['name' => 'StringTrim'],
+                    ['name' => 'Digits', ],
+                    ],
+                    ];
+                    /*
+                    * `contract_expiration_date` date DEFAULT NULL,
+                    `comments` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
+                    `address1` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+                    `address2` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+                    `city` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+                    `state` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+                    `zip` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
+                    `country` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
+                    */
+                    // address data
+                    $spec['address1'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    'filters' => [
                     [ 'name' => \Laminas\Filter\StringTrim::class ]
-              ],
-              'validators' => [
-                [
-                    'name' => \Laminas\Validator\StringLength::class,
-                    'options' => [
-                        'max' => 40,
-                        'messages' => [
-                        \Laminas\Validator\StringLength::TOO_LONG =>
-                            'address exceeds maximum length of 40 characters'
-                        ]
-                    ]
-                ]
-              ]
-            ];
-            $spec['address2'] = [
-            'allow_empty' => true,
-            'required'  => false,
-            'filters' => [
-                [ 'name' => \Laminas\Filter\StringTrim::class ]
-             ],
-            'validators' => [
-                [
-                    'name' => \Laminas\Validator\StringLength::class,
-                    'options' => [
-                        'max' => 40,
-                        'messages' => [
-                            \Laminas\Validator\StringLength::TOO_LONG =>
-                            'address exceeds maximum length of 40 characters'
-                        ]
-                    ]
-                ],
-            ],//validators
-            ];
-            $spec['city'] = [
-             'allow_empty' => true,
-             'required'  => false,
-            ];
-            $spec['state'] = [
-             'allow_empty' => true,
-             'required'  => false,
-            ];
-            $spec['zip'] = [
-             'allow_empty' => true,
-             'required'  => false,
-            ];
-            $spec['country'] = [
-             'allow_empty' => true,
-             'required'  => false,
-            ];
-            $spec['comments'] = [
-             'allow_empty' => true,
-             'required'  => false,
-              'filters' => [
-                   [ 'name' => \Laminas\Filter\StringTrim::class ]
-              ],
-              'validators' => [
+                    ],
+                    'validators' => [
                     [
-                        'name' => \Laminas\Validator\StringLength::class,
-                        'options' => [
-                            'max' => 600,
-                            'messages' => [
-                            \Laminas\Validator\StringLength::TOO_LONG =>
-                                'comments exceed maximum length of 600 characters'
-                            ]
-                        ]
+                    'name' => \Laminas\Validator\StringLength::class,
+                    'options' => [
+                    'max' => 40,
+                    'messages' => [
+                    \Laminas\Validator\StringLength::TOO_LONG =>
+                    'address exceeds maximum length of 40 characters'
                     ]
-              ]
-            ];
-            $spec['email']['allow_empty'] = false;
-            return $spec;
+                    ]
+                    ]
+                    ]
+                    ];
+                    $spec['address2'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    'filters' => [
+                    [ 'name' => \Laminas\Filter\StringTrim::class ]
+                    ],
+                    'validators' => [
+                    [
+                    'name' => \Laminas\Validator\StringLength::class,
+                    'options' => [
+                    'max' => 40,
+                    'messages' => [
+                    \Laminas\Validator\StringLength::TOO_LONG =>
+                    'address exceeds maximum length of 40 characters'
+                    ]
+                    ]
+                    ],
+                    ],//validators
+                    ];
+                    $spec['city'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    ];
+                    $spec['state'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    ];
+                    $spec['zip'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    ];
+                    $spec['country'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    ];
+                    $spec['comments'] = [
+                    'allow_empty' => true,
+                    'required'  => false,
+                    'filters' => [
+                    [ 'name' => \Laminas\Filter\StringTrim::class ]
+                    ],
+                    'validators' => [
+                    [
+                    'name' => \Laminas\Validator\StringLength::class,
+                    'options' => [
+                    'max' => 600,
+                    'messages' => [
+                    \Laminas\Validator\StringLength::TOO_LONG =>
+                    'comments exceed maximum length of 600 characters'
+                    ]
+                    ]
+                    ]
+                    ]
+                    ];
+                    $spec['email']['allow_empty'] = false;
+                    return $spec;
+             }
+         }
     }
 }

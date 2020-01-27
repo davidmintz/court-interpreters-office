@@ -100,7 +100,7 @@ $form->add([
         <?php if ($this->vault_error) :?>
             <div class="alert alert-warning py-2 px-3">
                 Your application configuration has the Vault module enabled for securing sensitive interpreter data,
-                but this service's health check responded with the message <strong><?php echo $this->vault_error ?></strong>
+                but this service's status check responded with the message <strong><?php echo $this->vault_error ?></strong>.
                 This data therefore cannot be read or written. Please contact your site administrator for assistance.
             </div>
             <?php
@@ -110,7 +110,8 @@ $form->add([
 if ($this->has_related_entities) :
     $fieldset->get('hat')->setAttribute('disabled', 'disabled');
 endif;?>
-        <?php foreach (['hat','active','fingerprintDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName) :
+        <?php foreach (['hat','active','fingerprintDate','BOPFormSubmissionDate','securityClearanceDate','contractExpirationDate','oathDate',] as $elementName) :
+                    if (! $fieldset->has($elementName)) : continue; endif;
                     $element = $fieldset->get($elementName);
                     $value = $element->getValue();
             if (is_object($value) && $value instanceof \DateTime) :
