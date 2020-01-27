@@ -6,6 +6,7 @@ namespace InterpretersOffice\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use DateTime;
 
 //
 /** @Entity @EntityListeners({"UserListener"}) */
@@ -91,7 +92,13 @@ class Interpreter extends Person
      */
     protected $contractExpirationDate;
 
-
+    /**
+    * date BOP security clearance was (last) submitted
+    *
+    * @ORM\Column(type="date",name="bop_form_submission_date",nullable=true)
+    * @var \DateTime
+    */
+   protected $BOPFormSubmissionDate;
     /**
      * comments
      *
@@ -472,6 +479,27 @@ class Interpreter extends Person
         return $this;
     }
 
+    /**
+     * gets BOP form submission date
+     *
+     * @return DateTime
+     */
+    public function getBOPFormSubmissionDate()
+    {
+        return $this->BOPFormSubmissionDate;
+    }
+
+    /**
+     * sets BOP form submission date
+     * @param DateTime $BOPFormSubmissionDate
+     * @return Interpreter
+     */
+    public function setBOPFormSubmissionDate(DateTime $BOPFormSubmissionDate)
+    {
+        $this->BOPFormSubmissionDate = $BOPFormSubmissionDate;
+
+        return this;
+    }
 
     /**
      * Set comments
