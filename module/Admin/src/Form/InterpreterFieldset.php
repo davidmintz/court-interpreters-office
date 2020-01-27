@@ -498,7 +498,42 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                 ],
-
+            ],
+        ];
+        }
+        if ($this->has('BOPFormSubmissionDate')) {
+            $spec['BOPFormSubmissionDate'] = [
+                'allow_empty' => true,
+                'required'  => false,
+                'filters' => [
+                    [
+                        'name' => 'StringTrim',
+                    ],
+                ],
+                'validators' => [
+                    [
+                        'name' => 'Laminas\Validator\Date',
+                        'options' => [
+                            'format' => 'm/d/Y',
+                            'messages' => [\Laminas\Validator\Date::INVALID_DATE => 'valid date in MM/DD/YYYY format is required']
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    ///*
+                    [ 'name' => 'Callback',
+                    'options' => [
+                        'callback' => function ($value, $context) {
+                            // it can't be in the future
+                            list($M, $D, $Y) = explode('/', $value);
+                            $date = "$Y-$M-$D";
+                            $max = (new \DateTime())->format('Y-m-d');
+                            return $date <= $max;
+                        },
+                        'messages' => [
+                            \Laminas\Validator\Callback::INVALID_VALUE => 'form submission date cannot be set in the future',
+                        ],
+                    ],
+                ],
             ],
         ];
         }
