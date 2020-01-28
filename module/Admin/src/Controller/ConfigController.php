@@ -43,27 +43,79 @@ class ConfigController extends AbstractActionController
         if ($error) {
             return ['errorMessage' => $error ];
         }
-        return ['config'=>$config];
+        return ['config'=> $config ];
+    }
+
+    public function getInputFilter()
+    {
+        $interpreterFormFilter = new InputFilter\InputFilter();
+        foreach ([
+        'BOPFormSubmissionDate', 'fingerprintDate','contractExpirationDate',
+        'oathDate','securityClearanceDate'] as $field) {
+            $interpreterFormFilter->add([
+                'name' => $field,
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages' => ['isEmpty'=> "$field field is required"],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'InArray',
+                        'options' => [
+                            'haystack' => [ '0', '1' ],
+                            'messages' => [
+                                'notInArray' => "invalid value for $field"
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+            ]);
+        }
+        $eventFormFilter = new InputFilter\InputFilter();
+        $field = 'end time';
+        $eventFormFilter->add([
+            'name'=>'endTime',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => ['isEmpty'=> "$field field is required"],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'InArray',
+                    'options' => [
+                        'haystack' => [ '0', '1' ],
+                        'messages' => [
+                            'notInArray' => "invalid value for $field"
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+            ],
+        ]);
+        $inputFilter = new InputFilter\InputFilter();
+        $inputFilter->add($interpreterFormFilter,'interpreters');
+        $inputFilter->add($eventFormFilter,'events');
+
+        return $inputFilter;
     }
 
     private function post()
     {
-        $inputFilter = new InputFilter\InputFilter();
-        foreach (['BOPFormSubmissionDate',
-        'fingerprintDate','contractExpirationDate',
-        'oathDate','securityClearanceDate'] as $field) {
-            $inputFilter->add([
-                'name' => $field,
-                'required' => true,
-                'validators' => [
-                    // to be continued
-                ],
-            ]);
-        }
+
         $data =  $this->params()->fromPost();
-        $inputFilter->setData($data['interpreters']);
+        $inputFilter = $this->getInputFilter();
+        $inputFilter->setData($data);
         if (! $inputFilter->isValid()) {
-            return new JsonModel(['validation_errors' => ['interpreters' => $inputFilter->getMessages()]]);
+            return new JsonModel(['validation_errors' => $inputFilter->getMessages()]);
         }
         return new JsonModel([
             'status' => 'testing one two',
