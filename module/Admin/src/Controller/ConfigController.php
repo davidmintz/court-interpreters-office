@@ -7,6 +7,7 @@ use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 
+
 use Laminas\InputFilter;
 use Laminas\Validator;
 use Laminas\Filter;
@@ -111,17 +112,21 @@ class ConfigController extends AbstractActionController
     private function post()
     {
 
-        $data =  $this->params()->fromPost();
         $inputFilter = $this->getInputFilter();
-        $inputFilter->setData($data);
+        $inputFilter->setData($this->params()->fromPost());
         if (! $inputFilter->isValid()) {
             return new JsonModel(['validation_errors' => $inputFilter->getMessages()]);
         }
+        $data = $inputFilter->getValues();
+        $array = [
+            'interpreters' => ['optional_elements'=> $data['interpreters']],
+            'events' => ['optional_elements'=> $data['events']],
+        ];
+        $json = json_encode($array,\JSON_PRETTY_PRINT);
+        \file_put_contents($this->config_path,$json);
         return new JsonModel([
-            'status' => 'testing one two',
-            'data' => $inputFilter->getValues(),
+            'status' => 'success',
+            'data' => $data,
         ]);
     }
-
-
 }

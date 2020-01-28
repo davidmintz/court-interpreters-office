@@ -16,8 +16,6 @@ class ConfigControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ConfigController(
-            //$container->get('entity-manager')
-        );
+        return new ConfigController();
     }
 }
