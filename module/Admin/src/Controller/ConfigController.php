@@ -7,6 +7,9 @@ use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Laminas\InputFilter;
+use Laminas\Validator;
+use Laminas\Filter;
 
 /**
  * configuration controller
@@ -45,9 +48,28 @@ class ConfigController extends AbstractActionController
 
     private function post()
     {
+        $inputFilter = new InputFilter\InputFilter();
+        foreach (['BOPFormSubmissionDate',
+        'fingerprintDate','contractExpirationDate',
+        'oathDate','securityClearanceDate'] as $field) {
+            $inputFilter->add([
+                'name' => $field,
+                'required' => true,
+                'validators' => [
+                    // to be continued
+                ],
+            ]);
+        }
+        $data =  $this->params()->fromPost();
+        $inputFilter->setData($data['interpreters']);
+        if (! $inputFilter->isValid()) {
+            return new JsonModel(['validation_errors' => ['interpreters' => $inputFilter->getMessages()]]);
+        }
         return new JsonModel([
             'status' => 'testing one two',
-            'data' => $this->params()->fromPost()
+            'data' => $inputFilter->getValues(),
         ]);
     }
+
+
 }
