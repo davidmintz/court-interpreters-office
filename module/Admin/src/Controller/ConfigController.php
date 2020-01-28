@@ -7,7 +7,6 @@ use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 
-
 use Laminas\InputFilter;
 use Laminas\Validator;
 use Laminas\Filter;
@@ -17,25 +16,30 @@ use Laminas\Filter;
  */
 class ConfigController extends AbstractActionController
 {
+
+    private $form_config_path = 'module/Admin/config/forms.json';
+    private $permissions;
+
+    public function __construct(Array $permissions)
+    {
+        $this->permissions = $permissions;
+    }
+
     public function indexAction()
     {
         return [];
     }
 
-    private $config_path = 'module/Admin/config/forms.json';
 
     public function formsAction()
     {
-        if ($this->getRequest()->isPost()) {
-            return $this->post();
-        }
         $error = false;
-        if (! file_exists($this->config_path)) {
+        if (! file_exists($this->form_config_path)) {
             $error = 'Unable to find form configuration file.';
-        } elseif (! is_writable($this->config_path)) {
+        } elseif (! is_writable($this->form_config_path)) {
             $error = 'Form configuration file is not writeable.';
         } else {
-            $data = file_get_contents($this->config_path);
+            $data = file_get_contents($this->form_config_path);
             $config = json_decode($data);
             if (! $data) {
                 $error = 'Form configuration file could not be parsed.';
@@ -44,7 +48,7 @@ class ConfigController extends AbstractActionController
         if ($error) {
             return ['errorMessage' => $error ];
         }
-        return ['config'=> $config ];
+        return ['config'=> $config ] + $this->permissions;
     }
 
     public function getInputFilter()
@@ -77,6 +81,7 @@ class ConfigController extends AbstractActionController
                 ],
             ]);
         }
+
         $eventFormFilter = new InputFilter\InputFilter();
         $field = 'end time';
         $eventFormFilter->add([
@@ -109,7 +114,7 @@ class ConfigController extends AbstractActionController
         return $inputFilter;
     }
 
-    private function post()
+    public function postAction()
     {
 
         $inputFilter = $this->getInputFilter();
@@ -122,8 +127,8 @@ class ConfigController extends AbstractActionController
             'interpreters' => ['optional_elements'=> $data['interpreters']],
             'events' => ['optional_elements'=> $data['events']],
         ];
-        $json = json_encode($array,\JSON_PRETTY_PRINT);
-        \file_put_contents($this->config_path,$json);
+        $json = \json_encode($array,\JSON_PRETTY_PRINT);
+        \file_put_contents($this->form_config_path,$json);
         return new JsonModel([
             'status' => 'success',
             'data' => $data,

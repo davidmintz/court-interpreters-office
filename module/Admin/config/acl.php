@@ -70,6 +70,7 @@ return [
             Admin\LanguagesController::class => null,
             Admin\EventsController::class => null,
             Admin\UsersController::class => null,
+            Admin\ConfigController::class => ['index','forms'],
             // ??
             'SDNY\Vault\Controller\VaultController' => null,
             Main\AuthController::class => ['logout'],

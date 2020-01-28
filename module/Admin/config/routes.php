@@ -852,12 +852,21 @@ return  [
                 ],
                 'forms' => [
                     'type' => Segment::class,
+                    'may_terminate' => true,
                     'options' => [
                         'route' => '/forms',
                         'defaults' => [
-                            //'controller' => ConfigController::class,
+                            'controller' => Controller\ConfigController::class,
                             'action' => 'forms',
-
+                        ],
+                    ],
+                    'child_routes' => [
+                        'update' => [
+                            'type' => Segment::class,
+                            'options' => [
+                                'route' => '/update',
+                                'action' => 'post',
+                            ],
                         ],
                     ],
                 ],

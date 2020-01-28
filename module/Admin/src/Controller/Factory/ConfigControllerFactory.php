@@ -16,6 +16,12 @@ class ConfigControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ConfigController();
+        // does the current user have write access?
+        $acl = $container->get('acl');
+        $auth = $container->get('auth');
+        $role = $auth->getStorage()->read()->role;
+        $write_access = $acl->isAllowed($role, ConfigController::class, 'post');
+        
+        return new ConfigController(['write_access'=>$write_access]);
     }
 }

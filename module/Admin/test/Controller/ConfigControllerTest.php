@@ -29,14 +29,35 @@ class ConfigControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(200);
     }
 
-    public function testAccessToAdminConfig()
+    public function testManagerAccessToAdminConfig()
     {
         $this->login('susie', 'boink');
         $this->reset(true);
         $this->dispatch('/admin/configuration');
-        $this->assertNotResponseStatusCode(404);
-        // they should get redirected
-        $this->assertResponseStatusCode(303);
+        $this->assertNotResponseStatusCode(303);
+
+        // they should (not?) get redirected
+        $this->assertResponseStatusCode(200);
+    }
+
+    public function testManagerCanReadButNotUpdateConfigForm()
+    {
+        $this->login('susie', 'boink');
+        $this->reset(true);
+        $this->dispatch('/admin/configuration/forms');
+        $this->assertResponseStatusCode(200);
+        // needs more work...
+
+        // $token = $this->getCsrfToken('/admin/configuration/forms');
+        // $this->getRequest()->setMethod('POST')->setPost(
+        //     new Parameters([
+        //             // bla bla
+        //             'csrf' => $token,
+        //         ])
+        // );
+        // $this->dispatch('/admin/configuration/forms/update');
+        // $this->assertNotResponseStatusCode(200);
+
     }
 
 }

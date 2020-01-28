@@ -5,11 +5,21 @@ $this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php if ($this->errorMessage): echo $this->errorMessage($this->errorMessage) ?>
 <?php return; endif ?>
-<form id="config-form" class="mx-auto" style="max-width:700px" action="/admin/configuration/forms" method="post">
+<form id="config-form" class="mx-auto" style="max-width:700px" action="<?=$this->url('configuration/forms/update') ?>" method="post">
+    <div id="message-success" class="alert alert-success alert-dismissible border border-success shadow-sm" role="alert" style="display:none">
+        <p class="mb-0">Form configuration has been saved.</p>
+        <button type="button" class="close" data-hide="alert" aria-label="close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <h3>optional data fields</h3>
-    <p class="alert border border-info">Use this form to enable or disable certain form fields.
-        For example, you can disable the event form's <em class="text-nowrap">end time</em> if you do not want to
-        record the time at which interpreter-events end.</p>
+    <?php if (! $this->write_access):?>
+        <p class="alert alert-warning">Your user account is not authorized to modify these settings.</p>
+    <?php else: ?>
+        <p class="alert border border-info">Use this form to enable or disable certain form fields.
+            For example, you can disable the event form's <em class="text-nowrap">end time</em> if you do not want to
+            record the time at which interpreter-events end.</p>
+    <?php endif?>
     <fieldset>
         <legend>interpreter form</legend>
         <?php
@@ -24,7 +34,8 @@ $this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
             <div class="col">
                 <div class="custom-control custom-switch">
                     <input name="interpreters[<?=$name?>]" value="0" type="hidden">
-                    <input name="interpreters[<?=$name?>]" value="1" type="checkbox" class="custom-control-input" id="<?=$name?>" checked=checked>
+                    <input name="interpreters[<?=$name?>]" value="1" type="checkbox" class="custom-control-input" id="<?=$name?>" <?php
+                        if ($value):?> checked<?php endif?>>
                     <label class="custom-control-label" for="<?=$name?>">enable <?=$display_name?></label>
                 </div>
             </div>
@@ -40,7 +51,8 @@ $this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
                 <div class="col">
                     <div class="custom-control custom-switch">
                         <input name="events[<?=$name?>]" value="0" type="hidden">
-                        <input name="events[<?=$name?>]" value="1" type="checkbox" class="custom-control-input" id="<?=$name?>" checked=checked>
+                        <input name="events[<?=$name?>]" value="1" type="checkbox" class="custom-control-input" id="<?=$name?>" <?php
+                            if ($value):?> checked<?php endif?>>
                         <label class="custom-control-label" for="<?=$name?>">enable <?=$display_name?></label>
                     </div>
                 </div>
@@ -48,6 +60,8 @@ $this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
         <?php endforeach ?>
     </fieldset>
     <div class="form-row form-group">
-        <button class="btn btn-success" type="button" name="button">save configuration</button>
+        <button class="btn btn-success" type="button" name="button" <?php if (! $this->write_access):?>disabled<?php endif?>>save configuration</button>
+
     </div>
 </form>
+<!-- <pre><?php // print_r($this->config)?></pre> -->
