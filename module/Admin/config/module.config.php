@@ -62,6 +62,7 @@ return [
             Service\EmailService::class =>  Service\Factory\EmailServiceFactory::class,
             Service\Log\Writer::class =>  Service\Factory\DbLogWriterFactory::class,
             Form\InterpreterForm::class => Form\InterpreterFormFactory::class,
+            Form\EventForm::class => Form\EventFormFactory::class,
 
         ],
         'aliases' => [

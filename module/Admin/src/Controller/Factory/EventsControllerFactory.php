@@ -35,6 +35,12 @@ class EventsControllerFactory implements FactoryInterface
             $auth,
             $updateManager
         );
+
+        $action = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParams()['action'];
+        if (in_array($action,['edit','add'])) {
+            $container->get('log')->debug("action is $action so it's time to inject EventForm into Controller");
+        }
+
         //attach the entity listeners
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
         $resolver->register($container->get(Listener\EventEntityListener::class));
@@ -164,7 +170,7 @@ class EventsControllerFactory implements FactoryInterface
                 $updateManager->setPreviousEventState($view_before);
             }
         );
-        
+
         return $controller;
     }
 }

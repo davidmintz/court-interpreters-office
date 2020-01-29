@@ -218,7 +218,7 @@ class Module
             }
         }
         if (! $allowed) {
-             $container->get("log")->warn("WTF? redirecting...");
+             $container->get("log")->debug("WTF? redirecting...");
              return $this->getRedirectionResponse($event);
         }
         /** try to prevent us from timing out */
