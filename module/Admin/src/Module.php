@@ -51,7 +51,7 @@ class Module
         //     $log = $container->get('log');
         //     $log->debug("an EVENT_ROUTE listener running in ".__NAMESPACE__);
         // });
-        // 
+        //
         // $log = $container->get('log');
         //$log->addWriter($container->get(DbWriter::class));
         /*
@@ -218,6 +218,7 @@ class Module
             }
         }
         if (! $allowed) {
+             $container->get("log")->warn("WTF? redirecting...");
              return $this->getRedirectionResponse($event);
         }
         /** try to prevent us from timing out */

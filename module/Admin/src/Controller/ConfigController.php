@@ -110,6 +110,28 @@ class ConfigController extends AbstractActionController
         $inputFilter = new InputFilter\InputFilter();
         $inputFilter->add($interpreterFormFilter,'interpreters');
         $inputFilter->add($eventFormFilter,'events');
+        $inputFilter->add([
+            'name' => 'csrf',
+            'validators' => [
+                [
+                    'name' => 'NotEmpty',
+                    'options' => [
+                        'messages' => [
+                            'isEmpty' => 'required security token is missing'
+                        ],
+                    ],
+                    'break_chain_on_failure' => true,
+                ],
+                [
+                    'name' => 'Csrf',
+                    'options' => [
+                        'messages' => [
+                            'notSame' =>
+                            'Invalid or expired security token. Please reload this page and try again.'
+                    ]],
+                ],
+            ],
+        ]);
 
         return $inputFilter;
     }

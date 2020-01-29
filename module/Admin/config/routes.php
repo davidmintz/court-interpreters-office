@@ -846,7 +846,6 @@ return  [
                         'defaults' => [
                             'controller' => RequestsConfigController::class,
                             'action' => 'config',
-
                         ],
                     ],
                 ],
@@ -865,7 +864,9 @@ return  [
                             'type' => Segment::class,
                             'options' => [
                                 'route' => '/update',
-                                'action' => 'post',
+                                'defaults' => [
+                                    'action' => 'post',
+                                ],
                             ],
                         ],
                     ],

@@ -59,9 +59,10 @@ $this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
             </div>
         <?php endforeach ?>
     </fieldset>
-    <div class="form-row form-group">
+    <div class="form-row form-group">\
+        <?php $csrf  = (new \Laminas\Validator\Csrf(['timeout'=>600]))->getHash()?>
+        <input type="hidden" name="csrf" value="<?=$csrf?>">
         <button class="btn btn-success" type="button" name="button" <?php if (! $this->write_access):?>disabled<?php endif?>>save configuration</button>
-
     </div>
 </form>
 <!-- <pre><?php // print_r($this->config)?></pre> -->

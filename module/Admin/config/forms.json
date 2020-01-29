@@ -4,7 +4,7 @@
             "BOPFormSubmissionDate": "1",
             "fingerprintDate": "1",
             "contractExpirationDate": "1",
-            "oathDate": "1",
+            "oathDate": "0",
             "securityClearanceDate": "1"
         }
     },

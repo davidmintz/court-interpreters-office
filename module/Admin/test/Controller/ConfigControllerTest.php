@@ -35,8 +35,7 @@ class ConfigControllerTest extends AbstractControllerTest
         $this->reset(true);
         $this->dispatch('/admin/configuration');
         $this->assertNotResponseStatusCode(303);
-
-        // they should (not?) get redirected
+        // they should not get redirected
         $this->assertResponseStatusCode(200);
     }
 
@@ -46,17 +45,15 @@ class ConfigControllerTest extends AbstractControllerTest
         $this->reset(true);
         $this->dispatch('/admin/configuration/forms');
         $this->assertResponseStatusCode(200);
-        // needs more work...
-
-        // $token = $this->getCsrfToken('/admin/configuration/forms');
-        // $this->getRequest()->setMethod('POST')->setPost(
-        //     new Parameters([
-        //             // bla bla
-        //             'csrf' => $token,
-        //         ])
-        // );
-        // $this->dispatch('/admin/configuration/forms/update');
-        // $this->assertNotResponseStatusCode(200);
+        $token = $this->getCsrfToken('/admin/configuration/forms');
+        $this->dispatch('/admin/configuration/forms/update','POST',
+            [
+                    // bla bla, whatever...
+                    'csrf' => $token,
+            ]
+        );
+        $this->assertNotResponseStatusCode(200);
+        $this->assertResponseStatusCode(303);
 
     }
 
