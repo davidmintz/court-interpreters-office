@@ -85,7 +85,7 @@ class ConfigController extends AbstractActionController
         $eventFormFilter = new InputFilter\InputFilter();
         $field = 'end time';
         $eventFormFilter->add([
-            'name'=>'endTime',
+            'name'=>'end_time',
             'required' => true,
             'validators' => [
                 [

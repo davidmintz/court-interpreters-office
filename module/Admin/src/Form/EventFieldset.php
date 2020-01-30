@@ -123,22 +123,27 @@ class EventFieldset extends AbstractEventFieldset
             ],
 
         ]);
-        /** @to do make this configurable */
-        $this->add(
-            [
-            'name' => 'end_time',
-            //'type' => 'text',
-            'type' => self::TIME_ELEMENT_TYPE,
-            'attributes' => [
-                'id' => 'end_time',
-                'class' => 'time form-control',
-            ],
-             'options' => [
-                'label' => 'time',
-                'format' => 'H:i:s',
-             ],
-            ]
-        );
+        if ($options['optional_elements'] && is_array($options['optional_elements']))
+        {
+            if (!empty($options['optional_elements']['end_time'])) {
+
+                $this->add(
+                    [
+                        'name' => 'end_time',
+                        //'type' => 'text',
+                        'type' => self::TIME_ELEMENT_TYPE,
+                        'attributes' => [
+                            'id' => 'end_time',
+                            'class' => 'time form-control',
+                        ],
+                        'options' => [
+                            'label' => 'time',
+                            'format' => 'H:i:s',
+                        ],
+                    ]
+                );
+            }
+        }
 
         $this->addSubmissionDateTimeElements();
 

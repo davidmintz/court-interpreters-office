@@ -6,6 +6,9 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Form\EventForm;
 use InterpretersOffice\Entity;
+use function file_get_contents;
+use function json_decode;
+use function is_readable;
 
 class EventFormFactory implements FactoryInterface
 {
@@ -19,18 +22,30 @@ class EventFormFactory implements FactoryInterface
     {
         $params = $container->get('Application')->getMvcEvent()
             ->getRouteMatch()->getParams();
-        $options = [];
         $em = $container->get('entity-manager');
+        /** get form config options (optional fields) */
+        $config_path = 'module/Admin/config/forms.json';
+        $options = [];
+        if (is_readable($config_path)) {
+            $json = file_get_contents($config_path);
+            $config = json_decode($json,\JSON_OBJECT_AS_ARRAY);
+            if (isset($config['events']) && isset($config['events']['optional_elements'])) {
+                $options['optional_elements'] = $config['events']['optional_elements'];
+            }
+        }
+        if (!$options) {
+            $container->get('log')->warn("EventFormFactory: unable to load events form configuration file");
+        }
         if ('edit' == $params['action']) {
             $id = $params['id'];
             /** @var \InterpretersOffice\Entity\Event $entity  */
             $entity = $em->getRepository(Entity\Event::class)
                 ->load($id);
-            $options = ['object' => $entity, 'action' => 'update',];
+            $options += ['object' => $entity, 'action' => 'update',];
             $form = new EventForm($em, $options);
             $form->setObject($entity);
         } else {
-            $form =  new EventForm($em, ['object' => null, 'action' => 'create',]);
+            $form =  new EventForm($em, $options + ['object' => null, 'action' => 'create',]);
         }
 
         return $form;

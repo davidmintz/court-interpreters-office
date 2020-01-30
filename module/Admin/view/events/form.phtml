@@ -85,8 +85,8 @@ foreach (['judge','anonymousJudge','location','parent_location','eventType','can
     endif;
 endforeach;
 /** ============================================================ ! */
-// temporarily, let's just set this here
-$config = ['end_time' => true];
+
+
 ?>
 <div id="slideout-toggle" style="display:none;position:absolute;left:0;z-index:100;min-width:22rem" class="card border ml-5 bg-light">
     <div class="card-header">
@@ -120,7 +120,7 @@ echo $this->form()->openTag($form); ?>
     </div>
     <label for="time" class="col-sm-2 col-form-label pr-1">time</label>
     <div class="col-sm-4">
-        <?php if (! $config['end_time']):?>
+        <?php if (! $fieldset->has('end_time')):?>
         <?php  echo $this->formElement($fieldset->get('time')); ?>
 <?php else: ?>
     <div class="form-row">

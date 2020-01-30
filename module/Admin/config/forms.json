@@ -10,7 +10,7 @@
     },
     "events": {
         "optional_elements": {
-            "endTime": "0"
+            "end_time": "1"
         }
     }
 }
