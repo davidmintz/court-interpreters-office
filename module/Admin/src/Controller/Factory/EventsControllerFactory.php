@@ -10,6 +10,7 @@ use InterpretersOffice\Admin\Controller\EventsController;
 
 use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
+use InterpretersOffice\Admin\Form\EventForm;
 /**
  * Factory for instantiating EventController
  */
@@ -35,11 +36,6 @@ class EventsControllerFactory implements FactoryInterface
             $auth,
             $updateManager
         );
-
-        $action = $container->get('Application')->getMvcEvent()->getRouteMatch()->getParams()['action'];
-        if (in_array($action,['edit','add'])) {
-            $container->get('log')->debug("action is $action so it's time to inject EventForm into Controller");
-        }
 
         //attach the entity listeners
         $resolver = $em->getConfiguration()->getEntityListenerResolver();
@@ -170,7 +166,11 @@ class EventsControllerFactory implements FactoryInterface
                 $updateManager->setPreviousEventState($view_before);
             }
         );
-
+        $action = $container->get('Application')->getMvcEvent()
+            ->getRouteMatch()->getParams()['action'];
+        if (in_array($action,['edit','add'])) {
+            $controller->setForm($container->get(EventForm::class));
+        }
         return $controller;
     }
 }

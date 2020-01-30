@@ -175,7 +175,7 @@ class EventForm extends LaminasForm implements
             $end_time_input->getValidatorChain()
                 ->attach(new Validator\EndTimeValidator());
         }
-        // take out datetime elements that they have not changes, to
+        // take out datetime elements that they have not changed, to
         // prevent Doctrine from wasting an update
         $this->filterDateTimeFields(
             ['date','time','end_time','submission_date','submission_time'],

@@ -251,7 +251,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
                 'missing "action" option in constructor'
             );
         }
-        if (! in_array($options['action'], ['create', 'update','repeat'])) {
+        if (! in_array($options['action'], ['create', 'update',])) { //'repeat'??
             throw new \RuntimeException('invalid "action" option in '
                 . 'EventFieldset constructor: '.(string)$options['action']);
         }

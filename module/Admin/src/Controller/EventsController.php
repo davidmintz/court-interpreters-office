@@ -69,6 +69,11 @@ class EventsController extends AbstractActionController
      */
     protected $updateManager;
 
+    /** @var Form\EventForm */
+    protected $eventForm;
+
+
+
     /**
      * constructor
      *
@@ -83,6 +88,19 @@ class EventsController extends AbstractActionController
         $this->entityManager = $em;
         $this->auth = $auth;
         $this->updateManager = $updateManager;
+    }
+
+    /**
+     * sets form. work in progress.
+     *
+     * @param FormEventForm $form
+     * @return EventsController
+     */
+    public function setForm(Form\EventForm $form)
+    {
+        $this->form = $form;
+
+        return $this;
     }
 
     /**
@@ -114,12 +132,7 @@ class EventsController extends AbstractActionController
      */
     public function addAction()
     {
-        $form = new Form\EventForm(
-            $this->entityManager,
-            ['action' => 'create',
-             'auth_user_role' => $this->auth->getIdentity()->role,
-             'object' => null,]
-        );
+        $form = $this->form;
         $form->attach($this->getEventManager());
         $request = $this->getRequest();
         $form->setAttribute('action', $request->getRequestUri());
@@ -168,7 +181,7 @@ class EventsController extends AbstractActionController
         $this->entityManager->persist($event);
         $this->entityManager->flush();
         $url = $this->getEvent()->getApplication()->getServiceManager()
-        ->get('ViewHelperManager')->get('url')('events');
+            ->get('ViewHelperManager')->get('url')('events');
         $date = $event->getDate();
         $this->flashMessenger()->addSuccessMessage(sprintf(
             'This event has been added to the schedule for <a href="%s">%s</a>',
@@ -234,16 +247,18 @@ class EventsController extends AbstractActionController
         /** @var \InterpretersOffice\Entity\Event $entity  */
         $entity = $this->entityManager->getRepository(Entity\Event::class)
             ->load($id);
+        $entity = $this->form->getObject();
+        if (! $entity) {
+            return ['errorMessage' => "No event with id $id was found in the database.",
+            'header' => 'event not found'];
+        }
         if ($entity->isDeleted()) {
-            return ['errorMessage' => 'This event has been deleted from the schedule, and therefore is no longer mutable. If you need to have it restored, please contact your database administrator.',
+            return ['errorMessage' =>
+            'This event has been deleted from the schedule, and therefore is no longer mutable.
+             If you need to have it restored, please contact your database administrator.',
             'header' => 'event deleted'];
         }
-        if (! $entity) {
-            return ['errorMessage' => "No event with id $id was found in the database.",'header' => 'event not found'];
-        }
-        $form = new Form\EventForm(
-            $this->entityManager, ['action' => 'update','object' => $entity,]
-        );
+        $form = $this->form;
         $view = $this->getViewModel(['id' => $id,'form' => $form]);
         $events = $this->getEventManager();
         $form->attach($events);
