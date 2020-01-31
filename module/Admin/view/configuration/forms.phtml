@@ -23,12 +23,9 @@ $this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
     <fieldset>
         <legend>interpreter form</legend>
         <?php
-        $filter = new \Laminas\Filter\Word\CamelCaseToSeparator(' ');
+        //$filter = new \Laminas\Filter\Word\CamelCaseToSeparator(' ');
         foreach ($this->config->interpreters->optional_elements as $name => $value) :
-            $display_name = strtolower($filter->filter($name));
-            if (strstr($display_name, 'bop')) {
-                $display_name = str_replace('bop','BOP',$display_name);
-            }
+            $display_name = str_replace('_',' ',$name);
         ?>
         <div class="form-row form-group">
             <div class="col">
@@ -45,7 +42,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
     <fieldset>
         <legend>event form</legend>
         <?php foreach ($this->config->events->optional_elements as $name => $value) :
-            $display_name = strtolower($filter->filter($name));
+            $display_name = $display_name = str_replace('_',' ',$name);
             ?>
             <div class="form-row form-group">
                 <div class="col">

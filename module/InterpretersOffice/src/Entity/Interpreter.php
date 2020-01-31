@@ -66,7 +66,7 @@ class Interpreter extends Person
      * @ORM\Column(type="date",name="security_clearance_date",nullable=true)
      * @var \DateTime
      */
-    protected $securityClearanceDate;
+    protected $security_clearance_date;
 
      /**
      * date fingerprints taken.
@@ -74,7 +74,7 @@ class Interpreter extends Person
      * @ORM\Column(type="date",name="fingerprint_date",nullable=true)
      * @var \DateTime
      */
-    protected $fingerprintDate;
+    protected $fingerprint_date;
 
     /**
      * date interpreters' oath was administered
@@ -82,7 +82,7 @@ class Interpreter extends Person
      * @ORM\Column(type="date",name="oath_date",nullable=true)
      * @var \DateTime
      */
-    protected $oathDate;
+    protected $oath_date;
 
      /**
      * date contract expires
@@ -90,7 +90,7 @@ class Interpreter extends Person
      * @ORM\Column(type="date",name="contract_expiration_date",nullable=true)
      * @var \DateTime
      */
-    protected $contractExpirationDate;
+    protected $contract_expiration_date;
 
     /**
     * date BOP security clearance was (last) submitted
@@ -98,7 +98,7 @@ class Interpreter extends Person
     * @ORM\Column(type="date",name="bop_form_submission_date",nullable=true)
     * @var \DateTime
     */
-   protected $BOPFormSubmissionDate;
+   protected $BOP_form_submission_date;
     /**
      * comments
      *
@@ -392,7 +392,7 @@ class Interpreter extends Person
      */
     public function setSecurityClearanceDate(\DateTime $securityClearanceDate = null)
     {
-        $this->securityClearanceDate = $securityClearanceDate;
+        $this->security_clearance_date = $securityClearanceDate;
 
         return $this;
     }
@@ -404,7 +404,7 @@ class Interpreter extends Person
      */
     public function getSecurityClearanceDate()
     {
-        return $this->securityClearanceDate;
+        return $this->security_clearance_date;
     }
 
     /**
@@ -416,7 +416,7 @@ class Interpreter extends Person
      */
     public function setFingerprintDate(\DateTime $fingerprintDate = null)
     {
-        $this->fingerprintDate = $fingerprintDate;
+        $this->fingerprint_date = $fingerprintDate;
 
         return $this;
     }
@@ -428,7 +428,7 @@ class Interpreter extends Person
      */
     public function getFingerprintDate()
     {
-        return $this->fingerprintDate;
+        return $this->fingerprint_date;
     }
 
     /**
@@ -440,7 +440,7 @@ class Interpreter extends Person
      */
     public function setOathDate(\DateTime $oathDate = null)
     {
-        $this->oathDate = $oathDate;
+        $this->oath_date = $oathDate;
 
         return $this;
     }
@@ -452,7 +452,7 @@ class Interpreter extends Person
      */
     public function getOathDate()
     {
-        return $this->oathDate;
+        return $this->oath_date;
     }
 
     /**
@@ -462,7 +462,7 @@ class Interpreter extends Person
      */
     public function getContractExpirationDate()
     {
-        return $this->contractExpirationDate;
+        return $this->contract_expiration_date;
     }
 
     /**
@@ -474,7 +474,7 @@ class Interpreter extends Person
      */
     public function setContractExpirationDate($contractExpirationDate)
     {
-        $this->contractExpirationDate = $contractExpirationDate;
+        $this->contract_expiration_date = $contractExpirationDate;
 
         return $this;
     }
@@ -486,7 +486,7 @@ class Interpreter extends Person
      */
     public function getBOPFormSubmissionDate()
     {
-        return $this->BOPFormSubmissionDate;
+        return $this->BOP_form_submission_date;
     }
 
     /**
@@ -496,9 +496,9 @@ class Interpreter extends Person
      */
     public function setBOPFormSubmissionDate(DateTime $BOPFormSubmissionDate)
     {
-        $this->BOPFormSubmissionDate = $BOPFormSubmissionDate;
+        $this->BOP_form_submission_date = $BOPFormSubmissionDate;
 
-        return this;
+        return $this;
     }
 
     /**

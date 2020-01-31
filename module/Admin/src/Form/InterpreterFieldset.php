@@ -47,8 +47,8 @@ class InterpreterFieldset extends PersonFieldset
 
     private $optional_elements = [
 
-        'fingerprintDate' => [
-            'name' => 'fingerprintDate',
+        'fingerprint_date' => [
+            'name' => 'fingerprint_date',
             'type' => 'Laminas\Form\Element\Text',
             'attributes' => [
                 'id' => 'fingerprint_date',
@@ -59,8 +59,8 @@ class InterpreterFieldset extends PersonFieldset
                 'format' => 'Y-m-d',
              ],
          ],
-         'BOPFormSubmissionDate' => [
-             'name' => 'BOPFormSubmissionDate',
+         'BOP_form_submission_date' => [
+             'name' => 'BOP_form_submission_date',
              'type' => 'Laminas\Form\Element\Text',
              'attributes' => [
                  'id' => 'BOP_form_submission_date',
@@ -72,8 +72,8 @@ class InterpreterFieldset extends PersonFieldset
                  'format' => 'Y-m-d',
               ],
          ],
-         'oathDate' => [
-             'name' => 'oathDate',
+         'oath_date' => [
+             'name' => 'oath_date',
              'type' => 'Laminas\Form\Element\Text',
              'attributes' => [
                  'id' => 'oath_date',
@@ -84,8 +84,8 @@ class InterpreterFieldset extends PersonFieldset
                  'format' => 'Y-m-d',
              ],
          ],
-         'securityClearanceDate' => [
-            'name' => 'securityClearanceDate',
+         'security_clearance_date' => [
+            'name' => 'security_clearance_date',
             'type' => 'Laminas\Form\Element\Text',
             'attributes' => [
                 'id' => 'security_clearance_date',
@@ -97,8 +97,8 @@ class InterpreterFieldset extends PersonFieldset
                 'format' => 'Y-m-d',
              ],
          ],
-         'contractExpirationDate' => [
-             'name' => 'contractExpirationDate',
+         'contract_expiration_date' => [
+             'name' => 'contract_expiration_date',
              'type' => 'Laminas\Form\Element\Text',
              'attributes' => [
                  'id' => 'contract_expiration_date',
@@ -353,8 +353,8 @@ class InterpreterFieldset extends PersonFieldset
          ];
          /** optional fields */
 
-         if ($this->has('fingerprintDate')) {
-             $spec['fingerprintDate'] = [
+         if ($this->has('fingerprint_date')) {
+             $spec['fingerprint_date'] = [
                  'allow_empty' => true,
                  'required' => false,
                  'filters' => [
@@ -390,8 +390,8 @@ class InterpreterFieldset extends PersonFieldset
                  ],
              ];
          }
-        if ($this->has('securityClearanceDate')) {
-            $spec['securityClearanceDate'] = [
+        if ($this->has('security_clearance_date')) {
+            $spec['security_clearance_date'] = [
              'allow_empty' => true,
              'required'  => false,
              'filters' => [
@@ -428,8 +428,8 @@ class InterpreterFieldset extends PersonFieldset
                 ],
             ];
         }
-        if ($this->has('contractExpirationDate')) {
-            $spec['contractExpirationDate'] = [
+        if ($this->has('contract_expiration_date')) {
+            $spec['contract_expiration_date'] = [
                 'allow_empty' => true,
                 'required' => false,
                 'filters' => [
@@ -464,8 +464,8 @@ class InterpreterFieldset extends PersonFieldset
                 ],
             ];
         }
-        if ($this->has('oathDate')) {
-            $spec['oathDate'] = [
+        if ($this->has('oath_date')) {
+            $spec['oath_date'] = [
                 'allow_empty' => true,
                 'required'  => false,
                 'filters' => [
@@ -502,8 +502,8 @@ class InterpreterFieldset extends PersonFieldset
             ],
         ];
         }
-        if ($this->has('BOPFormSubmissionDate')) {
-            $spec['BOPFormSubmissionDate'] = [
+        if ($this->has('BOP_form_submission_date')) {
+            $spec['BOP_form_submission_date'] = [
                 'allow_empty' => true,
                 'required'  => false,
                 'filters' => [

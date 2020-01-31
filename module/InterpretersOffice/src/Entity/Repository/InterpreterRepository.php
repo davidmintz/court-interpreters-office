@@ -69,7 +69,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $queryParams = [];
 
         //https://github.com/doctrine/doctrine2/issues/2596#issuecomment-162359725
-        $qb->select('PARTIAL i.{lastname, firstname, id, active, securityClearanceDate}', 'h.name AS hat')
+        $qb->select('PARTIAL i.{lastname, firstname, id, active, security_clearance_date}', 'h.name AS hat')
             ->join('i.hat', 'h');
 
         if (! empty($params['lastname'])) {
@@ -117,17 +117,17 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
                     $security_expiration_clause = '';
                     break;
                 case 0:  // expired
-                    $security_expiration_clause = 'i.securityClearanceDate < :expiration ';
+                    $security_expiration_clause = 'i.security_clearance_date < :expiration ';
                     $queryParams[':expiration'] = new \DateTime('-2 years');
                     $hasWhereConditions = true;
                     break;
                 case 1: // valid
-                    $security_expiration_clause = 'i.securityClearanceDate > :expiration ';
+                    $security_expiration_clause = 'i.security_clearance_date > :expiration ';
                     $queryParams[':expiration'] = new \DateTime('-2 years');
                     $hasWhereConditions = true;
                     break;
                 case -2: // NULL
-                    $security_expiration_clause = 'i.securityClearanceDate IS NULL';
+                    $security_expiration_clause = 'i.security_clearance_date IS NULL';
                     $hasWhereConditions = true;
                     break;
             }

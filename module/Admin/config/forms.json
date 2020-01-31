@@ -1,11 +1,11 @@
 {
     "interpreters": {
         "optional_elements": {
-            "BOPFormSubmissionDate": "1",
-            "fingerprintDate": "1",
-            "contractExpirationDate": "1",
-            "oathDate": "0",
-            "securityClearanceDate": "1"
+            "BOP_form_submission_date": "1",
+            "fingerprint_date": "1",
+            "contract_expiration_date": "1",
+            "oath_date": "0",
+            "security_clearance_date": "1"
         }
     },
     "events": {
