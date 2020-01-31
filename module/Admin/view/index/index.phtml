@@ -44,61 +44,72 @@ form { max-width: 900px;}
     ?></table>
 
     <div class="row mt-3">
-        <div class="col list-group">
-            <div class="list-group-item">
-                <a href="<?= $this->url('events')?>">scheduling</a><br>
-                schedule of court interpreter events
-            </div>
-            <div class="list-group-item">
-                <a href="<?= $this->url('interpreters')?>">interpreters</a><br>
-                roster of interpreters
-            </div>
-            <div class="list-group-item">
-                <a href="<?= $this->url('judges')?>">judges</a><br>
-                roster of judges
-            </div>
-            <div class="list-group-item">
-                <a href="<?= $this->url('users')?>">users</a><br>
-                user account management
-            </div>
-            <div class="list-group-item">
-                <a href="<?= $this->url('people')?>">people</a><br>
-                contact information for people in general
-            </div>
-            <div class="list-group-item">
-                <a href="<?= $this->url('languages')?>">languages</a><br>
-                languages required in your court
-            </div>
-        </div>
-        <div class="col list-group">
+        <div class="col">
 
-            <div class="list-group-item">
-                <a href="<?= $this->url('court-closings')?>">court closings</a><br>
-                list of court holidays and ad-hoc closings
-            </div>
-            <div class="list-group-item">
-                <a href="<?= $this->url('locations')?>">locations</a><br>
-                locations where interpreting services are rendered
-            </div>
-            <div class="list-group-item">
-                <a href="<?= $this->url('admin-defendants')?>">defendant/etc names</a><br>
-                names of non-English-speaking consumers of interpreting services
-            </div>
-            <div class="list-group-item">
-                <a href="<?= $this->url('event-types')?>">event-types</a><br>
-                types of court proceedings and ancillary events that involve interpreters
-            </div>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('events')?>">scheduling</a>
+                schedule of court interpreter events
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('interpreters')?>">interpreters</a>
+                interpreter contact data, working languages, etc
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('judges')?>">judges</a>
+                roster of judges sitting in your Court
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('users')?>">users</a>
+                user account management
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('people')?>">people</a>
+                contact information for people in general
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('languages')?>">languages</a>
+                languages required in your Court
+            </p>
         </div>
-        <div class="col list-group">
-            <div class="list-group-item">
-            <a href="<?=$this->url('configuration/requests') ?>"><?=$this->url('configuration/requests') ?></a> here?
-            </div>
-            <div class="list-group-item">
-                thing two
-            </div>
-            <div class="list-group-item">
-                thing three
-            </div>
+        <div class="col">
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('court-closings')?>">court closings</a>
+                official Court holidays and ad-hoc closings
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('locations')?>">locations</a>
+                locations where interpreting services are rendered
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('admin-defendants')?>">defendant/etc names</a>
+                names of non-English-speaking consumers of interpreting services
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('event-types')?>">event-types</a>
+                types of proceedings and ancillary events involving interpreters
+            </p>
+        </div>
+        <div class="col">
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?=$this->url('search') ?>">search</a>
+                search your database for past and future interpreter-events based on various criteria
+            </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?=$this->url('notes') ?>">notes</a>
+                informational notes relevant to particular days or weeks
+            </p>
+            <p class="mb-0">
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?=$this->url('configuration') ?>">configuration</a>
+                configuration settings for
+            </p>
+            <ul class="mt-1">
+                <li>
+                    <a href="<?=$this->url('configuration/requests') ?>">Requests module</a>
+                </li>
+                <li>
+                    <a href="<?=$this->url('configuration/forms') ?>">form/data fields</a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
