@@ -1,0 +1,16 @@
+{
+    "interpreters": {
+        "optional_elements": {
+            "BOP_form_submission_date": "0",
+            "fingerprint_date": "0",
+            "contract_expiration_date": "0",
+            "oath_date": "0",
+            "security_clearance_date": "0"
+        }
+    },
+    "events": {
+        "optional_elements": {
+            "end_time": "0"
+        }
+    }
+}
