@@ -375,7 +375,7 @@ class RequestRepository extends EntityRepository
         ->leftJoin('j.flavor', 'j_flavor')
         ->leftJoin('loc.parentLocation', 'parent_loc')
         ->leftJoin('r.event', 'event')
-        ->leftJoin('event.cancellationReason', 'cr')
+        ->leftJoin('event.cancellation_reason', 'cr')
         ->where('r.id = :id')
         ->setParameters(['id' => $id]);
 

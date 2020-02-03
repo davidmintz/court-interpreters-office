@@ -169,7 +169,7 @@ class Event implements Interpretable
      *
      * @var ReasonForCancellation
      */
-    protected $cancellationReason;
+    protected $cancellation_reason;
 
 
 
@@ -757,7 +757,7 @@ class Event implements Interpretable
      */
     public function setCancellationReason(ReasonForCancellation $cancellationReason = null)
     {
-        $this->cancellationReason = $cancellationReason;
+        $this->cancellation_reason = $cancellationReason;
 
         return $this;
     }
@@ -769,7 +769,7 @@ class Event implements Interpretable
      */
     public function getCancellationReason()
     {
-        return $this->cancellationReason;
+        return $this->cancellation_reason;
     }
 
     /**

@@ -63,7 +63,7 @@ class EventControllerTest extends AbstractControllerTest
         $data['submitter'] = $user->getPerson()->getId();
         $data['anonymousJudge'] = '';
         $data['is_anonymous_judge'] = '';
-        $data['cancellationReason'] = '';
+        $data['cancellation_reason'] = '';
         $data['id'] = '';
 
         $this->dummy_data = $data;
@@ -317,7 +317,7 @@ class EventControllerTest extends AbstractControllerTest
             'submitter' => $entity->getSubmitter()->getId(),
             'anonymousJudge' => '',
             'is_anonymous_judge' => '',
-            'cancellationReason' => '',
+            'cancellation_reason' => '',
             'id' => $entity->getId(),
             'defendants' => [
                 $entity->getDefendants()->toArray()[0]->getId()

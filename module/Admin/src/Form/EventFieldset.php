@@ -158,7 +158,7 @@ class EventFieldset extends AbstractEventFieldset
         ];
         array_unshift($cancellation_options, $default_opt);
         $this->add([
-            'name' => 'cancellationReason',
+            'name' => 'cancellation_reason',
             'type' => 'select',
              'attributes' => [
                 'id'   => 'cancellation_reason',
@@ -526,7 +526,7 @@ class EventFieldset extends AbstractEventFieldset
                     ['name' => 'StringTrim'],
                 ],
              ],
-            'cancellationReason' => [
+            'cancellation_reason' => [
                 'required' => true,
                 'allow_empty' => true,
             ],

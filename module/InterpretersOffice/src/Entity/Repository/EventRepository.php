@@ -67,7 +67,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          FROM InterpretersOffice\Entity\Event e
          JOIN e.eventType t
          JOIN t.category c
-         LEFT JOIN e.cancellationReason r
+         LEFT JOIN e.cancellation_reason r
          LEFT JOIN e.judge j
          LEFT JOIN j.flavor f
          LEFT JOIN e.anonymousJudge aj
@@ -145,7 +145,7 @@ DQL;
             JOIN t.category c
             LEFT JOIN j.defaultLocation default_loc
             LEFT JOIN default_loc.parentLocation default_parent_loc
-            LEFT JOIN e.cancellationReason cr
+            LEFT JOIN e.cancellation_reason cr
             LEFT JOIN e.anonymousJudge anon_j
             LEFT JOIN anon_j.defaultLocation anon_j_default_loc
             LEFT JOIN e.anonymousSubmitter anon_submitter
@@ -288,7 +288,7 @@ DQL;
          LEFT JOIN e.location loc
          LEFT JOIN loc.type as loc_type
          LEFT JOIN loc.parentLocation ploc
-         LEFT JOIN e.cancellationReason cr
+         LEFT JOIN e.cancellation_reason cr
          WHERE e.deleted = false AND e.date = :date';
         if (isset($options['language']) && 'all' != $options['language']) {
             $dql .= ' AND lang.name ';
@@ -449,7 +449,7 @@ DQL;
             ->join('e.language', 'l')
             ->leftJoin('e.location', 'loc')
             ->leftJoin('loc.parentLocation', 'ploc')
-            ->leftJoin('e.cancellationReason', 'cr');
+            ->leftJoin('e.cancellation_reason', 'cr');
         $params = [];
         if (!empty($query['language'])) {
             $qb->where('l.id = :language_id');
