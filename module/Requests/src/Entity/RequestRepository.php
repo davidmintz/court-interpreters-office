@@ -268,7 +268,7 @@ class RequestRepository extends EntityRepository
         //     ->from(Request::class, 'r')
         //     ->join('r.event_type', 'type')
         //     ->join('r.language', 'lang')
-        //     ->join('r.modifiedBy', 'mod_by')
+        //     ->join('r.modified_by', 'mod_by')
         //     ->join('mod_by.person', 'mod_by_p')
         //     ->join('mod_by.role', 'mod_by_role')
         //     ->leftJoin('mod_by.judges', 'mod_by_judges')
@@ -366,7 +366,7 @@ class RequestRepository extends EntityRepository
         ->join('r.event_type', 'e')
         ->join('r.submitter', 'submitter')// a Person
         ->join('submitter.hat', 'submitter_h')
-        ->leftJoin('r.modifiedBy', 'modified_by_user')
+        ->leftJoin('r.modified_by', 'modified_by_user')
         ->join('r.language', 'lang')
         ->leftJoin('modified_by_user.person', 'modified_by')
         ->leftJoin('modified_by.hat', 'modified_by_h')

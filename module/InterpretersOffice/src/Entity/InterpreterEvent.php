@@ -52,7 +52,7 @@ class InterpreterEvent
      *
      * @var User
      */
-    protected $createdBy;
+    protected $created_by;
 
     /**
      * current data and time
@@ -168,7 +168,7 @@ class InterpreterEvent
 
     /* ------------------ */
     /**
-     * sets createdBy property.
+     * sets created_by property.
      *
      * @param \InterpretersOffice\Entity\User $user
      *
@@ -176,18 +176,18 @@ class InterpreterEvent
      */
     public function setCreatedBy(User $user)
     {
-        $this->createdBy = $user;
+        $this->created_by = $user;
 
         return $this;
     }
 
     /**
-     * gets createdBy property.
+     * gets created_by property.
      *
      * @return User
      */
     public function getCreatedBy()
     {
-        return $this->createdBy;
+        return $this->created_by;
     }
 }

@@ -232,7 +232,7 @@ class Event implements Interpretable
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(nullable=false,name="created_by_id")
      */
-    protected $createdBy;
+    protected $created_by;
 
     /**
      * timestamp of last update.
@@ -249,7 +249,7 @@ class Event implements Interpretable
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(nullable=true,name="modified_by_id")
      */
-    protected $modifiedBy;
+    protected $modified_by;
 
     /**
      * Interpreters assigned to this Event.
@@ -394,9 +394,9 @@ class Event implements Interpretable
      *
      * @return Event
      */
-    public function setEndTime(\DateTime $endTime = null) : Event
+    public function setEndTime(\DateTime $end_time = null) : Event
     {
-        $this->end_time = $endTime;
+        $this->end_time = $end_time;
 
         return $this;
     }
@@ -873,51 +873,51 @@ class Event implements Interpretable
     }
 
     /**
-     * Set createdBy.
+     * Set created_by.
      *
-     * @param User $createdBy
+     * @param User $created_by
      *
      * @return Event
      */
-    public function setCreatedBy(User $createdBy)
+    public function setCreatedBy(User $created_by)
     {
-        $this->createdBy = $createdBy;
+        $this->created_by = $created_by;
 
         return $this;
     }
 
     /**
-     * Get createdBy.
+     * Get created_by.
      *
      * @return User
      */
     public function getCreatedBy()
     {
-        return $this->createdBy;
+        return $this->created_by;
     }
 
     /**
-     * Set modifiedBy.
+     * Set modified_by.
      *
-     * @param User $modifiedBy
+     * @param User $modified_by
      *
      * @return Event
      */
-    public function setModifiedBy(User $modifiedBy = null)
+    public function setModifiedBy(User $modified_by = null)
     {
-        $this->modifiedBy = $modifiedBy;
+        $this->modified_by = $modified_by;
 
         return $this;
     }
 
     /**
-     * Get modifiedBy.
+     * Get modified_by.
      *
      * @return User
      */
     public function getModifiedBy()
     {
-        return $this->modifiedBy;
+        return $this->modified_by;
     }
 
     /**

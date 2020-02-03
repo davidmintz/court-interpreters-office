@@ -150,7 +150,7 @@ class Request implements Interpretable, ResourceInterface
      * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\User")
      * @ORM\JoinColumn(nullable=true,name="modified_by_id")
      */
-    protected $modifiedBy;
+    protected $modified_by;
 
     /**
      * comments.
@@ -581,27 +581,27 @@ class Request implements Interpretable, ResourceInterface
     }
 
     /**
-     * Set modifiedBy.
+     * Set modified_by.
      *
-     * @param \InterpretersOffice\Entity\User|null $modifiedBy
+     * @param \InterpretersOffice\Entity\User|null $modified_by
      *
      * @return Request
      */
-    public function setModifiedBy(\InterpretersOffice\Entity\User $modifiedBy = null)
+    public function setModifiedBy(\InterpretersOffice\Entity\User $modified_by = null)
     {
-        $this->modifiedBy = $modifiedBy;
+        $this->modified_by = $modified_by;
 
         return $this;
     }
 
     /**
-     * Get modifiedBy.
+     * Get modified_by.
      *
      * @return \InterpretersOffice\Entity\User|null
      */
     public function getModifiedBy()
     {
-        return $this->modifiedBy;
+        return $this->modified_by;
     }
 
     /**

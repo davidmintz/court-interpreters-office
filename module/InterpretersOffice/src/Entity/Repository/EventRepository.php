@@ -81,8 +81,8 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          LEFT JOIN e.submitter p
          LEFT JOIN p.hat h
          LEFT JOIN e.anonymous_submitter anon_submitter
-         JOIN e.createdBy user1
-         LEFT JOIN e.modifiedBy user2
+         JOIN e.created_by user1
+         LEFT JOIN e.modified_by user2
          LEFT JOIN user2.role u2_role
          LEFT JOIN user2.person u2_person
          LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
@@ -134,7 +134,7 @@ DQL;
     public function load($id)
     {
         // LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
-        // JOIN e.modifiedBy lastmod_by
+        // JOIN e.modified_by lastmod_by
         $dql = 'SELECT e, j, f, t, c, anon_j, anon_submitter, submitter, sh, loc, lang,
                 ploc, cr, ie,i, d, default_loc,default_parent_loc, anon_j_default_loc
              FROM '.Entity\Event::class. ' e

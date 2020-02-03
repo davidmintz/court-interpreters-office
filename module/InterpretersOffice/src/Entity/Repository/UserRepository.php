@@ -129,7 +129,7 @@ class UserRepository extends EntityRepository
             JOIN e.submitter s WHERE s.id = :person_id
         ) events
         FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
-        JOIN r.modifiedBy m WHERE p.id = :person_id OR (m.person = p and p.id = :person_id)';
+        JOIN r.modified_by m WHERE p.id = :person_id OR (m.person = p and p.id = :person_id)';
         $params = [':person_id'=>$person_id];
         $result = $this->createQuery($dql)
             ->useResultCache(false)
@@ -288,7 +288,7 @@ SELECT COUNT(r.id) requests,
 JOIN e.submitter s WHERE s.id = 1476
 ) events
 FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
-JOIN r.modifiedBy m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
+JOIN r.modified_by m WHERE p.id = 1476 OR (m.person = p and p.id = 1476)
  */
 /*
  //this is too much bullshit...
