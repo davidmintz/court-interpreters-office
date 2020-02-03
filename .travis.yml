@@ -23,6 +23,7 @@ before_script:
     #- bin/initialize-test-db.sh
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
     - cp config/autoload/development.local.php.dist config/autoload/development.local.php
+    - cp module/Admin/config/forms.json.dist module/Admin/config/forms.json
     - mkdir -p data/log
     - mkdir data/mail
     - mkdir data/cache
