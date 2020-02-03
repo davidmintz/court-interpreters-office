@@ -89,7 +89,7 @@ class Event implements Interpretable
      *
      * @var EventType
      */
-    protected $eventType;
+    protected $event_type;
 
     /**
      * Most events have a Judge.
@@ -112,7 +112,7 @@ class Event implements Interpretable
      *
      * @var AnonymousJudge
      */
-    protected $anonymousJudge;
+    protected $anonymous_judge;
 
     /**
      * The interpreter is requested by a Person (submitter).
@@ -135,7 +135,7 @@ class Event implements Interpretable
      *
      * @var Hat
      */
-    protected $anonymousSubmitter;
+    protected $anonymous_submitter;
 
     /**
      * the docket number.
@@ -324,8 +324,8 @@ class Event implements Interpretable
             $string .= $this->judge->getLastName().', ';
             $string .= (string)$this->judge->getFlavor();
             return $string;
-        } elseif ($this->anonymousJudge) {
-            return $this->anonymousJudge->getName();
+        } elseif ($this->anonymous_judge) {
+            return $this->anonymous_judge->getName();
         }
         return '';
     }
@@ -580,27 +580,27 @@ class Event implements Interpretable
     }
 
     /**
-     * Set eventType.
+     * Set event_type.
      *
-     * @param EventType $eventType
+     * @param EventType $event_type
      *
      * @return Event
      */
-    public function setEventType(EventType $eventType)
+    public function setEventType(EventType $event_type)
     {
-        $this->eventType = $eventType;
+        $this->event_type = $event_type;
 
         return $this;
     }
 
     /**
-     * Get eventType.
+     * Get event_type.
      *
      * @return EventType
      */
     public function getEventType()
     {
-        return $this->eventType;
+        return $this->event_type;
     }
 
     /**
@@ -628,27 +628,27 @@ class Event implements Interpretable
     }
 
     /**
-     * Set anonymousJudge.
+     * Set anonymous_judge.
      *
-     * @param AnonymousJudge $anonymousJudge
+     * @param AnonymousJudge $anonymous_judge
      *
      * @return Event
      */
-    public function setAnonymousJudge(AnonymousJudge $anonymousJudge = null)
+    public function setAnonymousJudge(AnonymousJudge $anonymous_judge = null)
     {
-        $this->anonymousJudge = $anonymousJudge;
+        $this->anonymous_judge = $anonymous_judge;
 
         return $this;
     }
 
     /**
-     * Get anonymousJudge.
+     * Get anonymous_judge.
      *
      * @return AnonymousJudge
      */
     public function getAnonymousJudge()
     {
-        return $this->anonymousJudge;
+        return $this->anonymous_judge;
     }
 
     /**
@@ -676,27 +676,27 @@ class Event implements Interpretable
     }
 
     /**
-     * Set anonymousSubmitter.
+     * Set anonymous_submitter.
      *
-     * @param Hat $anonymousSubmitter
+     * @param Hat $anonymous_submitter
      *
      * @return Event
      */
-    public function setAnonymousSubmitter(Hat $anonymousSubmitter = null)
+    public function setAnonymousSubmitter(Hat $anonymous_submitter = null)
     {
-        $this->anonymousSubmitter = $anonymousSubmitter;
+        $this->anonymous_submitter = $anonymous_submitter;
 
         return $this;
     }
 
     /**
-     * Get anonymousSubmitter.
+     * Get anonymous_submitter.
      *
      * @return Hat
      */
     public function getAnonymousSubmitter()
     {
-        return $this->anonymousSubmitter;
+        return $this->anonymous_submitter;
     }
 
 
@@ -707,9 +707,9 @@ class Event implements Interpretable
      *
      * @return Event
      */
-    public function setSubmissionDate(\DateTime $submissionDate) : Event
+    public function setSubmissionDate(\DateTime $submission_date) : Event
     {
-        $this->submission_date = $submissionDate;
+        $this->submission_date = $submission_date;
 
         return $this;
     }
@@ -731,9 +731,9 @@ class Event implements Interpretable
      *
      * @return Event
      */
-    public function setSubmissionTime(\DateTime $submissionTime)
+    public function setSubmissionTime(\DateTime $submission_time)
     {
-        $this->submission_time = $submissionTime;
+        $this->submission_time = $submission_time;
 
         return $this;
     }
@@ -755,9 +755,9 @@ class Event implements Interpretable
      *
      * @return Event
      */
-    public function setCancellationReason(ReasonForCancellation $cancellationReason = null)
+    public function setCancellationReason(ReasonForCancellation $cancellation_reason = null)
     {
-        $this->cancellation_reason = $cancellationReason;
+        $this->cancellation_reason = $cancellation_reason;
 
         return $this;
     }
@@ -1000,17 +1000,17 @@ class Event implements Interpretable
      */
     public function onSave()
     {
-        if (! ($this->anonymousSubmitter == null xor $this->submitter === null)) {
+        if (! ($this->anonymous_submitter == null xor $this->submitter === null)) {
             throw new \RuntimeException(
-                'Event entity submitter and anonymousSubmitter properties: '
+                'Event entity submitter and anonymous_submitter properties: '
                     .' one must be null and the other not-null'
             );
         }
-        if (! ($this->anonymousJudge === null xor $this->judge === null)) {
-            $debug = "\nanonymousJudge: " .(is_null($this->anonymousJudge) ? "null" : "not null");
+        if (! ($this->anonymous_judge === null xor $this->judge === null)) {
+            $debug = "\nanonymous_judge: " .(is_null($this->anonymous_judge) ? "null" : "not null");
             $debug .= "\nJudge: " .(is_null($this->judge) ? "null" : "not null");
             throw new \RuntimeException(
-                'Event entity judge and anonymousJudge properties: '
+                'Event entity judge and anonymous_judge properties: '
                     .' one must be null and the other not-null. ' . $debug
             );
         }

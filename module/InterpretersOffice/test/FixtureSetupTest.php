@@ -121,7 +121,7 @@ class FixtureSetupTest extends AbstractControllerTest
         $language = $objectManager->getRepository(Entity\Language::class)
                 ->findOneBy(['name' => 'Spanish']);
 
-        $eventType = $objectManager->getRepository(Entity\EventType::class)
+        $event_type = $objectManager->getRepository(Entity\EventType::class)
                 ->findOneBy(['name' => 'pretrial conference']);
 
         $comments = 'test one two';
@@ -145,7 +145,7 @@ class FixtureSetupTest extends AbstractControllerTest
             ->setTime($time)
             ->setJudge(null)
             ->setLanguage($language)
-            ->setEventType($eventType)
+            ->setEventType($event_type)
             ->setDocket('2016-CR-0123')
             ->setComments($comments)
             ->setAdminComments('')

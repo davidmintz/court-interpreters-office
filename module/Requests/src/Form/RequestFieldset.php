@@ -65,7 +65,7 @@ class RequestFieldset extends AbstractEventFieldset
         $opts[0] = ['label' => '','value' => ''];
         $language_element->setValueOptions($opts);
 
-        $event_type_element = $this->get('eventType');
+        $event_type_element = $this->get('event_type');
         $opts = $event_type_element->getValueOptions();
         array_unshift($opts, ['label' => ' ','value' => '']);
         $event_type_element->setValueOptions($opts);
@@ -98,12 +98,12 @@ class RequestFieldset extends AbstractEventFieldset
         $this->add(
             [
             'type' => 'Laminas\Form\Element\Select',
-            'name' => 'eventType',
+            'name' => 'event_type',
             'options' => [
                 'label' => 'event type',
                 'value_options' => $options,
             ],
-            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'eventType'],
+            'attributes' => ['class' => 'custom-select text-muted', 'id' => 'event_type'],
             ]
         );
 
@@ -225,12 +225,12 @@ class RequestFieldset extends AbstractEventFieldset
                 ],
             ],
 
-            'anonymousJudge' => [
+            'anonymous_judge' => [
                 'required' => false,
                 'allow_empty' => true,
             ],
 
-            'eventType' => [
+            'event_type' => [
                 'required' => true,
                 'allow_empty' => false,
                 'validators' => [

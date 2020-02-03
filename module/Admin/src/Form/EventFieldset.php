@@ -183,7 +183,7 @@ class EventFieldset extends AbstractEventFieldset
     {
         $this->add([
             'type' => 'DoctrineModule\Form\Element\ObjectSelect',
-            'name' => 'anonymousSubmitter',
+            'name' => 'anonymous_submitter',
             'options' => [
                 'object_manager' => $this->getObjectManager(),
                 'target_class' => Entity\Hat::class,
@@ -305,7 +305,7 @@ class EventFieldset extends AbstractEventFieldset
         $this->add(
             [
             'type' => 'Laminas\Form\Element\Select',
-            'name' => 'eventType',
+            'name' => 'event_type',
             'options' => [
                 'label' => 'event type',
                 'value_options' => $value_options,
@@ -429,8 +429,8 @@ class EventFieldset extends AbstractEventFieldset
         $this->add(
             [
                 'type' => 'Laminas\Form\Element\Hidden',
-                'name' => 'anonymousJudge',
-                'attributes' => ['id' => 'anonymousJudge'],
+                'name' => 'anonymous_judge',
+                'attributes' => ['id' => 'anonymous_judge'],
             ]
         );
         return $this;
@@ -472,7 +472,7 @@ class EventFieldset extends AbstractEventFieldset
                 'required' => true,
                 //'allow_empty' => true,
             ],
-            'anonymousJudge' => [
+            'anonymous_judge' => [
                 'required' => true,
                 //'allow_empty' => true,
             ],
@@ -492,7 +492,7 @@ class EventFieldset extends AbstractEventFieldset
                 'required' => false,
                 'allow_empty' => true,
             ],
-            'anonymousSubmitter' => [
+            'anonymous_submitter' => [
                 'required' => true,
                 'allow_empty' => true,
             ],

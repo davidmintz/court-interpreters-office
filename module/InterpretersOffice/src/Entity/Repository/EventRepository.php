@@ -65,12 +65,12 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          rq.id request_id, rq.comments AS submitter_comments,
          rq.extraData submitter_extra_data
          FROM InterpretersOffice\Entity\Event e
-         JOIN e.eventType t
+         JOIN e.event_type t
          JOIN t.category c
          LEFT JOIN e.cancellation_reason r
          LEFT JOIN e.judge j
          LEFT JOIN j.flavor f
-         LEFT JOIN e.anonymousJudge aj
+         LEFT JOIN e.anonymous_judge aj
          LEFT JOIN aj.defaultLocation aj_location
          LEFT JOIN aj_location.parentLocation aj_parent_location
          JOIN e.language lang
@@ -80,7 +80,7 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          LEFT JOIN ctrm.parentLocation ctrm_parent
          LEFT JOIN e.submitter p
          LEFT JOIN p.hat h
-         LEFT JOIN e.anonymousSubmitter anon_submitter
+         LEFT JOIN e.anonymous_submitter anon_submitter
          JOIN e.createdBy user1
          LEFT JOIN e.modifiedBy user2
          LEFT JOIN user2.role u2_role
@@ -141,14 +141,14 @@ DQL;
             LEFT JOIN e.judge j
             LEFT JOIN j.flavor f
             JOIN e.language lang
-            JOIN e.eventType t
+            JOIN e.event_type t
             JOIN t.category c
             LEFT JOIN j.defaultLocation default_loc
             LEFT JOIN default_loc.parentLocation default_parent_loc
             LEFT JOIN e.cancellation_reason cr
-            LEFT JOIN e.anonymousJudge anon_j
+            LEFT JOIN e.anonymous_judge anon_j
             LEFT JOIN anon_j.defaultLocation anon_j_default_loc
-            LEFT JOIN e.anonymousSubmitter anon_submitter
+            LEFT JOIN e.anonymous_submitter anon_submitter
             LEFT JOIN e.location loc
             LEFT JOIN loc.parentLocation ploc
             LEFT JOIN e.submitter submitter
@@ -279,10 +279,10 @@ DQL;
          loc_type.type AS location_type
          FROM InterpretersOffice\Entity\Event e
          JOIN e.language lang
-         JOIN e.eventType t
+         JOIN e.event_type t
          JOIN t.category cat
          LEFT JOIN e.judge j
-         LEFT JOIN e.anonymousJudge aj
+         LEFT JOIN e.anonymous_judge aj
          LEFT JOIN aj.defaultLocation aj_location
          LEFT JOIN aj_location.parentLocation aj_parent_location
          LEFT JOIN e.location loc
@@ -435,7 +435,7 @@ DQL;
         $qb->select('e, l, t, tc, j, jf, aj, cr, loc, ploc,
          jh, s, sh, defts,ie, i' )
             ->from(Entity\Event::class, 'e')
-            ->join('e.eventType', 't')
+            ->join('e.event_type', 't')
             ->leftJoin('e.interpreterEvents', 'ie')
             ->leftJoin('ie.interpreter', 'i')
             ->leftJoin('e.defendants','defts')
@@ -445,7 +445,7 @@ DQL;
             ->leftJoin('s.hat', 'sh')
             ->leftJoin('j.flavor', 'jf')
             ->leftJoin('j.hat', 'jh')
-            ->leftJoin('e.anonymousJudge', 'aj')
+            ->leftJoin('e.anonymous_judge', 'aj')
             ->join('e.language', 'l')
             ->leftJoin('e.location', 'loc')
             ->leftJoin('loc.parentLocation', 'ploc')
@@ -490,9 +490,9 @@ DQL;
             $qb->andWhere('j.id = :judge_id');
             $params['judge_id'] = $query['judge'];
         }
-        if (! empty($query['eventType'])) {
+        if (! empty($query['event_type'])) {
             $qb->andWhere('t.id = :event_type_id');
-            $params[':event_type_id'] = $query['eventType'];
+            $params[':event_type_id'] = $query['event_type'];
         }
         // same as above, with the related defendant names
         if (!empty($query['interpreter_id'])) {

@@ -44,7 +44,7 @@ foreach (['date','time','end_time','submission_time', 'submission_date'] as $tim
     endif;
 endforeach;
 
-$hatElement = $fieldset->get('anonymousSubmitter');
+$hatElement = $fieldset->get('anonymous_submitter');
 if ($this->hat_id) :
     $hatElement->setValue($hat_id);
     $submitterElement = $fieldset->get('submitter');
@@ -77,7 +77,7 @@ if ($entity->getLocation() && ! $entity->getLocation()->getParentLocation()) {
     $fieldset->get('parent_location')->setValue($entity->getLocation()->getId());
 }
 
-foreach (['judge','anonymousJudge','location','parent_location','eventType','cancellation_reason'] as $field) :
+foreach (['judge','anonymous_judge','location','parent_location','event_type','cancellation_reason'] as $field) :
     $element = $fieldset->get($field);
     if (is_object($element->getValue())) :
         $id = $element->getValue()->getId();
@@ -138,7 +138,7 @@ echo $this->form()->openTag($form); ?>
     <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('language'))?>
     </div>
     <label for="event_type" class="col-sm-2 col-form-label pr-1">event type</label>
-    <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('eventType'))?>
+    <div class="col-sm-4"><?php echo $this->formElement($fieldset->get('event_type'))?>
     </div>
 </div>
 <div class="form-row form-group">
@@ -159,7 +159,7 @@ echo $this->form()->openTag($form); ?>
     <label class="col-form-label pr-1 col-sm-2" for="hat">submitted by</label>
     <div class="col-sm-4">
     <?php
-        echo $this->formElement($fieldset->get('anonymousSubmitter'));?>
+        echo $this->formElement($fieldset->get('anonymous_submitter'));?>
         <div class="input-group">
             <?php echo $this->formElement($fieldset->get('submitter'));?>
             <button data-toggle="popover" class="btn btn-info fas fa-question"  type="button" id="btn-submitter-help" hidden><span class="sr-only">help</span></button>
@@ -230,7 +230,7 @@ echo $this->form()->openTag($form); ?>
     <div class="col text-center"><?php
         $csrf = $form->get('csrf');
         echo $this->formHidden($fieldset->get('is_anonymous_judge'));
-        echo $this->formHidden($fieldset->get('anonymousJudge'));
+        echo $this->formHidden($fieldset->get('anonymous_judge'));
         echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
         echo $this->formHidden($fieldset->get('id'));
         if ($form->has('modified')) {

@@ -29,7 +29,7 @@ class RequestLoader implements FixtureInterface
         $language = $objectManager->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Spanish']);
 
-        $eventType = $objectManager->getRepository('InterpretersOffice\Entity\EventType')
+        $event_type = $objectManager->getRepository('InterpretersOffice\Entity\EventType')
                 ->findOneBy(['name' => 'pretrial conference']);
 
         $comments = 'created by RequestLoader';
@@ -53,7 +53,7 @@ class RequestLoader implements FixtureInterface
             ->setTime($time)
             ->setJudge($judge)
             ->setLanguage($language)
-            ->setEventType($eventType)
+            ->setEventType($event_type)
             ->setDocket('2016-CR-0123')
             ->setComments('created by RequestLoader')
             ->setSubmitter($user->getPerson())
@@ -93,7 +93,7 @@ class RequestLoader implements FixtureInterface
         ->setTime($time)
         ->setJudge($judge)
         ->setLanguage($russian)
-        ->setEventType($eventType)
+        ->setEventType($event_type)
         ->setDocket('2018-CR-0321')
         ->setComments('this is a Russian request created by data loader')
         ->setSubmitter($user->getPerson())

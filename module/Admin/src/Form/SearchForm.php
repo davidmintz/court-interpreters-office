@@ -29,7 +29,7 @@ class SearchForm extends AbstractSearchForm
         $this->add(
             [
             'type' => 'Laminas\Form\Element\Select',
-            'name' => 'eventType',
+            'name' => 'event_type',
             'options' => [
                 'label' => 'event type',
                 'value_options' => $value_options,
@@ -65,7 +65,7 @@ class SearchForm extends AbstractSearchForm
         $spec['interpreter'] = [
             'required'=>false, 'allow_empty' => true,
         ];
-        $spec['eventType'] = [
+        $spec['event_type'] = [
             'required'=>false, 'allow_empty' => true,
         ];
 

@@ -65,7 +65,7 @@ class RequestRepository extends EntityRepository
             FROM InterpretersOffice\Requests\Entity\Request r
             JOIN r.submitter s
             JOIN s.hat h
-            JOIN r.eventType t
+            JOIN r.event_type t
             JOIN t.category tc
             JOIN r.language lang
             LEFT JOIN r.location loc
@@ -104,9 +104,9 @@ class RequestRepository extends EntityRepository
             ':docket' => $entity->getDocket(),
         ];
         $qb = $this->createQueryBuilder('r')
-            ->leftJoin('r.anonymousJudge', 'aj')
+            ->leftJoin('r.anonymous_judge', 'aj')
             ->leftJoin('r.judge', 'j')
-            ->join('r.eventType', 'e')
+            ->join('r.event_type', 'e')
             ->join('r.language', 'l')
              ->where('r.time = :time AND r.date = :date AND r.docket = :docket')
              ->andWhere('l.id = :language_id')
@@ -192,9 +192,9 @@ class RequestRepository extends EntityRepository
             'loc.name location','defts d','aj.name anon_judge',
             'lang.name language',])
             ->from(Request::class, 'r')
-            ->join('r.eventType', 't')
+            ->join('r.event_type', 't')
             ->leftJoin('r.judge', 'j')
-            ->leftJoin('r.anonymousJudge', 'aj')
+            ->leftJoin('r.anonymous_judge', 'aj')
             ->join('r.language', 'lang')
             ->leftJoin('r.defendants','defts')
             ->leftJoin('r.location', 'loc')
@@ -266,7 +266,7 @@ class RequestRepository extends EntityRepository
         //     ->select('r,type,lang, j, jhat, jflav,mod_by, mod_by_p,
         //         mod_by_judges, mod_by_role, submitter, submitter_hat, defts')
         //     ->from(Request::class, 'r')
-        //     ->join('r.eventType', 'type')
+        //     ->join('r.event_type', 'type')
         //     ->join('r.language', 'lang')
         //     ->join('r.modifiedBy', 'mod_by')
         //     ->join('mod_by.person', 'mod_by_p')
@@ -363,7 +363,7 @@ class RequestRepository extends EntityRepository
             'j.middlename judge_middlename','j_flavor.flavor judge_flavor'
         ])
         ->from(Request::class, 'r')
-        ->join('r.eventType', 'e')
+        ->join('r.event_type', 'e')
         ->join('r.submitter', 'submitter')// a Person
         ->join('submitter.hat', 'submitter_h')
         ->leftJoin('r.modifiedBy', 'modified_by_user')

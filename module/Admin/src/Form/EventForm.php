@@ -135,12 +135,12 @@ class EventForm extends LaminasForm implements
                return $i->getId();},$this->getObject()->getInterpreters());
 
         /* there is one form control for the judge, but its value may
-         * correspond to either the 'judge' or the 'anonymousJudge' property,
+         * correspond to either the 'judge' or the 'anonymous_judge' property,
          * and we have to make sure one is null and the other is not-null. Some
          * Javascript (loaded by form.phtml) watches the judge element 'change'
          * event and sets the is_anonymous_judge flag.
          */
-        if (empty($event['judge']) && empty($event['anonymousJudge'])) {
+        if (empty($event['judge']) && empty($event['anonymous_judge'])) {
             $validator = new \Laminas\Validator\NotEmpty([
                 'messages' => ['isEmpty' => "judge is required"],
                 'break_chain_on_failure' => true,
@@ -148,14 +148,14 @@ class EventForm extends LaminasForm implements
             $judge_input = $this->getInputFilter()->get('event')->get('judge');
             //$judge_input->setRequired(true);//->setAllowEmpty(false)
             $judge_input->getValidatorChain()->attach($validator);
-            $this->getInputFilter()->get('event')->remove('anonymousJudge');
+            $this->getInputFilter()->get('event')->remove('anonymous_judge');
             $log->debug("added NotEmpty validator to the judge input, removed anon-judge input");
 
         } else {
             // one or the other is non-empty
             $entity = $this->getObject();
             if ($event['is_anonymous_judge']) {
-                $event['anonymousJudge'] = $event['judge'];
+                $event['anonymous_judge'] = $event['judge'];
                 //$event['judge'] = '';
                 unset($event['judge']);
                 $this->getInputFilter()->get('event')->remove('judge');
@@ -166,7 +166,7 @@ class EventForm extends LaminasForm implements
                 if ($entity->getAnonymousJudge()) {
                     $entity->setAnonymousJudge(null);
                 }
-                $this->getInputFilter()->get('event')->remove('anonymousJudge');
+                $this->getInputFilter()->get('event')->remove('anonymous_judge');
             }
         }
         if (! empty($event['end_time'])) {
@@ -197,11 +197,11 @@ class EventForm extends LaminasForm implements
         }
 
         // heads up:  setData() has yet to happen. therefore your elements
-        // like anonymousSubmitter etc will be null
+        // like anonymous_submitter etc will be null
         /** @todo untangle this and make error message specific to context */
-        $anonSubmitterElement = $this->get('event')->get('anonymousSubmitter');
+        $anonSubmitterElement = $this->get('event')->get('anonymous_submitter');
         $hat_options = $anonSubmitterElement->getValueOptions();
-        $hat_id = $event['anonymousSubmitter'];
+        $hat_id = $event['anonymous_submitter'];
         $key = array_search($hat_id, array_column($hat_options, 'value'));
         // find out if this "hat" can be anonymous without hitting the database
         $can_be_anonymous = (! $key) ? false :
@@ -210,7 +210,7 @@ class EventForm extends LaminasForm implements
         $submitter_input = $this->getInputFilter()->get('event')
                 ->get('submitter');
 
-        if ((empty($event['submitter']) && empty($event['anonymousSubmitter']))
+        if ((empty($event['submitter']) && empty($event['anonymous_submitter']))
                 or
             (! $can_be_anonymous  and empty($event['submitter']))
         ) {
@@ -224,17 +224,17 @@ class EventForm extends LaminasForm implements
             $log->debug(__METHOD__. " we attached a validator for non-anonymous hat type");
         }
         // if NO submitter but YES anonymous submitter, unset submitter
-        elseif (empty($event['submitter']) && ! empty($event['anonymousSubmitter'])) {
+        elseif (empty($event['submitter']) && ! empty($event['anonymous_submitter'])) {
             unset($event['submitter']);
             //$submitter_input->setRequired(false); //->setAllowEmpty(true);
             $this->getInputFilter()->get('event')->remove('submitter');
         }
         // if YES submitter and YES anonymous submitter, unset anon submitter
         elseif (! empty($event['submitter'])
-            && ! empty($event['anonymousSubmitter'])) {
-            unset($event['anonymousSubmitter']);
+            && ! empty($event['anonymous_submitter'])) {
+            unset($event['anonymous_submitter']);
             $anon_submitter_input = $this->getInputFilter()->get('event')
-                ->remove('anonymousSubmitter');
+                ->remove('anonymous_submitter');
             //$anon_submitter_input->setRequired(false)->setAllowEmpty(true);
         }
 
@@ -325,7 +325,7 @@ class EventForm extends LaminasForm implements
         if ($this->isElectronic()) {
             $inputFilter = $this->getInputFilter()->get('event');
             foreach (['submitter','submission_date','submission_time',
-                    'anonymousSubmitter'] as $element_name) {
+                    'anonymous_submitter'] as $element_name) {
                 $inputFilter->remove($element_name);
                 $element = $fieldset->get($element_name);
                 $element->setAttribute('disabled', 'disabled');
@@ -333,10 +333,10 @@ class EventForm extends LaminasForm implements
         }
         // seems like BULLSHIT to have to do quite so much work here.
         // what am I doing wrong that makes this necessary?
-        // if submitter !== NULL, set anonymousSubmitter element = hat_id of submitter
+        // if submitter !== NULL, set anonymous_submitter element = hat_id of submitter
         if (null !== $event->getSubmitter()) {
             $hat = $event->getSubmitter()->getHat();
-            $fieldset->get('anonymousSubmitter')->setValue($hat->getId());
+            $fieldset->get('anonymous_submitter')->setValue($hat->getId());
             // the form element value needs to be an integer, not an object.
             $fieldset->get('submitter')
                   ->setValue($event->getSubmitter()->getId());
@@ -439,12 +439,12 @@ class EventForm extends LaminasForm implements
             // and this suffices to make the Doctrine EventEntityListener's
             // preUpdate take note and set the last-modified-by
         }
-        if ($fieldset->get('anonymousSubmitter')->getValue()
+        if ($fieldset->get('anonymous_submitter')->getValue()
             &&
             $fieldset->get('submitter')->getValue()
         ) {
             $this->getInputFilter()->get('event')
-                ->remove('anonymousSubmitter');
+                ->remove('anonymous_submitter');
             if ($entity->getAnonymousSubmitter()) {
                 $entity->setAnonymousSubmitter(null);
             }

@@ -40,7 +40,7 @@ var eventForm = (function () {
     * event-type select element
     * @type {jQuery}
     */
-    var eventTypeElement = $("#event_type");
+    var event_type_element = $("#event_type");
 
     /**
     * language select element
@@ -285,8 +285,8 @@ var eventForm = (function () {
                 .trigger("change", location_id ? {location_id:location_id}:null);
             return;
         }
-        if (! eventTypeElement.val() ||
-            "in" !== eventTypeElement.children(":selected").data().category) {
+        if (! event_type_element.val() ||
+            "in" !== event_type_element.children(":selected").data().category) {
             return;
         }
         /*
@@ -443,7 +443,7 @@ var eventForm = (function () {
         // due to both judge and anon judge props being null
         if (! judgeElement.val()) {
             anon_judge.val(0);
-            $("#anonymousJudge").val(judgeElement.val());
+            $("#anonymous_judge").val(judgeElement.val());
         }
 
         // multi-date stuff
@@ -690,7 +690,7 @@ var eventForm = (function () {
             // values by appending an "A" or something and save real value as
             // a data attribute, or some such
             console.log("not good: two options have selected attrib");
-            var is_anonymous_judge = $("#anonymousJudge").val() ? true : false;
+            var is_anonymous_judge = $("#anonymous_judge").val() ? true : false;
             var real_judge_value = judgeElement.val();
             var last_selected = $("#judge option[selected]").last();
             if (last_selected.data('pseudojudge')) {
@@ -708,7 +708,7 @@ var eventForm = (function () {
             var data = judgeElement.children(":selected").data();
             if (data.pseudojudge) {
                 anon_judge.val(1);
-                $("#anonymousJudge").val(judgeElement.val());
+                $("#anonymous_judge").val(judgeElement.val());
             }
         }
 

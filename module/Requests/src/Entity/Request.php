@@ -63,7 +63,7 @@ class Request implements Interpretable, ResourceInterface
      *
      * @var EventType
      */
-    protected $eventType;
+    protected $event_type;
 
     /**
      * Judge.
@@ -86,7 +86,7 @@ class Request implements Interpretable, ResourceInterface
      *
      * @var AnonymousJudge
      */
-    protected $anonymousJudge;
+    protected $anonymous_judge;
 
     /**
      * Person who creates (hence submits) this request.
@@ -461,27 +461,27 @@ class Request implements Interpretable, ResourceInterface
     }
 
     /**
-     * Set eventType.
+     * Set event_type.
      *
-     * @param \InterpretersOffice\Entity\EventType $eventType
+     * @param \InterpretersOffice\Entity\EventType $event_type
      *
      * @return Request
      */
-    public function setEventType(\InterpretersOffice\Entity\EventType $eventType)
+    public function setEventType(\InterpretersOffice\Entity\EventType $event_type)
     {
-        $this->eventType = $eventType;
+        $this->event_type = $event_type;
 
         return $this;
     }
 
     /**
-     * Get eventType.
+     * Get event_type.
      *
      * @return \InterpretersOffice\Entity\EventType
      */
     public function getEventType()
     {
-        return $this->eventType;
+        return $this->event_type;
     }
 
     /**
@@ -509,27 +509,27 @@ class Request implements Interpretable, ResourceInterface
     }
 
     /**
-     * Set anonymousJudge.
+     * Set anonymous_judge.
      *
-     * @param \InterpretersOffice\Entity\AnonymousJudge|null $anonymousJudge
+     * @param \InterpretersOffice\Entity\AnonymousJudge|null $anonymous_judge
      *
      * @return Request
      */
-    public function setAnonymousJudge(\InterpretersOffice\Entity\AnonymousJudge $anonymousJudge = null)
+    public function setAnonymousJudge(\InterpretersOffice\Entity\AnonymousJudge $anonymous_judge = null)
     {
-        $this->anonymousJudge = $anonymousJudge;
+        $this->anonymous_judge = $anonymous_judge;
 
         return $this;
     }
 
     /**
-     * Get anonymousJudge.
+     * Get anonymous_judge.
      *
      * @return \InterpretersOffice\Entity\AnonymousJudge|null
      */
     public function getAnonymousJudge()
     {
-        return $this->anonymousJudge;
+        return $this->anonymous_judge;
     }
 
     /**

@@ -103,7 +103,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
                   ],
               ],
           ],
-          'eventType' => [
+          'event_type' => [
               'required' => true,
               'allow_empty' => false,
               'validators' => [

@@ -230,7 +230,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
                 'judge' => $request->getJudge()->getId(),
                 'language' => $request->getLanguage()->getId(),
                 'docket' => $request->getDocket(),
-                'eventType' => $request->getEventType()->getId(),
+                'event_type' => $request->getEventType()->getId(),
                 'defendants' => [
                      $request->getDefendants()[0]->getId()
                 ],
@@ -293,7 +293,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
                 'judge' => $request->getJudge()->getId(),
                 'language' => $request->getLanguage()->getId(),
                 'docket' => $request->getDocket(),
-                'eventType' => $request->getEventType()->getId(),
+                'event_type' => $request->getEventType()->getId(),
                 'defendants' => [
                      $request->getDefendants()[0]->getId()
                 ],

@@ -11,7 +11,7 @@ $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert', 'alert-success'], false);
 endif;
-if (! $this->eventTypes) :?>
+if (! $this->event_types) :?>
     <div class="alert alert-warning alert-dismissable">
         There are no event-types in your database. You should go to <a href="<?php echo $this->url('event-types/add') ?>">/admin/event-types/add</a>
         to starting adding some.
@@ -21,7 +21,7 @@ if (! $this->eventTypes) :?>
 endif; ?>
 <ul id="event-types-list" class="list-group" style="max-width:400px">
 <?php
-foreach ($this->eventTypes as $entity) : ?>
+foreach ($this->event_types as $entity) : ?>
     <li class="list-group-item py-2">
         <a href="<?php echo $this->url('event-types/edit', ['id' => $entity->getId()]) ?>"><?php echo $this->escapeHtml($entity) ?></a>
     </li>

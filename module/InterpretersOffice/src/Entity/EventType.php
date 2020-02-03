@@ -100,7 +100,7 @@ class EventType
      * ArrayCollection related Events
      *
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="Event",mappedBy="eventType")
+     * @ORM\OneToMany(targetEntity="Event",mappedBy="event_type")
      */
     protected $events;
 

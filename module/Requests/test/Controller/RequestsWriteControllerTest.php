@@ -127,7 +127,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
                 'judge' => $judge,
                 'docket' => '2018-CR-1234',
                 'language' => $spanish,
-                'eventType' => $conference,
+                'event_type' => $conference,
                 'location'  => $location,
                 'date' => (new \DateTime('next Tuesday +1 week'))->format('m/d/Y'),
                 'time' => (new \DateTime("today 10:00 am"))->format('g:i a'),
@@ -331,9 +331,9 @@ class RequestsWriteControllerTest extends AbstractControllerTest
         $time = $request->getTime()->format('H:i a');
         $this->assertQuery("input#time[value='$time']");
 
-        $this->assertQuery("select#eventType option");
+        $this->assertQuery("select#event_type option");
         $q = new \Laminas\Dom\Query($this->getResponse()->getBody());
-        $options = $q->execute("select#eventType option");
+        $options = $q->execute("select#event_type option");
         $this->assertTrue(count($options) > 5);
         $selected = null;
         foreach($options as $opt) {
@@ -403,7 +403,7 @@ class RequestsWriteControllerTest extends AbstractControllerTest
                 'defendants' => $deft_ids,
                 'modified'=>date('Y-m-d H:i:s'),
                 'comments' => 'Time and the bell have buried the day.',
-                'eventType' => $request->getEventType()->getId(),
+                'event_type' => $request->getEventType()->getId(),
             ],
             'csrf' => $token,
         ];

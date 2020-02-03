@@ -158,7 +158,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
             aj.id anon_judge_id
             FROM InterpretersOffice\Entity\Event e
             JOIN e.defendants d LEFT JOIN e.judge j
-            LEFT JOIN e.anonymousJudge aj
+            LEFT JOIN e.anonymous_judge aj
             WHERE d.id = :id GROUP BY e.docket,aj.id,j.id
             ORDER BY e.docket, judge';
 
@@ -453,7 +453,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         $dql = 'SELECT DISTINCT e.id
         FROM InterpretersOffice\Entity\Event e
         JOIN e.defendants d
-        LEFT JOIN e.anonymousJudge aj LEFT JOIN e.judge j
+        LEFT JOIN e.anonymous_judge aj LEFT JOIN e.judge j
         WHERE d.id = :id AND ';
         $where = [];
         foreach ($occurrences as $occurrence) {

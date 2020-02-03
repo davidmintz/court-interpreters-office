@@ -9,7 +9,7 @@ $(function(){
             return;
         }
         var data = $("form#event-type").data();
-        var name = data.eventType_name;
+        var name = data.event_type_name;
         var id = $("input[name=\"id\"]").val();
         var url = `/admin/event-types/delete/${id}`;
         $.post(url,{name})

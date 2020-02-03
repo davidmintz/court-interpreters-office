@@ -539,7 +539,7 @@ class ScheduleUpdateManager
             return; // important! from here on we might just assume...
         }
         $props = [
-            'date','time','judge','language','eventType','docket','location'
+            'date','time','judge','language','event_type','docket','location'
         ];
         $updatable = array_intersect($props, array_keys($updates));
         $shit = print_r(array_keys($updates), true);

@@ -33,7 +33,7 @@
             $fieldset->get($field)->setValue($value->format($format));
         endif;
     endforeach;
-    foreach (['judge','eventType','location'] as $field) {
+    foreach (['judge','event_type','location'] as $field) {
       $value = $fieldset->get($field)->getValue();
       if (is_object($value)):
           $fieldset->get($field)->setValue($value->getId());
@@ -102,7 +102,7 @@
         </div>
     </div>
     <?php
-        foreach (['language','judge','eventType','location','docket'] as $name) :
+        foreach (['language','judge','event_type','location','docket'] as $name) :
             $element = $fieldset->get($name);
     ?>
     <div class="form-group form-row">

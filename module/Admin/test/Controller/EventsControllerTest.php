@@ -43,7 +43,7 @@ class EventControllerTest extends AbstractControllerTest
         $data['time'] = '10:00 am';
         $data['docket'] = '2017-CR-123';
         $type = $em->getRepository(Entity\EventType::class)->findOneBy(['name' => 'conference']);
-        $data['eventType'] = $type->getId();
+        $data['event_type'] = $type->getId();
         $location = $em->getRepository(Entity\Location::class)
                 ->findOneBy(['name' => '14B']);
         $data['location'] = $location->getId();
@@ -54,14 +54,14 @@ class EventControllerTest extends AbstractControllerTest
         $data['submission_time'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
         $clerk_hat = $em->getRepository(Entity\Hat::class)
                 ->findOneBy(['name' => 'Law Clerk']);
-        $data['anonymousSubmitter'] = $clerk_hat->getId();
+        $data['anonymous_submitter'] = $clerk_hat->getId();
         $dql = 'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p '
                 . ' WHERE p.email = :email';
         $user = $em->createQuery($dql)
             ->setParameters(['email' => 'jane_zorkendoofer@nysd.uscourts.gov'])
             ->getOneorNullResult();
         $data['submitter'] = $user->getPerson()->getId();
-        $data['anonymousJudge'] = '';
+        $data['anonymous_judge'] = '';
         $data['is_anonymous_judge'] = '';
         $data['cancellation_reason'] = '';
         $data['id'] = '';
@@ -89,7 +89,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertQueryCount('#submission_time', 1);
         $this->assertQueryCount('#comments', 1);
         $this->assertQueryCount('#admin_comments', 1);
-        $this->assertQueryCount('#anonymousJudge', 1);
+        $this->assertQueryCount('#anonymous_judge', 1);
         $this->assertQueryCount('#is_anonymous_judge', 1);
     }
 
@@ -233,7 +233,7 @@ class EventControllerTest extends AbstractControllerTest
         $event['time'] = '3:00 pm';
         $type_id = $em->getRepository(Entity\EventType::class)
                 ->findOneBy(['name' => 'plea'])->getId();
-        $event['eventType'] = $type_id;
+        $event['event_type'] = $type_id;
         $event['id'] = $count_after;
         $event['end_time'] = '';
         $event['comments'] = 'hey this is something different';
@@ -308,14 +308,14 @@ class EventControllerTest extends AbstractControllerTest
             'date' => $entity->getDate()->format("m/d/Y"),
             'time' => $entity->getTime()->format("g:i a"),
             'docket' => $entity->getDocket(),
-            'eventType' => $entity->getEventType()->getId(),
+            'event_type' => $entity->getEventType()->getId(),
             'location' =>$entity->getJudge()->getDefaultLocation()->getId(),
             'parentLocation' => '',
             'submission_date' => $entity->getSubmissionDate()->format("m/d/Y"),
             'submission_time' => $entity->getSubmissionTime()->format("g:i a"),
-            'anonymousSubmitter' => '',
+            'anonymous_submitter' => '',
             'submitter' => $entity->getSubmitter()->getId(),
-            'anonymousJudge' => '',
+            'anonymous_judge' => '',
             'is_anonymous_judge' => '',
             'cancellation_reason' => '',
             'id' => $entity->getId(),

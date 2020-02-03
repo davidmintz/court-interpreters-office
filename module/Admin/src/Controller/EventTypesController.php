@@ -71,9 +71,9 @@ class EventTypesController extends AbstractActionController
     public function indexAction()
     {
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\EventType');
-        $eventTypes = $repository->findAll();
+        $event_types = $repository->findAll();
 
-        return ['title' => 'event-types', 'eventTypes' => $eventTypes];
+        return ['title' => 'event-types', 'event_types' => $event_types];
     }
 
     /**

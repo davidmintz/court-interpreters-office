@@ -23,7 +23,7 @@ class EventLoader implements FixtureInterface
         $language = $objectManager->getRepository('InterpretersOffice\Entity\Language')
                 ->findOneBy(['name' => 'Spanish']);
 
-        $eventType = $objectManager->getRepository('InterpretersOffice\Entity\EventType')
+        $event_type = $objectManager->getRepository('InterpretersOffice\Entity\EventType')
                 ->findOneBy(['name' => 'pretrial conference']);
 
         $comments = 'test one two';
@@ -48,7 +48,7 @@ class EventLoader implements FixtureInterface
             ->setTime($time)
             ->setJudge($judge)
             ->setLanguage($language)
-            ->setEventType($eventType)
+            ->setEventType($event_type)
             ->setDocket('2016-CR-0123')
             ->setComments($comments)
             ->setAdminComments('')

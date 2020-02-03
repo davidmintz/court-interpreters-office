@@ -207,8 +207,8 @@ class EventsController extends AbstractActionController
         foreach($dates as $d) {
             $entity = new Entity\Event();
             $entity->setDate(new \DateTime($d));
-            foreach(['time','docket','judge','language','eventType','location','anonymousJudge',
-            'submissionDate','submissionTime', 'submitter','anonymousSubmitter','endTime','cancellation_reason',
+            foreach(['time','docket','judge','language','event_type','location','anonymous_judge',
+            'submissionDate','submissionTime', 'submitter','anonymous_submitter','endTime','cancellation_reason',
             'comments','adminComments',
             ]  as $prop) {
                 $getter = 'get'.ucfirst($prop);
