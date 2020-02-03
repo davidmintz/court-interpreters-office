@@ -27,7 +27,7 @@ class InterpreterElementCollection extends AbstractHelper
         </li>
 TEMPLATE;
 
-// we removed <!-- <input name="event[interpreterEvents][%d][createdBy]" type="hidden" value="%d"> -->
+// we removed <!-- <input name="event[interpreterEvents][%d][created_by]" type="hidden" value="%d"> -->
 // <input name="event[interpreterEvents][%d][name]" type="hidden" value="%s">
 
     /**
@@ -125,7 +125,7 @@ TEMPLATE;
                 [
                     'index' => $index,
                     'name'  => $ie['name'],
-                    //'created_by' => $ie['createdBy'],
+                    //'created_by' => $ie['created_by'],
                     'event_id'  => $ie['event'],
                     'interpreter_id' => $ie['interpreter']
                 ]

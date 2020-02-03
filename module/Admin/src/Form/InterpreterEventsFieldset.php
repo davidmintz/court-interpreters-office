@@ -46,7 +46,7 @@ class InterpreterEventsFieldset extends Fieldset implements InputFilterProviderI
         $this->add(
             [
                 'type' => 'hidden',
-                'name' => 'createdBy'
+                'name' => 'created_by'
             ]
         );
         $this->add(

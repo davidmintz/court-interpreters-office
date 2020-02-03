@@ -110,7 +110,7 @@ class RequestEntityListener implements EventManagerAwareInterface, LoggerAwareIn
     /**
      * preUpdate callback.
      *
-     * updates the modified and modifiedBy fields if data was actually changed.
+     * updates the modified and modified_by fields if data was actually changed.
      *
      * @param  Entity\Request $request
      * @param  PreUpdateEventArgs $args

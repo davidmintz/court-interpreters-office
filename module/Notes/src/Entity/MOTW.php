@@ -55,7 +55,7 @@ class MOTW implements \JsonSerializable, NoteInterface
      * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\User")
      * @ORM\JoinColumn(nullable=false,name="created_by_id")
      */
-    private $createdBy;
+    private $created_by;
 
 
     /**
@@ -74,7 +74,7 @@ class MOTW implements \JsonSerializable, NoteInterface
      * @ORM\ManyToOne(targetEntity="\InterpretersOffice\Entity\User")
      * @ORM\JoinColumn(nullable=true,name="modified_by_id")
      */
-    private $modifiedBy;
+    private $modified_by;
 
      /**
       * Get id.
@@ -223,51 +223,51 @@ class MOTW implements \JsonSerializable, NoteInterface
      }
 
      /**
-      * Set createdBy.
+      * Set created_by.
       *
-      * @param \InterpretersOffice\Entity\User $createdBy
+      * @param \InterpretersOffice\Entity\User $created_by
       *
       * @return MOTD
       */
-     public function setCreatedBy(\InterpretersOffice\Entity\User $createdBy) : NoteInterface
+     public function setCreatedBy(\InterpretersOffice\Entity\User $created_by) : NoteInterface
      {
-         $this->createdBy = $createdBy;
+         $this->created_by = $created_by;
 
          return $this;
      }
 
      /**
-      * Get createdBy.
+      * Get created_by.
       *
       * @return \InterpretersOffice\Entity\User
       */
      public function getCreatedBy() : User
      {
-         return $this->createdBy;
+         return $this->created_by;
      }
 
      /**
-      * Set modifiedBy.
+      * Set modified_by.
       *
-      * @param User|null $modifiedBy
+      * @param User|null $modified_by
       *
       * @return MOTD
       */
-     public function setModifiedBy(User $modifiedBy = null) : NoteInterface
+     public function setModifiedBy(User $modified_by = null) : NoteInterface
      {
-         $this->modifiedBy = $modifiedBy;
+         $this->modified_by = $modified_by;
 
          return $this;
      }
 
      /**
-      * Get modifiedBy.
+      * Get modified_by.
       *
       * @return User|null
       */
      public function getModifiedBy() :? User
      {
-         return $this->modifiedBy;
+         return $this->modified_by;
      }
 
      /**

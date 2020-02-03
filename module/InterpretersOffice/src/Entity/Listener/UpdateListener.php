@@ -253,7 +253,7 @@ class UpdateListener implements
             $user = $this->getAuthenticatedUser($args);
             $entity->setCreatedBy($user)->setCreated($this->getTimeStamp());
             $this->logger->debug(
-                "set createdBy and timestamp on InterpreterEvent in ".__METHOD__
+                "set created_by and timestamp on InterpreterEvent in ".__METHOD__
             );
         }
     }

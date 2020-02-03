@@ -60,7 +60,7 @@ class MOTD implements JsonSerializable, NoteInterface
      *
      * @var User
      */
-    private $createdBy;
+    private $created_by;
 
 
     /**
@@ -81,7 +81,7 @@ class MOTD implements JsonSerializable, NoteInterface
      *
      * @var User
      */
-    private $modifiedBy;
+    private $modified_by;
 
      /**
       * Get id.
@@ -205,50 +205,50 @@ class MOTD implements JsonSerializable, NoteInterface
      }
 
      /**
-      * Set createdBy.
+      * Set created_by.
       *
-      * @param \InterpretersOffice\Entity\User $createdBy
+      * @param \InterpretersOffice\Entity\User $created_by
       *
       * @return MOTD
       */
-     public function setCreatedBy(\InterpretersOffice\Entity\User $createdBy)
+     public function setCreatedBy(\InterpretersOffice\Entity\User $created_by)
      {
-         $this->createdBy = $createdBy;
+         $this->created_by = $created_by;
 
          return $this;
      }
 
      /**
-      * Get createdBy.
+      * Get created_by.
       *
       * @return \InterpretersOffice\Entity\User
       */
      public function getCreatedBy() : User
      {
-         return $this->createdBy;
+         return $this->created_by;
      }
 
      /**
-      * Set modifiedBy.
+      * Set modified_by.
       *
-      * @param User|null $modifiedBy
+      * @param User|null $modified_by
       *
       * @return MOTD
       */
-     public function setModifiedBy(User $modifiedBy = null) : MOTD
+     public function setModifiedBy(User $modified_by = null) : MOTD
      {
-         $this->modifiedBy = $modifiedBy;
+         $this->modified_by = $modified_by;
 
          return $this;
      }
 
      /**
-      * Get modifiedBy.
+      * Get modified_by.
       *
       * @return User|null
       */
      public function getModifiedBy() : ?User
      {
-         return $this->modifiedBy;
+         return $this->modified_by;
      }
 }
