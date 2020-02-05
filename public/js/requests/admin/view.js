@@ -31,4 +31,9 @@ $(function(){
     $("#btn-cancel").on("click",function(){
         $("#email-dialog").modal("hide");
     });
+    // prepopulate the search thingy with the docket number
+    var docket = $("div.docket").text().trim();
+    if (docket) {
+        $(`li.nav-item input[name="docket"]`).val(docket);
+    }
 });
