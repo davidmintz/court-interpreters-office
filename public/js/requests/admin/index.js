@@ -91,9 +91,14 @@ $(function(){
 
     // https://getbootstrap.com/docs/4.4/components/navs/#events
     $("#scheduled-requests-tab").on("show.bs.tab",function(e){
-        console.log("time to load future requests...")
+        console.log("time to load future requests...");
+        $.get('/admin/requests/scheduled').then((res)=>{
+            $("#scheduled-requests").html(res);
+        });
+
     });
     $("#past-requests-tab").on("show.bs.tab",function(e){
-        console.log("time to load past requests...")
+        console.log("time to load past requests...");
+
     });
 });
