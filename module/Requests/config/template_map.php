@@ -12,6 +12,7 @@ return [
 
     // admin
     'interpreters-office/requests/admin/index/index' => __DIR__ . '/../view/admin/index.phtml',
+    'interpreters-office/requests/admin/index/get-scheduled-requests' => __DIR__ . '/../view/admin/index.phtml',
     'interpreters-office/requests/admin/index/config' => __DIR__ . '/../view/admin/config.phtml',
     'interpreters-office/requests/admin/index/view' => __DIR__ . '/../view/admin/view.phtml',
     'interpreters-office/requests/admin/index/email-modal' => __DIR__ . '/../view/admin/email-modal.phtml',

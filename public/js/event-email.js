@@ -635,5 +635,10 @@ $(function(){
     });
 
     $("#btn-send").on("click",send_email);
-
+    // addendum:  prepopulate the search thingy with the docket number
+    // prepopulate the search thingy with the docket number
+    var docket = $("div.docket").text().trim();
+    if (docket) {
+        $(`li.nav-item input[name="docket"]`).val(docket).trigger("change");
+    }
 });

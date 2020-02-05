@@ -248,15 +248,13 @@ return [
                             ],
                         ],
                     ],
-
                     'scheduled' => [
                         'type' => Segment::class,
                         'options' => [
                             'route' => '/scheduled',
                             'defaults' => [
-                                //'controller' => Admin\IndexController::class,
-                                'action'   => 'get-scheduled',
-
+                                'controller' => Admin\IndexController::class,
+                                'action' => 'get-scheduled-requests',
                             ],
                         ],
                     ],
@@ -324,6 +322,7 @@ return [
                             ],
                         ],
                     ],
+
                     'search' => [
                         'type' => Segment::class,
                         'may_terminate' => true,
