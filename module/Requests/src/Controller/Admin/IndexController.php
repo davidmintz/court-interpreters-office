@@ -61,7 +61,7 @@ class IndexController extends AbstractActionController
         $repo = $this->objectManager->getRepository(Request::class);
         $paginator = $repo->getPendingRequests();
         if ($paginator) {
-            $defendants = $repo->getDefendantNamesForCurrentPage($pending);
+            $defendants = $repo->getDefendantNamesForCurrentPage($paginator);
         } else {
             $defendants = [];
         }
