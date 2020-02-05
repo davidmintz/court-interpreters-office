@@ -50,6 +50,14 @@ class IndexController extends AbstractActionController
         $this->objectManager = $objectManager;
         $this->auth = $auth;
     }
+    /**
+     * experimental
+     * @return [type] [description]
+     */
+    public function getScheduledAction()
+    {
+        echo "hi there"; return false;
+    }
 
     /**
      * index action
@@ -76,6 +84,8 @@ class IndexController extends AbstractActionController
         }
         return $data;
     }
+
+
     /**
      * controller action for configuring Request listeners
      *

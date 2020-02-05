@@ -248,6 +248,18 @@ return [
                             ],
                         ],
                     ],
+
+                    'scheduled' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/scheduled',
+                            'defaults' => [
+                                //'controller' => Admin\IndexController::class,
+                                'action'   => 'get-scheduled',
+
+                            ],
+                        ],
+                    ],
                     'view' => [
                         'type' => Segment::class,
                         'options' => [
