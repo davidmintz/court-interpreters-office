@@ -59,17 +59,13 @@ class IndexController extends AbstractActionController
     {
 
         $repo = $this->objectManager->getRepository(Request::class);
-        $pending = $repo->getPendingRequests();
-
-        if ($pending) {
-            $data = $pending->getCurrentItems()->getArrayCopy();
-            // remind me to refactor this
-            $ids = array_column(array_column($data, 0), 'id');
-            $defendants = $repo->getDefendants($ids);
+        $paginator = $repo->getPendingRequests();
+        if ($paginator) {
+            $defendants = $repo->getDefendantNamesForCurrentPage($pending);
         } else {
             $defendants = [];
         }
-        $data = compact('pending', 'defendants');
+        $data = compact('paginator', 'defendants');
         $data['csrf'] = (new \Laminas\Validator\Csrf('csrf'))->getHash();
         if ($this->getRequest()->isXmlHttpRequest()) {
             return (new ViewModel($data))->setTerminal(true);
@@ -161,6 +157,24 @@ class IndexController extends AbstractActionController
         $validator = new \Laminas\Validator\Csrf('csrf');
         $token = $validator->getHash();
         return ['request' => $entity,'csrf' => $token];
+    }
+
+    public function getScheduledRequestsAction()
+    {
+        $repo = $this->objectManager->getRepository(Request::class);
+        $page = $this->params()->fromQuery('page',1);
+        /** @var \Laminas\Paginator\Paginator $paginator */
+        $paginator = $repo->getScheduledRequests($page);
+        $defendants = $repo->getDefendantNamesForCurrentPage($paginator);
+        $data = compact('paginator','defendants');
+        $view = new ViewModel($data);
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $view
+                ->setTemplate('partials/scheduled-requests-table')
+                ->setTerminal(true);
+        }
+
+        return $view;
     }
 
     /**

@@ -25,8 +25,8 @@ $this->headTitle("requests for court interpreting services")
 </ul>
 <div class="tab-content" id="tab-content">
     <div class="tab-pane fade show active py-3" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
-<?php if ($this->pending):
-        $count = $this->pending->getTotalItemCount();
+<?php if ($this->paginator):
+        $count = $this->paginator->getTotalItemCount();
         $what = 'request';
         if ($count > 1) :
             $what .= 's'; // pluralize
@@ -39,8 +39,8 @@ $this->headTitle("requests for court interpreting services")
         <table class="table table-bordered">
             <thead></thead>
             <tbody data-csrf="<?php echo $this->csrf?>">
-        <?php if ($this->pending):?>
-            <?php foreach ($this->pending as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
+        <?php if ($this->paginator):?>
+            <?php foreach ($this->paginator as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
             <tr class="request" data-id="<?php echo $r['id']?>">
                 <td><?php echo $r['date']->format('d-M-Y')?></td>
                 <td><?php echo $r['time']->format('g:i a')?></td>

@@ -162,10 +162,51 @@ class RequestRepository extends EntityRepository
            ->addDefendants($existing->getDefendants());
     }
 
+    /**
+     * [getPendingRequests description]
+     * @param  integer $page [description]
+     * @return [type]        [description]
+     */
     public function getPendingRequests($page = 1)
     {
         $qb = $this->getBaseQuery();
         $qb->where('r.pending = true')->andWhere('r.cancelled = false');
+
+        $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        $adapter = new DoctrineAdapter(new ORMPaginator($query));
+        $paginator = new LaminasPaginator($adapter);
+        if (! count($paginator)) {
+            return null;
+        }
+        $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
+
+        return $paginator;
+    }
+
+    /**
+     * gets defendant names for current page of Request entities
+     * @param  LaminasPaginator $paginator
+     * @return Array
+     */
+    public function getDefendantNamesForCurrentPage(LaminasPaginator $paginator)
+    {
+        $data = $paginator->getCurrentItems()->getArrayCopy();
+        if (! $data) {
+            return [];
+        }
+        $ids = array_column(array_column($data, 0), 'id');
+        $defendants = $this->getDefendants($ids);
+
+        return $defendants;
+    }
+    public function getScheduledRequests($page = 1)
+    {
+        $qb = $this->getBaseQuery();
+        $qb->where('r.pending = false')
+            ->andWhere('r.cancelled = false')
+            ->andWhere('r.date >= :today')
+            ->setParameters(['today' => date('Y-m-d')]);
 
         $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
