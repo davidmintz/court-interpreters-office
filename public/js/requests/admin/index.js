@@ -8,7 +8,7 @@ var moment, schedule_request_callback;
 
 var update_verbiage = function(count) {
     if ( "undefined" === typeof count) {
-        count = $("tbody tr").length;
+        count = $("#pending-requests tbody tr").length;
     }
     var verbiage = `${count} request`;
     if (count !== 1) {
@@ -21,7 +21,7 @@ var update_verbiage = function(count) {
  * how often to reload the requests data (via xhr)
  * @type {Number}
  */
-const requests_refresh_interval = 60000;
+const requests_refresh_interval = 10000;
 
 $(function(){
     // event listeners for dropdowns in each table row
