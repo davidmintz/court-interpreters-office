@@ -21,7 +21,7 @@ var update_verbiage = function(count) {
  * how often to reload the requests data (via xhr)
  * @type {Number}
  */
-const requests_refresh_interval = 10000;
+const requests_refresh_interval = 60000;
 
 $(function(){
     // event listeners for dropdowns in each table row
