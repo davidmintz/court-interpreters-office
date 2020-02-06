@@ -3,9 +3,10 @@ $this->headScript()
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
     ->appendFile($this->basePath('js/requests/admin/requests.js'))
     ->appendFile($this->basePath('js/requests/admin/index.js'));
-$this->headTitle("requests for court interpreting services")
+$this->headTitle("admin | requests");
 ?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<!-- fuckin' active? <?= $this->active ?> -->
 <div id="message-success" class="alert alert-success alert-dismissible" role="alert" style="display:none">
     <p class="mb-0"></p>
     <button type="button" class="close" data-dismiss="alert" aria-label="close">
@@ -14,64 +15,33 @@ $this->headTitle("requests for court interpreting services")
 </div>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="pending-requests-tab" data-toggle="tab" href="#pending-requests" role="tab" aria-controls="pending-requests" aria-selected="true">pending</a>
+    <a class="nav-link <?php if ('pending-requests' == $this->active):?>active<?php endif ?>" id="pending-requests-tab" data-toggle="tab" href="#pending-requests" role="tab" aria-controls="pending-requests" aria-selected="true">pending</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="scheduled-requests-tab" data-toggle="tab" href="#scheduled-requests" role="tab" aria-controls="scheduled-requests" aria-selected="false">scheduled</a>
+    <a class="nav-link <?php if ('scheduled-requests' == $this->active):?>active<?php endif ?>" id="scheduled-requests-tab" data-toggle="tab" href="#scheduled-requests" role="tab" aria-controls="scheduled-requests" aria-selected="false">scheduled</a>
   </li>
-  <li class="nav-item">
+  <!-- <li class="nav-item">
     <a class="nav-link" id="past-requests-tab" data-toggle="tab" href="#past-requests" role="tab" aria-controls="past-requests" aria-selected="false">previous</a>
-  </li>
+  </li> -->
 </ul>
 <div class="tab-content" id="tab-content">
-    <div class="tab-pane fade show active py-3" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
-<?php if ($this->paginator):
-        $count = $this->paginator->getTotalItemCount();
-        $what = 'request';
-        if ($count > 1) :
-            $what .= 's'; // pluralize
+    <div class="tab-pane fade<?php if ('pending-requests' == $this->active):?> show active<?php endif ?> py-3" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
+        <?php if ('pending-requests' == $this->active):
+            echo $this->partial('partials/pending-requests-table',['paginator'=>$this->paginator,'defendants'=>$this->defendants]);
         endif;
-    else:
-        $count = "no";
-        $what = 'requests';
-    endif;
-            ?><p><?php printf('You have <span id="requests-pending">%s %s</span> pending',$count,$what);?></p>
-        <table class="table table-bordered">
-            <thead></thead>
-            <tbody data-csrf="<?php echo $this->csrf?>">
-        <?php if ($this->paginator):?>
-            <?php foreach ($this->paginator as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
-            <tr class="request" data-id="<?php echo $r['id']?>">
-                <td><?php echo $r['date']->format('d-M-Y')?></td>
-                <td><?php echo $r['time']->format('g:i a')?></td>
-                <td class="language"><?php echo $r['language']?></td>
-                <td><?php echo $r['type']?></td>
-                <td><?php echo $r['location']?></td>
-                <td><?php echo $r['judge']?></td>
-                <td><?php echo substr($r['docket'],2)?></td>
-                <td><?php echo $this->defendants($r['id'])?></td>
-                <td class="dropdown dropleft"><a style="color:gray" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
-                  <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
-                    <a title="add this request to the schedule" class="dropdown-item request-add text-primary" href="<?php echo "#"?>">add to schedule</a>
-                    <!-- <div class="dropdown-divider"></div>  -->
-                    <a title="view detailed information about this request" class="dropdown-item text-primary" href="/admin/requests/view/<?php echo $r['id']?>">view details</a>
-                  </div>
-                </td>
-            </tr>
-            <?php endforeach; endif;?>
-            </tbody>
-        </table>
+         ?>
     </div>
-  <div class="tab-pane fade py-3" id="scheduled-requests" role="tabpanel" aria-labelledby="scheduled-requests-tab">
-      <p>
-          scheduled requests to go here
-      </p>
+  <div class="tab-pane fade<?php if ('scheduled-requests' == $this->active):?> show active<?php endif ?> py-3" id="scheduled-requests" role="tabpanel" aria-labelledby="scheduled-requests-tab">
+      <?php if ('scheduled-requests' == $this->active):
+          echo $this->partial('partials/scheduled-requests-table',['paginator'=>$this->paginator,'defendants'=>$this->defendants]);
+      endif;
+       ?>
   </div>
-  <div class="tab-pane fade py-3" id="past-requests" role="tabpanel" aria-labelledby="past-requests-tab">
+  <!-- <div class="tab-pane fade py-3" id="past-requests" role="tabpanel" aria-labelledby="past-requests-tab">
       <p>
          previous requests to go here
       </p>
-  </div>
+  </div> -->
 </div>
 
 

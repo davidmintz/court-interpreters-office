@@ -101,4 +101,17 @@ $(function(){
         console.log("time to load past requests...");
 
     });
+    $("#pending-requests-tab").on("show.bs.tab",function(e){
+        console.log("time to load PENDING requests...");
+        $.get('/admin/requests').then((res)=>{
+            $("#pending-requests").html(res);
+        });
+
+    });
+
+    $("#tab-content").on("click",".pagination a",function(e){
+        e.preventDefault();
+        var tab = $(this).closest(".tab-pane");
+        $.get(this.href).then((html)=>tab.html(html));
+    });
 });
