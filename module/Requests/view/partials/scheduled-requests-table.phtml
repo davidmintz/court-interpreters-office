@@ -9,7 +9,7 @@ if ($this->paginator):
         $count = "no";
         $what = 'requests';
     endif;
-?><p><?php printf('You have <span id="requests-pending">%s %s</span> scheduled for today or later',$count,$what);?>.<?php
+?><p><?php printf('You have <span id="requests-scheduled">%s %s</span> scheduled for today or later',$count,$what);?>.<?php
 $pages = $this->paginator->count();
 if ( $pages > 1) : printf(' Showing page %d of %d',$this->paginator->getCurrentPageNumber(),$pages); endif;
 ?></p>

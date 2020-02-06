@@ -61,7 +61,7 @@ $(function(){
         }
     );
     // periodically refresh interpreter-request data
-    var html = $("tbody").html();
+    var html = $("#pending-requests tbody").html();
     var refresh = function refresh(){
         $.get(document.location.href)
         .then((response)=>{
