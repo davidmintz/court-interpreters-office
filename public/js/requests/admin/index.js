@@ -97,10 +97,7 @@ $(function(){
         });
 
     });
-    $("#past-requests-tab").on("show.bs.tab",function(e){
-        console.log("time to load past requests...");
-
-    });
+    
     $("#pending-requests-tab").on("show.bs.tab",function(e){
         console.log("time to load PENDING requests...");
         $.get('/admin/requests').then((res)=>{

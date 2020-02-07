@@ -1,10 +1,11 @@
 <p><?php
-$count = $this->paginator->getTotalItemCount();
+$count = $this->paginator ? $this->paginator->getTotalItemCount() : 0;
 $what = 'request';
 if ($count != 1) {
     $what .= 's';
 }
 printf('You have <span id="requests-pending">%s %s</span> pending addition to the schedule',$count,$what);?>.</p>
+<?php if ($count):?>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -19,7 +20,6 @@ printf('You have <span id="requests-pending">%s %s</span> pending addition to th
         </tr>
     </thead>
     <tbody data-csrf="<?php echo $this->csrf?>">
-<?php if ($this->paginator):?>
     <?php foreach ($this->paginator as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
     <tr class="request" data-id="<?php echo $r['id']?>">
         <td><?php echo $r['date']->format('d-M-Y')?></td>
@@ -38,6 +38,7 @@ printf('You have <span id="requests-pending">%s %s</span> pending addition to th
           </div>
         </td>
     </tr>
-    <?php endforeach; endif;?>
+    <?php endforeach; ?>
     </tbody>
 </table>
+<?php endif;
