@@ -41,4 +41,9 @@ printf('You have <span id="requests-pending">%s %s</span> pending addition to th
     <?php endforeach; ?>
     </tbody>
 </table>
+<?php else : ?>
+<table>
+    <thead></thead>
+    <tbody data-csrf="<?php echo $this->csrf?>"></tbody>
+</table>
 <?php endif;

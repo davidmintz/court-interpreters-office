@@ -25,12 +25,11 @@ $this->headTitle("admin | requests");
   </li> -->
 </ul>
 <div class="tab-content" id="tab-content">
-    <div class="tab-pane fade<?php if ('pending-requests' == $this->active):?> show active<?php endif ?> py-3" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab">
-        <?php if ('pending-requests' == $this->active):
-            echo $this->partial('partials/pending-requests-table',['paginator'=>$this->paginator,'defendants'=>$this->defendants]);
-        endif;
-         ?>
-    </div>
+    <div class="tab-pane fade<?php if ('pending-requests' == $this->active):?> show active<?php endif ?> py-3" id="pending-requests" role="tabpanel" aria-labelledby="pending-requests-tab"><?php
+    if ('pending-requests' == $this->active):
+            echo $this->partial('partials/pending-requests-table',['csrf'=>$this->csrf,'paginator'=>$this->paginator,'defendants'=>$this->defendants]);
+    endif;
+  ?></div>
   <div class="tab-pane fade<?php if ('scheduled-requests' == $this->active):?> show active<?php endif ?> py-3" id="scheduled-requests" role="tabpanel" aria-labelledby="scheduled-requests-tab">
       <?php if ('scheduled-requests' == $this->active):
           echo $this->partial('partials/scheduled-requests-table',['paginator'=>$this->paginator,'defendants'=>$this->defendants]);
