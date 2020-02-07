@@ -99,13 +99,24 @@ class Interpreter extends Person
     * @var \DateTime
     */
    protected $BOP_form_submission_date;
+
     /**
      * comments
      *
      * @ORM\Column(type="string",length=600,name="comments",nullable=false)
      * @var string
      */
-    protected $comments = '';
+     protected $comments = '';
+
+    /**
+     * whether to include in availability-solicitation emails
+     *
+     * @ORM\Column(type="boolean",nullable=false)
+     * @var boolean
+     */
+    private $solicit_availability = false;
+
+
 
     /**
      * address line 1
@@ -667,5 +678,27 @@ class Interpreter extends Person
     public function getCountry()
     {
         return $this->country;
+    }
+
+    /**
+     * gets solicity_availability
+     *
+     * @return boolean
+     */
+    public function getSolicitAvailability() : bool
+    {
+        return $this->solicit_availability;
+    }
+
+    /**
+     * sets solicity_availability
+     *
+     * @return Interpreter
+     */
+    public function setSolicitAvailability(bool $flag) : Interpreter
+    {
+        $this->solicit_availability = $flag;
+
+        return $this;
     }
 }
