@@ -21,7 +21,7 @@ var update_verbiage = function(count) {
  * how often to reload the requests data (via xhr)
  * @type {Number}
  */
-const requests_refresh_interval = 60000;
+const requests_refresh_interval = 10000;
 
 $(function(){
     // event listeners for dropdowns in each table row
@@ -61,7 +61,7 @@ $(function(){
         }
     );
     // periodically refresh interpreter-request data
-    var html = $("#pending-requests tbody").html();
+    var html = $("#pending-requests").html(); // was  "... tbody"
     var refresh = function refresh(){
         $.get(document.location.href)
         .then((response)=>{
@@ -69,12 +69,12 @@ $(function(){
             var element = $(response).find("tbody");
             var this_html = element.html();
             var csrf = element.data('csrf');
-            if (! this_html) { console.warn("error? no TBODY html");  }
+            if (! this_html) { console.debug("no TBODY in returned html");  }
             var updated = html !== this_html;
             console.warn("updated? "+ (updated ? "yes" : "no"));
             if (updated) {
                 html = this_html;
-                $("tbody").html(this_html)
+                $("#pending-requests").html(response);
                 // restore any previously-showing dropdown
                 var dropdown_id = $("table").data("dropdown_id");
                 if (dropdown_id) {
@@ -97,7 +97,7 @@ $(function(){
         });
 
     });
-    
+
     $("#pending-requests-tab").on("show.bs.tab",function(e){
         console.log("time to load PENDING requests...");
         $.get('/admin/requests').then((res)=>{
