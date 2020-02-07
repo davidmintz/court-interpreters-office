@@ -21,7 +21,7 @@ echo $this->partial('interpreters-office/email/partials/event-details.phtml',
 </p>
 <?php if ($this->notes):?>
 <p>Additional notes:</p>
-<p style="margin-left:2em"><?php echo $this->notes ?></p>
+<p style="margin-left:2em"><?php echo $this->escapeHtml($this->notes) ?></p>
 <?php endif ?>
 <p>Very truly yours,</p>
 

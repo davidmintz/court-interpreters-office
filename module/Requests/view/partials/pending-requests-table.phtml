@@ -1,19 +1,12 @@
-<?php
-if ($this->paginator):
-        $count = $this->paginator->getTotalItemCount();
-        $what = 'request';
-        if ($count > 1) :
-            $what .= 's'; // pluralize
-        endif;
-    else:
-        $count = "no";
-        $what = 'requests';
-    endif;
-?><p><?php printf('You have <span id="requests-scheduled">%s %s</span> scheduled for today or later',$count,$what);?>.<?php
-$pages = $this->paginator->count();
-if ( $pages > 1) : printf(' Showing page %d of %d',$this->paginator->getCurrentPageNumber(),$pages); endif;
-?></p>
-<table class="table table-bordered table-sm">
+<p><?php
+$count = $this->paginator ? $this->paginator->getTotalItemCount() : 0;
+$what = 'request';
+if ($count != 1) {
+    $what .= 's';
+}
+printf('You have <span id="requests-pending">%s %s</span> pending addition to the schedule',$count,$what);?>.</p>
+<?php if ($count):?>
+<table class="table table-bordered">
     <thead>
         <tr>
             <th class="text-info font-weight-normal">date</th>
@@ -27,7 +20,6 @@ if ( $pages > 1) : printf(' Showing page %d of %d',$this->paginator->getCurrentP
         </tr>
     </thead>
     <tbody data-csrf="<?php echo $this->csrf?>">
-    <?php if ($this->paginator && $this->paginator->getTotalItemCount()):?>
     <?php foreach ($this->paginator as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
     <tr class="request" data-id="<?php echo $r['id']?>">
         <td><?php echo $r['date']->format('d-M-Y')?></td>
@@ -38,10 +30,20 @@ if ( $pages > 1) : printf(' Showing page %d of %d',$this->paginator->getCurrentP
         <td><?php echo $r['judge']?></td>
         <td><?php echo substr($r['docket'],2)?></td>
         <td><?php echo $this->defendants($r['id'])?></td>
-        <td><a class="fas fa-search-plus" title="view details" href="<?php echo $this->url('admin-requests/view',['id'=>$r['id']])?>"><span class="sr-only">view details</span></a></td>
+        <td class="dropdown dropleft"><a style="color:gray" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
+          <div class="dropdown-menu" aria-labelledby="request-dropdown-<?php echo $r['id']?>">
+            <a title="add this request to the schedule" class="dropdown-item request-add text-primary" href="<?php echo "#"?>">add to schedule</a>
+            <!-- <div class="dropdown-divider"></div>  -->
+            <a title="view detailed information about this request" class="dropdown-item text-primary" href="/admin/requests/view/<?php echo $r['id']?>">view details</a>
+          </div>
+        </td>
     </tr>
-    <?php endforeach; endif;?>
+    <?php endforeach; ?>
     </tbody>
 </table>
-<?php   echo $this->paginationControl($this->paginator,'sliding', 'partials/pagination_control',
-['route' => 'admin-requests/scheduled']);?>
+<?php else : ?>
+<table>
+    <thead></thead>
+    <tbody data-csrf="<?php echo $this->csrf?>"></tbody>
+</table>
+<?php endif;

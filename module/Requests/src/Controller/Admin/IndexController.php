@@ -11,6 +11,7 @@ use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Stdlib\ArrayObject;
 use InterpretersOffice\Requests\Form\ConfigForm;
 use InterpretersOffice\Requests\Entity\Request;
+use Laminas\Session\Container as Session;
 
 /**
  * admin controller for Requests module
@@ -39,6 +40,8 @@ class IndexController extends AbstractActionController
      */
     protected $config_dir = 'module/Requests/config';
 
+    private $session;
+
     /**
      * constructor.
      *
@@ -49,6 +52,7 @@ class IndexController extends AbstractActionController
     {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
+        $this->session = new Session('admin_requests');
     }
     /**
      * experimental
@@ -67,17 +71,49 @@ class IndexController extends AbstractActionController
     {
 
         $repo = $this->objectManager->getRepository(Request::class);
-        $paginator = $repo->getPendingRequests();
+        $xhr = $this->getRequest()->isXmlHttpRequest();
+        if (! $xhr) {
+            if ($this->session->tabs) { // use session
+                $active = $this->session->tabs['active'];
+                $page = $this->session->tabs['page'];
+                if ($active == 'scheduled-requests') {
+                    $method = 'getScheduledRequests';
+                } else {
+                    $method = 'getPendingRequests';
+                }
+            } else { // use defaults
+                $active = 'pending-requests';
+                $method = 'getPendingRequests';
+                $page   = 1;
+                $this->session->tabs = [
+                    'active' => $active,
+                    'page' => $page,
+                ];
+            }
+            $paginator = $repo->$method($page);
+        } else {
+            // YES xhr, and they asked for index, therefore they are asking for pending requests
+            $active = 'pending-requests';
+            $page   = $this->params()->fromQuery('page',1);
+            $this->session->tabs = [
+                'active' => $active,
+                'page' => $page,
+            ];
+            $paginator = $repo->getPendingRequests($page);
+        }
         if ($paginator) {
             $defendants = $repo->getDefendantNamesForCurrentPage($paginator);
         } else {
             $defendants = [];
         }
-        $data = compact('paginator', 'defendants');
+        $data = compact('paginator', 'defendants','page','active');
         $data['csrf'] = (new \Laminas\Validator\Csrf('csrf'))->getHash();
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            return (new ViewModel($data))->setTerminal(true);
+        if ($xhr) {
+            return (new ViewModel($data))
+                ->setTerminal(true)
+                ->setTemplate('partials/pending-requests-table');
         }
+
         return $data;
     }
 
@@ -173,16 +209,22 @@ class IndexController extends AbstractActionController
     {
         $repo = $this->objectManager->getRepository(Request::class);
         $page = $this->params()->fromQuery('page',1);
+        $active = 'scheduled-requests';
         /** @var \Laminas\Paginator\Paginator $paginator */
         $paginator = $repo->getScheduledRequests($page);
         $defendants = $repo->getDefendantNamesForCurrentPage($paginator);
-        $data = compact('paginator','defendants');
+
+        $data = compact('paginator','defendants','page','active');
         $view = new ViewModel($data);
         if ($this->getRequest()->isXmlHttpRequest()) {
             $view
                 ->setTemplate('partials/scheduled-requests-table')
                 ->setTerminal(true);
         }
+        $this->session->tabs = [
+            'active' => 'scheduled-requests',
+            'page' => $page,
+        ];
 
         return $view;
     }

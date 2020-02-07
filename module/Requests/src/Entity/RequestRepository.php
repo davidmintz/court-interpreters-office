@@ -225,7 +225,10 @@ class RequestRepository extends EntityRepository
         $qb->where('r.pending = false')
             ->andWhere('r.cancelled = false')
             ->andWhere('r.date >= :today')
-            ->setParameters(['today' => date('Y-m-d')]);
+            ->andWhere('r.event IS NOT NULL')
+            ->setParameters(['today' => date('Y-m-d')])
+            ->orderBy('r.date', 'ASC')
+            ->addOrderBy('r.time', 'ASC');
 
         $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 

@@ -8,13 +8,21 @@ var moment, schedule_request_callback;
 
 var update_verbiage = function(count) {
     if ( "undefined" === typeof count) {
-        count = $("tbody tr").length;
+        count = $("#pending-requests tbody tr").length;
     }
     var verbiage = `${count} request`;
     if (count !== 1) {
         verbiage += "s";
     }
     $("#requests-pending").text(verbiage);
+    var thead = $("#pending-requests table > thead");
+    if (! count) {
+        thead.hide();
+    } else {
+        if (! thead.is(":visible")) {
+            thead.show();
+        }
+    }
 }
 
 /**
@@ -52,6 +60,7 @@ $(function(){
             }
         }).fail(fail);
     // keep track of whatever dropdown is being shown
+    // in case the parent <table> gets replaced
     }).on("show.bs.dropdown","td.dropdown",function(event){
             $("table").data({dropdown_id : event.relatedTarget.id});
         }
@@ -61,22 +70,20 @@ $(function(){
         }
     );
     // periodically refresh interpreter-request data
-    var html = $("tbody").html();
+    var html = $("#pending-requests tbody").html();
     var refresh = function refresh(){
         $.get(document.location.href)
         .then((response)=>{
-            //var doc = $(response);
-            var element = $(response).find("tbody");
-            var this_html = element.html();
-            var csrf = element.data('csrf');
-            if (! this_html) { console.warn("error? no TBODY html");  }
+
+            var this_html = $(response).find("tbody").html();
             var updated = html !== this_html;
             console.warn("updated? "+ (updated ? "yes" : "no"));
+            //console.log(html); console.log('----'); console.log(this_html);
             if (updated) {
                 html = this_html;
-                $("tbody").html(this_html)
-                // restore any previously-showing dropdown
                 var dropdown_id = $("table").data("dropdown_id");
+                $("#pending-requests").html(response);
+                // restore any previously-showing dropdown
                 if (dropdown_id) {
                     console.log("we're a class act, restoring your dropdown");
                     // could not get .dropdown("show") to work \-:
@@ -87,6 +94,7 @@ $(function(){
             setTimeout(refresh,requests_refresh_interval);
         });
     };
+
     setTimeout(refresh,requests_refresh_interval);
 
     // https://getbootstrap.com/docs/4.4/components/navs/#events
@@ -97,8 +105,18 @@ $(function(){
         });
 
     });
-    $("#past-requests-tab").on("show.bs.tab",function(e){
-        console.log("time to load past requests...");
 
+    $("#pending-requests-tab").on("show.bs.tab",function(e){
+        console.log("time to load PENDING requests...");
+        $.get('/admin/requests').then((res)=>{
+            $("#pending-requests").html(res);
+        });
+
+    });
+
+    $("#tab-content").on("click",".pagination a",function(e){
+        e.preventDefault();
+        var tab = $(this).closest(".tab-pane");
+        $.get(this.href).then((html)=>tab.html(html));
     });
 });
