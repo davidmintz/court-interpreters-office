@@ -15,13 +15,21 @@ var update_verbiage = function(count) {
         verbiage += "s";
     }
     $("#requests-pending").text(verbiage);
+    var thead = $("#pending-requests table > thead");
+    if (! count) {
+        thead.hide();
+    } else {
+        if (! thead.is(":visible")) {
+            thead.show();
+        }
+    }
 }
 
 /**
  * how often to reload the requests data (via xhr)
  * @type {Number}
  */
-const requests_refresh_interval = 10000;
+const requests_refresh_interval = 60000;
 
 $(function(){
     // event listeners for dropdowns in each table row
@@ -52,6 +60,7 @@ $(function(){
             }
         }).fail(fail);
     // keep track of whatever dropdown is being shown
+    // in case the parent <table> gets replaced
     }).on("show.bs.dropdown","td.dropdown",function(event){
             $("table").data({dropdown_id : event.relatedTarget.id});
         }
@@ -61,22 +70,20 @@ $(function(){
         }
     );
     // periodically refresh interpreter-request data
-    var html = $("#pending-requests").html(); // was  "... tbody"
+    var html = $("#pending-requests tbody").html();
     var refresh = function refresh(){
         $.get(document.location.href)
         .then((response)=>{
-            //var doc = $(response);
-            var element = $(response).find("tbody");
-            var this_html = element.html();
-            var csrf = element.data('csrf');
-            if (! this_html) { console.debug("no TBODY in returned html");  }
+
+            var this_html = $(response).find("tbody").html();
             var updated = html !== this_html;
             console.warn("updated? "+ (updated ? "yes" : "no"));
+            //console.log(html); console.log('----'); console.log(this_html);
             if (updated) {
                 html = this_html;
+                var dropdown_id = $("table").data("dropdown_id");
                 $("#pending-requests").html(response);
                 // restore any previously-showing dropdown
-                var dropdown_id = $("table").data("dropdown_id");
                 if (dropdown_id) {
                     console.log("we're a class act, restoring your dropdown");
                     // could not get .dropdown("show") to work \-:
@@ -87,6 +94,7 @@ $(function(){
             setTimeout(refresh,requests_refresh_interval);
         });
     };
+
     setTimeout(refresh,requests_refresh_interval);
 
     // https://getbootstrap.com/docs/4.4/components/navs/#events
