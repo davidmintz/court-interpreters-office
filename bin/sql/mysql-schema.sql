@@ -382,7 +382,7 @@ CREATE TABLE `interpreters` (
   `fingerprint_date` date DEFAULT NULL,
   `oath_date` date DEFAULT NULL,
   `contract_expiration_date` date DEFAULT NULL,
-  `solicit_availability` tinyint(1) NOT NULL,
+  `solicit_availability` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `comments` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
   `address1` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `address2` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
@@ -847,4 +847,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-07 15:55:55
+-- Dump completed on 2020-02-10  9:39:18
