@@ -11,11 +11,11 @@ use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
 use InterpretersOffice\Service\ProperNameParsingTrait;
+
 /**
  * request repository
  *
  * @todo implement caching -- or else don't
-            ->setParameters(['today' => date('Y
  */
 class RequestRepository extends EntityRepository
 {
@@ -185,24 +185,6 @@ class RequestRepository extends EntityRepository
         return $paginator;
     }
 
-    public function getScheduledRequests($page = 1)
-    {
-        $qb = $this->getBaseQuery();
-        $qb->where('r.pending = false')->andWhere('r.date > :today')
-            ->setParameters(['today' => date('Y-m-d')]);
-
-        $query = $qb->getQuery()->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-
-        $adapter = new DoctrineAdapter(new ORMPaginator($query));
-        $paginator = new LaminasPaginator($adapter);
-        if (! count($paginator)) {
-            return null;
-        }
-        $paginator->setCurrentPageNumber($page)->setItemCountPerPage(20);
-
-        return $paginator;
-    }
-
     /**
      * gets defendant names for current page of Request entities
      * @param  LaminasPaginator $paginator
@@ -219,6 +201,7 @@ class RequestRepository extends EntityRepository
 
         return $defendants;
     }
+
     public function getScheduledRequests($page = 1)
     {
         $qb = $this->getBaseQuery();
