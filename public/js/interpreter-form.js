@@ -94,11 +94,24 @@ $(function(){
             );
         }
     });
-    $("#person-active").on("change",()=>{
+
+    var is_contractor = $("#hat").data("is_contractor");
+
+    $("#person-active").on("change",function(){
         if (!this.checked) {
             $("#solicit_availability").attr("disabled",true);
         } else {
-            $("#solicit_availability").removeAttr("disabled");
+             $("#solicit_availability").removeAttr("disabled");
+            // if (typeof is_contractor === "undefined") {
+            //     var is_contractor = $("#hat option:selected").text().includes("contract");
+            //     if (is_contractor) {
+            //         $("#solicit_availability").removeAttr("disabled");
+            //     }
+            // } else {
+            //     if (is_contractor) {
+            //         $("#solicit_availability").removeAttr("disabled");
+            //     }
+            // }
         }
     }).trigger("change");
 
