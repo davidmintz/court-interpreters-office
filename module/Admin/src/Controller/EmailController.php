@@ -49,6 +49,11 @@ class EmailController extends AbstractActionController
         return (new ViewModel)->setTemplate('email/templates');
     }
 
+    public function indexAction()
+    {
+        //return false;
+    }
+
     /**
      *
      * Sends email regarding an Event or Request (entity).

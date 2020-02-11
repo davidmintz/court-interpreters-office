@@ -761,9 +761,10 @@ return  [
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\EmailController::class,
+                    'action' => 'index',
                 ],
             ],
-            'may_terminate' => false,
+            'may_terminate' => true,
             //'route' => '/admin/email',
             'child_routes' => [
                 'event' => [

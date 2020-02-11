@@ -48,6 +48,7 @@ return [
     'interpreters-office/admin/search/docket-search' => __DIR__ . '/../view/search/docket-search.phtml',
     // this one's a bit weird...
     'interpreters-office/admin/email/templates' => __DIR__ . '/../../InterpretersOffice/view/interpreters-office/email/templates.phtml',
+    'interpreters-office/admin/email/index' => __DIR__ . '/../view/email/index.phtml',
     'interpreters-office/admin/config/index' => __DIR__ . '/../view/configuration/index.phtml',
     'interpreters-office/admin/config/forms' => __DIR__ . '/../view/configuration/forms.phtml',
 

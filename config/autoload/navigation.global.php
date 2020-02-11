@@ -350,7 +350,7 @@ return [
                     [
                         'order' => 3,
                         'label' => 'email',
-                        'route' => 'email/templates',
+                        'route' => 'email',
                         'resource' => Admin\EmailController::class,
                     ],
                     [
