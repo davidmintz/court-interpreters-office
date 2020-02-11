@@ -200,6 +200,38 @@ class InterpreterFieldset extends PersonFieldset
                 ]
             );
         }
+        $this->add([
+            'name' => 'solicit_availability',
+            'type' => 'checkbox',
+            'attributes' => [
+                'value' => 1,
+                'id' => 'solicit_availability',
+                //'class' => 'form-check-input',
+            ],
+            'options' => [
+            'label' => 'solicit availability',
+            'use_hidden_element' => true,
+            'checked_value' => 1,
+            'unchecked_value' => 0,],
+        ]);
+        /*
+        $this->add([
+            'type' => 'Laminas\Form\Element\Checkbox',
+            'name' => 'active',
+            'required' => true,
+            'allow_empty' => false,
+            'options' => [
+                'label' => 'active',
+                'use_hidden_element' => true,
+                'checked_value' => 1,
+                'unchecked_value' => 0,
+            ],
+            'attributes' => [
+                'value' => 1,
+                'id' => 'user-active',
+            ],
+        ]);
+         */
     }
 
     /**
@@ -350,6 +382,14 @@ class InterpreterFieldset extends PersonFieldset
                     'break_chain_on_failure' => true,
                     ],
                 ],
+         ];
+         $spec['solicit_availability'] =
+             [
+                 'required' => false, // for now
+                 'allow_empty' => true,
+                 'validators' => [],
+                 'filters' => [],
+
          ];
          /** optional fields */
 

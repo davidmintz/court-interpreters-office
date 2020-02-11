@@ -28,7 +28,6 @@ $form->add([
    ->setAttribute('class', 'form-horizontal');
 ?>
 <div class="mx-auto" style="max-width:700px;"><!-- wrapper -->
-
     <h2 class="mb-3"><h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2></h2>
     <?php
     $form->prepare();
@@ -93,7 +92,6 @@ $form->add([
             <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
             <div class="col-sm-9" style="margin-bottom:1em"><?php echo $this->formElement($element), $this->formElementErrors($element)?>
             </div>
-
         </div><!-- /languages panel -->
         <!-- admin panel ------------->
         <div class="tab-pane" id="administrative" role="tabpanel" aria-labelledby="administrative-tab">
@@ -107,20 +105,26 @@ $form->add([
             $fieldset->get('dob')->setAttribute('disabled', 'disabled');
             $fieldset->get('ssn')->setAttribute('disabled', 'disabled');
         endif;
-if ($this->has_related_entities) :
-    $fieldset->get('hat')->setAttribute('disabled', 'disabled');
-endif;?>
-        <?php foreach (['hat','active','fingerprint_date','BOP_form_submission_date','security_clearance_date','contract_expiration_date','oath_date',] as $elementName) :
+        if ($this->has_related_entities) :
+            $fieldset->get('hat')->setAttribute('disabled', 'disabled');
+        endif;?>
+        <?php foreach (['hat','active','solicit_availability','fingerprint_date','BOP_form_submission_date',
+        'security_clearance_date','contract_expiration_date','oath_date',] as $elementName) :
                     if (! $fieldset->has($elementName)) : continue; endif;
                     $element = $fieldset->get($elementName);
                     $value = $element->getValue();
             if (is_object($value) && $value instanceof \DateTime) :
                 $element->setValue($value->format('m/d/Y'));
             endif;
+            if ($element instanceof \Laminas\Form\Element\Checkbox) :
+                $label_class = ' pt-2';
+            else:
+                $label_class = '';
+            endif;
             ?>
                 <div class="form-group form-row">
-                    <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
-                    <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element)                   ?>
+                    <label class="col-form-label col-sm-3 "><?php echo $element->getLabel()?></label>
+                    <div class="col-sm-9<?=$label_class?>"><?php echo $this->formElement($element),$this->formElementErrors($element)                   ?>
                     </div>
                 </div>
         <?php endforeach; ?>

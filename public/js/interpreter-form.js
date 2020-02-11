@@ -94,6 +94,13 @@ $(function(){
             );
         }
     });
+    $("#person-active").on("change",()=>{
+        if (!this.checked) {
+            $("#solicit_availability").attr("disabled",true);
+        } else {
+            $("#solicit_availability").removeAttr("disabled");
+        }
+    }).trigger("change");
 
     // try to prevent the damn browser from autocompleting
     // http://stackoverflow.com/questions/31439047/prevent-browser-from-remembering-credentials-password/43874591#43874591
