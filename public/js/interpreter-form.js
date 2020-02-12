@@ -6,7 +6,7 @@
 
 /*
  global $, fail, displayValidationErrors
- */
+*/
 
 
 $(function(){
@@ -132,8 +132,14 @@ $(function(){
         if (element.val()) { // good enough for government work
             element.next(".validation-error").slideUp().empty();
         }
+        // if they're a contractor...
         if (element.children(":selected").text().includes("contract")) {
-            // AND active is true then enable the solicit_availability box
+            // ... and "active" is checked, enable the "solicit_availability" box
+            if ($("#person-active").prop("checked")) {
+                $("#solicit_availability").removeAttr("disabled");
+            }
+        } else {
+            $("#solicit_availability").attr("disabled",true);
         }
     });
 
