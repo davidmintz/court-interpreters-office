@@ -37,18 +37,21 @@ SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ALLOW_INVALID_DAT
 
 INSERT INTO interpreters (
 id, security_clearance_date, contract_expiration_date,fingerprint_date,
-bop_form_submission_date, oath_date,
+bop_form_submission_date, oath_date, solicit_availability,
 comments, address1, address2, city, state, zip, home_phone, country
 )
-(SELECT interp_id,
+(SELECT interpreters.interp_id,
     IF (security_clearance <> "0000-00-00",security_clearance,NULL),
     IF (contract_expiration = "0000-00-00",NULL,contract_expiration),
     IF (fingerprinted = "0000-00-00",NULL,fingerprinted),
     IF (bop_forms_submitted = "0000-00-00",NULL,bop_forms_submitted),
     IF (oath = "0000-00-00",NULL,oath),
+    IF (availability_invitees.interp_id IS NULL, 0, 1),
     notes, address1, address2, city, state, zip, home, "United States"
 
-FROM dev_interpreters.interpreters ORDER BY interp_id);
+FROM dev_interpreters.interpreters
+LEFT JOIN dev_interpreters.availability_invitees ON  dev_interpreters.interpreters.interp_id = dev_interpreters.availability_invitees.interp_id
+ORDER BY dev_interpreters.interpreters.interp_id);
 
 
 
