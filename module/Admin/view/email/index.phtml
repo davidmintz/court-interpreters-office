@@ -1,42 +1,85 @@
 <?php
 /** module/Admin/view/email/index.phtml viewscript for batch-email */
 $this->headTitle('admin | email');
-$this->headScript()->appendFile($this->basePath('js/admin/batch-email.js'));
+$this->headScript()
+    ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+    ->appendFile($this->basePath('js/admin/batch-email.js'));
 ?>
 <h2 class="mx-auto text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <div style="max-width:800px" class="mx-auto p-2">
-<form class="" action="index.html" method="post">
-    <div class="form-row form-group">
-        <label for="recipient_list" class="col-sm-3 col-form-label float-md-right">
-            recipient list
-        </label>
-        <div class="col-sm-9">
-            <select class="custom-select" name="recipient_list" id="recipient list">
-                <option value=""> </option>
-                <option value="1">one</option>
-                <option value="2">two</option>
-                <option value="3">three</option>
-            </select>
+
+    <!-- <div id="carousel" class="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+            content for slide one
         </div>
-    </div>
-    <div class="form-row form-group">
-        <label for="subject" class="col-sm-3 col-form-label float-md-right">
-            subject
-        </label>
-        <div class="col-sm-9">
-            <input type="text" id="subject" class="form-control" name="subject" value="">
+        <div class="carousel-item">
+          content for slide two
         </div>
-    </div>
-    <div class="form-row form-group">
-        <label for="message" class="col-sm-3 col-form-label float-md-right">
-            message
-        </label>
-        <div class="col-sm-9"><textarea id="message" name="message" rows="6" class="form-control"></textarea>
+      </div>
+    </div> -->
+
+<form id="email-form" class="carousel" action="index.html" method="post" <?php
+    if (isset($this->site_config['contact']['organization_name'])) :
+        printf('data-organization_name="%s"',$this->site_config['contact']['organization_name']);
+    endif;
+?>>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="form-row form-group">
+                <label for="recipient_list" class="col-sm-3 col-form-label float-md-right">
+                    recipient list
+                </label>
+                <div class="col-sm-9">
+                    <select class="custom-select" name="recipient_list" id="recipient_list">
+                        <option value=""></option>
+                    <?php foreach ($this->recipient_list_options as $opt):?>
+                        <option label="<?=$opt?>" value="<?=$opt?>"><?=$opt?></option>
+                    <?php endforeach ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <label for="subject" class="col-sm-3 col-form-label float-md-right">
+                    subject
+                </label>
+                <div class="col-sm-9">
+                    <input type="text" id="subject" class="form-control" name="subject" value="">
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <label for="salutation" class="col-sm-3 col-form-label float-md-right">
+                    salutation
+                </label>
+                <div class="col-sm-9">
+                    <select class="custom-select" name="salutation">
+                        <option value="personalized">Dear <?php echo $this->escapeHtml("<first name> <surname>:")?></option>
+                        <option value="other">I'll write my own</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <label for="message" class="col-sm-3 col-form-label float-md-right">
+                    message
+                </label>
+                <div class="col-sm-9"><textarea placeholder="the body of your message" id="message" name="message" rows="8" class="form-control"></textarea>
+                <span class="text-muted">You can use <a target="__blank" href="https://www.markdownguide.org/basic-syntax">Markdown</a> for formatting</span>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <div class="col-sm-9 offset-sm-3">
+                    <button type="button" class="btn btn-success" name="preview">preview</button>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="form-row form-group">
-        <div class="col-sm-9 offset-sm-3">
-            <button type="button" class="btn btn-success" name="preview">preview</button>
+        <div class="carousel-item">
+            <div class="form-row form-group">
+                <div class="col-sm-9 offset-sm-3">
+                    <button type="button" class="btn btn-info" name="revise">revise</button>
+                    <button type="button" class="btn btn-success" name="send">send</button>
+                </div>
+            </div>
+
         </div>
     </div>
 </form>

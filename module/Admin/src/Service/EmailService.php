@@ -25,7 +25,6 @@ use Laminas\Log\LoggerAwareInterface;
 
 use Laminas\InputFilter;
 
-
 /**
  * sends email from the admin/schedule interface
  */
@@ -34,6 +33,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
     use EmailTrait;
     use LoggerAwareTrait;
     use EventManagerAwareTrait;
+    use ObjectManagerAwareTrait;
 
     /**
      * @var string
@@ -46,6 +46,18 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
      * @var Array
      */
     private $config;
+
+    const ACTIVE_INTERPRETERS = 'all active interpreters';
+    const ACTIVE_SPANISH_INTERPRETERS = 'all active Spanish interpreters';
+    const ACTIVE_SUBMITTERS = 'all active request submitters';
+    const AVAILABILITY_SOLICITATION_LIST = 'contract interpreters on your availability-solicitation list';
+
+    public static $recipient_list_options = [
+        self::ACTIVE_INTERPRETERS => self::ACTIVE_INTERPRETERS,
+        self::ACTIVE_SPANISH_INTERPRETERS => self::ACTIVE_SPANISH_INTERPRETERS,
+        self::ACTIVE_SUBMITTERS => self::ACTIVE_SUBMITTERS,
+        self::AVAILABILITY_SOLICITATION_LIST => self::AVAILABILITY_SOLICITATION_LIST,
+    ];
 
     /**
      * input filter for batch-email form
@@ -69,16 +81,65 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
                 'required' => true,
                 'validators' => [
                     [
-                        'name' => 'not_empty',
+                        'name' => 'NotEmpty',
                         'options' => [
-                            'isEmpty' => 'recipient list is required',
+                            'messages'=>['isEmpty' => 'recipient list is required'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
                 ],
             ],
+            'subject' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty' => 'subject is required'],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'StringLength',
+                        'required' => true,
+                        'options' => [
+                            'max' => '80',
+                            'min' => '8',
+                            'messages' => [
+                                'stringLengthTooShort' => 'subject should be a minimum %min% characters',
+                                'stringLengthTooLong' => 'subject cannot exceed %max% characters',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'body' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty' => 'message body is required'],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'StringLength',
+                        'required' => true,
+                        'options' => [
+                            'max' => '8000',
+                            'min' => '80',
+                            'messages' => [
+                                'stringLengthTooShort' => 'message should be a minimum %min% characters',
+                                'stringLengthTooLong' => 'message cannot exceed %max% characters',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
+        // to be continued
         return $this->batchEmailInputFilter;
     }
 
@@ -119,9 +180,11 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
     public function __construct(Array $config)
     {
         $this->config = $config;
-        //$this->setObjectManager($em);
     }
-
+    public function getConfig()
+    {
+        return $this->config;
+    }
     /**
      * sends email message
      *
@@ -189,7 +252,6 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
             file_put_contents("data/email-output.{$i}.html", $content);
             $this->getLogger()->debug(__FUNCTION__.": using email template: '$template'");
             $message->setTo($address['email'], ! empty($address['name']) ? $address['name'] : null);
-            // try {
             $transport->send($message);
             $result['sent_to'][] = $address;
             $data['entity_id'] = isset($data['event_id']) ? $data['event_id']:$data['request_id'];

@@ -27,7 +27,8 @@ class EmailServiceFactory implements FactoryInterface
         $service
             ->setViewRenderer($container->get('ViewRenderer'))
             ->setAuth($container->get('auth'))
-            ->setLogger($log);
+            ->setLogger($log)
+            ->setObjectManager($container->get('entity-manager'));
 
         return $service;
     }

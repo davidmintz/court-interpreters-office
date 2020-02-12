@@ -51,11 +51,14 @@ class EmailController extends AbstractActionController
 
     /**
      * displays form for batch email
-     * @return void
+     * @return ViewModel
      */
     public function indexAction()
     {
-
+        return new ViewModel([
+            'recipient_list_options' => $this->emailService::$recipient_list_options,
+            'site_config' => $this->emailService->getConfig()['site'] ?? [],
+        ]);
     }
 
     /**
@@ -64,6 +67,13 @@ class EmailController extends AbstractActionController
      */
     public function previewAction()
     {
+        $data = $this->getRequest()->getPost();
+        $filter = $this->emailService->getBatchEmailInputFilter();
+        $filter->setData($data);
+        if (!$filter->isValid()) {
+            $validation_errors = $filter->getMessages();
+            return new JsonModel(['validation_errors'=>$validation_errors]);
+        }
         return new JsonModel(['status'=>'test one two, looking good']);
     }
 
