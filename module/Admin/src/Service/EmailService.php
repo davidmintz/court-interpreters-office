@@ -23,6 +23,9 @@ use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\Log\LoggerAwareTrait;
 use Laminas\Log\LoggerAwareInterface;
 
+use Laminas\InputFilter;
+
+
 /**
  * sends email from the admin/schedule interface
  */
@@ -43,6 +46,41 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
      * @var Array
      */
     private $config;
+
+    /**
+     * input filter for batch-email form
+     *
+     * @var Input\InputFilter
+     */
+    private $batchEmailInputFilter;
+
+    /**
+     * gets batch-email input filter
+     * @return Input\InputFilter
+     */
+    public function getBatchEmailInputFilter() : InputFilter\InputFilter
+    {
+        if ($this->batchEmailInputFilter) {
+            return $this->getBatchEmailInputFilter();
+        }
+        $this->batchEmailInputFilter = (new InputFilter\Factory())
+        ->createInputFilter([
+            'recipient_list' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'not_empty',
+                        'options' => [
+                            'isEmpty' => 'recipient list is required',
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+            ],
+        ]);
+
+        return $this->batchEmailInputFilter;
+    }
 
 
     /**
@@ -128,19 +166,13 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
 
         if (isset($data['event_details'])) {
             if (isset($data['event_details']['location'])) {
-                $data['event_details']['location'] = strip_tags(str_replace('*', '', $data['event_details']['location']));
+                $data['event_details']['location'] =
+                    strip_tags(str_replace('*', '', $data['event_details']['location']));
             }
             $view->setVariables(['entity' => $data['event_details'],'escaped' => true]);
         }
         if (! empty($data['body'])) {
             $view->notes = $data['body'];
-            // if (empty($data['template_hint']) or $template == 'blank-page') {
-            //     // the additional notes are the message body (no event-details)
-            //     $view->body = $data['body'];
-            // } else {
-            //     // the message body is injected as an additional note
-            //     $view->notes = $data['body'];
-            // }
         }
         $transport = $this->getMailTransport();
         foreach ($data['to'] as $i => $address) {
@@ -177,18 +209,6 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
                 'comments' => $log_comments,
                 'address' => $address,
             ]);
-            // } catch (\Throwable $e) {
-            //     $details = [
-            //         'status' => 'error',
-            //         'exception_class' => get_class($e),
-            //         'address' => $address['email'],
-            //         'name'   => $address['name'],
-            //         'error' => ['message' => $e->getMessage()],
-            //     ];
-            //     $this->getEventManager()
-            //         ->trigger('error', $this, ['exception' => $e, 'details' => $details]);
-            //     return array_merge($result, $details);
-            // }
         }
         if (! empty($data['cc'])) {
             $result['cc_to'] = $data['cc']; // for confirmation

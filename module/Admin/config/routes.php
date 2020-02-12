@@ -743,17 +743,6 @@ return  [
             ],
         ],
 
-        // 'email' => [
-        //     'type' => Literal::class,
-        //     'options' => [
-        //        'route' => '/admin/email/event', //[/]
-        //        'defaults' => [
-        //            'module' => __NAMESPACE__,
-        //            'controller' => Controller\EmailController::class,
-        //            'action' => 'email-event',
-        //        ],
-        //     ],
-        // ],
         'email' => [
             'type' => Segment::class,
             'options' => [
@@ -765,8 +754,16 @@ return  [
                 ],
             ],
             'may_terminate' => true,
-            //'route' => '/admin/email',
             'child_routes' => [
+                'preview' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/preview',
+                        'defaults' => [
+                            'action' => 'preview',
+                        ],
+                    ],
+                ],
                 'event' => [
                     'type' => Segment::class,
                     'options' => [

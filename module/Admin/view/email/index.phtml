@@ -1,5 +1,8 @@
-<?php $this->headTitle('admin | email')?>
-
+<?php
+/** module/Admin/view/email/index.phtml viewscript for batch-email */
+$this->headTitle('admin | email');
+$this->headScript()->appendFile($this->basePath('js/admin/batch-email.js'));
+?>
 <h2 class="mx-auto text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <div style="max-width:800px" class="mx-auto p-2">
 <form class="" action="index.html" method="post">

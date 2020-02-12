@@ -49,9 +49,22 @@ class EmailController extends AbstractActionController
         return (new ViewModel)->setTemplate('email/templates');
     }
 
+    /**
+     * displays form for batch email
+     * @return void
+     */
     public function indexAction()
     {
-        //return false;
+
+    }
+
+    /**
+     * validates draft email
+     * @return JsonModel
+     */
+    public function previewAction()
+    {
+        return new JsonModel(['status'=>'test one two, looking good']);
     }
 
     /**
