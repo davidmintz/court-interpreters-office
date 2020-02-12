@@ -121,7 +121,7 @@ $(function(){
         $(".thing1, .thing2").val("");  // doesn't work, either.
         // nor does this. shit.
         // maybe some carousel thing where you show them one form control
-        // followed by the other
+        // followed by the other?
         $(".thing2").css({color:"white"}).on("focus",function(){$(this).css({color:"black"});});
         $(".thing1").on("focus",function(){
             $(".thing2").val("");
@@ -201,7 +201,6 @@ $(function(){
                 return displayValidationErrors(errors);
             }
             if (response.authenticated) {
-
                 var encrypted_dob =  $("input[name=\"encrypted.dob\"]");
                 var encrypted_ssn =  $("input[name=\"encrypted.ssn\"]");
                 $.post("/vault/decrypt",{
@@ -209,7 +208,6 @@ $(function(){
                     ssn  : encrypted_ssn.val(),
                     csrf : response.csrf
                 },function(response){
-
                     if (response.error) {
                         $("#div-auth-error").text("Error: "+response.error).removeClass("hidden");
                         return;
@@ -251,7 +249,7 @@ $(function(){
             $(".validation-error:visible").addClass("border border-danger");
             return false;
         }
-        //serialized form values + encodeURI("&interpreter[hat]=3") is required
+        // serialized form values + encodeURI("&interpreter[hat]=3") is required
         // to get python selenium working
         $.post(document.location.pathname,form.serialize())
         .then((res)=>{
@@ -288,7 +286,7 @@ $(function(){
             }
         });
     });
-
+    /** DELETE an interpreter */
     $("#btn-delete").on("click",function(event){
         event.preventDefault();
         if (! window.confirm("Are you sure you want to delete this interpreter?"))
@@ -299,35 +297,35 @@ $(function(){
         var url = `/admin/interpreters/delete/${id}`;
         var name = `${$("#firstname").val()} ${$("#lastname").val()}`;
         $.post(url,{name})
-            .done(()=>
-                window.document.location = `${window.basePath||""}/admin/interpreters`)
-            .fail(fail);
+        .then(()=> window.document.location = `${window.basePath||""}/admin/interpreters`)
+        .fail(fail);
     });
 });
+/** displays validation errors for interpreter-language elements */
 var render_interpreter_language_errors = function(errors) {
-    $.each(errors,
-        function(i,error){
-            if (error.indexOf("language is required") > -1 ) {
-                var el =  $(".language-required");
-                if (! el.length) {
-                    el = $(`<div class="alert alert-warning validation-error language-required"></div>`);
-                    $("#languages-div").append(el);
-                } else {
-                    if ($(".language-required:visible").length) {
-                        el.addClass("border border-danger");
-                    }
+    $.each(errors, function(i,error)
+    {
+        if (error.indexOf("language is required") > -1 ) {
+            var el =  $(".language-required");
+            if (! el.length) {
+                el = $(`<div class="alert alert-warning validation-error language-required"></div>`);
+                $("#languages-div").append(el);
+            } else {
+                if ($(".language-required:visible").length) {
+                    el.addClass("border border-danger");
                 }
-                el.text(error).show();
-                return;
             }
-            $("div.language-credential select").not(":disabled")
-                .children(`option:selected[value=""]`)
-                .closest("div.language-credential")
-                .children(".validation-error")
-                .text(error).show();
-        });
-
+            el.text(error).show();
+            return;
+        }
+        $("div.language-credential select").not(":disabled")
+            .children(`option:selected[value=""]`)
+            .closest("div.language-credential")
+            .children(".validation-error")
+            .text(error).show();
+    });
 };
+/** validates interpreter-language elements */
 var validate_languages = function(){
     var id = "#"+$("div.active").attr("id");
     if (id.indexOf("languages") !== -1 &&
@@ -355,8 +353,9 @@ var test = function(){
     $("#lastname").val("Doinkle");
     $("#firstname").val("Boinker");
     $("#email").val("doink@boink.com");
-    $('#languages-pane').tab("show");
+    $('#languages-tab').tab("show");
     $('#language-select').val(62);
+    setTimeout(()=>$("#language-credential-62").val("1"),400);
     $('#btn-add-language').trigger("click");
 };
 //*/

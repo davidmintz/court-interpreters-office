@@ -122,13 +122,19 @@ $form->add([
             endif;
             if ($element instanceof \Laminas\Form\Element\Checkbox) :
                 $label_class = ' pt-2';
+                if ($elementName == 'solicit_availability'):
+                    $help_text = 'include among contract interpreters whom you email to ask availability';
+                endif;
             else:
                 $label_class = '';
+                $help_text = '';
             endif;
             ?>
                 <div class="form-group form-row">
                     <label class="col-form-label col-sm-3 "><?php echo $element->getLabel()?></label>
-                    <div class="col-sm-9<?=$label_class?>"><?php echo $this->formElement($element),$this->formElementErrors($element)                   ?>
+                    <div class="col-sm-9<?=$label_class?>"><?php echo $this->formElement($element);
+                    if ($help_text): printf('<span class="ml-1 my-0 text-muted">%s</span>',$help_text); endif;
+                    echo $this->formElementErrors($element);?>
                     </div>
                 </div>
         <?php endforeach; ?>
