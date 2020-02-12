@@ -95,23 +95,23 @@ $(function(){
         }
     });
 
-    var is_contractor = $("#hat").data("is_contractor");
-
+    var hat = $("#hat").data("hat");
+    var hat_element = $("#hat");
     $("#person-active").on("change",function(){
         if (!this.checked) {
             $("#solicit_availability").attr("disabled",true);
         } else {
-             $("#solicit_availability").removeAttr("disabled");
-            // if (typeof is_contractor === "undefined") {
-            //     var is_contractor = $("#hat option:selected").text().includes("contract");
-            //     if (is_contractor) {
-            //         $("#solicit_availability").removeAttr("disabled");
-            //     }
-            // } else {
-            //     if (is_contractor) {
-            //         $("#solicit_availability").removeAttr("disabled");
-            //     }
-            // }
+            var is_contractor;
+            if (hat_element.is(":disabled")) {
+                is_contractor = hat.includes("contract");
+            } else {
+                is_contractor = hat_element.children(":selected").text().includes("contract");
+            }
+            if (is_contractor) {
+                $("#solicit_availability").removeAttr("disabled");
+            } else {
+                $("#solicit_availability").attr("disabled",true);
+            }
         }
     }).trigger("change");
 
@@ -131,6 +131,9 @@ $(function(){
         var element = $(this);
         if (element.val()) { // good enough for government work
             element.next(".validation-error").slideUp().empty();
+        }
+        if (element.children(":selected").text().includes("contract")) {
+            // AND active is true then enable the solicit_availability box
         }
     });
 

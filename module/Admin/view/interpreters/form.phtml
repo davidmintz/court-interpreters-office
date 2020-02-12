@@ -106,14 +106,10 @@ $form->add([
             $fieldset->get('ssn')->setAttribute('disabled', 'disabled');
         endif;
         $hat = $form->getObject()->getHat() ? (string)$form->getObject()->getHat() : '';
-        $is_contractor = false !== stristr($hat,'contract');
+        $hat_element = $fieldset->get('hat');
+        $hat_element->setAttribute('data-hat', $hat);
         if ($this->has_related_entities) :
-            $is_contractor = false !== stristr((string)$form->getObject()->getHat(),'contract');;
-            $fieldset->get('hat')
-                ->setAttribute('data-is_contractor', $is_contractor ? '1':'0')
-                ->setAttribute('disabled', 'disabled');
-        else :
-            if ():endif;
+            $hat_element->setAttribute('disabled', 'disabled');
         endif;
         ?>
         <?php foreach (['hat','active','solicit_availability','fingerprint_date','BOP_form_submission_date',
