@@ -1,0 +1,40 @@
+<?php $this->headTitle('admin | email')?>
+
+<h2 class="mx-auto text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<div style="max-width:800px" class="mx-auto p-2">
+<form class="" action="index.html" method="post">
+    <div class="form-row form-group">
+        <label for="recipient_list" class="col-sm-3 col-form-label float-md-right">
+            recipient list
+        </label>
+        <div class="col-sm-9">
+            <select class="custom-select" name="recipient_list" id="recipient list">
+                <option value=""> </option>
+                <option value="1">one</option>
+                <option value="2">two</option>
+                <option value="3">three</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row form-group">
+        <label for="subject" class="col-sm-3 col-form-label float-md-right">
+            subject
+        </label>
+        <div class="col-sm-9">
+            <input type="text" id="subject" class="form-control" name="subject" value="">
+        </div>
+    </div>
+    <div class="form-row form-group">
+        <label for="message" class="col-sm-3 col-form-label float-md-right">
+            message
+        </label>
+        <div class="col-sm-9"><textarea id="message" name="message" rows="6" class="form-control"></textarea>
+        </div>
+    </div>
+    <div class="form-row form-group">
+        <div class="col-sm-9 offset-sm-3">
+            <button type="button" class="btn btn-success" name="preview">preview</button>
+        </div>
+    </div>
+</form>
+</div>

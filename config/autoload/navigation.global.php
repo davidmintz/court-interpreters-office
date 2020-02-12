@@ -194,7 +194,11 @@ return [
                             ],
                         ]
                     ],
-                    // see what would happen if we move this to the Requests config
+                    [
+                        'label' => 'email',
+                        'route' => 'email',
+                    ],
+                    // see what would happen if we move this to the Requests config?
                     'configuration' =>[
                         'label' => 'configuration',
                         'route' => 'configuration',
