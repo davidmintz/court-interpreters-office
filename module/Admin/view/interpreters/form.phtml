@@ -28,7 +28,7 @@ $form->add([
    ->setAttribute('class', 'form-horizontal');
 ?>
 <div class="mx-auto" style="max-width:700px;"><!-- wrapper -->
-    <h2 class="mb-3"><h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2></h2>
+    <h2 class="mb-3"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
     <?php
     $form->prepare();
     $fieldset = $form->get('interpreter');

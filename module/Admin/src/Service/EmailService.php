@@ -22,8 +22,8 @@ use Laminas\EventManager\EventManagerAwareTrait;
 use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\Log\LoggerAwareTrait;
 use Laminas\Log\LoggerAwareInterface;
-
 use Laminas\InputFilter;
+use Parsedown;
 
 /**
  * sends email from the admin/schedule interface
@@ -65,6 +65,35 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
      * @var Input\InputFilter
      */
     private $batchEmailInputFilter;
+
+    /** @var ParseDown */
+    private $parseDown;
+
+    /**
+     * constructor
+     *
+     * @param Array $config
+     *
+     */
+    public function __construct(Array $config)
+    {
+        $this->config = $config;
+    }
+
+    /**
+     * renders $text as Markdown
+     *
+     * @param  string $text
+     * @return string
+     */
+    public function renderMarkdown(string $text) : string
+    {
+        if (!$this->parseDown) {
+            $this->parseDown = new Parsedown();
+        }
+
+        return $this->parseDown->text($text);
+    }
 
     /**
      * gets batch-email input filter
@@ -136,6 +165,7 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
                         ],
                     ],
                 ],
+                // 'filters' => [],
             ],
         ]);
 
@@ -171,17 +201,12 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
      */
     private $auth;
 
+
     /**
-     * constructor
-     *
-     * @param Array $config
-     *
+     * gets configuration
+     * @return array
      */
-    public function __construct(Array $config)
-    {
-        $this->config = $config;
-    }
-    public function getConfig()
+    public function getConfig() : Array
     {
         return $this->config;
     }
@@ -418,5 +443,15 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
         $this->auth = $auth;
 
         return $this;
+    }
+
+    /**
+     * gets Auth instance
+     *
+     * @return AuthenticationServiceInterface|null
+     */
+    public function getAuth() : ? AuthenticationServiceInterface
+    {
+        return $this->auth;
     }
 }

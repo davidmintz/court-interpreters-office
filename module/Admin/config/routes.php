@@ -755,6 +755,35 @@ return  [
             ],
             'may_terminate' => true,
             'child_routes' => [
+                'batch' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/batch',
+                        'defaults' => [
+                            'action' => 'form',
+                        ],
+                    ],
+                ],
+                /* experimental */
+                'batch-email' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/send',
+                        'defaults' => [
+                            'action' => 'batch-email',
+                        ],
+                    ],
+                ],
+                /* experimental */
+                'batch-progress' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/progress',
+                        'defaults' => [
+                            'action' => 'progress',
+                        ],
+                    ],
+                ],
                 'preview' => [
                     'type' => Segment::class,
                     'options' => [

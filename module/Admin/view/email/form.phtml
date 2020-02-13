@@ -1,0 +1,104 @@
+<?php
+/** module/Admin/view/email/index.phtml viewscript for batch-email */
+$this->headTitle('admin | email');
+$this->headScript()
+    ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+    ->appendFile($this->basePath('js/admin/batch-email.js'));
+?>
+<h2 class="mx-auto text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<div style="max-width:800px" class="mx-auto p-2">
+
+    <!-- <div id="carousel" class="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+            content for slide one
+        </div>
+        <div class="carousel-item">
+          content for slide two
+        </div>
+      </div>
+    </div> -->
+
+<form id="email-form" class="carousel" data-interval="false" action="index.html" method="post" <?php
+    if (isset($this->site_config['contact']['organization_name'])) :
+        printf('data-organization_name="%s"',$this->site_config['contact']['organization_name']);
+    endif;
+?>>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="form-row form-group">
+                <label for="recipient_list" class="col-sm-3 col-form-label float-md-right">
+                    recipient list
+                </label>
+                <div class="col-sm-9">
+                    <select class="custom-select" name="recipient_list" id="recipient_list">
+                        <option value=""></option>
+                    <?php foreach ($this->recipient_list_options as $opt):?>
+                        <option label="<?=$opt?>" value="<?=$opt?>"><?=$opt?></option>
+                    <?php endforeach ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <label for="subject" class="col-sm-3 col-form-label float-md-right">
+                    subject
+                </label>
+                <div class="col-sm-9">
+                    <input type="text" id="subject" class="form-control" name="subject" value="">
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <label for="salutation" class="col-sm-3 col-form-label float-md-right">
+                    salutation
+                </label>
+                <div class="col-sm-9">
+                    <select class="custom-select" name="salutation">
+                        <option value="personalized">Dear <?php echo $this->escapeHtml("<first name> <surname>:")?></option>
+                        <option value="other">I'll write my own</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <label for="body" class="col-sm-3 col-form-label float-md-right">
+                    message
+                </label>
+                <div class="col-sm-9"><textarea placeholder="the body of your message" id="body" name="body" rows="8" class="form-control"></textarea>
+                <span class="text-muted">You can use <a target="__blank" href="https://www.markdownguide.org/basic-syntax">Markdown</a> for formatting</span>
+                </div>
+            </div>
+            <div class="form-row form-group">
+                <div class="col-sm-9 offset-sm-3">
+                    <button type="button" class="btn btn-success" name="preview">preview</button>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item border px-2">
+            <div class="row pt-2">
+                <div class="col-sm-3">
+                    <div class="float-md-right">to</div>
+                </div>
+                <div id="recipient-preview" class="col-sm-9"></div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm-3">
+                    <div class="float-md-right">subject</div>
+                </div>
+                <div id="subject-preview" class="col-sm-9"></div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm-3 float-md-right">
+                    <div class=" pt-2 float-md-right">message text</div>
+                </div>
+                <div id="message-preview" class="col-sm-8 pt-2 border border-default rounded">
+                </div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm-9 offset-sm-3">
+                    <button type="button" class="btn btn-info" name="revise">revise</button>
+                    <button type="button" class="btn btn-success" name="send">send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+</div>

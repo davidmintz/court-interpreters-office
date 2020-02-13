@@ -2,6 +2,22 @@
 
 /* global  $, fail, moment */
 
+
+/** a progress-checking function will go sort of like this */
+var check_progress = function(i){
+    i = i || 0;
+    if (i < 20) {
+        window.setTimeout(()=>{
+            i++;
+            console.log(`i is at ${i}`);
+            check_progress(i);
+        },250);
+    } else {
+        console.log("done");
+    }
+
+};
+
 $(function(){
     var form = $("#email-form");
     form.carousel();
@@ -11,8 +27,18 @@ $(function(){
             if (res.validation_errors) {
                 return displayValidationErrors(res.validation_errors);
             }
+            $(".validation-error").hide();
+            $("#message-preview").html(res.markdown);
+            $("#recipient-preview").text($("#recipient_list").val());
+            $("#subject-preview").text($("#subject").val());
             form.carousel("next");
         });
+    });
+    $(`button[name="revise"]`).on("click",(e)=>{
+        form.carousel("prev");
+    });
+    $(`button[name="send"]`).on("click",(e)=>{
+        alert("say shit!");
     });
     $("#recipient_list").on("change",function(){
         var is_availability_list = $(this).children(":selected").text().includes("availab");
@@ -28,7 +54,7 @@ $(function(){
                 organization_name = `our office`;
             }
             // subject to further tweaking etc...
-            $("#message").text(
+            $("#body").text(
                 `We write to ask when you would be available to accept contract interpreting assignments for ${organization_name} `
                 + `during the coming week of ${from} through ${to}.`);
         } else {

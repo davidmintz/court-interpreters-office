@@ -197,6 +197,12 @@ return [
                     [
                         'label' => 'email',
                         'route' => 'email',
+                        'pages' => [
+                            [
+                                'label' => 'broadcast',
+                                'route' => 'email/batch'
+                            ],
+                        ],
                     ],
                     // see what would happen if we move this to the Requests config?
                     'configuration' =>[

@@ -53,12 +53,56 @@ class EmailController extends AbstractActionController
      * displays form for batch email
      * @return ViewModel
      */
-    public function indexAction()
+    public function formAction()
     {
         return new ViewModel([
             'recipient_list_options' => $this->emailService::$recipient_list_options,
             'site_config' => $this->emailService->getConfig()['site'] ?? [],
         ]);
+    }
+
+    public function indexAction()
+    {
+
+    }
+
+
+    private $max = 150;
+    /**
+     * experimental
+     *
+     * @return [type] [description]
+     */
+    public function batchEmailAction()
+    {
+        $progress_file = 'data/batch-progress.txt';
+        if ($this->params()->fromQuery('progress')) {
+            $data = file_get_contents($progress_file);
+            return new JsonModel(['progress'=>$data]);
+        } else {
+            for ($i = 1; $i <= 150; $i++) {
+                usleep(250*1000);
+                file_put_contents($progress_file,"$i of 150\n");
+            }
+            file_put_contents($progress_file,"done");
+            return new JsonModel(['status'=>'success']);
+        }
+
+
+    }
+
+    /**
+     * experimental
+     *
+     * @return [type] [description]
+     */
+    public function progressAction()
+    {
+        $data = file_get_contents('data/batch-progress.txt');
+        if ($data == 'done') {
+            //  unlink('data/batch-progress.txt');
+        }
+        return new JsonModel(['progress'=>$data]);
     }
 
     /**
@@ -74,7 +118,10 @@ class EmailController extends AbstractActionController
             $validation_errors = $filter->getMessages();
             return new JsonModel(['validation_errors'=>$validation_errors]);
         }
-        return new JsonModel(['status'=>'test one two, looking good']);
+        return new JsonModel([
+            'status'=>'OK',
+            'markdown' => $this->emailService->renderMarkdown($filter->getValue('body')),
+        ]);
     }
 
     /**
