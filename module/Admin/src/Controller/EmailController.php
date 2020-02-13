@@ -58,16 +58,23 @@ class EmailController extends AbstractActionController
         return new ViewModel([
             'recipient_list_options' => $this->emailService::$recipient_list_options,
             'site_config' => $this->emailService->getConfig()['site'] ?? [],
+
         ]);
     }
 
     public function indexAction()
     {
-
+        // $response = $this->getResponse();
+        // $response->getHeaders()->addHeaders(['Content-type' => 'application/json']);
+        // $response->setContent(json_encode(['status'=>'OK']));
+        // //(new JsonModel())->setTerminal(true);
+        // // echo $response->toString();
+        // // return false;
+        // return $response;
     }
 
 
-    private $max = 150;
+
     /**
      * experimental
      *
@@ -75,20 +82,26 @@ class EmailController extends AbstractActionController
      */
     public function batchEmailAction()
     {
-        $progress_file = 'data/batch-progress.txt';
-        if ($this->params()->fromQuery('progress')) {
-            $data = file_get_contents($progress_file);
-            return new JsonModel(['progress'=>$data]);
-        } else {
-            for ($i = 1; $i <= 150; $i++) {
-                usleep(250*1000);
-                file_put_contents($progress_file,"$i of 150\n");
-            }
-            file_put_contents($progress_file,"done");
-            return new JsonModel(['status'=>'success']);
+        $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+        $path = $path = \realpath('./data/progress.sqlite');
+        $db = new \PDO("sqlite:$path");
+        $db->setAttribute(\PDO::ATTR_ERRMODE, \ PDO::ERRMODE_EXCEPTION);
+        $stmt = $db->prepare("UPDATE progress SET status = :status");
+        $stmt->execute([':status' => "starting"]);
+        header("content-type: application/json");
+        echo json_encode(['status'=>'started']);
+        // this here is critical ...
+        session_write_close();
+        fastcgi_finish_request();
+        // otherwise it will NOT work
+        for ($i = 0; $i <= 150; $i++) {
+            usleep(250*1000);
+            $stmt->execute([':status' => "$i of 150"]);
+            // this also works
+            file_put_contents('./data/progress.txt',"$i of 150");
         }
-
-
+        $stmt->execute([':status' => "done"]);
+        return new JsonModel(['status'=>'OK']);
     }
 
     /**
@@ -98,11 +111,13 @@ class EmailController extends AbstractActionController
      */
     public function progressAction()
     {
-        $data = file_get_contents('data/batch-progress.txt');
-        if ($data == 'done') {
-            //  unlink('data/batch-progress.txt');
-        }
-        return new JsonModel(['progress'=>$data]);
+        $path = \realpath('./data/progress.sqlite');
+        $db = new \PDO("sqlite:$path");
+        $query = 'SELECT status FROM progress';
+        $stmt = $db->query($query);
+        // and this is working as well..
+        $text = file_get_contents('./data/progress.txt');
+        return new JsonModel(['status'=>$stmt->fetchColumn(),'text'=>$text]);
     }
 
     /**

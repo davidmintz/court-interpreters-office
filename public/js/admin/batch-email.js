@@ -3,7 +3,7 @@
 /* global  $, fail, moment */
 
 
-/** a progress-checking function will go sort of like this */
+/*  // a progress-checking function will go sort of like this
 var check_progress = function(i){
     i = i || 0;
     if (i < 20) {
@@ -17,7 +17,14 @@ var check_progress = function(i){
     }
 
 };
-
+*/
+var check_progress = function(){
+    $.get("/admin/email/progress").then(r=>{
+        $("#progress").text(r.status);
+        if (r.status === "done") { return; }
+        window.setTimeout(check_progress,300);
+    });
+}
 $(function(){
     var form = $("#email-form");
     form.carousel();
