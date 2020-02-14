@@ -105,20 +105,43 @@ EOD;
         return $this->parseDown->text($text);
     }
 
+    /**
+     * gets email recipient list
+     *
+     * @param  string $list
+     * @return Array
+     */
     public function getRecipientList(string $list) : Array
     {
-        $qb  = $this->getObjectManager()->createQueryBuilder();
+        $qb = $this->getObjectManager()->createQueryBuilder()
+            ->select('p.id, p.lastname, p.firstname, p.email');
+
         switch ($list) {
             case self::ACTIVE_INTERPRETERS;
+                $qb->from(Entity\Interpreter::class, 'p')
+                    ->where('p.active = true');
             break;
             case self::ACTIVE_SPANISH_INTERPRETERS;
+                $qb->from(Entity\Interpreter::class, 'p')
+                    ->join('p.interpreterLanguages', 'il')->join('il.language','l')
+                    ->where('l.name = :spanish')
+                    ->andWhere('p.active = true')
+                    ->setParameters([':spanish'=>'Spanish']);
             break;
             case self::AVAILABILITY_SOLICITATION_LIST:
+                $qb->from(Entity\Interpreter::class, 'p')
+                ->where('p.active = true')->andWhere('p.solicit_availability = true');
+            break;
+            case self::ACTIVE_SUBMITTERS:
+                $qb->from(Entity\Person::class, 'p')
+                    ->join(Entity\User::class, 'u','WITH','u.person = p')
+                    ->where('u.active = true');
             break;
             default:
             throw new \RunTimeException("unknown email recipient list: $list");
         }
-        return [];
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -191,7 +214,27 @@ EOD;
                         ],
                     ],
                 ],
-                // 'filters' => [],
+            ],
+            'salutation' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty' => 'salutation option is required'],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'InArray',
+                        'options' => [
+                            'haystack' => ['personalized','other'],
+                            'messages' => [
+                                'notInArray' => 'invalid option for salutation',
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ]);
 

@@ -70,7 +70,7 @@ class EmailController extends AbstractActionController
         // // echo $response->toString();
         // // return false;
         // return $response;
-        
+
 
     }
 
@@ -83,6 +83,16 @@ class EmailController extends AbstractActionController
     public function batchEmailAction()
     {
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+        $filter = $this->filter($this->getRequest()->getPost());
+        if (! $filter->isValid()) {
+            return new JsonModel(['validation_errors'=>$filter->getMessages()]);
+        }
+        $data = $filter->getValues();
+        $service = $this->emailService;
+        $recipients = $service->getRecipientList($data['recipient_list']);
+        $html = $service->renderMarkdown($data['body']);
+        return new JsonModel(['total'=>count($recipients),'recipients'=>$recipients,]);
+        // to be continued
         $file = './data/progress.txt';
         if (! \file_exists($file)) {
             touch($file);
@@ -100,7 +110,7 @@ class EmailController extends AbstractActionController
             fclose($fp);
         }
         header("content-type: application/json");
-        echo json_encode(['status'=>'started']);
+        echo json_encode(['status'=>'started','count'=>count($recipients)]);
         // this here is critical ...
         session_write_close();
         fastcgi_finish_request();
@@ -122,23 +132,26 @@ class EmailController extends AbstractActionController
      */
     public function progressAction()
     {
-
-        // and this is working as well..
         $text = file_get_contents('./data/progress.txt');
 
-        // return new JsonModel(['status'=>$stmt->fetchColumn(),'text'=>$text]);
         return new JsonModel(['status'=>$text,]);
     }
 
+    private function filter(\Laminas\Stdlib\Parameters $data)
+    {
+        $filter = $this->emailService->getBatchEmailInputFilter();
+        $filter->setData($data);
+
+        return $filter;
+    }
     /**
      * validates draft email
      * @return JsonModel
      */
     public function previewAction()
     {
-        $data = $this->getRequest()->getPost();
-        $filter = $this->emailService->getBatchEmailInputFilter();
-        $filter->setData($data);
+
+        $filter = $this->filter($this->getRequest()->getPost());
         if (!$filter->isValid()) {
             $validation_errors = $filter->getMessages();
             return new JsonModel(['validation_errors'=>$validation_errors]);
