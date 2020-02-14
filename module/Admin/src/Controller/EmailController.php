@@ -85,7 +85,7 @@ class EmailController extends AbstractActionController
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         $path = $path = \realpath('./data/progress.sqlite');
         $db = new \PDO("sqlite:$path");
-        $db->setAttribute(\PDO::ATTR_ERRMODE, \ PDO::ERRMODE_EXCEPTION);
+        $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $stmt = $db->prepare("UPDATE progress SET status = :status");
         $stmt->execute([':status' => "starting"]);
         header("content-type: application/json");
@@ -101,13 +101,13 @@ class EmailController extends AbstractActionController
             file_put_contents('./data/progress.txt',"$i of 150");
         }
         $stmt->execute([':status' => "done"]);
-        return new JsonModel(['status'=>'OK']);
+        //return new JsonModel(['status'=>'OK']);
     }
 
     /**
      * experimental
      *
-     * @return [type] [description]
+     * @return JsonModel
      */
     public function progressAction()
     {
