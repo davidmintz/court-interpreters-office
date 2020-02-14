@@ -6,20 +6,12 @@ $this->headScript()
     ->appendFile($this->basePath('js/admin/batch-email.js'));
 ?>
 <h2 class="mx-auto text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<span id="progress"></span>
+
 <div style="max-width:800px" class="mx-auto p-2">
-
-    <!-- <div id="carousel" class="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-            content for slide one
-        </div>
-        <div class="carousel-item">
-          content for slide two
-        </div>
-      </div>
-    </div> -->
-
+    <div class="progress mb-2 mx-auto">
+      <div id="progress" class="progress-bar progress-bar-striped bg-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+<?php echo $this->errorMessage() ?>
 <form id="email-form" class="carousel" data-interval="false" action="index.html" method="post" <?php
     if (isset($this->site_config['contact']['organization_name'])) :
         printf('data-organization_name="%s"',$this->site_config['contact']['organization_name']);
@@ -53,7 +45,7 @@ $this->headScript()
                     salutation
                 </label>
                 <div class="col-sm-9">
-                    <select class="custom-select" name="salutation">
+                    <select class="custom-select" id="salutation" name="salutation">
                         <option value="personalized">Dear <?php echo $this->escapeHtml("<first name> <surname>:")?></option>
                         <option value="other">I'll write my own</option>
                     </select>
@@ -85,6 +77,12 @@ $this->headScript()
                     <div class="float-md-right">subject</div>
                 </div>
                 <div id="subject-preview" class="col-sm-9"></div>
+            </div>
+            <div class="row pt-2">
+                <div class="col-sm-3">
+                    <div class="float-md-right">salutation</div>
+                </div>
+                <div id="salutation-preview" class="col-sm-9"></div>
             </div>
             <div class="row pt-2">
                 <div class="col-sm-3 float-md-right">

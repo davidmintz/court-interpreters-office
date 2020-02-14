@@ -58,7 +58,6 @@ class EmailController extends AbstractActionController
         return new ViewModel([
             'recipient_list_options' => $this->emailService::$recipient_list_options,
             'site_config' => $this->emailService->getConfig()['site'] ?? [],
-
         ]);
     }
 
@@ -71,53 +70,64 @@ class EmailController extends AbstractActionController
         // // echo $response->toString();
         // // return false;
         // return $response;
+        
+
     }
 
 
 
     /**
-     * experimental
      *
-     * @return [type] [description]
+     * processes batch email
      */
     public function batchEmailAction()
     {
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
-        $path = $path = \realpath('./data/progress.sqlite');
-        $db = new \PDO("sqlite:$path");
-        $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $stmt = $db->prepare("UPDATE progress SET status = :status");
-        $stmt->execute([':status' => "starting"]);
+        $file = './data/progress.txt';
+        if (! \file_exists($file)) {
+            touch($file);
+        } else {
+            $contents = trim(file_get_contents($file));
+            $log->debug("progress file exists",['text'=>$contents]);
+            if ($contents && $contents != 'done') {
+                $log->info("aborting batch email job",['progress_file_contents'=>$contents]);
+                $this->getResponse()->setStatusCode(503);
+                return new JsonModel(['status'=>'error',
+                    'message'=> $this->emailService::ERROR_JOB_IN_PROGRESS]);
+            }
+            $fp = fopen($file,'w');
+            \ftruncate($fp,0);
+            fclose($fp);
+        }
         header("content-type: application/json");
         echo json_encode(['status'=>'started']);
         // this here is critical ...
         session_write_close();
         fastcgi_finish_request();
-        // otherwise it will NOT work
-        for ($i = 0; $i <= 150; $i++) {
+        // ...otherwise it will NOT work
+
+        for ($i = 1; $i <= 150; $i++) {
             usleep(250*1000);
-            $stmt->execute([':status' => "$i of 150"]);
-            // this also works
-            file_put_contents('./data/progress.txt',"$i of 150");
+
+            file_put_contents($file,"$i of 150");
         }
-        $stmt->execute([':status' => "done"]);
-        //return new JsonModel(['status'=>'OK']);
+        file_put_contents($file,"done");
+
     }
 
     /**
-     * experimental
+     * returns progress data for batch-email
      *
      * @return JsonModel
      */
     public function progressAction()
     {
-        $path = \realpath('./data/progress.sqlite');
-        $db = new \PDO("sqlite:$path");
-        $query = 'SELECT status FROM progress';
-        $stmt = $db->query($query);
+
         // and this is working as well..
         $text = file_get_contents('./data/progress.txt');
-        return new JsonModel(['status'=>$stmt->fetchColumn(),'text'=>$text]);
+
+        // return new JsonModel(['status'=>$stmt->fetchColumn(),'text'=>$text]);
+        return new JsonModel(['status'=>$text,]);
     }
 
     /**
@@ -163,17 +173,25 @@ class EmailController extends AbstractActionController
         }
         $data = $this->params()->fromPost('message');
         $result = $this->emailService->emailEvent($data);
-        // if (isset($result['status']) && 'error' == $result['status']) {
-        //     $this->getResponse()->setStatusCode(500);
-        // }
 
         return new JsonModel($result);
     }
 }
-/* ----------
+
+/* ---------- remind me to clean this up
+// $path = $path = \realpath('./data/progress.sqlite');
+// $db = new \PDO("sqlite:$path");
+// $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+// $stmt = $db->prepare("UPDATE progress SET status = :status");
+// $stmt->execute([':status' => "starting"]);
+//$stmt->execute([':status' => "$i of 150"]);
+//$stmt->execute([':status' => "done"]);
+
+// $query = 'SELECT status FROM progress';
+// $stmt = $db->query($query);
+
 $factory = new \Laminas\InputFilter\Factory();
 $inputFilter = $factory->createInputFilter([
-
     'to' => [
         'name' => 'to',
         'type'=> 'Laminas\InputFilter\CollectionInputFilter',
@@ -214,5 +232,4 @@ $inputFilter = $factory->createInputFilter([
 ]);
 $inputFilter->setData($data);
 $valid = $inputFilter->isValid();
-
 */

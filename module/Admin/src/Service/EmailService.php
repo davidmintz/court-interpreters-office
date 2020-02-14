@@ -40,6 +40,16 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
      */
     const CHANNEL = 'email';
 
+
+    /**
+     * error message for concurrent batch-email jobs
+     *
+     * @var string
+     */
+     const ERROR_JOB_IN_PROGRESS = <<<EOD
+Another batch email job appears to be in progress, and running these jobs in parallel is not recommended.
+Please try again in a couple of minutes.
+EOD;
     /**
      * configuration
      *
@@ -93,6 +103,22 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
         }
 
         return $this->parseDown->text($text);
+    }
+
+    public function getRecipientList(string $list) : Array
+    {
+        $qb  = $this->getObjectManager()->createQueryBuilder();
+        switch ($list) {
+            case self::ACTIVE_INTERPRETERS;
+            break;
+            case self::ACTIVE_SPANISH_INTERPRETERS;
+            break;
+            case self::AVAILABILITY_SOLICITATION_LIST:
+            break;
+            default:
+            throw new \RunTimeException("unknown email recipient list: $list");
+        }
+        return [];
     }
 
     /**
@@ -175,7 +201,12 @@ class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
 
 
     /**
-     * map email-subject hints to template filenames
+     * Maps email-subject options to template filenames
+     *
+     * The form for emailing someone in relation to a specific event provides
+     * options for templates they can choose depending on the context. These
+     * template files are in module/Admin/view/email/.
+     *
      * @var array
      */
     private $template_map = [
