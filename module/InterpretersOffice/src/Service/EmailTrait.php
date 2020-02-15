@@ -44,6 +44,16 @@ trait EmailTrait
         return $this->transport;
     }
 
+    public function createHtmlPart(string $markup)
+    {
+        $html = new MimePart($markup);
+        $html->type = Mime::TYPE_HTML;
+        $html->charset = 'utf-8';
+        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+
+        return $html;
+    }
+
     /**
      * creates an email message
      *
@@ -53,10 +63,11 @@ trait EmailTrait
      */
     public function createEmailMessage(string $markup = '', string $textContent = '') : Message
     {
-        $html = new MimePart($markup);
-        $html->type = Mime::TYPE_HTML;
-        $html->charset = 'utf-8';
-        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+        $html = $this->createHtmlPart($markup);
+        // $html = new MimePart($markup);
+        // $html->type = Mime::TYPE_HTML;
+        // $html->charset = 'utf-8';
+        // $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
         if (! $textContent) {
             $textContent = 'You will need to view this message in an email client that supports HTML.';
         }
