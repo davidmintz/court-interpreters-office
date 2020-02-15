@@ -83,22 +83,11 @@ class EmailController extends AbstractActionController
     public function batchEmailAction()
     {
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
-        $filter = $this->filter($this->getRequest()->getPost());
-        if (! $filter->isValid()) {
-            return new JsonModel(['validation_errors'=>$filter->getMessages()]);
-        }
-        $data = $filter->getValues();
-        $service = $this->emailService;
-        $recipients = $service->getRecipientList($data['recipient_list']);
-        $html = $service->renderMarkdown($data['body']);
-        return new JsonModel(['total'=>count($recipients),'recipients'=>$recipients,]);
-        // to be continued
         $file = './data/progress.txt';
         if (! \file_exists($file)) {
             touch($file);
         } else {
             $contents = trim(file_get_contents($file));
-            $log->debug("progress file exists",['text'=>$contents]);
             if ($contents && $contents != 'done') {
                 $log->info("aborting batch email job",['progress_file_contents'=>$contents]);
                 $this->getResponse()->setStatusCode(503);
@@ -109,16 +98,42 @@ class EmailController extends AbstractActionController
             \ftruncate($fp,0);
             fclose($fp);
         }
+        $filter = $this->filter($this->getRequest()->getPost());
+        if (! $filter->isValid()) {
+            return new JsonModel(['validation_errors'=>$filter->getMessages()]);
+        }
+        $data = $filter->getValues();
+        $service = $this->emailService;
+        $recipients = $service->getRecipientList($data['recipient_list']);
+        $total = count($recipients);
+        $html = $service->renderMarkdown($data['body']);
+        // return new JsonModel(['total'=>count($recipients),'recipients'=>$recipients,]);
+        // to be continued
+
         header("content-type: application/json");
         echo json_encode(['status'=>'started','count'=>count($recipients)]);
         // this here is critical ...
-        session_write_close();
-        fastcgi_finish_request();
-        // ...otherwise it will NOT work
+        if (function_exists('fastcgi_finish_request')) {
+            session_write_close();
+            \fastcgi_finish_request();
+            // ...otherwise it will NOT work
+        } else {
+            /* good question. */
+        }
 
+        $transport = $service->getMailTransport();
+        $message = $service->createEmailMessage();
+
+        foreach($recipients as $person) {
+            // work in progress !
+            $body = $message->getBody();
+            $text_part = $body->getParts()[0];
+            $body->setParts([$text_part,$service->createHtmlPart($html),]);
+            $message->setBody($body);
+            // etc.....
+        }
         for ($i = 1; $i <= 150; $i++) {
             usleep(250*1000);
-
             file_put_contents($file,"$i of 150");
         }
         file_put_contents($file,"done");

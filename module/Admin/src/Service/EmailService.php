@@ -275,7 +275,10 @@ EOD;
      */
     private $auth;
 
-
+    public function getLayout() : ViewModel
+    {
+        return (new ViewModel())->setTemplate('interpreters-office/email/layout');
+    }
     /**
      * gets configuration
      * @return array
@@ -323,8 +326,7 @@ EOD;
         }
         $view->setTemplate("email/{$template}.phtml");
 
-        $layout = new ViewModel();
-        $layout->setTemplate('interpreters-office/email/layout');
+        $layout = $this->getLayout();
 
         if (isset($data['event_details'])) {
             if (isset($data['event_details']['location'])) {
