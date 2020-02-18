@@ -66,9 +66,8 @@ cat bin/sdny/parent-locations.sql bin/sdny/more-locations.sql | mysql office
 OK;
 
 if [[ ! -z $SCRAPE_JUDGES ]]; then
-    #echo -n "please wait, scraping judges and courtrooms from nysd.uscourts.gov..."
-    #/opt/www/interpreters/bin/scrape-complete-judge-directory.php > judges-courtrooms.json
-    # no more
+    # see if this works...
+    curl -s https://davidmintz.org/sdny/judges.json > bin/sdny/judges-courtrooms.json
     OK;
 fi;
 # echo "STOPPING HERE (after some locations)";
