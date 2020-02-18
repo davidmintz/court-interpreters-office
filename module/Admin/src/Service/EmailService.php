@@ -206,7 +206,7 @@ EOD;
                         'required' => true,
                         'options' => [
                             'max' => '8000',
-                            'min' => '80',
+                            'min' => '40',
                             'messages' => [
                                 'stringLengthTooShort' => 'message should be a minimum %min% characters',
                                 'stringLengthTooLong' => 'message cannot exceed %max% characters',
@@ -377,6 +377,13 @@ EOD;
             $result['cc_to'] = $data['cc']; // for confirmation
         }
         return array_merge($result, ['status' => 'success','info' => "template: $template",]);
+    }
+
+    public function render($layout,$markup = null) {
+        if ($markup) {
+            $layout->content = $markup;
+        }
+        return $this->viewRenderer->render($layout);
     }
 
     private function log(Array $data,string $channel = 'email')

@@ -106,10 +106,6 @@ class EmailController extends AbstractActionController
         $service = $this->emailService;
         $recipients = $service->getRecipientList($data['recipient_list']);
         $total = count($recipients);
-        $html = $service->renderMarkdown($data['body']);
-        // return new JsonModel(['total'=>count($recipients),'recipients'=>$recipients,]);
-        // to be continued
-
         header("content-type: application/json");
         echo json_encode(['status'=>'started','count'=>count($recipients)]);
         // this here is critical ...
@@ -123,21 +119,30 @@ class EmailController extends AbstractActionController
 
         $transport = $service->getMailTransport();
         $message = $service->createEmailMessage();
-
+        $message->setSubject($data['subject']);
+        $config = $service->getConfig()['mail'];
+        $message->setFrom($config['from_address'],$config['from_entity']);
+        $layout = $service->getLayout();
+        $i = 0;
         foreach($recipients as $person) {
             // work in progress !
             $body = $message->getBody();
             $text_part = $body->getParts()[0];
+            $name = "{$person['firstname']} {$person['lastname']}";
+            $markup = $service->renderMarkdown($data['body']);
+            if ($data['salutation'] == 'personalized') {
+                $markup = "<p>Dear $name:</p>" . $markup;
+            }
+            $html = $service->render($layout,$markup);
             $body->setParts([$text_part,$service->createHtmlPart($html),]);
-            $message->setBody($body);
-            // etc.....
-        }
-        for ($i = 1; $i <= 150; $i++) {
-            usleep(250*1000);
-            file_put_contents($file,"$i of 150");
+            $message->setBody($body)->setTo($person['email'],$name);
+            $log->debug("sending mail to {$person['email']}");
+            $transport->send($message);
+            file_put_contents($file,"++$i of $total");
         }
         file_put_contents($file,"done");
 
+        return new JsonModel(['total'=>$total,'current'=> $i]);
     }
 
     /**
