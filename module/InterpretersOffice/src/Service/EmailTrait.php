@@ -54,6 +54,7 @@ trait EmailTrait
         return $html;
     }
 
+
     /**
      * creates an email message
      *
@@ -64,10 +65,6 @@ trait EmailTrait
     public function createEmailMessage(string $markup = '', string $textContent = '') : Message
     {
         $html = $this->createHtmlPart($markup);
-        // $html = new MimePart($markup);
-        // $html->type = Mime::TYPE_HTML;
-        // $html->charset = 'utf-8';
-        // $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
         if (! $textContent) {
             $textContent = 'You will need to view this message in an email client that supports HTML.';
         }
@@ -83,8 +80,7 @@ trait EmailTrait
         $contentTypeHeader = $message->getHeaders()->get('Content-Type');
         $contentTypeHeader->setType('multipart/alternative');
         $message->getHeaders()->addHeaderLine(
-            'X-Sent-By',
-            'InterpretersOffice https://interpretersoffice.org'
+            'X-Sent-By','InterpretersOffice https://interpretersoffice.org'
         );
 
         return $message;

@@ -135,7 +135,9 @@ EOD;
             case self::ACTIVE_SUBMITTERS:
                 $qb->from(Entity\Person::class, 'p')
                     ->join(Entity\User::class, 'u','WITH','u.person = p')
-                    ->where('u.active = true');
+                    ->join('u.role','r')
+                    ->where('u.active = true')->andWhere('r.name = :role')
+                    ->setParameters([':role'=>'submitter']);
             break;
             default:
             throw new \RunTimeException("unknown email recipient list: $list");

@@ -5,7 +5,8 @@
 
 var re =/(\d+)\D+(\d+)/;
 var progress_element = $("#progress");
-var check_progress = function(){
+var check_progress = function(response){
+
     $.get("/admin/email/progress").then(r=>{
         if (typeof r.status === "string") {
             var m = r.status.match(re);
@@ -13,27 +14,52 @@ var check_progress = function(){
                 var n = m[1]/m[2];
                 var pct = Math.round(n * 100);
                 var width = `${pct}%`;
-                progress_element.css({width});
+                progress_element.css({width}).attr({"aria-valuenow":pct});
             }
         } else {
             console.warn("WTF");
         }
 
         if (r.status === "done") {
-            progress_element.css({width:"100%"});
+            progress_element.attr({"aria-valuenow":100}).css({width:"100%"});//.text("100%");
+            complete();
             return;
         }
         window.setTimeout(check_progress,250);
     });
 }
 
-var complete = function(){};
-
+var complete = function(){
+    var form = $("#email-form");
+    form[0].reset();
+    $("#body").text("");
+    $(`button[name="revise"], button[name="send"]`).removeAttr("disabled");
+    form.carousel("prev");
+    var total = form.data().total;
+    // give the progress bar animation time to finish
+    window.setTimeout(
+        ()=>{$(".alert-success p")
+        .text(`Finished sending messages to ${total} recipients.`)
+        .parent().removeAttr("hidden").show();
+    }, 500);
+};
+var test = function() {
+    var form = $("#email-form");
+    $("#recipient_list").val("all active request submitters");
+    $("#subject").val("A test of the email broadcasting system");
+    $("#body").text("There will be a brief service interruption, after which we will cordially invite you to eat shit and die.\r\n\r\nVery truly yours,\r\n\r\nThe Interpreters");
+    $(`button[name="preview"]`).trigger("click");
+}
 var submit_form = function(e){
     e.preventDefault();
-    var data = $("#email-form").serialize();
+    var form = $("#email-form");
+    var data = form.serialize();
     $(`button[name="send"], button[name="revise"]`).attr({disabled : true});
-    $.post("/admin/email/send",data).then(check_progress).fail((r)=>{
+    $("div.progress").show();
+    $.post("/admin/email/send",data).then((r)=>{
+            form.data({total:r.total});
+            check_progress(r);
+        }).fail((r)=>{
         if (r.status === 503) {
             $("#error-div h3").text(r.statusText)
             $("#error-message").text(r.responseJSON.message).parent().show();
@@ -61,9 +87,7 @@ $(function(){
         });
     });
     $(`button[name="revise"]`).on("click",(e)=>{form.carousel("prev");});
-
     $(`button[name="send"]`).on("click",submit_form);
-
     $("#recipient_list").on("change",function(){
         var is_availability_list = $(this).children(":selected").text().includes("availab");
         if (is_availability_list) {
@@ -86,5 +110,5 @@ $(function(){
             $("#message").text("");
         }
     });
-
+    //test();
 });
