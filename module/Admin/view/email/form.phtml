@@ -8,10 +8,14 @@ $this->headScript()
 <h2 class="mx-auto text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 
 <div style="max-width:800px" class="mx-auto p-2">
-    <div class="progress mb-2 mx-auto">
-      <div id="progress" class="progress-bar progress-bar-striped bg-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="progress mb-2 mx-auto" style="max-width:500px;display:none" ">
+      <div id="progress" class="progress-bar progress-bar-striped bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
 <?php echo $this->errorMessage() ?>
+<div class="alert alert-success alert-dismissible fade show" role="alert" hidden>
+    <p></p>
+    <button type="button" class="close" data-hide="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>
+</div>
 <form id="email-form" class="carousel" data-interval="false" action="index.html" method="post" <?php
     if (isset($this->site_config['contact']['organization_name'])) :
         printf('data-organization_name="%s"',$this->site_config['contact']['organization_name']);
@@ -65,7 +69,7 @@ $this->headScript()
                 </div>
             </div>
         </div>
-        <div class="carousel-item border px-2">
+        <div class="carousel-item p-2">
             <div class="row pt-2">
                 <div class="col-sm-3">
                     <div class="float-md-right">to</div>

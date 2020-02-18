@@ -107,7 +107,7 @@ class EmailController extends AbstractActionController
         $recipients = $service->getRecipientList($data['recipient_list']);
         $total = count($recipients);
         header("content-type: application/json");
-        echo json_encode(['status'=>'started','count'=>count($recipients)]);
+        echo json_encode(['status'=>'started','total'=>count($recipients)]);
         // this here is critical ...
         if (function_exists('fastcgi_finish_request')) {
             session_write_close();
@@ -136,9 +136,9 @@ class EmailController extends AbstractActionController
             $html = $service->render($layout,$markup);
             $body->setParts([$text_part,$service->createHtmlPart($html),]);
             $message->setBody($body)->setTo($person['email'],$name);
-            $log->debug("sending mail to {$person['email']}");
+            $log->debug("sending mail re {$data['subject']} to {$person['email']}");
             $transport->send($message);
-            file_put_contents($file,"++$i of $total");
+            file_put_contents($file,++$i ." of $total");
         }
         file_put_contents($file,"done");
 
