@@ -103,10 +103,11 @@ class PeopleController extends AbstractActionController
     {
         $repo = $this->entityManager->getRepository(Entity\Person::class);
         $term = $this->params()->fromQuery('term');
+        $banned_list = $this->params()->fromQuery('banned_list');
         $hat  = $this->params()->fromQuery('hat');
         $active = $this->params()->fromQuery('active');
         $value_column = $this->params()->fromQuery('value_column', 'id');
-        $data = $repo->autocomplete($term, compact('hat', 'active', 'value_column'));
+        $data = $repo->autocomplete($term, compact('hat', 'active','banned_list','value_column'));
 
         return new JsonModel($data);
     }

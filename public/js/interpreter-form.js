@@ -20,10 +20,8 @@ $(function(){
     // in order for server-side partial validation to know the context
     var action = form.attr("action").indexOf("/edit/") > -1 ?
         "update" : "create";
-
     // pad the div holding the checkbox
     $("#person-active").parent().addClass("pt-2");
-
     // make the first tab active
     $("#nav-tabs li:first a").tab("show");
     //if (! Modernizr.inputtypes.date) {
@@ -34,6 +32,38 @@ $(function(){
         selectOtherMonths : true,
         showOtherMonths : true
     });
+    // autocompletion for "banned" element
+    var banned_list_autocomplete = $("#banned-autocompletion");
+    if (banned_list_autocomplete.length){
+        var banned_by_element = $("#banned_by_persons");
+        banned_list_autocomplete.autocomplete({
+            minLength: 2,
+            source: (request,response) => {
+                var params = { term : request.term, banned_list : 1 };
+                $.get("/admin/people/autocomplete",params)
+                .then((data) => response(data));
+            },
+            select : function(event,ui){
+                event.preventDefault();
+                if ($(`#banned_by_persons input[value="${ui.item.value}"]`).length) { return; }
+                banned_by_element.append(
+                `<li class="list-group-item py-1"><span class="text-muted">(${ui.item.hat})</span> ${ui.item.label} <input type="hidden" name="interpreter[banned_by_persons][]" value="${ui.item.value}">                        <div class="float-right remove-item bg-warning px-2"><a title="remove this person from banned-by list" href="#">&times;</a></div></li>`
+                );
+                banned_list_autocomplete.val("");
+            },
+            focus: function(event,ui) {
+                event.preventDefault();
+                $(this).val(ui.item.label);
+            }
+        });
+        banned_list_autocomplete.autocomplete("instance")._renderItem =
+         function(ul, item) {
+            return $( "<li>" )
+                .append($("<div>").html( `<span class="text-muted">(${item.hat})</span> ${item.label} ` ) )
+                .appendTo(ul);
+         };
+    }
+
     // if the dob field is enabled, set datepicker options
     if (!($("#dob").val())) { // i.e., if it isn't just '**********'
         $("#dob").datepicker("option",{
@@ -189,7 +219,7 @@ $(function(){
             password : password,
             login_csrf : $("input[name=\"login_csrf\"").val()
         };
-        var url = /*window.basePath +*/ "/login";
+        var url = "/login";
         $.post(url, input, function(response){
             if (response.validation_errors) {
                 //refresh the CSRF token

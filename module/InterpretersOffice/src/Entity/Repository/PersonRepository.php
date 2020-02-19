@@ -93,8 +93,14 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      */
     public function autocomplete($term, Array $options = [])
     {
-        $options = array_merge(['value_column'=>'id','hat' => null,'active' => null, 'limit' => 20, ], $options);
+        $options = array_merge(
+            // defaults
+            ['value_column'=>'id','hat' => null,'active' => null, 'limit' => 20,'banned_list'=>null ],
+            $options);
         $name = $this->parseName($term);
+        if ($options['banned_list']) { // special case
+            return $this->autocomplete_banned_list($name);
+        }
         $parameters = ['lastname' => "$name[last]%"];
         $dql = "SELECT p.{$options['value_column']} AS value,
             CONCAT(p.lastname, ', ', p.firstname) AS label, h.name AS hat";
@@ -120,6 +126,39 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
                 ->setMaxResults($options['limit']);
 
         return $query->getResult();
+    }
+
+    /**
+     * Provides autocompletion data for the Interpreter banned-by list.
+     *
+     * The idea here is to constrain the choices to either Judges or people
+     * with user accounts having the "submitter" role. One limitation, if you
+     * consider it a limitation, is that this solution will not include people
+     * without "submitter" accounts whose Hats are other than "Judge",
+     * e.g., "defense attorney."
+     *
+     * @param  array $name
+     * @return Array results
+     */
+    public function autocomplete_banned_list(array $name) : Array
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->select( // not sure why they think this API is so wonderful...
+            $qb->expr()->concat('p.firstname', $qb->expr()->concat($qb->expr()->literal(' '), 'p.lastname'))
+            . " AS label"
+        )->addSelect('p.id AS value')->addSelect('h.name AS hat')
+        ->join('p.hat','h')
+        ->leftJoin('InterpretersOffice\Entity\User', 'u','WITH','u.person = p')
+        ->leftJoin('u.role','r')
+        ->where("(r.name = 'submitter' AND u.active = true) OR (p.active = true AND h.name = 'Judge')")
+        ->andWhere('p.lastname LIKE :lastname');
+        $params = [':lastname'=>"$name[last]%"];
+        if ($name['first']) {
+            $qb->andWhere('p.firstname LIKE :firstname');
+            $params[':firstname'] =  "$name[first]%";
+        }
+        $qb->setParameters($params)->orderBy('p.lastname')->addOrderBy('p.firstname');
+        return $qb->getQuery()->setMaxResults(20)->getResult();
     }
 
     /**
