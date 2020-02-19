@@ -38,7 +38,7 @@ class InterpreterFormFactory implements FactoryInterface
             $form_config = json_decode(file_get_contents($form_config_file),\JSON_OBJECT_AS_ARRAY)['interpreters'];
             $options = array_merge($options,$form_config);
         }
-        $container->get('log')->debug(print_r($options,true));
+        
         return new InterpreterForm($container->get('entity-manager'), $options);
     }
 }
