@@ -109,6 +109,19 @@ class InterpreterFieldset extends PersonFieldset
                  'format' => 'Y-m-d',
               ],
           ],
+          'banned_list' => [
+              'name' => 'banned_list',
+              'type' => 'Laminas\Form\Element\Select',
+              'options' => [
+                  'value_options' => [],
+                  'disable_inarray_validator' => true,
+              ],
+              'attributes' => [
+                  'style' => 'display:none',
+                  'id' => 'banned_list',
+                  'multiple' => 'multiple',
+              ],
+          ],
     ];
 
     /**

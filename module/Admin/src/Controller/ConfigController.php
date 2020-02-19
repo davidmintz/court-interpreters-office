@@ -54,9 +54,8 @@ class ConfigController extends AbstractActionController
     public function getInputFilter()
     {
         $interpreterFormFilter = new InputFilter\InputFilter();
-        foreach ([
-        'BOP_form_submission_date', 'fingerprint_date','contract_expiration_date',
-        'oath_date','security_clearance_date'] as $field) {
+        foreach (['banned_list', 'BOP_form_submission_date', 'fingerprint_date',
+        'contract_expiration_date','oath_date','security_clearance_date'] as $field) {
             $interpreterFormFilter->add([
                 'name' => $field,
                 'required' => true,
