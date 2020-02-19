@@ -15,16 +15,6 @@ $(function(){
             }
             $.get("/admin/people/autocomplete",params,"json").then(
                 (data)=>response(data)
-                // ,statusText,jqXHR
-                // bullshit, experimental effort to handle non-json
-                // responses e.g., redirects to /login
-                // if (-1 < jqXHR.getResponseHeader("content-type")
-                //         .toLowerCase().indexOf("application/json")) {
-                //     if (! data.length) {
-                //          name_element.data({id:""});
-                //     }
-                //     return response(data);
-                // }
             );
         },
         minLength: 2,
@@ -68,9 +58,6 @@ $(function(){
         a popover. for people who have a user account, refer them to user admin
      */
     results_div.on("click","td a[title='view details']",function(){
-        // if ($(this).text().trim() === "#") {
-        //     e.preventDefault();
-        // }
         if ($(this).data("user_role")) {
             //e.preventDefault();
             console.warn("so and so has default role: "+$(this).data("user_role"));

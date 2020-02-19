@@ -36,7 +36,6 @@ $(function(){
             if ($("#error_countable").is(":visible")) {
                 $("#error_countable").hide();
             }
-            // var hidden =  $("#members li").length < 2;
             $("#member-sort-help").attr({hidden:()=>$("#members li").length < 2});
         },
         focus: function(event,ui) {
@@ -49,9 +48,10 @@ $(function(){
     autocomplete_field.autocomplete("instance")._renderItem =
      function(ul, item) {
         return $( "<li>" )
-            .append( $( "<div>" ).html( `${item.label} <span class="text-muted">${item.hat}</span>` ) )
-            .appendTo( ul );
+            .append($("<div>").html( `${item.label} <span class="text-muted">${item.hat}</span>` ) )
+            .appendTo(ul);
      };
+     
     $("#datepicker_start_date").datepicker({
         showOtherMonths : true,
         changeMonth : true,
