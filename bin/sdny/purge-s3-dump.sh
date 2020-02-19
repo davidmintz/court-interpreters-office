@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-# needs work!
+# removes all but the latest 3 office.*.sql.gz files
 
-FILES=($(s3cmd -c $HOME/.dh-sdny.s3cfg  ls s3://sdny/office|grep sql.gz|awk '{ print $4}'))
-count=$((1 + ${#FILES[@]}))
-
+FILES=($(s3cmd -c $HOME/.dh-sdny.s3cfg  ls s3://sdny/office.|grep .sql.gz|awk '{ print $4}'))
+count=${#FILES[@]}
 echo "we have ${count} files."
 if [ ${count} > 4 ];
 then
