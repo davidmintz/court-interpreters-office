@@ -168,6 +168,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $this->cache->setNamespace($this->cache_namespace);
         $this->cache->deleteAll();
         $this->cache->setNamespace('people');
+
         return $this->cache->deleteAll();
     }
 
@@ -270,10 +271,12 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
      * @param int $id
      * @return Array
      */
-    public function getInterpreterOptionsForLanguage($id)
+    public function getInterpreterOptionsForLanguage($id, array $options = []) : Array
     {
-        $qb = $this->createQueryBuilder('i')
+        $with_banned_data = $options['with_banned_data'] ?? false;
+        $qb = $this->createQueryBuilder('i','i.id')
             ->select("i.id AS value, CONCAT(i.lastname, ', ',i.firstname) AS label")
+
                 // maybe more columns later, and data attributes
             ->join('i.interpreterLanguages', 'il')
             ->join('il.language', 'l')
@@ -281,12 +284,45 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             ->andWhere('i.active = true')
             ->orderBy('i.lastname, i.firstname')
             ->setParameters(['id' => $id]);
-        $query = $qb->getQuery()->useResultCache(
-            true,
-            null,
-            "interp-options-language-$id"
-        );
+            $query = $qb->getQuery()->useResultCache(
+                true,
+                null,
+                "interp-options-language-$id"
+            );
+            $result = $query->getResult();
+        if (! $with_banned_data) {
+            return $result;
+        } else {
+            $ids = array_column($result, 'value');
+            $query = $this->createQuery('SELECT i.id interpreter, p.id person
+                FROM InterpretersOffice\Entity\Interpreter i JOIN i.banned_by_persons p
+                WHERE i.id IN (:ids)')->setParameters([':ids'=>$ids]);
+            $banned = $query->getResult();
 
-        return $query->getResult();
+            if (! $banned) {
+                return $result;
+            }
+            $tmp = [];
+            foreach($banned as $record) {
+                $banned_id = $record['interpreter'];
+                if (isset($result[$banned_id])) {
+                    if (!isset($tmp[$banned_id])) {
+                        $tmp[$banned_id] = [$record['person']];
+                    } else {
+                        $tmp[$banned_id][] = $record['person'];
+                    }
+                }
+            }
+            $shit = array_map(function($record) use ($tmp){
+                $interpreter_id = $record['value'];
+                if (isset($tmp[$interpreter_id])) {
+                    $record['attributes'] = ['data-banned_by' => implode(',',$tmp[$interpreter_id])];
+                }
+                return $record;
+            },$result);
+
+            return $shit;
+
+        }
     }
 }

@@ -72,7 +72,7 @@ class EventFieldset extends AbstractEventFieldset
             $language_id = $entity->getLanguage()->getId();
             $repository = $objectManager->getRepository(Entity\Interpreter::class);
             $value_options = // $empty_option +
-                $repository->getInterpreterOptionsForLanguage($language_id);
+                $repository->getInterpreterOptionsForLanguage($language_id,['with_banned_data'=>true]);
             array_unshift($value_options, $empty_option);
         } else {
             $value_options = [$empty_option];
