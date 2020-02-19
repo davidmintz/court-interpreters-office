@@ -53,7 +53,7 @@ class InterpretersControllerTest extends AbstractControllerTest
         if (! $auth->hasIdentity()) {
             exit("SHIT FAILED!\n" . $this->getResponse()->getBody());
         }
-        //$this->dispatch($url); $this->dumpResponse(); return;
+        $this->dispatch($url); //$this->dumpResponse(); return;
         $token = $this->getCsrfToken($url, 'csrf');
 
 
@@ -88,6 +88,7 @@ class InterpretersControllerTest extends AbstractControllerTest
         $response = $this->getResponse()->getBody();
         $json = json_decode($response);
         $this->assertTrue(is_object($json));
+        // print_r($json);
         $this->assertEquals($json->status,'success');
 
         $count_after = $em->createQuery('SELECT COUNT(i.id) FROM InterpretersOffice\Entity\Interpreter i')

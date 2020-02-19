@@ -593,10 +593,10 @@ class InterpreterFieldset extends PersonFieldset
         }
         /** @todo tighten this up? */
         if ($this->has('banned_by_persons')) {
-            // $spec['banned_by_persons'] = [
-            //     'required'=>true,
-            //     'allow_empty'=>true,
-            // ];
+            $spec['banned_by_persons'] = [
+                'required'=>false,
+                'allow_empty'=>true,
+            ];
         }
          // encrypted fields
             $spec['dob'] = [

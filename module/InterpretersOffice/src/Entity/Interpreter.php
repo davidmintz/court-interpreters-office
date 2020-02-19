@@ -192,7 +192,7 @@ class Interpreter extends Person
     public function __construct()
     {
         $this->interpreterLanguages = new ArrayCollection();
-        $this->bannedBy = new ArrayCollection();
+        $this->banned_by_persons = new ArrayCollection();
     }
 
     /**
