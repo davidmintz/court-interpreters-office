@@ -467,14 +467,7 @@ return  [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\InterpretersController::class,
                     'action' => 'index',
-                    // defaults for interpreter roster search terms
-                    //'active' => 1, // by default, active only
-                    //'security_clearance_expiration'=> 1, // by default, valid security clearance status
-                    //'language_id' => 0,
-                    // 'name' => '',
-
                 ],
-
             ],
             'child_routes' => [
                 'add' => [
@@ -514,6 +507,17 @@ return  [
                         ],
                     ],
                  ],
+                 'autocomplete_banned_list' => [
+                     'type' => Segment::class,
+                     'options' => [
+                         'route' => '/autocomplete/banned',
+                         'defaults' => [
+                             'controller' => Controller\InterpretersWriteController::class,
+                             'action' => 'autocomplete-banned-list',
+                         ],
+                     ],
+                 ],
+
                 // for generating markup for an interpreter-language
                 'language-fieldset' => [
                     'type' => Segment::class,

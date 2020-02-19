@@ -112,7 +112,6 @@ class InterpretersWriteController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                //printf("<pre>%s</pre>",print_r($form->getMessages(),true));
                 return new JsonModel(['validation_errors'=>$form->getMessages()]);
             }
             try {
@@ -121,9 +120,7 @@ class InterpretersWriteController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                     sprintf(
                         'The interpreter <strong>%s %s</strong> has been added to the database',
-                        $entity->getFirstname(),
-                        $entity->getLastname()
-                        )
+                        $entity->getFirstname(), $entity->getLastname())
                     );
                 return new JsonModel(['status'=>'success','id'=>$entity->getId()]);
             } catch (VaultException $e) {
@@ -195,6 +192,19 @@ class InterpretersWriteController extends AbstractActionController
         ));
 
         return new JsonModel(['status'=>'success']);
+    }
+
+    /**
+     * autocompletion for Interpreter form's "banned" element
+     * @return JsonModel
+     */
+    public function autocompleteBannedListAction()
+    {
+        $repo = $this->entityManager->getRepository(Entity\Person::class);
+        $term = $this->params()->fromQuery('term','');
+        $data = $repo->autocomplete($term,['banned_list'=>true]);
+
+        return new JsonModel($data);
     }
 
     /**

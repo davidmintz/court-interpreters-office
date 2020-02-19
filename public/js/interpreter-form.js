@@ -38,11 +38,7 @@ $(function(){
         var banned_by_element = $("#banned_by_persons");
         banned_list_autocomplete.autocomplete({
             minLength: 2,
-            source: (request,response) => {
-                var params = { term : request.term, banned_list : 1 };
-                $.get("/admin/people/autocomplete",params)
-                .then((data) => response(data));
-            },
+            source : "/admin/interpreters/autocomplete/banned",
             select : function(event,ui){
                 event.preventDefault();
                 if ($(`#banned_by_persons input[value="${ui.item.value}"]`).length) { return; }
