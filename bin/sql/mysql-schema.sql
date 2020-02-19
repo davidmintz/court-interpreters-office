@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.7.29, for Linux (x86_64)
+-- MySQL dump 10.16  Distrib 10.1.44-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: office
 -- ------------------------------------------------------
--- Server version	5.7.29-0ubuntu0.16.04.1-log
+-- Server version	10.1.44-MariaDB-0ubuntu0.18.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -86,6 +86,24 @@ DROP TABLE IF EXISTS `availability_invitees`;
 CREATE TABLE `availability_invitees` (
   `interp_id` smallint(5) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `banned`
+--
+
+DROP TABLE IF EXISTS `banned`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `banned` (
+  `interpreter_id` smallint(5) unsigned NOT NULL,
+  `person_id` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`interpreter_id`,`person_id`),
+  KEY `IDX_9B490DB6AD59FFB1` (`interpreter_id`),
+  KEY `IDX_9B490DB6217BBB47` (`person_id`),
+  CONSTRAINT `FK_9B490DB6217BBB47` FOREIGN KEY (`person_id`) REFERENCES `people` (`id`),
+  CONSTRAINT `FK_9B490DB6AD59FFB1` FOREIGN KEY (`interpreter_id`) REFERENCES `interpreters` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -810,21 +828,23 @@ DROP TABLE IF EXISTS `view_locations`;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE VIEW `view_locations` AS SELECT 
- 1 AS `id`,
- 1 AS `type_id`,
- 1 AS `parent_location_id`,
- 1 AS `name`,
- 1 AS `comments`,
- 1 AS `active`,
- 1 AS `parent`,
- 1 AS `category`*/;
+/*!50001 CREATE TABLE `view_locations` (
+  `id` tinyint NOT NULL,
+  `type_id` tinyint NOT NULL,
+  `parent_location_id` tinyint NOT NULL,
+  `name` tinyint NOT NULL,
+  `comments` tinyint NOT NULL,
+  `active` tinyint NOT NULL,
+  `parent` tinyint NOT NULL,
+  `category` tinyint NOT NULL
+) ENGINE=MyISAM */;
 SET character_set_client = @saved_cs_client;
 
 --
 -- Final view structure for view `view_locations`
 --
 
+/*!50001 DROP TABLE IF EXISTS `view_locations`*/;
 /*!50001 DROP VIEW IF EXISTS `view_locations`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -847,4 +867,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-10  9:39:18
+-- Dump completed on 2020-02-19 11:22:27
