@@ -8,9 +8,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use DateTime;
 
-//
-/** @Entity @EntityListeners({"UserListener"}) */
-
 /**
  * Entity representing an Interpreter.
  *
@@ -178,28 +175,85 @@ class Interpreter extends Person
     protected $interpreterLanguages;
 
 
-    /*
-      `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        `honorific` enum('','Ms.','Mr.','Mrs.','Dr.') COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-        `active` enum('Y','N') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Y',
-        `freelance` enum('Y','N') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Y',
-        `ssn` varbinary(40) DEFAULT NULL,
-        `dob` varbinary(40) DEFAULT NULL,
-        `password` char(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-        `publish_public` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-        `publish_internal` enum('Y','N') COLLATE utf8_unicode_ci DEFAULT NULL,
-        `security_clearance` date DEFAULT NULL,
-        `contract_expiration` date DEFAULT NULL,
-        `fingerprinted` date DEFAULT NULL,
-        `oath` date DEFAULT NULL,
+    /**
+     * @ORM\ManyToMany(targetEntity="Person")
+     * @ORM\JoinTable(name="banned",joinColumns={@ORM\JoinColumn(name="interpreter_id", referencedColumnName="id")},
+     * inverseJoinColumns={@ORM\JoinColumn(name="person_id", referencedColumnName="id")})
+     *
+     * @var ArrayCollection of Person
+     *
+     * people for whom this interpreter is not recommended, i.e., banned
+     */
+    protected $banned_by_persons;
 
-    */
     /**
      * Constructor.
      */
     public function __construct()
     {
         $this->interpreterLanguages = new ArrayCollection();
+        $this->bannedBy = new ArrayCollection();
+    }
+
+    /**
+     * adds a Person by whom this Interpreter is banned
+     *
+     * @param  Person      $person
+     * @return Interpreter
+     */
+    public function addBannedByPerson(Person $person) : Interpreter
+    {
+        $this->banned_by_persons->add($person);
+
+        return $this;
+    }
+
+    /**
+     * removes a Person from banned_by
+     *
+     * @param  Person $person
+     * @return Interpreter
+     */
+    public function removeBannedByPerson(Person $person) : Interpreter
+    {
+        $this->banned_by_persons->removeElement($person);
+
+        return $this;
+    }
+
+    /**
+     * adds people to banned list
+     *
+     * @param Collection $people [description]
+     */
+    public function addBannedByPersons(Collection $people) : Interpreter
+    {
+        foreach($people as $person)
+        {
+            $this->banned_by_persons->add($person);
+        }
+
+        return $this;
+    }
+
+    /**
+     * removes $people from banned list
+     *
+     * @param Collection $people [description]
+     */
+    public function removeBannedByPersons(Collection $people) : Interpreter
+    {
+        foreach($people as $person)
+        {
+            $this->banned_by_persons->removeElement($person);
+        }
+
+        return $this;
+    }
+
+    public function getBannedByPersons() : Collection
+    {
+        return $this->banned_by_persons;
     }
 
     /**
@@ -347,9 +401,7 @@ class Interpreter extends Person
     public function removeInterpreterLanguage(InterpreterLanguage $interpreterLanguage)
     {
         $this->interpreterLanguages->removeElement($interpreterLanguage);
-        // not sure whether/when the following is required
-        //$interpreterLanguage->setLanguage(null);
-        //$interpreterLanguage->setInterpreter(null);
+
         return $this;
     }
 

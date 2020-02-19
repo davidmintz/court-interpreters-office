@@ -23,9 +23,12 @@ $this->headScript()->appendFile($this->basePath('js/admin/form-config.js'));
     <fieldset>
         <legend>interpreter form</legend>
         <?php
-        //$filter = new \Laminas\Filter\Word\CamelCaseToSeparator(' ');
         foreach ($this->config->interpreters->optional_elements as $name => $value) :
-            $display_name = str_replace('_',' ',$name);
+            if ($name == 'banned_by_persons') :
+                $display_name = 'banned-by list';
+            else:
+                $display_name = str_replace('_',' ',$name);
+            endif;
         ?>
         <div class="form-row form-group">
             <div class="col">

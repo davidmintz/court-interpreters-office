@@ -1,6 +1,7 @@
 {
     "interpreters": {
         "optional_elements": {
+            "banned_by_persons": "1",
             "BOP_form_submission_date": "0",
             "fingerprint_date": "0",
             "contract_expiration_date": "0",

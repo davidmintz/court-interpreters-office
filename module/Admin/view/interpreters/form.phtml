@@ -58,7 +58,7 @@ $form->add([
                             $element = $fieldset->get($elementName);
     ?><div class="form-group form-row">
                         <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
-                        <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>
+                        <div class="col-sm-7"><?php echo $this->formElement($element),$this->formElementErrors($element) ?>
                         </div>
                     </div>
             <?php endforeach; ?>
@@ -85,12 +85,12 @@ $form->add([
                 echo $collectionErrors;
             endif;
             ?>
-            <div class="alert alert-warning validation-error col-sm-9" style="display:none" id="error_interpreterLanguages">
+            <div class="alert alert-warning validation-error col-sm-7" style="display:none" id="error_interpreterLanguages">
             </div>
             </div><!-- /languages-div -->
             <?php $element = $fieldset->get('comments');?>
             <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
-            <div class="col-sm-9" style="margin-bottom:1em"><?php echo $this->formElement($element), $this->formElementErrors($element)?>
+            <div class="col-sm-7" style="margin-bottom:1em"><?php echo $this->formElement($element), $this->formElementErrors($element)?>
             </div>
         </div><!-- /languages panel -->
         <!-- admin panel ------------->
@@ -112,7 +112,7 @@ $form->add([
             $hat_element->setAttribute('disabled', 'disabled');
         endif;
         ?>
-        <?php foreach (['hat','active','solicit_availability','banned_list','fingerprint_date','BOP_form_submission_date',
+        <?php foreach (['hat','active','solicit_availability','banned_by_persons','fingerprint_date','BOP_form_submission_date',
         'security_clearance_date','contract_expiration_date','oath_date',] as $elementName) :
                     if (! $fieldset->has($elementName)) : continue; endif;
                     $element = $fieldset->get($elementName);
@@ -121,8 +121,25 @@ $form->add([
             if (is_object($value) && $value instanceof \DateTime) :
                 $element->setValue($value->format('m/d/Y'));
             endif;
-            if ('banned_list' == $elementName):
-                ?>banned list to be implemented<?php
+            if ('banned_by_persons' == $elementName):?>
+            <div class="form-group form-row">
+                <label class="col-form-label col-sm-3 ">avoid assigning with</label>
+                <div class="col-sm-7">
+                    <input class="form-control" id="banned-autocompletion" placeholder="last name[, first name]" type="text" name="" value="">
+                    <input type="hidden" name="interpreter[banned_by_persons][]" value="">
+                    <ul class="list-group mt-2" id="banned_by_persons">
+                        <?php $entity = $form->getObject(); $banned_by = $entity->getBannedByPersons();
+                    foreach ($banned_by as $person):?>
+                        <li class="list-group-item py-1"><?php
+                            printf('<span class="text-muted">(%s)</span> %s',$person->getHat(),$person->getFullname());
+                            printf('<input type="hidden" name="interpreter[banned_by_persons][]" value="%d">',$person->getId());
+                            ?>
+                        <div class="float-right remove-item bg-warning px-2"><a title="remove this person from banned-by list" href="#">&times;</a></div></li>
+                    <?php endforeach;?>
+                    </ul>
+                </div>
+            </div>
+            <?php
             continue;
             endif;
             if ($element instanceof \Laminas\Form\Element\Checkbox) :
@@ -137,7 +154,7 @@ $form->add([
             ?>
                 <div class="form-group form-row">
                     <label class="col-form-label col-sm-3 "><?php echo $element->getLabel()?></label>
-                    <div class="col-sm-9<?=$label_class?>"><?php echo $this->formElement($element);
+                    <div class="col-sm-7<?=$label_class?>"><?php echo $this->formElement($element);
                     if ($help_text): printf('<span class="ml-1 my-0 text-muted">%s</span>',$help_text); endif;
                     echo $this->formElementErrors($element);?>
                     </div>
@@ -157,7 +174,7 @@ $form->add([
                         ?>
                 <div class="form-group form-row">
                     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
-                    <div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
+                    <div class="col-sm-7"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div>
                 </div><?php
                     endforeach;
                 else :  // should be obscured, until they re-authenticate/decrypt
@@ -170,10 +187,10 @@ $form->add([
                     <label class="col-form-label col-sm-3"><?php echo $element->getLabel()?></label>
                         <?php $encrypted = $element->getValue();
                         if (! $encrypted) : // nothing to obscure
-                            ?><div class="col-sm-9"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div><?php
+                            ?><div class="col-sm-7"><?php echo $this->formElement($element),$this->formElementErrors($element) ?></div><?php
                         else :  // display text inputs as encrypted/disabled
                             $element->setAttribute('disabled', 'disabled');?>
-                    <div class="col-sm-9 encrypted">
+                    <div class="col-sm-7 encrypted">
                             <?php
                             $element->setValue('**************');
                             ?><div class="input-group"><?php echo $this->formElement($element)?><button data-toggle="modal" data-target="#login-modal" title="re-authenticate to view or edit sensitive data fields" class="btn btn-info" type="button"><span class="fas fa-unlock"></span><span class="sr-only">unlock</span></button>
@@ -192,7 +209,7 @@ $form->add([
         </div>
     </div>
     <div style="margin-top:1em" class="pt-2 row border border-right-0 border-left-0 border-bottom-0" >
-        <div class="col-sm-9 offset-sm-3">
+        <div class="col-sm-7 offset-sm-3">
             <?php
             $csrf = $form->get('csrf');
             echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;

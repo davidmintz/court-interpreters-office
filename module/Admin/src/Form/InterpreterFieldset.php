@@ -109,8 +109,8 @@ class InterpreterFieldset extends PersonFieldset
                  'format' => 'Y-m-d',
               ],
           ],
-          'banned_list' => [
-              'name' => 'banned_list',
+          'banned_by_persons' => [
+              'name' => 'banned_by_persons',
               'type' => 'Laminas\Form\Element\Select',
               'options' => [
                   'value_options' => [],
@@ -118,7 +118,7 @@ class InterpreterFieldset extends PersonFieldset
               ],
               'attributes' => [
                   'style' => 'display:none',
-                  'id' => 'banned_list',
+                  'id' => 'banned_by_persons',
                   'multiple' => 'multiple',
               ],
           ],
@@ -590,6 +590,13 @@ class InterpreterFieldset extends PersonFieldset
                 ],
             ],
         ];
+        }
+        /** @todo tighten this up? */
+        if ($this->has('banned_by_persons')) {
+            // $spec['banned_by_persons'] = [
+            //     'required'=>true,
+            //     'allow_empty'=>true,
+            // ];
         }
          // encrypted fields
             $spec['dob'] = [

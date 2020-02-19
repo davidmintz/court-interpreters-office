@@ -250,7 +250,7 @@ $(function(){
             return false;
         }
         // serialized form values + encodeURI("&interpreter[hat]=3") is required
-        // to get python selenium working
+        // to get python selenium working. don't ask me why.
         $.post(document.location.pathname,form.serialize())
         .then((res)=>{
             if ("success" === res.status) {
@@ -285,6 +285,9 @@ $(function(){
                 }
             }
         });
+    }).on("click",".remove-item",function(e){
+        e.preventDefault();
+        $(this).closest("li").slideUp(function(){$(this).remove()});
     });
     /** DELETE an interpreter */
     $("#btn-delete").on("click",function(event){
