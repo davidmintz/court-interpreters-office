@@ -274,7 +274,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     public function getInterpreterOptionsForLanguage($id, array $options = []) : Array
     {
         $with_banned_data = $options['with_banned_data'] ?? false;
-        $qb = $this->createQueryBuilder('i','i.id')
+        $qb = $this->createQueryBuilder('i','i.id   ')
             ->select("i.id AS value, CONCAT(i.lastname, ', ',i.firstname) AS label")
                 // maybe more columns later, and data attributes
             ->join('i.interpreterLanguages', 'il')
@@ -284,13 +284,11 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             ->orderBy('i.lastname, i.firstname')
             ->setParameters(['id' => $id]);
             $query = $qb->getQuery()->useResultCache(
-                true,
-                null,
-                "interp-options-language-$id"
+                true,  null, "interp-options-language-$id"
             );
             $result = $query->getResult();
-        if (! $with_banned_data) { // I doubt it
-            return $result;
+        if (! $with_banned_data) { // though I doubt it
+            return array_values($result);
         }
         // there has to be a better way to do this:  get all the ids of the
         // people by whom any of these interpreters are banned
@@ -299,10 +297,10 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             FROM InterpretersOffice\Entity\Interpreter i JOIN i.banned_by_persons p
             WHERE i.id IN (:ids)')->setParameters([':ids'=>$ids]);
         $banned = $query->getResult();
-
         if (! $banned) {
-            return $result;
+            return array_values($result);
         }
+        // and get them into an array of interpreter_id => [ array of person ids]
         $tmp = [];
         foreach($banned as $record) {
             $banned_id = $record['interpreter'];
@@ -314,13 +312,16 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
                 }
             }
         }
-
-        return array_map(function($record) use ($tmp){
+        // then get the banned_by ids into each $record
+        $final_answer =  array_map(function($record) use ($tmp){
             $interpreter_id = $record['value'];
             if (isset($tmp[$interpreter_id])) {
                 $record['attributes'] = ['data-banned_by' => implode(',',$tmp[$interpreter_id])];
             }
             return $record;
         },$result);
+        // and use array_values() to help JsonModel return a js array, not object
+        return array_values($final_answer);
+
     }
 }

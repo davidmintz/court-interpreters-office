@@ -199,9 +199,8 @@ $(function() {
         $.getJSON("/admin/schedule/interpreter-options?language_id="
         + language_id + "&csrf=1" )
             .then((response)=>{
-                var options = Object.values(response.options)
-                .sort((a,b) => a.label.localeCompare(b.label))
-                .map(function(item){
+                // Object.values(response.options).sort((a,b) => a.label.localeCompare(b.label))
+                var options = response.options.map(function(item){
                     var opt = $("<option>").val(item.value).text(item.label);
                     if (item.attributes) {
                         for (let [key, value] of Object.entries(item.attributes)) {
