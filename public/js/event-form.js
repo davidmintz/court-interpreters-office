@@ -164,29 +164,86 @@ var eventForm = (function () {
 
 
     var check_banned_list = function(e){
-        var category, judge_id, assigned;
-        var do_test = false;
-        // if interpreter has no baggage, we're good
-        if (interpreterSelectElement.children(":selected").data("banned_by")) {
-            console.log("need to check banned about to be assigned");
-            do_test = true;
-        } else {
-            assigned = check_assigned_interpreters();
-            if (assigned) {
-                do_test = true;
-                console.log("need to check banned among already-assigned");
+        console.debug("beginning check_banned_list()");
+        // if it's historic, I guess we don't care. so check the date...
+        if ($("#date").val()) {
+            var when = moment($("#date").val(),"MM/DD/YYYY");
+            if (when.isBefore(moment(),"day")) {
+                console.debug("date is in the past, so it's moot. returning");
+                return;
             }
         }
-
+        var judge_id = judgeElement.val();
+        var dubious_assigned = check_assigned_interpreters();
+        var candidate_baggage = interpreterSelectElement.children(":selected").data("banned_by");
+        // were we called manually, or triggered? if(!e) {it was manual};
+        if (!dubious_assigned && !candidate_baggage) {
+            console.debug("no banned-interpreter issue detected");
+            return true;
+        } // else...
+        console.debug("looking for possible banned-interpreter issues");
+        var event_category = event_type_element.children(":selected").data("category");
+        if (! ["in","out"].includes(event_category)) {
+            console.debug("null|irrelevant relevant event type selected. returning.");
+            return;
+        }
+        if ("in" === event_category) {
+            console.debug("in-court event: check interps against the judge");
+            if (!judge_id) {
+                console.debug("no judge selected. returning");
+                return;
+            } else {
+                var judge_result = get_judge_issues({candidate_baggage,dubious_assigned,judge_id});
+                if (! judge_result) {
+                    console.debug("no issues with proposed or already assigned interpreter(s)");
+                }
+            }
+        } else if ("out" === event_category) {
+            console.debug("out-of-court: check interps against the submitter ")
+        }
     }
+
+    var get_judge_issues = function(params){
+        console.debug(params);
+        if (params.candidate_baggage) {
+            console.log("check_judge(): checking candidate's baggage against judge");
+            if (params.candidate_baggage.split(",").includes(params.judge_id)) {
+                console.warn("proposed interpreter banned by current judge");
+                return {judge_id : params.judge_id, candidate_element:interpreterSelectElement.children(":selected")};
+            }
+        }
+        // check the already-assigned
+        console.debug("examining already-assigned for issues");
+        if (!params.dubious_assigned) {
+            console.debug("nobody questionable assigned? returning");
+            return;
+        }
+        var result;
+        params.dubious_assigned.each(function(){
+            var el = $(this);
+            if (el.data("banned_by").split(",").includes(params.judge_id)) {
+                console.warn("assigned interpreter banned by current judge!");
+                result = {judge_id : params.judge_id, assigned_element: el};
+                return false;
+            }
+        });
+        return result ? result : false;
+    };
+
+    /**
+     * checks the currently existing li.interpreter-assigned elements for
+     * "banned_by" data attributes
+     * @return {object|false}
+     */
     var check_assigned_interpreters = function(){
         var assigned = $("li.interpreter-assigned");
         if (! assigned.length) { return false; }
         var banned = assigned.filter(function(){
             return $(this).data("banned_by");
         });
-        return banned.length ? false : banned;
+        return banned.length ? banned : false;
     };
+
     /**
      * callback for assign-interpreter button's click event
      *
@@ -201,14 +258,12 @@ var eventForm = (function () {
     var interpreterButtonClick = function(event,params){
         var id = interpreterSelectElement.val();
         if (! id ) { return; }
-        var banned_by;
-        if (judgeElement.val()) {
-            // check for banned_by
-            banned_by = interpreterSelectElement.children(":selected").data("banned_by");
-            if (banned_by && "in" === event_type_element.children(":selected").data("category") && banned_by.split(",").includes(judgeElement.val())) {
-                if (! window.confirm(`According to your records, this interpreter should not be assigned to in-court matters involving this judge. Continue anyway?`))
-                { return  interpreterSelectElement.val("");; }
-            }
+        var banned_by = interpreterSelectElement.children(":selected").data("banned_by");
+        if (banned_by) {
+            check_banned_list();
+            /** @todo then figure out what to do next */
+        } else {
+            console.debug("proposed interpreter has no banned-by data");
         }
         var selector = `#interpreters-assigned li > input[name$="[interpreter]"][value="${id}"]`;
         if ($(selector).length) {
@@ -244,8 +299,12 @@ var eventForm = (function () {
             .fail(fail);
     };
 
-    $("#event_type, #judge, #interpreter-select").on("change",function(e){
+    $("#event_type, #judge").on("change",function(e){
+        // only deal with "natural events"
+        if (! e.originalEvent) { return; }
+        // e.target is the element that changed
         check_banned_list(e);
+
     });
 
 
@@ -652,6 +711,7 @@ var eventForm = (function () {
                 if (el.length) { el.closest("li").data($(this).data());}
             });
         }
+        check_banned_list();
         form.data({"multiDate":false});
         $("input.docket").on("change",formatDocketElement);
 
