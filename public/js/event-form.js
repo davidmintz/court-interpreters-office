@@ -195,11 +195,60 @@ var eventForm = (function () {
             } else {
                 var judge_result = get_judge_issues({candidate_baggage,dubious_assigned,judge_id});
                 if (! judge_result) {
-                    console.debug("no issues with proposed or already assigned interpreter(s)");
+                    console.debug("no issues with proposed or already assigned interpreter(s). returning");
+                    return;
                 }
+                var modal = $("#modal-assign-interpreter");
+                var modal_body = $("#modal-assign-interpreter .modal-body");
+                var btn_yes = $("#btn-yes-assign-interpreter");
+                var btn_no = $("#btn-no-assign-interpreter")
+                var name;
+                var is_proposed = typeof judge_result.candidate_element === "object";
+                if (is_proposed) {
+                    name = judge_result.candidate_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
+                    console.debug(`issue is with PROPOSED interpreter: ${name}`);
+                } else {
+                    var name_txt = judge_result.assigned_element.children("span").text().trim();
+                    name = name_txt.replace(/(.+), +(.+)/,"$2 $1");
+                    console.debug(`issue is with ASSIGNED interpreter: ${name}` );
+                }
+                var message = `Your records indicate that the interpreter ${name} should not be assigned to matters before this judge.`;
+                var handler;
+                if (is_proposed) {
+                    message += " Continue anyway?";
+                    handler = function(e){
+                        // take out the last-appended li
+                        $("li.interpreter-assigned").last().remove();
+                        console.debug("your handler has run");
+                    };
+                    btn_no.one("click",handler);
+                } else {
+                    message += " Remove?";
+                    handler = function(e){judge_result.assigned_element.remove(); console.debug("your handler has run");};
+                    btn_yes.one("click",handler);
+                }
+                modal_body.text(message);
+                modal.on("hide.bs.modal",function(){
+                    modal.off("click","button",handler);
+                });
+                modal.modal("show");
             }
         } else if ("out" === event_category) {
-            console.debug("out-of-court: check interps against the submitter ")
+            // still to do!
+            console.debug("out-of-court: check interps against the submitter ");
+            var submitter_id = $("#submitter option:selected").attr("value");
+            if (! submitter_id) {
+                console.debug("no submitter to check against, returning");
+                return;
+            }
+            if (e && e.target) {
+                if (e.target.type === "button") {
+                    // it's a **proposed** interpreter
+                    console.log("check proposed interpreter");
+                } else {
+                    console.log("need to check any existing...");
+                }
+            }
         }
     }
 
@@ -260,7 +309,7 @@ var eventForm = (function () {
         if (! id ) { return; }
         var banned_by = interpreterSelectElement.children(":selected").data("banned_by");
         if (banned_by) {
-            check_banned_list();
+            check_banned_list(event);
             /** @todo then figure out what to do next */
         } else {
             console.debug("proposed interpreter has no banned-by data");
@@ -282,11 +331,10 @@ var eventForm = (function () {
             index = 0;
         }
         interpreterSelectElement.val("");
-        // get the markup. this is kind of silly.
+        // get the markup. this approach is kind of stupid.
         $.get("/admin/schedule/interpreter-template",
-            {
-                interpreter_id : id, index : index,
-                name : name, event_id : $("#event_id").val()
+            {   interpreter_id : id, index, name,
+                event_id : $("#event_id").val()
             })
             .then((html)=>{
                 var el = $(html);
@@ -299,7 +347,7 @@ var eventForm = (function () {
             .fail(fail);
     };
 
-    $("#event_type, #judge").on("change",function(e){
+    $("#event_type, #judge, #submitter").on("change",function(e){
         // only deal with "natural events"
         if (! e.originalEvent) { return; }
         // e.target is the element that changed
