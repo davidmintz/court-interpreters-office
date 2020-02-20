@@ -162,6 +162,31 @@ var eventForm = (function () {
         }
     };
 
+
+    var check_banned_list = function(e){
+        var category, judge_id, assigned;
+        var do_test = false;
+        // if interpreter has no baggage, we're good
+        if (interpreterSelectElement.children(":selected").data("banned_by")) {
+            console.log("need to check banned about to be assigned");
+            do_test = true;
+        } else {
+            assigned = check_assigned_interpreters();
+            if (assigned) {
+                do_test = true;
+                console.log("need to check banned among already-assigned");
+            }
+        }
+
+    }
+    var check_assigned_interpreters = function(){
+        var assigned = $("li.interpreter-assigned");
+        if (! assigned.length) { return false; }
+        var banned = assigned.filter(function(){
+            return $(this).data("banned_by");
+        });
+        return banned.length ? false : banned;
+    };
     /**
      * callback for assign-interpreter button's click event
      *
@@ -176,7 +201,16 @@ var eventForm = (function () {
     var interpreterButtonClick = function(event,params){
         var id = interpreterSelectElement.val();
         if (! id ) { return; }
-        var selector = "#interpreters-assigned li > input[value=\""+id+"\"]";
+        var banned_by;
+        if (judgeElement.val()) {
+            // check for banned_by
+            banned_by = interpreterSelectElement.children(":selected").data("banned_by");
+            if (banned_by && "in" === event_type_element.children(":selected").data("category") && banned_by.split(",").includes(judgeElement.val())) {
+                if (! window.confirm(`According to your records, this interpreter should not be assigned to in-court matters involving this judge. Continue anyway?`))
+                { return  interpreterSelectElement.val("");; }
+            }
+        }
+        var selector = `#interpreters-assigned li > input[name$="[interpreter]"][value="${id}"]`;
         if ($(selector).length) {
             // duplicate. maybe do something to let them know?
             return interpreterSelectElement.val("");
@@ -193,23 +227,27 @@ var eventForm = (function () {
             index = 0;
         }
         interpreterSelectElement.val("");
-        // get the markup
-        //** to do: think about using Vue and a component for this and similar */
+        // get the markup. this is kind of silly.
         $.get("/admin/schedule/interpreter-template",
             {
                 interpreter_id : id, index : index,
                 name : name, event_id : $("#event_id").val()
             })
-            .done((html)=>
-            {
-                $("#interpreters-assigned").append(html);
+            .then((html)=>{
+                var el = $(html);
+                if (banned_by) { el.data({banned_by});}
+                $("#interpreters-assigned").append(el);
                 if (params && params.submit) {
-                    $("#event-form input[value=save]")
-                        .trigger("click");
+                    $("#event-form input[value=save]").trigger("click");
                 }
             })
             .fail(fail);
     };
+
+    $("#event_type, #judge, #interpreter-select").on("change",function(e){
+        check_banned_list(e);
+    });
+
 
     /**
      * callback for language-select's change event
@@ -239,8 +277,6 @@ var eventForm = (function () {
         $.getJSON("/admin/schedule/interpreter-options?language_id="+language_id)
             .then(
                 function(data){
-                    // at around commit fc32aab2 we broke this, used to be
-                    // just data.map() and no sorting required
                     var options = data.map(function(item){
                         var opt = $("<option>").val(item.value).text(item.label);
                         if (item.attributes) {
@@ -271,7 +307,7 @@ var eventForm = (function () {
      */
     var judgeElementChange = function() {
         if (!  judgeElement.val()) {
-            //return;
+            // return;
             // note to self:  decide: why (not) return if no judge is selected?
         }
         // keep track of whether judge is a person or a generic/pseudojudge
@@ -605,6 +641,17 @@ var eventForm = (function () {
         $("body").on("mousedown",".popover-submitter-admin a",function(e){
             document.location = e.target.href;
         });
+        // add the banned_by data to any already-assigned interpreter <li>
+        let banned = interpreterSelectElement.children().filter(
+            function() { return $(this).data("banned_by")}
+        );
+        if (banned.length && $("li.interpreter-assigned").length) {
+            banned.each(function(){
+                var interpreter_id = $(this).attr("value");
+                var el = $(`li.interpreter-assigned input[name$="[interpreter]"][value="${interpreter_id}"`);
+                if (el.length) { el.closest("li").data($(this).data());}
+            });
+        }
         form.data({"multiDate":false});
         $("input.docket").on("change",formatDocketElement);
 
