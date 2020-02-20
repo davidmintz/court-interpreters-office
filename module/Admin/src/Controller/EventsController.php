@@ -72,8 +72,6 @@ class EventsController extends AbstractActionController
     /** @var Form\EventForm */
     protected $eventForm;
 
-
-
     /**
      * constructor
      *
@@ -383,13 +381,13 @@ class EventsController extends AbstractActionController
         if (! $language_id) {
             $result = ['error' => 'missing language id parameter'];
         } else {
-            $result = $repository->getInterpreterOptionsForLanguage($language_id);
+            $result = $repository->getInterpreterOptionsForLanguage($language_id,['with_banned_data'=>true]);
         }
         if ($this->params()->fromQuery('csrf')) {
             $csrf = (new \Laminas\Validator\Csrf('csrf'))->getHash();
             $result = [
-                'options' => $result,
                 'csrf' => $csrf,
+                'options' => $result,
             ];
         }
         return new JsonModel($result);

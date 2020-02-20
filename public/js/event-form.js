@@ -235,11 +235,32 @@ var eventForm = (function () {
             interpreterSelectElement.attr("disabled","disabled");
             return;
         }
+        /*function compare( a, b ) {
+  if ( a.last_nom < b.last_nom ){
+    return -1;
+  }
+  if ( a.last_nom > b.last_nom ){
+    return 1;
+  }
+  return 0;
+}
+
+objs.sort( compare );*/
         $.getJSON("/admin/schedule/interpreter-options?language_id="+language_id)
             .then(
                 function(data){
-                    var options = data.map(function(item){
-                        return $("<option>").val(item.value).text(item.label);
+                    // at around commit fc32aab2 we broke this, used to be
+                    // just data.map() and no sorting required
+                    var options = Object.values(data)
+                    .sort((a,b) => a.label.localeCompare(b.label))
+                    .map(function(item){
+                        var opt = $("<option>").val(item.value).text(item.label);
+                        if (item.attributes) {
+                            for (let [key, value] of Object.entries(item.attributes)) {
+                                opt.attr(key,value);
+                            }
+                        }
+                        return opt;
                     });
                     interpreterSelectElement.children().not(":first").remove();
                     interpreterSelectElement.append(options)

@@ -199,8 +199,16 @@ $(function() {
         $.getJSON("/admin/schedule/interpreter-options?language_id="
         + language_id + "&csrf=1" )
             .then((response)=>{
-                var options = response.options.map(function(item){
-                    return $("<option>").val(item.value).text(item.label);
+                var options = Object.values(response.options)
+                .sort((a,b) => a.label.localeCompare(b.label))
+                .map(function(item){
+                    var opt = $("<option>").val(item.value).text(item.label);
+                    if (item.attributes) {
+                        for (let [key, value] of Object.entries(item.attributes)) {
+                            opt.attr(key,value);
+                        }
+                    }
+                    return opt;
                 });
                 interpreter_select.append(options);
                 schedule_table.data({csrf:response.csrf});
