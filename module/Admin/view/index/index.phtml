@@ -1,5 +1,5 @@
 <?php /** module/Admin/view/interpreters-office/admin/index/index.phtml */
-$this->headTitle($this->title);
+$this->headTitle('admin');
 $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'));
 $this->headStyle()->captureStart();?>
 /*.multi-input label, .multi-input div { border : 1px dotted gray; }*/
@@ -13,7 +13,9 @@ form { max-width: 900px;}
 
 <div style="max-width:900px" class="mx-auto">
     <h2>administration</h2>
-    <pre><?php
+<?php if (false):?>
+    <pre>
+<?php
     /** @var \InterpretersOffice\Admin\Service\Acl $acl */
     $acl = $this->acl;
     //print_r(get_class_methods($acl));
@@ -23,29 +25,29 @@ form { max-width: 900px;}
     // print_r($resources);
     ?>
     </pre>
-    <table class="table" hidden>
+    <table class="table">
         <tr>
             <th>resource</th>
             <?php foreach ($roles as $role) { ?><th><?=$role?></th>
     <?php }
     ?></tr><?php
-    foreach($resources as $resource) { break;
+    foreach($resources as $resource) {
         ?><tr>
             <td><?=str_replace('InterpretersOffice\\','',$resource)?></td>
             <?php foreach ($roles as $role) { ?>
                 <td><?php
                 $access = $acl->isAllowed($role,$resource,'index') ? "allowed":"denied";
-                echo $access;
+                $color = $access == 'allowed' ? 'green' : 'red';
+                printf('<span style="color:%s">%s</span>',$color,$access);
                 ?></td>
             <?php  }?>
         </tr><?php
     }
 
     ?></table>
-
+<?php endif; ?>
     <div class="row mt-3">
         <div class="col">
-
             <p>
                 <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('events')?>">scheduling</a>
                 schedule of court interpreter events
