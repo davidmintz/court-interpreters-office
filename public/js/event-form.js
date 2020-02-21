@@ -169,7 +169,9 @@ var eventForm = (function () {
      */
     var check_banned_list = function(e){
         console.debug("beginning check_banned_list()");
-        var is_submit = e && e.target && e.target.type === "submit";
+        if (e) {
+            console.debug(`FYI target id is ${e.target.id}`);
+        }
         // if it's historic, I guess we don't care. so check the date...
         if ($("#date").val()) {
             var when = moment($("#date").val(),"MM/DD/YYYY");
@@ -178,8 +180,9 @@ var eventForm = (function () {
                 return;
             }
         }
+        var is_submit = e && e.target && e.target.type === "submit";
         var judge_id = judgeElement.val();
-        var dubious_assigned = check_assigned_interpreters();
+        var dubious_assigned = get_assigned_interpreters_having_baggage();
         var candidate_baggage = interpreterSelectElement.children(":selected").data("banned_by");
         // were we called manually, or triggered? if(!e) {it was manual};
         if (!dubious_assigned && !candidate_baggage) {
@@ -201,6 +204,10 @@ var eventForm = (function () {
         var btn_yes = $("#btn-yes-assign-interpreter");
         var btn_no = $("#btn-no-assign-interpreter")
         if ("in" === event_category) {
+            // if the event was triggered by change on submitter, no worries
+            if (e && e.target.id === "submitter") {
+                return false;
+            }
             console.debug("in-court event: check interps against the judge");
             if (!judge_id) {
                 console.debug("no judge selected. returning");
@@ -212,6 +219,7 @@ var eventForm = (function () {
                     return false;
                 }
                 var name;
+                // is the problem with an already-assigned, or the one they are now assigning?
                 var is_proposed = typeof judge_result.candidate_element === "object";
                 if (is_proposed) {
                     name = judge_result.candidate_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
@@ -294,6 +302,9 @@ var eventForm = (function () {
             console.debug("nobody questionable assigned? returning");
             return;
         }
+        // put the problematic ones in an array
+        // var bad_ones = [];
+        //["Joe","Bob","Alice", "John"].join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
         var result;
         params.dubious_assigned.each(function(){
             var el = $(this);
@@ -309,11 +320,11 @@ var eventForm = (function () {
     };
 
     /**
-     * checks the currently existing li.interpreter-assigned elements for
+     *  returns the currently existing li.interpreter-assigned elements for
      * "banned_by" data attributes
      * @return {object|false}
      */
-    var check_assigned_interpreters = function(){
+    var get_assigned_interpreters_having_baggage = function(){
         var assigned = $("li.interpreter-assigned");
         if (! assigned.length) { return false; }
         var banned = assigned.filter(function(){
@@ -377,13 +388,12 @@ var eventForm = (function () {
     };
 
     $("#event_type, #judge, #submitter").on("change",function(e){
-        // only deal with "natural events"
+        // only deal with "natural" events, not el.trigger("change")
         if (! e.originalEvent) { return; }
         // e.target is the element that changed
         check_banned_list(e);
 
     });
-
 
     /**
      * callback for language-select's change event
@@ -404,12 +414,12 @@ var eventForm = (function () {
         if (! params || params.remove_existing !== false) {
             $("#interpreters-assigned li").remove();
         }
-
+        // no language? no interpreters
         if (! language_id) {
             interpreterSelectElement.attr("disabled","disabled");
             return;
         }
-
+        // fetch interpreter data to populate interpreter-select element
         $.getJSON("/admin/schedule/interpreter-options?language_id="+language_id)
             .then(
                 function(data){
@@ -425,7 +435,7 @@ var eventForm = (function () {
                     interpreterSelectElement.children().not(":first").remove();
                     interpreterSelectElement.append(options)
                         .trigger("sdny.language-update-complete");
-                    // ^ ...doesn't yet do anything
+                    // ^ ...doesn't currently do anything -- maybe later
                     if (options.length) {
                         interpreterSelectElement.removeAttr("disabled");
                     }
@@ -843,8 +853,11 @@ var eventForm = (function () {
             function(){slideout.toggle("slide");}
         );
 
+        languageElement.on("change",languageElementChange);
         if (! languageElement.val()) {
             interpreterSelectElement.attr("disabled","disabled");
+        } else {
+            languageElement.trigger("change",{remove_existing:false});
         }
 
         if (! parentLocationElement.val()){
@@ -853,7 +866,6 @@ var eventForm = (function () {
 
         parentLocationElement.on("change",parentLocationChange);
 
-        languageElement.on("change",languageElementChange);
 
         // interpreter and deft name "remove" buttons event handler
         $("#interpreters-assigned, #defendant-names").on("click",".btn-remove-item",
