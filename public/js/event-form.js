@@ -244,12 +244,14 @@ var eventForm = (function () {
             if (e && e.target) {
                 if (e.target.type === "button") {
                     // it's a **proposed** interpreter
-                    console.log("check proposed interpreter");
+                    console.debug("check proposed interpreter");
                 } else {
-                    console.log("need to check any existing...");
+                    console.debug("need to check already-assigned interpreters");
                 }
+            } else {
+                console.debug("no event target, check already-assigned interpreters");
             }
-        }
+        };
     }
 
     var get_judge_issues = function(params){
