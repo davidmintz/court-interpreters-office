@@ -187,6 +187,10 @@ var eventForm = (function () {
             console.debug("null|irrelevant relevant event type selected. returning.");
             return;
         }
+        var modal = $("#modal-assign-interpreter");
+        var modal_body = $("#modal-assign-interpreter .modal-body");
+        var btn_yes = $("#btn-yes-assign-interpreter");
+        var btn_no = $("#btn-no-assign-interpreter")
         if ("in" === event_category) {
             console.debug("in-court event: check interps against the judge");
             if (!judge_id) {
@@ -198,10 +202,7 @@ var eventForm = (function () {
                     console.debug("no issues with proposed or already assigned interpreter(s). returning");
                     return;
                 }
-                var modal = $("#modal-assign-interpreter");
-                var modal_body = $("#modal-assign-interpreter .modal-body");
-                var btn_yes = $("#btn-yes-assign-interpreter");
-                var btn_no = $("#btn-no-assign-interpreter")
+
                 var name;
                 var is_proposed = typeof judge_result.candidate_element === "object";
                 if (is_proposed) {
@@ -224,7 +225,10 @@ var eventForm = (function () {
                     btn_no.one("click",handler);
                 } else {
                     message += " Remove?";
-                    handler = function(e){judge_result.assigned_element.remove(); console.debug("your handler has run");};
+                    handler = function(e){
+                        judge_result.assigned_element.remove();
+                        console.debug("your handler has run");
+                    };
                     btn_yes.one("click",handler);
                 }
                 modal_body.text(message);
@@ -234,21 +238,32 @@ var eventForm = (function () {
                 modal.modal("show");
             }
         } else if ("out" === event_category) {
-            // still to do!
             console.debug("out-of-court: check interps against the submitter ");
             var submitter_id = $("#submitter option:selected").attr("value");
             if (! submitter_id) {
                 console.debug("no submitter to check against, returning");
                 return;
             }
+            var submitter_name = $("#submitter option:selected").text().trim().replace(/(.+), +(.+)/,"$2 $1");
             if (e && e.target) {
                 if (e.target.type === "button") {
                     // it's a **proposed** interpreter
-                    console.debug("check proposed interpreter");
+                    console.debug("checking proposed interpreter");
+                    var option_element = interpreterSelectElement.children(":selected");
+                    var banned_data = option_element.data("banned_by");
+                    if (banned_data.split(",").includes(submitter_id)) {
+                        var name = option_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
+                        var message = `Your records indicate that the interpreter ${name} should not be assigned `
+                        + `to events involving ${submitter_name}. Continue anyway?`;
+                        console.debug(message);
+                        modal_body.text(message);
+                    }
                 } else {
+                    // it's a "change" event
                     console.debug("need to check already-assigned interpreters");
                 }
             } else {
+                // it's called manually during the onload event handler
                 console.debug("no event target, check already-assigned interpreters");
             }
         };
@@ -275,6 +290,8 @@ var eventForm = (function () {
             if (el.data("banned_by").split(",").includes(params.judge_id)) {
                 console.warn("assigned interpreter banned by current judge!");
                 result = {judge_id : params.judge_id, assigned_element: el};
+                /** @todo reconsider. there could conceivably be **multiple**
+                banned interpreters assigned. maybe return and array of objects? */
                 return false;
             }
         });
