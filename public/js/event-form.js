@@ -162,9 +162,14 @@ var eventForm = (function () {
         }
     };
 
-
+    /**
+     * check for banned-interpreter issues
+     * @param  {object|null} e the event
+     * @return {boolean} true if banned interpreter is found
+     */
     var check_banned_list = function(e){
         console.debug("beginning check_banned_list()");
+        var is_submit = e && e.target && e.target.type === "submit";
         // if it's historic, I guess we don't care. so check the date...
         if ($("#date").val()) {
             var when = moment($("#date").val(),"MM/DD/YYYY");
@@ -179,14 +184,18 @@ var eventForm = (function () {
         // were we called manually, or triggered? if(!e) {it was manual};
         if (!dubious_assigned && !candidate_baggage) {
             console.debug("no banned-interpreter issue detected");
-            return true;
+            return false;
         } // else...
         console.debug("looking for possible banned-interpreter issues");
         var event_category = event_type_element.children(":selected").data("category");
         if (! ["in","out"].includes(event_category)) {
             console.debug("null|irrelevant relevant event type selected. returning.");
-            return;
+            return false;
         }
+        // experimental... if we are a form submission, the warnings have already
+        // been raised, so end it here to prevent a possible "did you mean to add.."
+        // dialog for displaying for a banned person, which would get annoying
+        if (is_submit) { return true; }
         var modal = $("#modal-assign-interpreter");
         var modal_body = $("#modal-assign-interpreter .modal-body");
         var btn_yes = $("#btn-yes-assign-interpreter");
@@ -195,14 +204,13 @@ var eventForm = (function () {
             console.debug("in-court event: check interps against the judge");
             if (!judge_id) {
                 console.debug("no judge selected. returning");
-                return;
+                return false;
             } else {
                 var judge_result = get_judge_issues({candidate_baggage,dubious_assigned,judge_id});
                 if (! judge_result) {
                     console.debug("no issues with proposed or already assigned interpreter(s). returning");
-                    return;
+                    return false;
                 }
-
                 var name;
                 var is_proposed = typeof judge_result.candidate_element === "object";
                 if (is_proposed) {
@@ -236,13 +244,14 @@ var eventForm = (function () {
                     modal.off("click","button",handler);
                 });
                 modal.modal("show");
+                return true;
             }
         } else if ("out" === event_category) {
             console.debug("out-of-court: check interps against the submitter ");
             var submitter_id = $("#submitter option:selected").attr("value");
             if (! submitter_id) {
                 console.debug("no submitter to check against, returning");
-                return;
+                return false;
             }
             var submitter_name = $("#submitter option:selected").text().trim().replace(/(.+), +(.+)/,"$2 $1");
             if (e && e.target) {
@@ -252,6 +261,7 @@ var eventForm = (function () {
                     var option_element = interpreterSelectElement.children(":selected");
                     var banned_data = option_element.data("banned_by");
                     if (banned_data.split(",").includes(submitter_id)) {
+                        if (is_submit) { return true; } // same as above
                         var name = option_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
                         var message = `Your records indicate that the interpreter ${name} should not be assigned `
                         + `to events involving ${submitter_name}. Continue anyway?`;
@@ -273,7 +283,7 @@ var eventForm = (function () {
         console.debug(params);
         if (params.candidate_baggage) {
             console.log("check_judge(): checking candidate's baggage against judge");
-            if (params.candidate_baggage.split(",").includes(params.judge_id)) {
+            if (params.candidate_baggage.toString().split(",").includes(params.judge_id)) {
                 console.warn("proposed interpreter banned by current judge");
                 return {judge_id : params.judge_id, candidate_element:interpreterSelectElement.children(":selected")};
             }
@@ -287,7 +297,7 @@ var eventForm = (function () {
         var result;
         params.dubious_assigned.each(function(){
             var el = $(this);
-            if (el.data("banned_by").split(",").includes(params.judge_id)) {
+            if (el.data("banned_by").toString().split(",").includes(params.judge_id)) {
                 console.warn("assigned interpreter banned by current judge!");
                 result = {judge_id : params.judge_id, assigned_element: el};
                 /** @todo reconsider. there could conceivably be **multiple**
@@ -899,13 +909,16 @@ var eventForm = (function () {
         hatElement.on("change",hatElementChange);
 
         /**
-         * help them out if they chose an interpreter but
+         * try to help them out if they chose an interpreter but
          * did not click the button
          */
         $("input[value=save]").on("click",function(event){
             var submitButton = $(this);
-            if ($("#interpreter-select").val()) {
+            var banned_interpreter_found = check_banned_list(event);
+            if (! banned_interpreter_found && $("#interpreter-select").val()) {
                 event.preventDefault();
+                // if there's a problem with a banned interpreter, just let it go.
+                // an expedient solution for now.
                 $("#modal-assign-interpreter .modal-footer button").on("click",
                     function(event) {
                         var button = $(event.target);
