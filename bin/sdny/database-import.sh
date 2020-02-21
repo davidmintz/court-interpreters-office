@@ -76,13 +76,16 @@ echo -n "inserting judges and courtrooms with (newly?) downloaded data..."
 bin/sdny/import-judges-and-courtrooms-v2.php < bin/sdny/judges-courtrooms.json
 OK;
 
-
 echo -n "inserting clerks-judges..."
 cat bin/sdny/import-clerks-judges.sql | mysql office
 # bin/sdny/fucking-clerks-judges.php
 OK;
 # echo "STOPPING HERE";
 # exit 0;
+
+echo "importing banned-interpreter data... ";
+bin/sdny/banned-import.php
+OK; # so we hope
 
 echo "importing event-types..."
 bin/sdny/import-event-types.php
