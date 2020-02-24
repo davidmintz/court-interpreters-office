@@ -218,18 +218,34 @@ var eventForm = (function () {
                     console.debug("no issues with proposed or already assigned interpreter(s). returning");
                     return false;
                 }
-                var name;
+                var names, verbiage = "";
                 // is the problem with an already-assigned, or the one they are now assigning?
                 var is_proposed = typeof judge_result.candidate_element === "object";
                 if (is_proposed) {
-                    name = judge_result.candidate_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
-                    console.debug(`issue is with PROPOSED interpreter: ${name}`);
+                    names = judge_result.candidate_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
+                    verbiage = `the interpreter ${names}`;
+                    console.debug(`issue is with PROPOSED interpreter: ${names}`);
                 } else {
-                    var name_txt = judge_result.assigned_element.children("span").text().trim();
-                    name = name_txt.replace(/(.+), +(.+)/,"$2 $1");
-                    console.debug(`issue is with ASSIGNED interpreter: ${name}` );
+                    // the problem is with the already-assigned: usually, one but
+                    // conceivably more than one
+                    names = judge_result.assigned_elements.map((el)=>{
+                        return el.children("span").text().trim().replace(/(.+), +(.+)/,"$2 $1");
+                    });
+
+                    switch (names.length) {
+                        case 1:
+                          verbiage += ` ${names[0]}`;
+                          break;
+                        case 2:
+                          verbiage += `s ${names.join(" and ")}`;
+                          break;
+                        default:
+                        // improbable, but hey you never know...
+                          var str = names.join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
+                          verbiage = `s ${str}`;
+                    }
                 }
-                var message = `Your records indicate that the interpreter ${name} should not be assigned to matters before this judge.`;
+                var message = `Your records indicate that the ${verbiage} should not be assigned to matters before this judge.`;
                 var handler;
                 if (is_proposed) {
                     message += " Continue anyway?";
@@ -242,7 +258,8 @@ var eventForm = (function () {
                 } else {
                     message += " Remove?";
                     handler = function(e){
-                        judge_result.assigned_element.remove();
+                        // take out the (possibly multiple) bad ones
+                        judge_result.assigned_elements.remove();
                         console.debug("your handler has run");
                     };
                     btn_yes.one("click",handler);
@@ -268,7 +285,7 @@ var eventForm = (function () {
                     console.debug("checking proposed interpreter");
                     var option_element = interpreterSelectElement.children(":selected");
                     var banned_data = option_element.data("banned_by");
-                    if (banned_data.split(",").includes(submitter_id)) {
+                    if (banned_data.toString().split(",").includes(submitter_id)) {
                         if (is_submit) { return true; } // same as above
                         var name = option_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
                         var message = `Your records indicate that the interpreter ${name} should not be assigned `
@@ -285,7 +302,7 @@ var eventForm = (function () {
                 console.debug("no event target, check already-assigned interpreters");
             }
         };
-    }
+    };
 
     var get_judge_issues = function(params){
         console.debug(params);
@@ -303,20 +320,19 @@ var eventForm = (function () {
             return;
         }
         // put the problematic ones in an array
-        // var bad_ones = [];
+        var bad_ones = [];
         //["Joe","Bob","Alice", "John"].join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
         var result;
         params.dubious_assigned.each(function(){
             var el = $(this);
             if (el.data("banned_by").toString().split(",").includes(params.judge_id)) {
                 console.warn("assigned interpreter banned by current judge!");
-                result = {judge_id : params.judge_id, assigned_element: el};
-                /** @todo reconsider. there could conceivably be **multiple**
-                banned interpreters assigned. maybe return and array of objects? */
-                return false;
+                bad_ones.push(el);
             }
+            result = {judge_id : params.judge_id,
+                assigned_elements: bad_ones};
         });
-        return result ? result : false;
+        return bad_ones.length ? result : false;
     };
 
     /**
@@ -929,8 +945,8 @@ var eventForm = (function () {
             var banned_interpreter_found = check_banned_list(event);
             if (! banned_interpreter_found && $("#interpreter-select").val()) {
                 event.preventDefault();
-                // if there's a problem with a banned interpreter, just let it go.
-                // an expedient solution for now.
+                // if there's a problem with a banned interpreter, just let it go, because
+                // the interpreter in question won't get saved anyway.
                 $("#modal-assign-interpreter .modal-footer button").on("click",
                     function(event) {
                         var button = $(event.target);
