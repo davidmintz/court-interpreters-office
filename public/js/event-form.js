@@ -388,7 +388,7 @@ var eventForm = (function () {
         if (! id ) { return; }
         var banned_by = interpreterSelectElement.children(":selected").data("banned_by");
         if (banned_by) {
-            check_banned_list(event);
+            //check_banned_list(event);
             /** @todo then figure out what to do next */
         } else {
             console.debug("proposed interpreter has no banned-by data");
@@ -426,13 +426,13 @@ var eventForm = (function () {
             .fail(fail);
     };
 
-    $("#event_type, #judge, #submitter").on("change",function(e){
-        // only deal with "natural" events, not el.trigger("change")
-        if (! e.originalEvent) { return; }
-        // e.target is the element that changed
-        check_banned_list(e);
-
-    });
+    // $("#event_type, #judge, #submitter").on("change",function(e){
+    //     // only deal with "natural" events, not el.trigger("change")
+    //     if (! e.originalEvent) { return; }
+    //     // e.target is the element that changed
+    //     check_banned_list(e);
+    //
+    // });
 
     /**
      * callback for language-select's change event
@@ -837,7 +837,7 @@ var eventForm = (function () {
                 if (el.length) { el.closest("li").data($(this).data());}
             });
         }
-        check_banned_list();
+        //check_banned_list();
         form.data({"multiDate":false});
         $("input.docket").on("change",formatDocketElement);
 

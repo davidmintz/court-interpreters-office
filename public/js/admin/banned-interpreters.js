@@ -38,14 +38,14 @@ var test_for_banned_is_required = function(e){
             return false;
         } else {
             // it depends.
-            if (e.target.id === "judge" && event_category === "in") {
+            if ($("#judge").val() && event_category === "in") {
                 return true;
-            } else if (e.target.id === "submitter" && event_category === "out") {
+            } else if ($("#submitter").val() && event_category === "out") {
                 return true;
             }
         }
     }
-    // if we're triggered by the add-interpreter click event
+    // otherwise, if we're triggered by the add-interpreter click event
     if (e && e.target.id === "btn-add-interpreter") {
         if ($("#judge").val() && event_category === "in") {
             return true;
@@ -53,7 +53,42 @@ var test_for_banned_is_required = function(e){
             return true;
         }
     }
-
     return false;
-
 };
+
+/**
+ * [description]
+ * @return {[type]} [description]
+ */
+var get_interpreters_having_issues = function(person_id){
+
+}
+
+$(function(){
+
+    $("#event_type, #judge, #submitter").on("change",function(e){
+        // only deal with "natural" events, not el.trigger("change")
+        if (! e.originalEvent) { return; }
+        var dbg = `changed ${e.target.id}, need to test for banned?`;
+        if (test_for_banned_is_required(e)) {
+            console.debug(`${dbg} YES`);
+        } else {
+            console.debug(`${dbg} NO`);
+        }
+    });
+
+    $("#btn-add-interpreter").on("click",function(e){
+        var dbg =  "btn clicked. need to test for banned?";
+        if (!test_for_banned_is_required(e)) {
+            console.debug(`${dbg} NO`);
+            return;
+        }
+        var event_category = $("#event_type option:selected").data("category");
+        var el = event_category === "in" ? "judge" : "submitter";
+        console.log("need to get #"+el);
+     });
+
+
+
+
+});
