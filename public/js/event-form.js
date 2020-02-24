@@ -213,54 +213,36 @@ var eventForm = (function () {
                 console.debug("no judge selected. returning");
                 return false;
             } else {
-                var judge_result = get_judge_issues({candidate_baggage,dubious_assigned,judge_id});
+                var judge_result = get_interpreters_with_issues({candidate_baggage,dubious_assigned,person_id:judge_id});
                 if (! judge_result) {
                     console.debug("no issues with proposed or already assigned interpreter(s). returning");
                     return false;
                 }
-                var names, verbiage = "";
+                var names, verbiage;
                 // is the problem with an already-assigned, or the one they are now assigning?
                 var is_proposed = typeof judge_result.candidate_element === "object";
                 if (is_proposed) {
                     names = judge_result.candidate_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
-                    verbiage = `the interpreter ${names}`;
+                    verbiage += `the interpreter ${names}`;
                     console.debug(`issue is with PROPOSED interpreter: ${names}`);
                 } else {
-                    // the problem is with the already-assigned: usually, one but
-                    // conceivably more than one
-                    names = judge_result.assigned_elements.map((el)=>{
-                        return el.children("span").text().trim().replace(/(.+), +(.+)/,"$2 $1");
-                    });
-
-                    switch (names.length) {
-                        case 1:
-                          verbiage += ` ${names[0]}`;
-                          break;
-                        case 2:
-                          verbiage += `s ${names.join(" and ")}`;
-                          break;
-                        default:
-                        // improbable, but hey you never know...
-                          var str = names.join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
-                          verbiage = `s ${str}`;
-                    }
+                    console.debug("detected issues with ASSIGNED, parsing name(s)...");
+                    verbiage = parse_names_from_elements(judge_result.assigned_elements);
                 }
                 var message = `Your records indicate that the ${verbiage} should not be assigned to matters before this judge.`;
                 var handler;
                 if (is_proposed) {
                     message += " Continue anyway?";
-                    handler = function(e){
-                        // take out the last-appended li
+                    handler = function(e){  // take out the last-appended li
                         $("li.interpreter-assigned").last().remove();
-                        console.debug("your handler has run");
+                        console.debug("your remove-the-last-assigned handler has run");
                     };
                     btn_no.one("click",handler);
                 } else {
                     message += " Remove?";
-                    handler = function(e){
-                        // take out the (possibly multiple) bad ones
-                        judge_result.assigned_elements.remove();
-                        console.debug("your handler has run");
+                    handler = function(e){  // take out the (possibly multiple) bad ones
+                        $(judge_result.assigned_elements).remove();
+                        console.debug("your remove-them-all handler has run");
                     };
                     btn_yes.one("click",handler);
                 }
@@ -296,6 +278,25 @@ var eventForm = (function () {
                 } else {
                     // it's a "change" event
                     console.debug("need to check already-assigned interpreters");
+                    var elements = get_assigned_interpreters_having_baggage();
+                    console.debug(elements);
+                    if (! elements) {
+                        console.debug("detected no possible issues with currently-assigned");
+                        return false;
+                    } else {
+                        console.debug("getting possibly-problematic interpreter-assigned elements")
+                        var result = get_interpreters_with_issues({dubious_assigned : elements, person_id:submitter_id});
+
+                        if (!result) {
+                            console.log("no problems with assigned interpreters");
+                            return false;
+                        };
+
+
+                        var interpreter_verbiage = parse_names_from_elements(result.assigned_elements);
+                        console.warn("verbiage is: "+ interpreter_verbiage);
+
+                    }
                 }
             } else {
                 // it's called manually during the onload event handler
@@ -303,14 +304,14 @@ var eventForm = (function () {
             }
         };
     };
-
-    var get_judge_issues = function(params){
+    //candidate_baggage,dubious_assigned,person_id
+    var get_interpreters_with_issues = function(params){
         console.debug(params);
         if (params.candidate_baggage) {
-            console.log("check_judge(): checking candidate's baggage against judge");
-            if (params.candidate_baggage.toString().split(",").includes(params.judge_id)) {
+            console.log("check_whatever(): checking candidate's baggage against person");
+            if (params.candidate_baggage.toString().split(",").includes(params.person_id)) {
                 console.warn("proposed interpreter banned by current judge");
-                return {judge_id : params.judge_id, candidate_element:interpreterSelectElement.children(":selected")};
+                return {person_id : params.person_id, candidate_element:interpreterSelectElement.children(":selected")};
             }
         }
         // check the already-assigned
@@ -319,17 +320,17 @@ var eventForm = (function () {
             console.debug("nobody questionable assigned? returning");
             return;
         }
-        // put the problematic ones in an array
+        // put the problematic ones into an array
         var bad_ones = [];
         //["Joe","Bob","Alice", "John"].join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
         var result;
         params.dubious_assigned.each(function(){
             var el = $(this);
-            if (el.data("banned_by").toString().split(",").includes(params.judge_id)) {
-                console.warn("assigned interpreter banned by current judge!");
+            if (el.data("banned_by").toString().split(",").includes(params.person_id)) {
+                console.warn("assigned interpreter banned by current judge|person!");
                 bad_ones.push(el);
             }
-            result = {judge_id : params.judge_id,
+            result = {person_id : params.person_id,
                 assigned_elements: bad_ones};
         });
         return bad_ones.length ? result : false;
@@ -349,6 +350,28 @@ var eventForm = (function () {
         return banned.length ? banned : false;
     };
 
+    var parse_names_from_elements = function(elements) {
+        console.warn("running parse_names_from_elements()");
+        var names = elements.map((el)=>{
+            return el.children("span").text().trim().replace(/(.+), +(.+)/,"$2 $1");
+        });
+        var verbiage = "the interpreter";
+        switch (names.length) {
+            case 1:
+              verbiage += ` ${names[0]}`;
+              break;
+            case 2:
+              verbiage += `s ${names.join(" and ")}`;
+              break;
+            default:
+            // improbable, but hey you never know...
+              var str = names.join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
+              verbiage = `s ${str}`;
+        }
+
+        return verbiage;
+
+    }
     /**
      * callback for assign-interpreter button's click event
      *
