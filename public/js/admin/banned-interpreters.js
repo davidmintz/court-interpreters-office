@@ -1,12 +1,9 @@
-/** attempting to rewrite banned-interpreter-warning script */
-/*
-global $, fail, displayValidationErrors, formatDocketElement, parseTime, toggleSelectClass,
-event_type_element, judgeElement, interpreterButton, submitterElement
-*/
+/** banned-interpreter-warning for event form */
+/* global $ */
 
 /**
- * [description]
- * @param  {object} e [description]
+ * tests whether to bother checking for banned-interpreter issues
+ * @param  {object} e
  * @return {boolean} true if tests are needed
  */
 var test_for_banned_is_required = function(e){
@@ -25,7 +22,7 @@ var test_for_banned_is_required = function(e){
     // if event-type is neither in- nor out-of-court, nothing to do.
     var event_category = $("#event_type").children(":selected").data("category");
     if (! ["in","out"].includes(event_category)) {
-        console.debug("null|irrelevant relevant event type selected. returning.");
+        // console.debug("null|irrelevant relevant event type selected. returning.");
         return false;
     }
 
@@ -34,17 +31,16 @@ var test_for_banned_is_required = function(e){
         // but there are no interpreters yet assigned...
         if (! $("#interpreter-select").val() && ! $("li.interpreter-assigned").length) {
             // there's nothing to test
-            console.debug("no interpreters to check, returning false");
+            //console.debug("no interpreters to check, returning false");
             return false;
-        } else {
-            // it depends...
-            if (event_category === "in" && $("#judge").val() &&  e.target.id !== "submitter") {
-                console.debug("in-court: we think true ");
-                return true;
-            } else if (event_category === "out" && $("#submitter").val() && e.target.id !== "judge") {
-                console.debug("out-of-court: we think true");
-                return true;
-            }
+        }
+        // else, it depends...
+        if (event_category === "in" && $("#judge").val() &&  e.target.id !== "submitter") {
+            console.debug("in-court: we think true ");
+            return true;
+        } else if (event_category === "out" && $("#submitter").val() && e.target.id !== "judge") {
+            console.debug("out-of-court: we think true");
+            return true;
         }
     }
     // otherwise, if we're triggered by the add-interpreter click event
@@ -59,19 +55,19 @@ var test_for_banned_is_required = function(e){
 };
 
 /**
- * returns LI elements for interpreters banned by person_id
+ * returns elements filtered for interpreters banned by person_id
  * @return {object} jQuery
  */
 var get_banned_interpreter_elements = function(person_id){
-    var bad = $("li.interpreter-assigned, #interpreter-select option:selected").filter(function(){
-        var el = $(this);
-        if (! el.data("banned_by")) {
-            return false;
-        }
-        return el.data("banned_by").toString().split(",").includes(person_id);
+    return $("li.interpreter-assigned, #interpreter-select option:selected")
+        .filter(function(){
+            var el = $(this);
+            console.debug(`get_banned... filter looking at a ${this.tagName}`);
+            if (! el.data("banned_by")) {
+                return false;
+            }
+            return el.data("banned_by").toString().split(",").includes(person_id);
     });
-    console.debug(`returning ${bad.length} bad ones`);
-    return bad;
 };
 
 /**
@@ -79,7 +75,7 @@ var get_banned_interpreter_elements = function(person_id){
  * @return {string}
  */
 var parse_names_from_elements = function(elements) {
-    console.debug("running parse_names_from_elements()");
+
     var names = [];
     elements.each(function(){
         if (this.tagName === "LI") {
@@ -101,7 +97,6 @@ var parse_names_from_elements = function(elements) {
           var str = names.join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
           verbiage += `s ${str}`;
     }
-    console.debug(`and returning names: "${verbiage}"`);
 
     return verbiage;
 };
@@ -127,7 +122,13 @@ var compose_warning_message = function(names, event_category, target_id) {
     }
     return text;
 };
-
+/**
+ * composes and displays modal warning about banned interpreters
+ * @param {jQuery} banned
+ * @param {string} event_category
+ * @param {string} target_id
+ * @return void
+ */
 var show_banned_warning = function(banned, event_category, target_id)
 {
     var modal = $("#modal-assign-interpreter");
@@ -136,7 +137,16 @@ var show_banned_warning = function(banned, event_category, target_id)
     var btn_no = $("#btn-no-assign-interpreter");
     var names = parse_names_from_elements(banned);
     var text = compose_warning_message(names, event_category, target_id);
-    var handler = function(e){banned.remove();};
+    var handler = function(e){
+        // figure out the elements again, because when show_banned_warning()
+        // first runs, the elements to remove might not all be LI elements yet.
+        var person_id = event_category == "in" ? $("#judge").val() : $("#submitter").val();
+        var banned = get_banned_interpreter_elements(person_id)
+            .filter(function(){return this.tagName === "LI"});
+        console.log(`handler has ${banned.length} elements`);
+        banned.remove();
+    };
+    // which button to attach to depends on how the question was posed
     if (target_id === "btn-add-interpreter") {
         btn_no.one("click",handler);
     } else {
@@ -153,7 +163,6 @@ $(function(){
         function() { return $(this).data("banned_by")}
     );
     if (banned.length && $("li.interpreter-assigned").length) {
-        console.log("WTF");
         banned.each(function(){
             var interpreter_id = $(this).attr("value");
             var el = $(`li.interpreter-assigned input[name$="[interpreter]"][value="${interpreter_id}"`);
@@ -165,51 +174,38 @@ $(function(){
     $("#event_type, #judge, #submitter").on("change",function(e){
         // only deal with "natural" events, not el.trigger("change")
         if (! e.originalEvent) { return; }
-        var target = e.target.id;
-        var dbg = `change fired on ${e.target.id}, need to test for banned?`;
         if (test_for_banned_is_required(e)) {
-            console.debug(`${dbg} YES`);
             var person_id, event_category = $("#event_type option:selected").data("category");
             if (event_category === "in") {
                 person_id = $("#judge").val();
-                console.debug("need to check JUDGE: "+person_id);
+                // console.debug("need to check JUDGE: "+person_id);
             } else if (event_category === "out") {
                 person_id = $("#submitter").val();
-                console.debug("need to check SUBMITTER: "+person_id);
+                // console.debug("need to check SUBMITTER: "+person_id);
             } else {
                 console.log("neither in nor out? why is this happening?");
             }
             var banned = get_banned_interpreter_elements(person_id);
-            if (! banned.length) {
-                console.debug("no interpreters with bad baggage found");
-            } else {
-                //var names = parse_names_from_elements(banned);
-                // var text = compose_warning_message(names, event_category, target);
-                // console.warn(`need to display warning: ${text}`);
-                show_banned_warning(banned, event_category, target);
+            if (banned.length) {
+                show_banned_warning(banned, event_category, e.target.id);
             }
-        } else {
-            console.debug(`${dbg} NO`);
         }
     });
 
     $("#btn-add-interpreter").on("click",function(e){
-        var dbg =  "btn clicked. need to test for banned?";
         if (!test_for_banned_is_required(e)) {
-            console.debug(`${dbg} NO`);
+            console.debug(`NO test-for-banned required, returning`);
             return;
         }
-        console.debug(`${dbg} yes...`);
         var event_category = $("#event_type option:selected").data("category");
         var el = event_category === "in" ? "judge" : "submitter";
         var person_id = $(`#${el}`).val();
-        console.log("need to get banned interpreters for #"+el);
         var banned = get_banned_interpreter_elements(person_id);
         if (! banned.length) {
             console.debug("no interpreters with bad baggage found");
         } else {
+            console.debug(`${banned.length} banned elements found`);
             show_banned_warning(banned, event_category, e.target.id);
-            //console.warn(`need to display warning: ${text}`);
         }
      });
 });
