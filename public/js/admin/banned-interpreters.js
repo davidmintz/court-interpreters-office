@@ -63,8 +63,7 @@ var test_for_banned_is_required = function(e){
  * @return {object} jQuery
  */
 var get_banned_interpreter_elements = function(person_id){
-    var bad = $("li.interpreter-assigned").filter(function(){
-        console.log("examining an LI element");
+    var bad = $("li.interpreter-assigned, #interpreter-select option:selected").filter(function(){
         var el = $(this);
         if (! el.data("banned_by")) {
             return false;
@@ -83,7 +82,11 @@ var parse_names_from_elements = function(elements) {
     console.debug("running parse_names_from_elements()");
     var names = [];
     elements.each(function(){
-        names.push($(this).children("span").text().trim().replace(/(.+), +(.+)/,"$2 $1"));
+        if (this.tagName === "LI") {
+            names.push($(this).children("span").text().trim().replace(/(.+), +(.+)/,"$2 $1"));
+        } else {
+            names.push($(this).text().trim().replace(/(.+), +(.+)/,"$2 $1"));
+        }
     });
     var verbiage = "the interpreter";
     switch (names.length) {
@@ -103,7 +106,23 @@ var parse_names_from_elements = function(elements) {
     return verbiage;
 };
 
+/**
+ * returns text for warning message
+ * @param {string} names
+ * @param {string} event_category
+ * @return {string}
+ */
+var compose_warning_message = function(names, event_category, target_id) {
+    var text;
+    if (event_category === "in") {
+        text = `Your records indicate that ${names} should not be assigned to matters before this judge.`;
+    } else if (event_category === "out") {
+        var whom = $("#submitter option:selected").text().trim().replace(/(.+), +(.+)/,"$2 $1");
+        text = `Your records indicate that ${names} should not be assigned to events requested by ${whom}.`;
+    }
 
+    return text;
+}
 
 $(function(){
     // inject the banned_by data to any already-assigned interpreter <li>
@@ -144,6 +163,7 @@ $(function(){
             } else {
                 var names = parse_names_from_elements(banned);
                 console.warn(`need to display warning re ${banned.length} bad one(s): ${names}`);
+                var text = compose_warning_message(names, event_category, target);
             }
         } else {
             console.debug(`${dbg} NO`);
@@ -157,6 +177,8 @@ $(function(){
             return;
         }
         console.debug(`${dbg} yes...`);
+        // console.debug(`# assigned: ${$("li.interpreter-assigned").length}`);
+        // console.debug(`option: ${$("#interpreter-select option:selected").length}`);
         var event_category = $("#event_type option:selected").data("category");
         var el = event_category === "in" ? "judge" : "submitter";
         var person_id = $(`#${el}`).val();
@@ -166,7 +188,8 @@ $(function(){
             console.debug("no interpreters with bad baggage found");
         } else {
             var names = parse_names_from_elements(banned);
-            console.warn(`need to display warning re ${banned.length} bad one(s): ${names}`);
+            var text = compose_warning_message(names, event_category, e.target.id);
+            console.warn(`need to display warning re ${banned.length} bad one(s): ${names}: ${text}`);
         }
      });
 });
