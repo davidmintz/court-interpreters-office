@@ -59,20 +59,72 @@ var test_for_banned_is_required = function(e){
 };
 
 /**
- * [description]
- * @return {[type]} [description]
+ * returns LI elements for interpreters banned by person_id
+ * @return {object} jQuery
  */
-var get_interpreters_having_issues = function(person_id){
+var get_banned_interpreter_elements = function(person_id){
+    var bad = $("li.interpreter-assigned").filter(function(){
+        console.log("examining an LI element");
+        var el = $(this);
+        if (! el.data("banned_by")) {
+            return false;
+        }
+        return el.data("banned_by").toString().split(",").includes(person_id);
+    });
+    console.debug(`returning ${bad.length} bad ones`);
+    return bad;
+};
 
-}
+/**
+ * returns string of interpreter name(s) for warning message
+ * @return {string}
+ */
+var parse_names_from_elements = function(elements) {
+    console.debug("running parse_names_from_elements()");
+    var names = [];
+    elements.each(function(){
+        names.push($(this).children("span").text().trim().replace(/(.+), +(.+)/,"$2 $1"));
+    });
+    var verbiage = "the interpreter";
+    switch (names.length) {
+        case 1:
+          verbiage += ` ${names[0]}`;
+          break;
+        case 2:
+          verbiage += `s ${names.join(" and ")}`;
+          break;
+        default:
+        // improbable, but hey you never know...
+          var str = names.join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
+          verbiage += `s ${str}`;
+    }
+    console.debug(`and returning names: "${verbiage}"`);
+
+    return verbiage;
+};
+
+
 
 $(function(){
-
+    // inject the banned_by data to any already-assigned interpreter <li>
+    let banned = $("#interpreter-select").children().filter(
+        function() { return $(this).data("banned_by")}
+    );
+    if (banned.length && $("li.interpreter-assigned").length) {
+        console.log("WTF");
+        banned.each(function(){
+            var interpreter_id = $(this).attr("value");
+            var el = $(`li.interpreter-assigned input[name$="[interpreter]"][value="${interpreter_id}"`);
+            if (el.length) {
+                el.closest("li").data($(this).data());
+            }
+        });
+    }
     $("#event_type, #judge, #submitter").on("change",function(e){
         // only deal with "natural" events, not el.trigger("change")
         if (! e.originalEvent) { return; }
         var target = e.target.id;
-        var dbg = `changed ${e.target.id}, need to test for banned?`;
+        var dbg = `change fired on ${e.target.id}, need to test for banned?`;
         if (test_for_banned_is_required(e)) {
             console.debug(`${dbg} YES`);
             var person_id, event_category = $("#event_type option:selected").data("category");
@@ -86,6 +138,13 @@ $(function(){
             } else {
                 console.log("neither in nor out? why is this happening?");
             }
+            var banned = get_banned_interpreter_elements(person_id);
+            if (! banned.length) {
+                console.debug("no interpreters with bad baggage found");
+            } else {
+                var names = parse_names_from_elements(banned);
+                console.warn(`need to display warning re ${banned.length} bad one(s): ${names}`);
+            }
         } else {
             console.debug(`${dbg} NO`);
         }
@@ -97,9 +156,17 @@ $(function(){
             console.debug(`${dbg} NO`);
             return;
         }
+        console.debug(`${dbg} yes...`);
         var event_category = $("#event_type option:selected").data("category");
         var el = event_category === "in" ? "judge" : "submitter";
-        console.log("need to get #"+el);
+        var person_id = $(`#${el}`).val();
+        console.log("need to get banned interpreters for #"+el);
+        var banned = get_banned_interpreter_elements(person_id);
+        if (! banned.length) {
+            console.debug("no interpreters with bad baggage found");
+        } else {
+            var names = parse_names_from_elements(banned);
+            console.warn(`need to display warning re ${banned.length} bad one(s): ${names}`);
+        }
      });
-     console.log("boink");
 });
