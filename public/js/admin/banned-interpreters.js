@@ -29,18 +29,20 @@ var test_for_banned_is_required = function(e){
         return false;
     }
 
-    // if we were triggered by a change on submitter or judge
-    if (e && ["submitter", "judge"].includes(e.target.id)) {
+    // if we were triggered by a change on submitter or judge or event-type
+    if (e && ["submitter", "judge", "event_type"].includes(e.target.id)) {
         // but there are no interpreters yet assigned...
         if (! $("#interpreter-select").val() && ! $("li.interpreter-assigned").length) {
             // there's nothing to test
             console.debug("no interpreters to check, returning false");
             return false;
         } else {
-            // it depends.
-            if ($("#judge").val() && event_category === "in") {
+            // it depends...
+            if (event_category === "in" && $("#judge").val() &&  e.target.id !== "submitter") {
+                console.debug("in-court: we think true ");
                 return true;
-            } else if ($("#submitter").val() && event_category === "out") {
+            } else if (event_category === "out" && $("#submitter").val() && e.target.id !== "judge") {
+                console.debug("out-of-court: we think true");
                 return true;
             }
         }
@@ -69,9 +71,21 @@ $(function(){
     $("#event_type, #judge, #submitter").on("change",function(e){
         // only deal with "natural" events, not el.trigger("change")
         if (! e.originalEvent) { return; }
+        var target = e.target.id;
         var dbg = `changed ${e.target.id}, need to test for banned?`;
         if (test_for_banned_is_required(e)) {
             console.debug(`${dbg} YES`);
+            var person_id, event_category = $("#event_type option:selected").data("category");
+            console.debug(`event category is: ${event_category}`);
+            if (event_category === "in") {
+                person_id = $("#judge").val();
+                console.debug("need to check JUDGE: "+person_id);
+            } else if (event_category === "out") {
+                person_id = $("#submitter").val();
+                console.debug("need to check SUBMITTER: "+person_id);
+            } else {
+                console.log("neither in nor out? why is this happening?");
+            }
         } else {
             console.debug(`${dbg} NO`);
         }
@@ -87,8 +101,5 @@ $(function(){
         var el = event_category === "in" ? "judge" : "submitter";
         console.log("need to get #"+el);
      });
-
-
-
-
+     console.log("boink");
 });
