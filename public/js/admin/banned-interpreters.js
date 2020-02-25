@@ -120,9 +120,32 @@ var compose_warning_message = function(names, event_category, target_id) {
         var whom = $("#submitter option:selected").text().trim().replace(/(.+), +(.+)/,"$2 $1");
         text = `Your records indicate that ${names} should not be assigned to events requested by ${whom}.`;
     }
-
+    if (target_id === "btn-add-interpreter") {
+        text += " Continue anyway?";
+    } else {
+        text += " Remove?";
+    }
     return text;
-}
+};
+
+var show_banned_warning = function(banned, event_category, target_id)
+{
+    var modal = $("#modal-assign-interpreter");
+    var modal_body = $("#modal-assign-interpreter .modal-body");
+    var btn_yes = $("#btn-yes-assign-interpreter");
+    var btn_no = $("#btn-no-assign-interpreter");
+    var names = parse_names_from_elements(banned);
+    var text = compose_warning_message(names, event_category, target_id);
+    var handler = function(e){banned.remove();};
+    if (target_id === "btn-add-interpreter") {
+        btn_no.one("click",handler);
+    } else {
+        btn_yes.one("click",handler);
+    }
+    modal_body.text(text);
+    modal.on("hide.bs.modal",function(){modal.off("click","button",handler);});
+    modal.modal("show");
+};
 
 $(function(){
     // inject the banned_by data to any already-assigned interpreter <li>
@@ -147,7 +170,6 @@ $(function(){
         if (test_for_banned_is_required(e)) {
             console.debug(`${dbg} YES`);
             var person_id, event_category = $("#event_type option:selected").data("category");
-            console.debug(`event category is: ${event_category}`);
             if (event_category === "in") {
                 person_id = $("#judge").val();
                 console.debug("need to check JUDGE: "+person_id);
@@ -161,9 +183,10 @@ $(function(){
             if (! banned.length) {
                 console.debug("no interpreters with bad baggage found");
             } else {
-                var names = parse_names_from_elements(banned);
-                console.warn(`need to display warning re ${banned.length} bad one(s): ${names}`);
-                var text = compose_warning_message(names, event_category, target);
+                //var names = parse_names_from_elements(banned);
+                // var text = compose_warning_message(names, event_category, target);
+                // console.warn(`need to display warning: ${text}`);
+                show_banned_warning(banned, event_category, target);
             }
         } else {
             console.debug(`${dbg} NO`);
@@ -177,8 +200,6 @@ $(function(){
             return;
         }
         console.debug(`${dbg} yes...`);
-        // console.debug(`# assigned: ${$("li.interpreter-assigned").length}`);
-        // console.debug(`option: ${$("#interpreter-select option:selected").length}`);
         var event_category = $("#event_type option:selected").data("category");
         var el = event_category === "in" ? "judge" : "submitter";
         var person_id = $(`#${el}`).val();
@@ -187,9 +208,8 @@ $(function(){
         if (! banned.length) {
             console.debug("no interpreters with bad baggage found");
         } else {
-            var names = parse_names_from_elements(banned);
-            var text = compose_warning_message(names, event_category, e.target.id);
-            console.warn(`need to display warning re ${banned.length} bad one(s): ${names}: ${text}`);
+            show_banned_warning(banned, event_category, e.target.id);
+            //console.warn(`need to display warning: ${text}`);
         }
      });
 });
