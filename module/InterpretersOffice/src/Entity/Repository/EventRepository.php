@@ -216,7 +216,11 @@ DQL;
             $event_datetime .= ' 00:00';
         }
         $event['datetime'] = $event_datetime;
-        return $event;
+
+        // changing the data structure we're returning with a view towards
+        // adding more stuff...
+
+        return ['event'=>$event];
     }
 
     /**

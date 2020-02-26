@@ -53,4 +53,6 @@ return [
     'interpreters-office/admin/config/index' => __DIR__ . '/../view/configuration/index.phtml',
     'interpreters-office/admin/config/forms' => __DIR__ . '/../view/configuration/forms.phtml',
 
+    'interpreters-office/admin/docket-annotations/index' => __DIR__ . '/../view/docket-annotations/index.phtml',
+
 ];

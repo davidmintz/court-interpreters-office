@@ -20,6 +20,10 @@ return [
                 'label' => 'admin',
                 'route' => 'admin',
                 'pages' => [
+                    [
+                        'label' => 'docket annotations',
+                        'route' => 'admin/docket-annotations',
+                    ],
 
                     [
                         'label' => 'schedule',
@@ -340,7 +344,7 @@ return [
             'tools'=>
             [
                 'label' => 'tools',
-                'title' => 'yadda',
+                'title' => 'a handy set of tools just for you',
                 'order' => 200,
                 'uri' => '/',
                 //'resource' => Admin\EventsController::class,
@@ -348,23 +352,33 @@ return [
                     [
                         'label' => 'search',
                         'route' => 'search',
-                        'order' => 1,
+                        'order' => 10,
+
+                        //'css_class' => 'd-none d-sm-block',
+                    ],
+                    [
+                        'label' => 'docket annotations',
+                        'route' => 'admin/docket-annotations',
+                        'order' => 15,
+                        'route_matches' => [
+                            'admin/docket-annotations',
+                        ],
                         //'css_class' => 'd-none d-sm-block',
                     ],
                     [
                         'label' => 'reports',
                         'uri' => '#',
-                        'order' => 2,
+                        'order' => 20,
                         //'order' => 20,
                     ],
                     [
-                        'order' => 3,
+                        'order' => 30,
                         'label' => 'email',
                         'route' => 'email',
                         'resource' => Admin\EmailController::class,
                     ],
                     [
-                        'order' => 4,
+                        'order' => 40,
                         'label' => 'support',
                         'uri' => '#',
                     ],

@@ -62,8 +62,7 @@ class EventsControllerFactory implements FactoryInterface
                 $params = $e->getParams();
                 $entity = $params['entity'];
                 $id = $entity->getId();
-                // we could do the following but it seems less efficient, if less verbose
-                // $view_before = $em->getRepository(get_class($entity))->getView($entity->getId());
+                
                 $log->debug("using in-memory entity to get event snapshot");
                 $view_before = [
                     'date' => $entity->getDate(),

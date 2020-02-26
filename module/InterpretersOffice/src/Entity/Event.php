@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\EventRepository")
- * @ORM\Table(name="events")
+ * @ORM\Table(name="events",indexes={@ORM\Index(name="docket_idx", columns={"docket"})})
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"InterpretersOffice\Entity\Listener\EventEntityListener"})
  */
@@ -24,7 +24,7 @@ class Event implements Interpretable
     /**
      * entity id.
      *
-     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="smallint",options={"unsigned":true})
+     * @ORM\Id @ORM\GeneratedValue @ORM\Column(type="integer",options={"unsigned":true})
      */
     protected $id;
 

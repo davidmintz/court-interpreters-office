@@ -10,6 +10,7 @@ use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Entity\Listener\InterpreterEventEntityListener;
 use InterpretersOffice\Entity\Listener\Factory\InterpreterEntityListenerFactory;
 use InterpretersOffice\Admin\Service\Factory\DbLogWriterFactory;
+use InterpretersOffice\Admin\Controller\DocketAnnotationsController;
 
 return [
 
@@ -38,6 +39,7 @@ return [
             Controller\NormalizationController::class => Controller\Factory\NormalizationControllerFactory::class,
             Controller\SearchController::class => Controller\Factory\SearchControllerFactory::class,
             Controller\ConfigController::class => Controller\Factory\ConfigControllerFactory::class,
+            Controller\DocketAnnotationsController::class => Controller\Factory\DocketAnnotationsControllerFactory::class,
         ],
     ],
     'view_manager' => [

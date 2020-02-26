@@ -37,6 +37,7 @@ return [
         Admin\EmailController::class => Admin\EventsController::class,
         Admin\NormalizationController::class => Admin\EventsController::class,
         Admin\SearchController::class => Admin\EventsController::class,
+        Admin\DocketAnnotationsController::class => Admin\EventsController::class,
         Notes\Controller\NotesController::class => Admin\EventsController::class,
         // the topmost controller
         Main\IndexController::class => null,

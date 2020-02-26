@@ -123,7 +123,7 @@ class EventControllerTest extends AbstractControllerTest
         // pull it out and take a look.
         $q = 'SELECT MAX(e.id) FROM InterpretersOffice\Entity\Event e';
         $id = $em->createQuery($q)->getSingleScalarResult();
-        $data = $em->getRepository(Entity\Event::class)->getView($id);
+        $data = $em->getRepository(Entity\Event::class)->getView($id)['event'];
         $this->assertTrue(false !== strstr($data['judge'], 'Dinklesnort'));
         $this->assertTrue(false !== strstr($data['type'], 'conference'));
         $this->assertEquals($data['location'], '14B, 500 Pearl');
@@ -266,7 +266,7 @@ class EventControllerTest extends AbstractControllerTest
 
         $type_before = $type_expected;
         $time_before = $time_expected;
-        $shit = $em->getRepository(Entity\Event::class)->getView($id);
+        $shit = $em->getRepository(Entity\Event::class)->getView($id)['event'];
         $this->assertTrue('plea' == $shit['type']);
         $this->assertNotEquals($type_before, $shit['type']);
         if (is_object($shit['time'])) {
@@ -291,7 +291,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(200);
         $this->assertQuery('#event-form');
         $this->assertQueryCount('ul.interpreters-assigned li', 1);
-        $this->assertQueryContentRegex('ul.interpreters-assigned li',"/Mintz, David/"); 
+        $this->assertQueryContentRegex('ul.interpreters-assigned li',"/Mintz, David/");
     }
     public function testAssigningInterpretersResultsInMetaDataUpdate()
     {
@@ -322,7 +322,7 @@ class EventControllerTest extends AbstractControllerTest
             'defendants' => [
                 $entity->getDefendants()->toArray()[0]->getId()
             ],
-            
+
         ];
         $interpreter_id = FixtureManager::getEntityManager()->createQuery(
              'SELECT i.id FROM InterpretersOffice\Entity\Interpreter i WHERE i.lastname = :lastname'
@@ -351,7 +351,7 @@ class EventControllerTest extends AbstractControllerTest
                 'modified' => $entity->getModified()->format('Y-m-d H:i:s'),
             ])
         )->getHeaders()->addHeaderLine('X-Requested-With','XMLHttpRequest');
-        
+
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
         $now =  $entity = FixtureManager::getEntityManager()->find('InterpretersOffice\Entity\Event',1)
@@ -359,7 +359,7 @@ class EventControllerTest extends AbstractControllerTest
         //$this->dumpResponse();
         $this->assertNotEquals($then,$now);
         /**/
-        
+
     }
 
     public function testEventInputValidation()

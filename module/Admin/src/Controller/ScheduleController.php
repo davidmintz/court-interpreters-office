@@ -110,8 +110,9 @@ class ScheduleController extends AbstractActionController
     public function viewAction()
     {
         $id = $this->params()->fromRoute('id');
-        $event = $this->entityManager->getRepository(Entity\Event::class)
+        $data =  $this->entityManager->getRepository(Entity\Event::class)
            ->getView($id);
+        $event = $data['event'] ?? null;
         $csrf = (new \Laminas\Validator\Csrf('csrf', ['timeout' => 600]))->getHash();
         $session = new \Laminas\Session\Container('event_updates');
         $before = null;
@@ -119,6 +120,7 @@ class ScheduleController extends AbstractActionController
             $before = $session->{$event['id']};
             unset($session->{$event['id']});
         }
+
         return compact('event', 'id', 'csrf', 'before');
     }
 

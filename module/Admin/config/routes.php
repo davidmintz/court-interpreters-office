@@ -21,7 +21,19 @@ return  [
                 ],
             ],
             'child_routes' => [
-
+                'docket-annotations' => [
+                    'type' => Segment::class,
+                    'may_terminate' => true,
+                    'options' => [
+                        'route' => '/docket-annotations[/:docket]',
+                        'defaults' => [
+                            'module' => __NAMESPACE__,
+                            'controller' => Controller\DocketAnnotationsController::class,
+                            'action' => 'index',
+                        ],
+                        'constraints'=>[ 'docket' => '\d{4}-([A-Z]|[a-z]){2,4}-\d{3,5}'],
+                    ],
+                ],
             ],
         ],
         'events_index' => [
@@ -35,7 +47,9 @@ return  [
                     'action' => 'index',
                 ],
             ],
+
         ],
+
         'events' => [
             'type' => Segment::class,
             'may_terminate' => true,
@@ -461,7 +475,7 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/interpreters',//[/list] was an experiment
+                'route' => '/admin/interpreters',
 
                 'defaults' => [
                     'module' => __NAMESPACE__,
@@ -669,12 +683,11 @@ return  [
             'type' => Segment::class,
             'may_terminate' => true,
             'options' => [
-                'route' => '/admin/court-closings',//[/year/:year]',
+                'route' => '/admin/court-closings',
                 'defaults' => [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\CourtClosingsController::class,
                     'action' => 'index',
-                    //'constraints' => ['year' => '[20]\d\d',],
                 ],
             ],
             'child_routes' => [
@@ -834,7 +847,7 @@ return  [
                     'options' => [
                         'route' => '/docket/:docket',
                         'defaults' => ['action'=>'docket-search'],
-                        'constraints'=>[ 'docket' => '\d{4}-([A-Z]|[a-z]){2,4}-\d{3,5}']
+                        'constraints'=>[ 'docket' => '\d{4}-([A-Z]|[a-z]){2,4}-\d{3,5}'],
                     ],
                 ],
                 'clear' => [
