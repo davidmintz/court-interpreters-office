@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+/**
+ * creates dummy events, interpreter-events, defendant-events, requests...
+ */
 require __DIR__.'/../../vendor/autoload.php';
 use Laminas\Log\Logger;
 use Laminas\Log\Writer\Stream as FileWriter;
