@@ -1,11 +1,12 @@
 <?php
-
+/** search-controller factory */
 namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Controller\SearchController;
 
+/** factory */
 class SearchControllerFactory implements FactoryInterface
 {
     /**
