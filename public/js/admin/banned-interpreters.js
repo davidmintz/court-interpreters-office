@@ -8,9 +8,6 @@
  */
 var test_for_banned_is_required = function(e){
 
-    if (e) {
-        console.debug(`FYI, target id is ${e.target.id}`);
-    }
     // if it's historic, I guess we don't care. so check the date...
     if ($("#date").val()) {
         var when = moment($("#date").val(),"MM/DD/YYYY");
@@ -25,21 +22,17 @@ var test_for_banned_is_required = function(e){
         // console.debug("null|irrelevant relevant event type selected. returning.");
         return false;
     }
-
     // if we were triggered by a change on submitter or judge or event-type
     if (e && ["submitter", "judge", "event_type"].includes(e.target.id)) {
         // but there are no interpreters yet assigned...
         if (! $("#interpreter-select").val() && ! $("li.interpreter-assigned").length) {
             // there's nothing to test
-            //console.debug("no interpreters to check, returning false");
             return false;
         }
         // else, it depends...
         if (event_category === "in" && $("#judge").val() &&  e.target.id !== "submitter") {
-            console.debug("in-court: we think true ");
             return true;
         } else if (event_category === "out" && $("#submitter").val() && e.target.id !== "judge") {
-            console.debug("out-of-court: we think true");
             return true;
         }
     }
@@ -62,7 +55,7 @@ var get_banned_interpreter_elements = function(person_id){
     return $("li.interpreter-assigned, #interpreter-select option:selected")
         .filter(function(){
             var el = $(this);
-            console.debug(`get_banned... filter looking at a ${this.tagName}`);
+            // console.debug(`get_banned... filter looking at a ${this.tagName}`);
             if (! el.data("banned_by")) {
                 return false;
             }
@@ -133,27 +126,33 @@ var show_banned_warning = function(banned, event_category, target_id)
 {
     var modal = $("#modal-assign-interpreter");
     var modal_body = $("#modal-assign-interpreter .modal-body");
-    var btn_yes = $("#btn-yes-assign-interpreter");
-    var btn_no = $("#btn-no-assign-interpreter");
     var names = parse_names_from_elements(banned);
     var text = compose_warning_message(names, event_category, target_id);
-    var handler = function(e){
-        // figure out the elements again, because when show_banned_warning()
-        // first runs, the elements to remove might not all be LI elements yet.
-        var person_id = event_category == "in" ? $("#judge").val() : $("#submitter").val();
-        var banned = get_banned_interpreter_elements(person_id)
-            .filter(function(){return this.tagName === "LI"});
-        console.log(`handler has ${banned.length} elements`);
-        banned.remove();
+    modal.data({target_id});
+    var handler = function(e) {
+        var do_removal = (function(btn_clicked,modal_target_id){
+            if (! modal_target_id) { return false; }
+            if (modal_target_id === "btn-add-interpreter") {
+                // original target was the add-interpreter btn: NO means remove
+                return btn_clicked === "btn-no-assign-interpreter";
+            } else { // original target was a select menu: YES means remove
+                return btn_clicked === "btn-yes-assign-interpreter";
+            }
+        })(e.target.id,modal.data("target_id"));
+        // console.warn(`DO remove interpreters? ${do_removal}`);
+        if (do_removal) {
+            // figure out the elements again, because when show_banned_warning()
+            // first runs, the elements to remove might not all be LI elements yet.
+            var person_id = event_category == "in" ? $("#judge").val() : $("#submitter").val();
+            var banned = get_banned_interpreter_elements(person_id)
+                .filter(function(){return this.tagName === "LI"});
+            console.log(`handler: has ${banned.length} elements to remove`);
+            banned.remove();
+        }
     };
-    // which button to attach to depends on how the question was posed
-    if (target_id === "btn-add-interpreter") {
-        btn_no.one("click",handler);
-    } else {
-        btn_yes.one("click",handler);
-    }
+    modal.on("click","button",handler);
     modal_body.text(text);
-    modal.on("hide.bs.modal",function(){modal.off("click","button",handler);});
+    modal.on("hide.bs.modal",function(){modal.data({target_id:null});});
     modal.modal("show");
 };
 

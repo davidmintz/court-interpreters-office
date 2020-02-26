@@ -163,216 +163,6 @@ var eventForm = (function () {
     };
 
     /**
-     * check for banned-interpreter issues
-     * @param  {object|null} e the event
-     * @return {boolean} true if banned interpreter is found
-     */
-    var check_banned_list = function(e){
-        console.debug("beginning check_banned_list()");
-        if (e) {
-            console.debug(`FYI target id is ${e.target.id}`);
-        }
-        // if it's historic, I guess we don't care. so check the date...
-        if ($("#date").val()) {
-            var when = moment($("#date").val(),"MM/DD/YYYY");
-            if (when.isBefore(moment(),"day")) {
-                console.debug("date is in the past, so it's moot. returning");
-                return;
-            }
-        }
-        var is_submit = e && e.target && e.target.type === "submit";
-        var judge_id = judgeElement.val();
-        var dubious_assigned = get_assigned_interpreters_having_baggage();
-        var candidate_baggage = interpreterSelectElement.children(":selected").data("banned_by");
-        // were we called manually, or triggered? if(!e) {it was manual};
-        if (!dubious_assigned && !candidate_baggage) {
-            console.debug("no banned-interpreter issue detected");
-            return false;
-        } // else...
-        console.debug("looking for possible banned-interpreter issues");
-        var event_category = event_type_element.children(":selected").data("category");
-        if (! ["in","out"].includes(event_category)) {
-            console.debug("null|irrelevant relevant event type selected. returning.");
-            return false;
-        }
-        // experimental... if we are a form submission, the warnings have already
-        // been raised, so end it here to prevent a possible "did you mean to add.."
-        // dialog for displaying for a banned person, which would get annoying
-        if (is_submit) { return true; }
-        var modal = $("#modal-assign-interpreter");
-        var modal_body = $("#modal-assign-interpreter .modal-body");
-        var btn_yes = $("#btn-yes-assign-interpreter");
-        var btn_no = $("#btn-no-assign-interpreter")
-        if ("in" === event_category) {
-            // if the event was triggered by change on submitter, no worries
-            if (e && e.target.id === "submitter") {
-                return false;
-            }
-            console.debug("in-court event: check interps against the judge");
-            if (!judge_id) {
-                console.debug("no judge selected. returning");
-                return false;
-            } else {
-                var judge_result = get_interpreters_with_issues({candidate_baggage,dubious_assigned,person_id:judge_id});
-                if (! judge_result) {
-                    console.debug("no issues with proposed or already assigned interpreter(s). returning");
-                    return false;
-                }
-                var names, verbiage;
-                // is the problem with an already-assigned, or the one they are now assigning?
-                var is_proposed = typeof judge_result.candidate_element === "object";
-                if (is_proposed) {
-                    names = judge_result.candidate_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
-                    verbiage += `the interpreter ${names}`;
-                    console.debug(`issue is with PROPOSED interpreter: ${names}`);
-                } else {
-                    console.debug("detected issues with ASSIGNED, parsing name(s)...");
-                    verbiage = parse_names_from_elements(judge_result.assigned_elements);
-                }
-                var message = `Your records indicate that the ${verbiage} should not be assigned to matters before this judge.`;
-                var handler;
-                if (is_proposed) {
-                    message += " Continue anyway?";
-                    handler = function(e){  // take out the last-appended li
-                        $("li.interpreter-assigned").last().remove();
-                        console.debug("your remove-the-last-assigned handler has run");
-                    };
-                    btn_no.one("click",handler);
-                } else {
-                    message += " Remove?";
-                    handler = function(e){  // take out the (possibly multiple) bad ones
-                        $(judge_result.assigned_elements).remove();
-                        console.debug("your remove-them-all handler has run");
-                    };
-                    btn_yes.one("click",handler);
-                }
-                modal_body.text(message);
-                modal.on("hide.bs.modal",function(){
-                    modal.off("click","button",handler);
-                });
-                modal.modal("show");
-                return true;
-            }
-        } else if ("out" === event_category) {
-            console.debug("out-of-court: check interps against the submitter ");
-            var submitter_id = $("#submitter option:selected").attr("value");
-            if (! submitter_id) {
-                console.debug("no submitter to check against, returning");
-                return false;
-            }
-            var submitter_name = $("#submitter option:selected").text().trim().replace(/(.+), +(.+)/,"$2 $1");
-            if (e && e.target) {
-                if (e.target.type === "button") {
-                    // it's a **proposed** interpreter
-                    console.debug("checking proposed interpreter");
-                    var option_element = interpreterSelectElement.children(":selected");
-                    var banned_data = option_element.data("banned_by");
-                    if (banned_data.toString().split(",").includes(submitter_id)) {
-                        if (is_submit) { return true; } // same as above
-                        var name = option_element.text().trim().replace(/(.+), +(.+)/,"$2 $1");
-                        var message = `Your records indicate that the interpreter ${name} should not be assigned `
-                        + `to events involving ${submitter_name}. Continue anyway?`;
-                        console.debug(message);
-                        modal_body.text(message);
-                    }
-                } else {
-                    // it's a "change" event
-                    console.debug("need to check already-assigned interpreters");
-                    var elements = get_assigned_interpreters_having_baggage();
-                    console.debug(elements);
-                    if (! elements) {
-                        console.debug("detected no possible issues with currently-assigned");
-                        return false;
-                    } else {
-                        console.debug("getting possibly-problematic interpreter-assigned elements")
-                        var result = get_interpreters_with_issues({dubious_assigned : elements, person_id:submitter_id});
-
-                        if (!result) {
-                            console.log("no problems with assigned interpreters");
-                            return false;
-                        };
-
-
-                        var interpreter_verbiage = parse_names_from_elements(result.assigned_elements);
-                        console.warn("verbiage is: "+ interpreter_verbiage);
-
-                    }
-                }
-            } else {
-                // it's called manually during the onload event handler
-                console.debug("no event target, check already-assigned interpreters");
-            }
-        };
-    };
-    //candidate_baggage,dubious_assigned,person_id
-    var get_interpreters_with_issues = function(params){
-        console.debug(params);
-        if (params.candidate_baggage) {
-            console.log("check_whatever(): checking candidate's baggage against person");
-            if (params.candidate_baggage.toString().split(",").includes(params.person_id)) {
-                console.warn("proposed interpreter banned by current judge");
-                return {person_id : params.person_id, candidate_element:interpreterSelectElement.children(":selected")};
-            }
-        }
-        // check the already-assigned
-        console.debug("examining already-assigned for issues");
-        if (!params.dubious_assigned) {
-            console.debug("nobody questionable assigned? returning");
-            return;
-        }
-        // put the problematic ones into an array
-        var bad_ones = [];
-        //["Joe","Bob","Alice", "John"].join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
-        var result;
-        params.dubious_assigned.each(function(){
-            var el = $(this);
-            if (el.data("banned_by").toString().split(",").includes(params.person_id)) {
-                console.warn("assigned interpreter banned by current judge|person!");
-                bad_ones.push(el);
-            }
-            result = {person_id : params.person_id,
-                assigned_elements: bad_ones};
-        });
-        return bad_ones.length ? result : false;
-    };
-
-    /**
-     *  returns the currently existing li.interpreter-assigned elements for
-     * "banned_by" data attributes
-     * @return {object|false}
-     */
-    var get_assigned_interpreters_having_baggage = function(){
-        var assigned = $("li.interpreter-assigned");
-        if (! assigned.length) { return false; }
-        var banned = assigned.filter(function(){
-            return $(this).data("banned_by");
-        });
-        return banned.length ? banned : false;
-    };
-
-    var parse_names_from_elements = function(elements) {
-        console.warn("running parse_names_from_elements()");
-        var names = elements.map((el)=>{
-            return el.children("span").text().trim().replace(/(.+), +(.+)/,"$2 $1");
-        });
-        var verbiage = "the interpreter";
-        switch (names.length) {
-            case 1:
-              verbiage += ` ${names[0]}`;
-              break;
-            case 2:
-              verbiage += `s ${names.join(" and ")}`;
-              break;
-            default:
-            // improbable, but hey you never know...
-              var str = names.join(", ").replace(/(.+)(, )(.+)$/, "$1 and $3");
-              verbiage = `s ${str}`;
-        }
-
-        return verbiage;
-
-    }
-    /**
      * callback for assign-interpreter button's click event
      *
      * fetches from server and inserts markup containing human-readable label,
@@ -826,18 +616,6 @@ var eventForm = (function () {
         $("body").on("mousedown",".popover-submitter-admin a",function(e){
             document.location = e.target.href;
         });
-        // add the banned_by data to any already-assigned interpreter <li>
-        let banned = interpreterSelectElement.children().filter(
-            function() { return $(this).data("banned_by")}
-        );
-        if (banned.length && $("li.interpreter-assigned").length) {
-            banned.each(function(){
-                var interpreter_id = $(this).attr("value");
-                var el = $(`li.interpreter-assigned input[name$="[interpreter]"][value="${interpreter_id}"`);
-                if (el.length) { el.closest("li").data($(this).data());}
-            });
-        }
-        //check_banned_list();
         form.data({"multiDate":false});
         $("input.docket").on("change",formatDocketElement);
 
@@ -965,11 +743,20 @@ var eventForm = (function () {
          */
         $("input[value=save]").on("click",function(event){
             var submitButton = $(this);
-            var banned_interpreter_found = check_banned_list(event);
-            if (! banned_interpreter_found && $("#interpreter-select").val()) {
+            var banned_interpreter_found = (function(){
+                var opt = $("#interpreter-select option:selected");
+                if (! opt.length) { return false; }
+                if (! opt.data("banned_by")) { return false; }
+                var category = event_type_element.children(":selected").data("category");
+                if (! ["in","out"].includes(category)) { return false; }
+                var person_id = category === "in" ? judgeElement.val() : submitterElement.val();
+                return opt.data("banned_by").toString().split(",").includes(person_id);
+
+            })();
+            if ($("#interpreter-select").val() && ! banned_interpreter_found) {
+                // if there's a problem with a **banned** interpreter, we just let it go,
+                // because the interpreter in question won't get saved anyway.
                 event.preventDefault();
-                // if there's a problem with a banned interpreter, just let it go, because
-                // the interpreter in question won't get saved anyway.
                 $("#modal-assign-interpreter .modal-footer button").on("click",
                     function(event) {
                         var button = $(event.target);
