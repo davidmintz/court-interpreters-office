@@ -17,10 +17,8 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Laminas\Filter;
 use InterpretersOffice\Entity;
-
 use Parsedown;
-use Zend\Validator\InArray;
-use Laminas\Filter\HtmlEntities;
+use InterpretersOffice\Admin\Service\MarkdownTrait;
 
 /**
  * manages MOTW|MOTDs
@@ -46,13 +44,6 @@ class NotesService
      * @var MOTDRepository
      */
     private $noteRepository;
-
-    /**
-     * htmlentity filter
-     *
-     * @var Filter\HtmlEntities
-     */
-    private $htmlentity_filter;
 
     /**
      * session settings
@@ -106,11 +97,7 @@ class NotesService
      */
     private $inputFilter;
 
-    /**
-     * Parsedown
-     * @var Parsedown
-     */
-    private $parseDown;
+
 
     /**
      * for configuring optional behavior
@@ -118,6 +105,8 @@ class NotesService
      * @var array
      */
     private $options;
+
+    use MarkdownTrait;
 
     /**
      * constructor
@@ -141,20 +130,6 @@ class NotesService
     public function getOptions() : Array
     {
         return $this->options;
-    }
-
-    /**
-     * escapes $content
-     *
-     * @return string
-     */
-    private function escape(string $content) : string
-    {
-        if (! $this->htmlentity_filter) {
-            $this->htmlentity_filter = new Filter\HtmlEntities();
-        }
-
-        return $this->htmlentity_filter->filter($content);
     }
 
     public function getInputFilter() : InputFilter
@@ -697,27 +672,10 @@ class NotesService
             foreach ($notes as $type => $entity) {
                 if (! $entity) { continue; }
                 $entity->setContent($this->parsedown($entity->getContent()));
-
             }
         }
 
         return $notes;
-    }
-
-
-    /**
-     * renders markdown as HTML
-     *
-     * @param  string $content
-     * @return string
-     */
-    public function parsedown(string $content) : string
-    {
-        if (! $this->parseDown) {
-            $this->parseDown = new Parsedown();
-        }
-
-        return $this->parseDown->text($content);
     }
 
     /**
