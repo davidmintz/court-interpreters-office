@@ -28,7 +28,7 @@ class DocketAnnotation
     /**
      * docket number
      *
-     * @ORM\Column(type="string",length=15,nullable=false,options={"default":""})
+     * @ORM\Column(type="string",length=15,nullable=false)
      * @var string
      */
     private $docket;
@@ -37,7 +37,7 @@ class DocketAnnotation
     /**
      * comments
      *
-     * @ORM\Column(type="string",length=600,nullable=false,options={"default":""})
+     * @ORM\Column(type="string",length=600,nullable=false)
      * @var string
      */
     private $comment;

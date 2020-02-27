@@ -8,7 +8,7 @@ $this->headScript()
         ->appendFile($this->basePath('js/admin/banned-interpreters.js'))
         ->appendFile($this->basePath('js/event-form.js'));
 echo $this->errorMessage($this->errorMessage,$this->header);
-if ($this->errorMessage) :   return;  endif;
+if ($this->errorMessage) :  return;  endif;
 
 $form = $this->form;
 if ($this->layout()->action == 'add') :

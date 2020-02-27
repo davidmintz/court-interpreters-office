@@ -78,10 +78,7 @@ OK;
 
 echo -n "inserting clerks-judges..."
 cat bin/sdny/import-clerks-judges.sql | mysql office
-# bin/sdny/fucking-clerks-judges.php
 OK;
-# echo "STOPPING HERE";
-# exit 0;
 
 echo "importing banned-interpreter data... ";
 bin/sdny/banned-import.php
@@ -123,6 +120,9 @@ bin/sdny/motd-import.php
 OK;
 echo "importing tasks and rotations..."
 bin/sdny/import-task-rotation-data.php
+OK;
+echo "importing docket annotations...";
+bin/sdny/annotations-import.php
 OK;
 echo "success!"
 echo completed at $(date);

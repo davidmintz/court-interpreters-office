@@ -78,6 +78,9 @@ var formatDocketElement = function(event) // eslint-disable-line no-unused-vars
     var div = element.closest("div.form-group");
     var errorDiv = element.next(".validation-error");
     if (! errorDiv.length) {
+        errorDiv = $("#error_docket");
+    }
+    if (! errorDiv.length) {
         // try something else
         errorDiv = element.parent().next(".validation-error");
         if (! errorDiv.length)  {

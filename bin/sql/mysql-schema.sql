@@ -225,6 +225,31 @@ CREATE TABLE `defendants_requests` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `docket_annotations`
+--
+
+DROP TABLE IF EXISTS `docket_annotations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `docket_annotations` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `comment` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
+  `created_by_id` smallint(5) unsigned NOT NULL,
+  `modified_by_id` smallint(5) unsigned DEFAULT NULL,
+  `docket` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
+  `priority` smallint(5) unsigned NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `IDX_AD94F56AB03A8386` (`created_by_id`),
+  KEY `IDX_AD94F56A99049ECE` (`modified_by_id`),
+  KEY `docket_idx` (`docket`),
+  CONSTRAINT `FK_AD94F56A99049ECE` FOREIGN KEY (`modified_by_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `FK_AD94F56AB03A8386` FOREIGN KEY (`created_by_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `event_categories`
 --
 
@@ -323,6 +348,7 @@ CREATE TABLE `events` (
   KEY `IDX_5387574AB03A8386` (`created_by_id`),
   KEY `IDX_5387574A99049ECE` (`modified_by_id`),
   KEY `IDX_5387574A401B253C` (`event_type_id`),
+  KEY `docket_idx` (`docket`),
   CONSTRAINT `FK_5387574A401B253C` FOREIGN KEY (`event_type_id`) REFERENCES `event_types` (`id`),
   CONSTRAINT `FK_5387574A61A31DAE` FOREIGN KEY (`anonymous_submitter_id`) REFERENCES `hats` (`id`),
   CONSTRAINT `FK_5387574A64D218E` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
@@ -867,4 +893,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-19 11:22:27
+-- Dump completed on 2020-02-27 15:35:11
