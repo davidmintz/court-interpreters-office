@@ -17,11 +17,15 @@ class DocketAnnotationsControllerFactory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options
-     * @return SearchController
+     * @return DocketAnnotationsController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $service = new DocketAnnotationService($container->get('entity-manager'));
+        $service = new DocketAnnotationService(
+            $container->get('entity-manager'),
+            $container->get('auth')
+        );
+
         return new DocketAnnotationsController($service);
     }
 }

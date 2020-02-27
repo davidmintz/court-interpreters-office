@@ -3,6 +3,12 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations.js'
 ?>
 <div class="mx-auto border" style="max-width:800px">
     <h2><?= $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    <?php
+        // $data = $this->service->find('2018-CR-0509');
+        // $obj = $data[0];
+        // echo $obj->getComment(),"<br>";
+        //echo $obj->getCreatedBy()->getUsername();
+    ?>
     <div class="form-row form-group mt-4">
         <!-- <label class="sr-only col-form-label col-sm-2" for="docket">
             <span class="float-md-right">docket</span>

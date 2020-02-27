@@ -12,6 +12,9 @@ use Laminas\InputFilter\Factory;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Laminas\Filter;
+use Laminas\Authentication\AuthenticationServiceInterface;
+use Parsedown;
+
 
 /**
  * docket-annotation management
@@ -19,13 +22,35 @@ use Laminas\Filter;
 class DocketAnnotationService
 {
 
+    use MarkdownTrait;
+
+    /**
+     * entity manager
+     *
+     * @var EntityManagerInterface
+     */
     private $em;
 
-    public function __construct(EntityManagerInterface $em)
+    /**
+     * authentication service
+     *
+     * @var AuthenticationServiceInterface
+     */
+    private $auth;
+
+
+    public function __construct(EntityManagerInterface $em,
+        AuthenticationServiceInterface $auth)
     {
         $this->em = $em;
+        $this->auth = $auth;
     }
 
+    /**
+     * input filter
+     *
+     * @var InputFilter
+     */
     private $filter;
 
     public function createInputFilter()
@@ -76,6 +101,11 @@ class DocketAnnotationService
         ]);
     }
 
+    /**
+     * gets input filter
+     *
+     * @return
+     */
     public function getInputFilter()
     {
         if (! $this->filter) {
@@ -83,4 +113,28 @@ class DocketAnnotationService
         }
         return $this->filter;
     }
+
+    public function find(string $docket) : Array
+    {
+        $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
+        // we need to write our own repo and optimize this query
+        return $repo->findByDocket($docket);
+    }
+
+    public function create(array $data)
+    {
+
+    }
+
+    public function update(array $data, $id)
+    {
+
+    }
+
+    public function delete()
+    {
+
+    }
+
+
 }
