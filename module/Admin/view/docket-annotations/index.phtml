@@ -1,4 +1,17 @@
-
+<?php $this->headTitle('docket annotations') ?>
 <div class="mx-auto" style="max-width:800px">
     <h2><?= $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    <div class="form-row form-group mt-4">
+        <!-- <label class="sr-only col-form-label col-sm-2" for="docket">
+            <span class="float-md-right">docket</span>
+        </label> -->
+        <div class="col-sm-5">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" placeholder="docket number" aria-label="docket number" aria-describedby="btn-search">
+              <div class="input-group-append">
+                <button class="fas fa-search btn btn-primary" id="btn-search"><span class="sr-only">search</span></button>
+              </div>
+          </div>
+        </div>
+    </div>
 </div>
