@@ -50,6 +50,14 @@ $insert = $db->prepare("
         :modified);
 ");
 $i = 0;
+
+$priority_map = [
+    5 => 3,
+    4 => 3,
+    3 => 2,
+    2 => 1,
+    1 => 1,
+];
 while ($row = $stmt->fetch()) {
 
     $params = [];
@@ -61,8 +69,9 @@ while ($row = $stmt->fetch()) {
     } else {
         $params[':docket'] = $docket;
     }
+    $params[':priority'] => $priority_map[$row['priority']];
     $params[':created_by_id'] = $row['new_creator_id'];
-    foreach (['id','priority','created'] as $field) {
+    foreach (['id','created'] as $field) {
         $params[':'.$field] = $row[$field];
     }
     $params[':comment'] = $row['notes'];
