@@ -114,8 +114,14 @@ class DocketAnnotationService
         return $this->filter;
     }
 
-    public function find(string $docket) : Array
+    /**
+     * gets annotations for $docket
+     * @param  string $docket
+     * @return Array
+     */
+    public function getAnnotations(string $docket) : Array
     {
+        //var_dump(class_exists(Entity\DocketAnnotation::class));exit();
         $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
         // we need to write our own repo and optimize this query
         return $repo->findByDocket($docket);

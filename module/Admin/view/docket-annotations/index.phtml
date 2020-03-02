@@ -23,6 +23,38 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations.js'
         </div>
     </div>
     <div class="results">
+        <?php if ($this->data !== false):
+            $what = 'annotation';
+            $count = count($this->data);
+            if (! $count) :
+                echo "no ${$what}s found";
+            else:
+                if ($count > 1 ): $what .= 's'; endif;
+                echo "$count $what found";
+            endif;
+        else: $count = false; endif?>
+        <table class="table" <?php if (!$count):?>hidden<?php endif?>>
+            <thead class="text-info">
+                <th class="font-weight-normal">priority</th>
+                <th class="font-weight-normal">comment</th>
+                <th class="font-weight-normal">meta</th>
+                <th></th>
+            </thead>
+            <tbody>
+                <?php foreach($this->data as $note): $obj = $note[0]?>
+                    <tr>
+                        <td><?= $obj->getPriority()?></td>
+                        <td><?= $obj->getComment()?></td>
+                        <td><?= "created {$obj->getCreated()->format('d-M-Y g:ia')} by {$note['created_by']}"?><?php
+                            if ($note['modified_by']):
+                            ?><br><?= "updated {$obj->getModified()->format('d-M-Y g:ia')} by {$note['modified_by']}"?><?php
+                            endif;
+                        ?></td>
+                        <td></td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+        </table>
     </div>
     <div class="text-center">
         <button type="button" id="btn-create" class="btn btn-primary btn-sm" name="button"><span class="fas fa-plus"></span> add</button>

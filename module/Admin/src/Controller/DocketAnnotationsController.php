@@ -30,7 +30,30 @@ class DocketAnnotationsController extends AbstractActionController
 
     public function indexAction()
     {
-        // temporary, for playing around
-        return ['service'=>$this->service];
+        $docket = $this->params()->fromRoute('docket');
+        if ($docket) {
+            $data = $this->service->getAnnotations($docket);
+        }
+        return ['docket'=>$docket, 'data'=>$data ?? false];
+    }
+
+    public function queryAction()
+    {
+        $docket = $this->params()->fromRoute('docket');
+    }
+
+
+    public function editAction(){
+
+        return false;
+
+    }
+    public function deleteAction(){
+
+        return false;
+    }
+    public function addAction(){
+
+        return false;
     }
 }
