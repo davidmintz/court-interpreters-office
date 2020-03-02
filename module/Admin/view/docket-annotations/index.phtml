@@ -6,54 +6,19 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations.js'
     <div class="form-row form-group mt-4">
         <div class="col-sm-5">
             <div class="input-group">
-              <input type="text" value="<?=$this->docket?>" class="form-control docket" placeholder="docket number" aria-label="docket number" aria-describedby="btn-search">
+              <input type="text" id="docket" value="<?=$this->docket?>" class="form-control docket" placeholder="docket number" aria-label="docket number" aria-describedby="btn-search">
               <div class="input-group-append"><button class="fas fa-search btn btn-primary" id="btn-search"><span class="sr-only">search</span></button>
               </div>
           </div>
           <div style="display:none" id="error_docket" class="alert alert-warning validation-error"></div>
         </div>
     </div>
-    <div class="results">
-        <?php if ($this->data !== false):
-            $what = 'annotation';
-            $count = count($this->data);
-            if (! $count) :
-                echo "no ${$what}s found";
-            else:
-                if ($count > 1 ): $what .= 's'; endif;
-                echo "$count $what found";
-            endif;
-        else: $count = false; $this->data = []; endif?>
-        <table class="table" <?php if (!$count):?>hidden<?php endif?>>
-            <thead class="text-info">
-                <th class="font-weight-normal">priority</th>
-                <th class="font-weight-normal">comment</th>
-                <th class="font-weight-normal">meta</th>
-                <th></th>
-            </thead>
-            <tbody>
-                <?php foreach($this->data as $note): $obj = $note[0]?>
-                    <tr>
-                        <td><?= $obj->getPriority()?></td>
-                        <td><?= $obj->getComment()?></td>
-                        <td><?= "created {$obj->getCreated()->format('d-M-Y g:ia')} by {$note['created_by']}"?><?php
-                            if ($note['modified_by']):
-                            ?><br><?= "updated {$obj->getModified()->format('d-M-Y g:ia')} by {$note['modified_by']}"?><?php
-                            endif;
-                        ?></td>
-                        <td class="avoidwrap"><a title= "update this annotation" href="<?=$this->url('admin/docket-annotations/edit',['docket'=>$this->docket,'action'=>'edit','id'=>$obj->getId()])?>">
-                                <span class="fas fa-edit"></span><span class="sr-only">edit</span>
-                            </a>
-                            <a title="delete this annotation" href="<?=$this->url('admin/docket-annotations/edit',['docket'=>$this->docket,'action'=>'delete','id'=>$obj->getId()])?>">
-                                <span class="fas fa-trash text-muted"></span><span class="sr-only">delete</span>
-                            </a>
-                        </td>
-                    </tr>
-                <?php endforeach ?>
-            </tbody>
-        </table>
+    <div id="results" class="results">
+        <?php echo $this->partial('docket-annotations/partials/table',[
+            'data' => $this->data, 'docket' => $this->docket
+        ]);?>
     </div>
     <div class="text-center">
-        <a role="button" href="<?= $this->url('admin/docket-annotations/add',['docket'=>$this->docket])?>" type="button" id="btn-create" class="btn btn-primary btn-sm" name="button"><span class="fas fa-plus"></span> add</a>
+        <a role="button" href="<?= $this->url('admin/docket-annotations/add',['docket'=>$this->docket ?? ''])?>" type="button" id="btn-create" class="btn btn-primary btn-sm" name="button"><span class="fas fa-plus"></span> add</a>
     </div>
 </div>

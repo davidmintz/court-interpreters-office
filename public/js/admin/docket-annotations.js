@@ -1,22 +1,29 @@
 /* global  $, fail, formatDocketElement, displayValidationErrors */
 $(function(){
-    var url = document.location.pathname;
+    var url = window.basePath + "/admin/docket-annotations";
     console.debug(url);
-    $(".docket").on("change",formatDocketElement);
+    $(".docket").on("change",formatDocketElement).trigger("change");
+    var el = $("#docket");
     $("#btn-search").on("click",function(e){
-        var el = $("#docket");
         if (!el.data("valid") || ! el.val().trim()) {
             return;
         }
         var docket = el.val();
-        console.debug(`${url}/${docket}`);
         $.get(`${url}/${docket}`)
-        .then((res)=>{
-
-        });
+        .then((res)=>{$("#results").html(res);})
+        .fail(fail);
 
     });
 
-    // $("#btn-create").on("click",function(e){});
+    $("#btn-create").on("click",function(e){
+        e.preventDefault();
+
+        if (el.val().trim() && el.data("valid")) {
+            console.log("use "+el.val());
+            url += el.val().trim();
+        } else {
+            console.log("use "+document.location.pathname);
+        }
+    });
 
 });

@@ -34,7 +34,13 @@ class DocketAnnotationsController extends AbstractActionController
         if ($docket) {
             $data = $this->service->getAnnotations($docket);
         }
-        return ['docket'=>$docket, 'data'=>$data ?? false];
+        $view = new ViewModel(['docket'=>$docket, 'data'=>$data ?? false]);
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $view->setTemplate('docket-annotations/partials/table')
+                ->setTerminal(true);
+        }
+        
+        return $view;
     }
 
     public function queryAction()
