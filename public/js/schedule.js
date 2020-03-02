@@ -93,6 +93,11 @@ var check_banned = function(banned_by,event_data){
     }
 };
 
+/**
+ * initializes event handlers for /admin/schedule
+ *
+ * @return {void}
+ */
 $(function() {
     var schedule_table = $("#schedule-table");
     // for later comparison
@@ -129,6 +134,7 @@ $(function() {
         event.preventDefault(); // console.log("closing the popover");
         $(this).parents(".popover").popover("hide");
     })
+    
     /**
      * removes an interpreter from the popover
      */
