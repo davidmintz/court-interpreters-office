@@ -75,6 +75,24 @@ const reload_schedule = function(url){
 
 var previous_data, interval;
 
+/**
+ * checks if interpreter is banned by submitter|judge
+ *
+ * @param string|int banned_by comma-delimited $ids
+ * @param object event_data attributes from tr element
+ * @return boolean true if interpreter is banned
+ */
+var check_banned = function(banned_by,event_data){
+    var ids = banned_by.toString().split(",");
+    if (event_data.category === "in" && event_data.judge_id) {
+        return ! ids.includes(event_data.judge_id);
+    } else if (event_data.category === "out" && event_data.submitter_id) {
+        return ! ids.includes(event_data.submitter_id);
+    } else {
+        return false;
+    }
+};
+
 $(function() {
     var schedule_table = $("#schedule-table");
     // for later comparison
@@ -192,20 +210,27 @@ $(function() {
      */
     .on("shown.bs.popover",".edit-interpreters",(e)=>{
         var language_id = $(e.target).parent().prev().data().language_id;
-        var event_id = $(e.target).closest("tr").data().id;
+        var event_data = $(e.target).closest("tr").data();
+        var event_id = event_data.id;
         var popover = $(".popover").last();
         popover.data({event_id});
         var interpreter_select = popover.find("select");
+
         $.getJSON("/admin/schedule/interpreter-options?language_id="
         + language_id + "&csrf=1" )
             .then((response)=>{
-                // Object.values(response.options).sort((a,b) => a.label.localeCompare(b.label))
                 var options = response.options.map(function(item){
                     var opt = $("<option>").val(item.value).text(item.label);
                     if (item.attributes) {
                         for (let [key, value] of Object.entries(item.attributes)) {
                             opt.attr(key,value);
                         }
+                    }
+                    // disabled the option if the interpreter has issues with this
+                    // event's submitter|judge
+                    if (item.attributes && item.attributes["data-banned_by"]) {
+                        var disabled = check_banned(item.attributes["data-banned_by"],event_data);
+                        if (disabled) { opt.attr({disabled}); }
                     }
                     return opt;
                 });
