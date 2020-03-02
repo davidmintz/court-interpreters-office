@@ -270,6 +270,7 @@ DQL;
         }
         $dql = 'SELECT e.id, e.date, e.time,
          COALESCE(j.lastname, aj.name) AS judge,
+         j.id AS judge_id,
          COALESCE(aj_parent_location.name, aj_location.name) AS aj_default_location,
          t.name AS type,
          lang.name AS language,
@@ -280,11 +281,13 @@ DQL;
          ploc.name AS parent_location,
          cat.category,
          cr.reason AS cancellation,
-         loc_type.type AS location_type
+         loc_type.type AS location_type,
+         submitter.id AS submitter_id
          FROM InterpretersOffice\Entity\Event e
          JOIN e.language lang
          JOIN e.event_type t
          JOIN t.category cat
+         LEFT JOIN e.submitter submitter
          LEFT JOIN e.judge j
          LEFT JOIN e.anonymous_judge aj
          LEFT JOIN aj.defaultLocation aj_location
