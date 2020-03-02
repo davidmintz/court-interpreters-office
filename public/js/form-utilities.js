@@ -98,7 +98,7 @@ var formatDocketElement = function(event) // eslint-disable-line no-unused-vars
     var matches = element[0].value.match(DocketRegExp);
     if (element[0].value && ! matches) {
         errorDiv.text("invalid docket number").show().trigger("show");
-        element.data("valid",0);
+        element.data("valid",false).addClass("is-invalid");
         div.addClass("has-error has-feedback");
         return;
 
@@ -127,7 +127,7 @@ var formatDocketElement = function(event) // eslint-disable-line no-unused-vars
         number = number.replace(/^00/,"0");
     }
     element.val(year + "-"  + flavor + "-" + number)
-        .data("valid",1);
+        .data("valid",true).removeClass("is-invalid");
     errorDiv.empty().hide();
 
     return element;
