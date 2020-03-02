@@ -54,6 +54,6 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations.js'
         </table>
     </div>
     <div class="text-center">
-        <button type="button" id="btn-create" class="btn btn-primary btn-sm" name="button"><span class="fas fa-plus"></span> add</button>
+        <a role="button" href="<?= $this->url('admin/docket-annotations/add',['docket'=>$this->docket])?>" type="button" id="btn-create" class="btn btn-primary btn-sm" name="button"><span class="fas fa-plus"></span> add</a>
     </div>
 </div>

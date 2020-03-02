@@ -42,6 +42,7 @@ return  [
                                 'defaults' => [
                                     'action' => 'add',
                                 ],
+                                // 'constraints'=>[ 'docket' => '\d{4}-([A-Z]|[a-z]){2,4}-\d{3,5}'],
                             ],
                         ],
                         'edit' => [

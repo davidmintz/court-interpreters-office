@@ -12,14 +12,11 @@ $(function(){
         console.debug(`${url}/${docket}`);
         $.get(`${url}/${docket}`)
         .then((res)=>{
-            
+
         });
 
     });
 
-    $("#btn-create").on("click",function(e){
-        e.preventDefault();
-
-    });
+    // $("#btn-create").on("click",function(e){});
 
 });
