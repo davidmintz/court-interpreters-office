@@ -33,6 +33,29 @@ return  [
                         ],
                         'constraints'=>[ 'docket' => '\d{4}-([A-Z]|[a-z]){2,4}-\d{3,5}'],
                     ],
+                    'child_routes' => [
+                        'add' => [
+                            'type' => Segment::class,
+                            'may_terminate' => true,
+                            'options' => [
+                                'route' => '/add',
+                                'defaults' => [
+                                    'action' => 'add',
+                                ],
+                            ],
+                        ],
+                        'edit' => [
+                            'type' => Segment::class,
+                            'may_terminate' => true,
+                            'options' => [
+                                'route' => '/:action/:id',
+                                'constraints' => [
+                                    'action' => 'edit|delete',
+                                    'id' => '[1-9]\d*',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ],

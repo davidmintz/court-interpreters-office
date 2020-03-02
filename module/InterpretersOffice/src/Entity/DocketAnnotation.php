@@ -11,7 +11,7 @@ use InterpretersOffice\Entity\DocketAnnotation;
 /**
 * Docket annotation.
 *
-* @ORM\Entity()
+* @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\DocketAnnotationRepository")
 * @ORM\Table(name="docket_annotations",indexes={@ORM\Index(name="docket_idx", columns={"docket"})})
 *
 * //ORM\EntityListeners({"InterpretersOffice\Entity\Listener\..."})
@@ -136,7 +136,7 @@ class DocketAnnotation
      *
      * @return int
      */
-    public function getPriority() : integer
+    public function getPriority() : int
     {
         return (int)$this->priority;
     }
@@ -160,7 +160,7 @@ class DocketAnnotation
      *
      * @return \DateTime
      */
-    public function getCreated() : User
+    public function getCreated() : DateTime
     {
         return $this->created;
     }
