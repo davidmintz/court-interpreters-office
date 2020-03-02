@@ -69,7 +69,7 @@ while ($row = $stmt->fetch()) {
     } else {
         $params[':docket'] = $docket;
     }
-    $params[':priority'] => $priority_map[$row['priority']];
+    $params[':priority'] = $priority_map[$row['priority']];
     $params[':created_by_id'] = $row['new_creator_id'];
     foreach (['id','created'] as $field) {
         $params[':'.$field] = $row[$field];
