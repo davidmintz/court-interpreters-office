@@ -26,6 +26,6 @@ class DocketAnnotationsControllerFactory implements FactoryInterface
             $container->get('auth')
         );
 
-        return new DocketAnnotationsController($service);
+        return new $requestedName($service);
     }
 }

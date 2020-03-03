@@ -1,0 +1,60 @@
+<?php /** module/Admin/view/docket-annotations/form.phtml */
+$this->headTitle('docket annotations |'.$this->layout()->action);
+$this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-form.js'));
+if ($this->note):
+    $priority = $this->note->getPriority();
+else:
+    $priority = null;
+endif;
+?>
+<div class="mx-auto" style="max-width:800px">
+    <h2><?= $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    <form class="mt-4" action="" method="post">
+        <div class="form-row form-group">
+            <label class="col-form-label col-sm-3" for="docket">
+                <span class="float-md-right">docket</span>
+            </label>
+            <div class="col-sm-3">
+                <input type="text" id="docket" class="form-control" name="docket" value="<?=$this->note ? $this->note->getDocket() : ''?>">
+            </div>
+        </div>
+        <div class="form-row form-group">
+            <label class="col-form-label col-sm-3" for="comment">
+                <span class="float-md-right">text</span>
+            </label>
+            <div class="col-sm-6">
+                <textarea name="comment" class="form-control" rows="5" cols="60"><?php if ($this->note): echo $this->note->getComment(); endif?></textarea>
+            </div>
+        </div>
+        <div class="form-row form-group">
+            <div class="col-sm-3" for="priority">
+                <span class="float-md-right">priority</span>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="priority" id="priority-1" value="1" <?php if ($priority == 1):?>checked<?php endif ?>>
+                    <label class="form-check-label" for="priority-1"><span class="fas fa-info-circle text-info"></span>
+                        informational
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="priority" id="priority-2" value="2" <?php if ($priority == 2):?>checked<?php endif ?>>
+                    <label class="form-check-label" for="priority-2"><span class="fas fa-exclamation-triangle text-warning"></span>
+                        warning
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="priority" id="priority-3" value="3" <?php if ($priority == 3):?>checked<?php endif ?>>
+                    <label class="form-check-label" for="priority-3"><span class="fas fa-skull-crossbones text-danger"></span>
+                        danger
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row form-group">
+            <div class="col-sm-4 offset-sm-3 pt-2"><button type="button" id="btn-save" class="btn btn-success">save</button>
+                <input type="hidden" name="id" value="<?=$this->note ? $this->note->getId() : ''?>">
+                <input type="hidden" name="csrf" value="<?= $this->csrf ?>">
+            </div>
+    </form>
+</div>

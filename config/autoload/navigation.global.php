@@ -23,6 +23,18 @@ return [
                     [
                         'label' => 'docket annotations',
                         'route' => 'admin/docket-annotations',
+
+                        'pages' => [
+                            [
+                                'label' => 'add',
+                                'route' => 'admin/docket-annotations/add',
+                            ],
+                            [
+                                'label' => 'edit',
+                                'route' => 'admin/docket-annotations/edit',
+
+                            ],
+                        ],
                     ],
 
                     [
@@ -360,9 +372,7 @@ return [
                         'label' => 'docket annotations',
                         'route' => 'admin/docket-annotations',
                         'order' => 15,
-                        'route_matches' => [
-                            'admin/docket-annotations',
-                        ],
+                        'route_matches'=>['admin/docket-annotations/edit','admin/docket-annotations/add'],
                         //'css_class' => 'd-none d-sm-block',
                     ],
                     [

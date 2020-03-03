@@ -8,7 +8,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Laminas\Authentication\AuthenticationServiceInterface;
-
+use Laminas\Validator\Csrf;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 
@@ -23,11 +23,21 @@ class DocketAnnotationsController extends AbstractActionController
      */
     private $service;
 
+    /**
+     * constructor
+     *
+     * @param DocketAnnotationService $service
+     */
     public function __construct(DocketAnnotationService $service)
     {
         $this->service = $service;
     }
 
+    /**
+     * index
+     *
+     * @return ViewModel
+     */
     public function indexAction()
     {
         $docket = $this->params()->fromRoute('docket');
@@ -39,27 +49,34 @@ class DocketAnnotationsController extends AbstractActionController
             $view->setTemplate('docket-annotations/partials/table')
                 ->setTerminal(true);
         }
-        
+
         return $view;
     }
 
-    public function queryAction()
-    {
-        $docket = $this->params()->fromRoute('docket');
-    }
-
-
+    /**
+     * displays edit form
+     *
+     * @return ViewModel
+     */
     public function editAction(){
 
-        return false;
-
+        $id = $this->params()->fromRoute('id');
+        $note = $this->service->get((int)$id);
+        $token = (new Csrf(['timeout'=>1200]))->getHash();
+        return ['note'=>$note, 'csrf'=>$token];
     }
+
     public function deleteAction(){
 
         return false;
     }
+    /**
+     * displays create form
+     *
+     * @return ViewModel
+     */
     public function addAction(){
 
-        return false;
+
     }
 }

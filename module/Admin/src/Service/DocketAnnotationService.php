@@ -115,6 +115,18 @@ class DocketAnnotationService
     }
 
     /**
+     * gets DocketAnnotation
+     * 
+     * @param  int    $id
+     * @return Entity\DocketAnnotation
+     */
+    public function get(int $id) :? Entity\DocketAnnotation
+    {
+        $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
+        return $repo->find($id);
+    }
+
+    /**
      * gets annotations for $docket
      * @param  string $docket
      * @return Array

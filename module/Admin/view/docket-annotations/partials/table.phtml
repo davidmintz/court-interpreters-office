@@ -2,7 +2,7 @@
     $what = 'annotation';
     $count = count($this->data);
     if (! $count) :
-        echo "no ${$what}s found";
+        echo "no {$what}s found";
     else:
         if ($count > 1 ): $what .= 's'; endif;
         echo "$count $what found";

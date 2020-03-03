@@ -40,6 +40,7 @@ return [
             Controller\SearchController::class => Controller\Factory\SearchControllerFactory::class,
             Controller\ConfigController::class => Controller\Factory\ConfigControllerFactory::class,
             Controller\DocketAnnotationsController::class => Controller\Factory\DocketAnnotationsControllerFactory::class,
+            Controller\DocketAnnotationRestController::class => Controller\Factory\DocketAnnotationsControllerFactory::class,
         ],
     ],
     'view_manager' => [
