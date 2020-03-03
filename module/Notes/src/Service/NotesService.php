@@ -19,7 +19,7 @@ use Laminas\Filter;
 use InterpretersOffice\Entity;
 use Parsedown;
 use InterpretersOffice\Admin\Service\MarkdownTrait;
-
+use Laminas\Http\Header\HeaderInterface;
 /**
  * manages MOTW|MOTDs
  */
@@ -399,6 +399,34 @@ class NotesService
 
         return [$type => $entity, 'status'=>'success'];
     }
+
+    /**
+     * deletion
+     *
+     * @param  string $id
+     * @return null
+     */
+    public function delete(string $type, string $id, $header)  {
+
+        $filter = $this->getInputFilter();
+        $filter->setValidationGroup(['csrf','type']);
+        $token = $header instanceof \Laminas\Http\Header\HeaderInterface ?
+            $header->getFieldValue('X-Security-Token') : '';
+        $filter->setData(['csrf'=>$token,'type'=>$type]);
+        if (! $filter->isValid()) {
+            return $filter->getMessages();
+        }
+        $entity = $this->{'get'.\strtoupper($type)}($id);
+        if ($entity) {
+            $this->em->remove($entity);
+            $this->em->flush();
+            $status = 'deleted';
+        } else {
+            $status = 'not found';
+        }
+        return ['status' => $status, 'id' => $id];
+    }
+
 
     public function createBatchEditInputFilter() : InputFilter
     {

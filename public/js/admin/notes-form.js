@@ -27,6 +27,18 @@ var append_motd_date = function(dateText) {
     $("#dates").append(shit);
 };
 
+var delete_note = function(){
+    var form = $("#notes-form");
+    var id = $(`input[name="id"]`).val();
+    var type = $("input[name='type']").val();
+    var token = $("input[name=csrf]").val();
+    $.ajax({
+        method : "DELETE",
+        url : `${window.basePath}/admin/notes/delete/${type}/${id}`,
+        headers : {"X-Security-Token":token}
+    }).then((res)=>console.log(res));
+}
+
 $(function(){
     var dp_defaults = {
         dateFormat:"yy-mm-dd",
