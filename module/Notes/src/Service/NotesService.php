@@ -414,7 +414,10 @@ class NotesService
             $header->getFieldValue('X-Security-Token') : '';
         $filter->setData(['csrf'=>$token,'type'=>$type]);
         if (! $filter->isValid()) {
-            return $filter->getMessages();
+            return [
+                'validation_errors'=>$filter->getMessages(),
+                'status'=>'validation failed'
+            ];
         }
         $entity = $this->{'get'.\strtoupper($type)}($id);
         if ($entity) {

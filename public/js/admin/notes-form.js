@@ -36,7 +36,15 @@ var delete_note = function(){
         method : "DELETE",
         url : `${window.basePath}/admin/notes/delete/${type}/${id}`,
         headers : {"X-Security-Token":token}
-    }).then((res)=>console.log(res));
+    }).then(
+        (res)=>{
+            if (res.validation_errors) {
+                return displayValidationErrors(res.validation_errors);
+            }
+            var html = `<div class="alert alert-success">This ${type.toUpperCase()} has been deleted.</div>`;
+            form.replaceWith(html);
+        }
+    );
 }
 
 $(function(){
@@ -211,6 +219,13 @@ $(function(){
     .on("click",".btn-remove-item",function(e){
         e.preventDefault();
         $(this).closest("div").remove();
+    }).on("click","#btn-delete",function(e){
+        e.preventDefault();
+        var type = $("input[name='type']").val().toUpperCase();
+        if (!window.confirm(`Are you sure you want to delete this ${type}?`)) {
+            return;
+        }
+        delete_note();
     });
     $("#tabs-notes .nav-link").on("click",function(e){
         e.preventDefault();

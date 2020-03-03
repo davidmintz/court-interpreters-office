@@ -36,7 +36,9 @@
             <input type="hidden" name="date" value="<?php echo $this->date->format('Y-m-d')?>">
             <input type="hidden" name="id" value="<?php echo $this->note ? $this->note->getId():''?>">
             <input id="csrf" type="hidden" name="csrf" value="<?php echo $this->csrf ?>">
-            <button type="button" class="btn btn-success">save</button> <button id="btn-cancel-edit" type="button" class="btn btn-outline-secondary">cancel</button>
+            <button type="button" class="btn btn-success">save</button>
+            <button id="btn-delete" type="button" class="btn btn-warning" <?php if(!$this->note):?>hidden<?php endif ?>>delete</button>
+            <button id="btn-cancel-edit" type="button" class="btn btn-outline-secondary">cancel</button>
         </div>
     </div>
 </form>
