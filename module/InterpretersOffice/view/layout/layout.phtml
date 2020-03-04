@@ -15,7 +15,7 @@ echo $this->doctype();
         ->appendStylesheet($this->basePath('css/font-awesome-5.12.1/css/all.min.css'));
 echo $this->headStyle();?>
 </head>
-<body><?php if ($this->layout()->notes_enabled): // the Notes [a/k/a MOT[DW] feature]?>
+<body><?php if ($this->layout()->notes_enabled && $this->layout()->note_settings): // the Notes [a/k/a MOT[DW] feature]?>
     <?php echo $this->partial('notes/partials/notes.phtml',
     ['config'=>$this->layout()->note_settings,
     'motd'=>$this->motd,
