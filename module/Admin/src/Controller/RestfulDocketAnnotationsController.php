@@ -48,6 +48,6 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
 
     public function create($data)
     {
-        return new JsonModel(['status'=>'boink! CREATE']);
+        return new JsonModel($this->service->create($data));
     }
 }

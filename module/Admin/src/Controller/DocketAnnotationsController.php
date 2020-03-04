@@ -76,7 +76,8 @@ class DocketAnnotationsController extends AbstractActionController
      * @return ViewModel
      */
     public function addAction(){
-
+        $token = (new Csrf(['timeout'=>1200]))->getHash();
+        return ['csrf'=>$token];
 
     }
 }

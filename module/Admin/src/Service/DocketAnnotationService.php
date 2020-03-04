@@ -9,12 +9,13 @@ use InterpretersOffice\Entity;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Laminas\InputFilter\Factory;
-use Laminas\InputFilter\InputFilter;
+use Laminas\InputFilter;
 use Laminas\Validator;
 use Laminas\Filter;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Parsedown;
-
+use InterpretersOffice\Admin\Form\Validator\Docket as DocketValidator;
+use InterpretersOffice\Admin\Form\Filter\Docket as DocketFilter;
 
 /**
  * docket-annotation management
@@ -56,13 +57,55 @@ class DocketAnnotationService
     public function createInputFilter()
     {
         return (new InputFilter\Factory)->createInputFilter([
+            'csrf' => [
+                'name' => 'csrf',
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => Validator\NotEmpty::class,
+                        'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => "required security token is missing",
+                            ]
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => Validator\Csrf::class,
+                        'options' => [
+                            'messages' =>
+                                [
+                                    'notSame' => 'Security error: invalid/expired CSRF token.'
+                                    .' Please reload the page and try again.',
+                                ],
+                            'timeout' => 1200,
+                        ],
+                    ],
+                ]
+            ],
             'priority' => [
                 'name' => 'priority',
                 'required' => true,
                 'validators' => [
                     [
-                        'name' => 'not_empty',
-                        'options' => [],
+                        'name' => Validator\NotEmpty::class,
+                        'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => "priority is required",
+                            ]
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => Validator\InArray::class,
+                        'options' => [
+                            'haystack' => [1,2,3],
+                            'messages' => [
+                                Validator\InArray::NOT_IN_ARRAY =>
+                                 'priority must be either 1, 2 or 3',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
                     ],
                 ],
                 'filters' => [
@@ -74,15 +117,24 @@ class DocketAnnotationService
                 'required' => true,
                 'validators' => [
                     [
-                        'name' => 'not_empty',
-                        'options' => [],
+                        'name' => Validator\NotEmpty::class,
+                        'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => "docket number is required",
+                            ]
+                        ],
                     ],
                     [
-
-                    ]
+                        'name'=> DocketValidator::class,
+                    ],
                 ],
                 'filters' => [
-
+                    [
+                        'name' => Filter\StringTrim::class,
+                    ],
+                    [
+                        'name' => DocketFilter::class,
+                    ]
                 ],
             ],
             'comment' => [
@@ -90,12 +142,29 @@ class DocketAnnotationService
                 'required' => true,
                 'validators' => [
                     [
-                        'name' => 'not_empty',
-                        'options' => [],
+                        'name' => Validator\NotEmpty::class,
+                        'options' => [
+                            'messages' => [
+                                Validator\NotEmpty::IS_EMPTY => "some comment text is required",
+                            ]
+                        ],
+                        'break_chain_on_failure' => true,
                     ],
+                    [
+                        'name' => Validator\StringLength::class,
+                        'options' => [
+                            'min' => 5, 'max' => 600,
+                            'messages' => [
+                                 Validator\StringLength::TOO_SHORT => 'comment has to be a minimum of %min% characters',
+                                 Validator\StringLength::TOO_LONG => 'comment cannot exceed a maximum of %max% characters',
+                            ]
+                        ]
+                    ]
                 ],
                 'filters' => [
-
+                    [
+                        'name' => Filter\StringTrim::class,
+                    ],
                 ],
             ],
         ]);
@@ -116,7 +185,7 @@ class DocketAnnotationService
 
     /**
      * gets DocketAnnotation
-     * 
+     *
      * @param  int    $id
      * @return Entity\DocketAnnotation
      */
@@ -139,9 +208,14 @@ class DocketAnnotationService
         return $repo->findByDocket($docket);
     }
 
-    public function create(array $data)
+    public function create(array $data) : array
     {
-
+        $filter = $this->getInputFilter();
+        $filter->setData($data);
+        if (! $filter->isValid()) {
+            return ['validation_errors' => $filter->getMessages(), 'status'=>'validation failed'];
+        }
+        return [ 'status' => 'so far so good', 'valid' => true];
     }
 
     public function update(array $data, $id)

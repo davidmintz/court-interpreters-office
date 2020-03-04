@@ -1,15 +1,33 @@
 <?php /** module/Admin/view/docket-annotations/form.phtml */
 $this->headTitle('docket annotations |'.$this->layout()->action);
-$this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-form.js'));
-if ($this->note):
-    $priority = $this->note->getPriority();
-else:
-    $priority = null;
-endif;
-?>
+$this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-form.js'));?>
+
 <div class="mx-auto" style="max-width:800px">
     <h2><?= $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-    <form class="mt-4" action="" method="post">
+    <?php
+    if ($this->note):
+        $priority = $this->note->getPriority();
+    else:
+        $priority = null;
+    endif;
+    if ($this->layout()->action == 'edit') :
+        if (! $this->note) :
+            ?>
+            <div class="alert alert-warning mt-2">
+                Docket annotation was not found in the database. It may have been deleted, or
+                your query may contain invalid id number.
+            </div>
+        </div>
+        <?php return;
+            endif;
+        $action = $this->basePath('/admin/docket-notes/api/update');
+        $method = 'PUT';
+    elseif ($this->layout()->action == 'add'):
+        $action = $this->basePath('/admin/docket-notes/api/create');
+        $method = 'POST';
+    endif;
+    ?>
+    <form class="mt-4" id="annotation-form" action="<?=$action ?? ''?>" method="<?= $method ?? ''?>">
         <div class="form-row form-group">
             <label class="col-form-label col-sm-3" for="docket">
                 <span class="float-md-right">docket</span>
