@@ -1,6 +1,6 @@
 <?php /** module/Admin/config/routes.php */
-namespace InterpretersOffice\Admin;
 
+namespace InterpretersOffice\Admin;
 use Laminas\Router\Http\Segment;
 use Laminas\Router\Http\Literal;
 use InterpretersOffice\Admin\Controller\CourtClosingsController;
@@ -48,11 +48,64 @@ return  [
                             'type' => Segment::class,
                             'may_terminate' => true,
                             'options' => [
-                                'route' => '/:action/:id',
+                                'route' => '/edit/:id',
+                                'defaults' => [
+                                    'action' => 'edit',
+                                ],
                                 'constraints' => [
-                                    'action' => 'edit|delete',
+                                    // 'action' => 'edit|delete',
                                     'id' => '[1-9]\d*',
                                 ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'docket-notes-api' => [
+            'type' => Segment::class,
+            'may_terminate' => false,
+            'options' => [
+                'route' => '/admin/docket-notes/api',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\RestfulDocketAnnotationsController::class,
+                ],
+            ],
+            'child_routes' => [
+                // 'test' => [
+                //     'type' => Segment::class,
+                //     'options' => [
+                //         'route' => '/test',
+                //         'defaults' => [
+                //             'action' => 'test',
+                //         ],
+                //     ],
+                // ],
+                'put' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/update/:id',
+                        'defaults' => [
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
+                            ],
+                        ],
+                    ],
+                ],
+                'post' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/create',
+                    ]
+                ],
+                'delete' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/delete/:id',
+                        'defaults' => [
+                            'constraints' => [
+                                'id' => '[1-9]\d*',
                             ],
                         ],
                     ],

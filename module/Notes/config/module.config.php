@@ -121,7 +121,7 @@ return [
                                     'type' => 'mot[dw]',
                                 ],
                             ],
-                        ]
+                        ],
                     ],
                     'post' => [
                         'type' => Segment::class,

@@ -20,7 +20,7 @@ class Module
             if (! $routeMatch) {
                 return;
             }
-            $module = $routeMatch->getParams()['module'];
+            $module = $routeMatch->getParams()['module']??'';
             if ('Sandbox' == $module ) {
                 $viewModel = $e->getApplication()->getMvcEvent()
                         ->getViewModel();
