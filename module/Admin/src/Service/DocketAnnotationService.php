@@ -18,7 +18,7 @@ use InterpretersOffice\Admin\Form\Validator\Docket as DocketValidator;
 use InterpretersOffice\Admin\Form\Filter\Docket as DocketFilter;
 
 /**
- * docket-annotation management
+ * docket-annotation entity management
  */
 class DocketAnnotationService
 {
@@ -39,7 +39,11 @@ class DocketAnnotationService
      */
     private $auth;
 
-
+    /**
+     * constructor
+     * @param EntityManagerInterface         $em
+     * @param AuthenticationServiceInterface $auth
+     */
     public function __construct(EntityManagerInterface $em,
         AuthenticationServiceInterface $auth)
     {
@@ -54,7 +58,12 @@ class DocketAnnotationService
      */
     private $filter;
 
-    public function createInputFilter()
+    /**
+     * creates input filter
+     *
+     * @return InputFilter
+     */
+    public function createInputFilter() : InputFilter
     {
         return (new InputFilter\Factory)->createInputFilter([
             'csrf' => [
@@ -176,7 +185,7 @@ class DocketAnnotationService
      *
      * @return
      */
-    public function getInputFilter()
+    public function getInputFilter() : InputFilter
     {
         if (! $this->filter) {
             $this->filter = $this->createInputFilter();
@@ -202,7 +211,7 @@ class DocketAnnotationService
      * @param  string $docket
      * @return Array
      */
-    public function getAnnotations(string $docket) : Array
+    public function getAnnotations(string $docket) : array
     {
         return $this->em
             ->getRepository(Entity\DocketAnnotation::class)
@@ -282,7 +291,7 @@ class DocketAnnotationService
      * @param  string $csrf
      * @return array
      */
-    public function delete(string $id,string $csrf)
+    public function delete(string $id,string $csrf) : array
     {
         $filter = $this->getInputFilter();
         $filter->setValidationGroup(['csrf'])->setData(['csrf'=>$csrf]);

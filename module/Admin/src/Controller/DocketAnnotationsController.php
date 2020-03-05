@@ -14,11 +14,15 @@ use InterpretersOffice\Entity;
 
 use InterpretersOffice\Admin\Service\DocketAnnotationService;
 
+/**
+ * controller for listing and displaying forms for DocketAnnotation entities
+ */
 class DocketAnnotationsController extends AbstractActionController
 {
 
     /**
      * annotation service
+     * 
      * @var DocketAnnotationService
      */
     private $service;

@@ -1,11 +1,9 @@
 <?php
-
 /** module/Admin/src/Controller/DocketAnnotationsController.php */
 
 namespace InterpretersOffice\Admin\Controller;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Validator\Csrf;
@@ -14,11 +12,15 @@ use InterpretersOffice\Entity;
 
 use InterpretersOffice\Admin\Service\DocketAnnotationService;
 
+/**
+ * handles create|update|delete actions
+ */
 class RestfulDocketAnnotationsController extends AbstractRestfulController
 {
 
     /**
      * annotation service
+     *
      * @var DocketAnnotationService
      */
     private $service;
@@ -37,6 +39,13 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
     {
         $this->service = $service;
     }
+
+    /**
+     * deletion
+     *
+     * @param  string $id
+     * @return array
+     */
     public function delete($id)
     {
         $headers = $this->getRequest()->getHeaders("X-Security-Token");
@@ -44,10 +53,23 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
         return new JsonModel($this->service->delete($id,$token));
     }
 
+    /**
+     * updates
+     *
+     * @param  string $id
+     * @param  array $data
+     * @return array
+     */
     public function update($id, $data) {
         return new JsonModel($this->service->update($id,$data));
     }
 
+    /**
+     * creates
+     *
+     * @param  array $data
+     * @return array
+     */
     public function create($data)
     {
         return new JsonModel($this->service->create($data));
