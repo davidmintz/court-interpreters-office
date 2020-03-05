@@ -13,7 +13,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations.js'
           <div style="display:none" id="error_docket" class="alert alert-warning validation-error"></div>
         </div>
     </div>
-    <div id="results" class="results">
+    <div id="results" data-csrf="<?=$this->csrf?>" class="results">
         <?php echo $this->partial('docket-annotations/partials/table',[
             'data' => $this->data, 'docket' => $this->docket
         ]);?>

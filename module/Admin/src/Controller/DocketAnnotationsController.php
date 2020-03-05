@@ -44,7 +44,10 @@ class DocketAnnotationsController extends AbstractActionController
         if ($docket) {
             $data = $this->service->getAnnotations($docket);
         }
-        $view = new ViewModel(['docket'=>$docket, 'data'=>$data ?? false]);
+        $view = new ViewModel([
+            'docket'=>$docket, 'data'=>$data ?? false,
+            'csrf'=>(new Csrf(['timeout'=>1200]))->getHash()
+        ]);
         if ($this->getRequest()->isXmlHttpRequest()) {
             $view->setTemplate('docket-annotations/partials/table')
                 ->setTerminal(true);
@@ -66,10 +69,6 @@ class DocketAnnotationsController extends AbstractActionController
         return ['note'=>$note, 'csrf'=>$token];
     }
 
-    public function deleteAction(){
-
-        return false;
-    }
     /**
      * displays create form
      *
@@ -77,7 +76,7 @@ class DocketAnnotationsController extends AbstractActionController
      */
     public function addAction(){
         $token = (new Csrf(['timeout'=>1200]))->getHash();
-        return ['csrf'=>$token];
+        return ['csrf'=>$token,'docket'=>$this->params()->fromRoute('docket')];
 
     }
 }

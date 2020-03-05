@@ -39,11 +39,13 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
     }
     public function delete($id)
     {
-        return new JsonModel(['status'=>'boink! DELETE']);
+        $headers = $this->getRequest()->getHeaders("X-Security-Token");
+        $token = $headers ? $headers->getFieldValue():'';
+        return new JsonModel($this->service->delete($id,$token));
     }
 
     public function update($id, $data) {
-        return new JsonModel(['status'=>'boink! UPDATE']);
+        return new JsonModel($this->service->update($id,$data));
     }
 
     public function create($data)

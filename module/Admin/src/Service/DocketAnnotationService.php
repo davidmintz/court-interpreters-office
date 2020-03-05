@@ -123,6 +123,7 @@ class DocketAnnotationService
                                 Validator\NotEmpty::IS_EMPTY => "docket number is required",
                             ]
                         ],
+                        'break_chain_on_failure' => true,
                     ],
                     [
                         'name'=> DocketValidator::class,
@@ -197,17 +198,23 @@ class DocketAnnotationService
 
     /**
      * gets annotations for $docket
+     *
      * @param  string $docket
      * @return Array
      */
     public function getAnnotations(string $docket) : Array
     {
-        //var_dump(class_exists(Entity\DocketAnnotation::class));exit();
-        $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
-        // we need to write our own repo and optimize this query
-        return $repo->findByDocket($docket);
+        return $this->em
+            ->getRepository(Entity\DocketAnnotation::class)
+            ->findByDocket($docket);
     }
 
+    /**
+     * creates a docket annotation
+     *
+     * @param  array $data [description]
+     * @return array
+     */
     public function create(array $data) : array
     {
         $filter = $this->getInputFilter();
@@ -215,18 +222,81 @@ class DocketAnnotationService
         if (! $filter->isValid()) {
             return ['validation_errors' => $filter->getMessages(), 'status'=>'validation failed'];
         }
-        return [ 'status' => 'so far so good', 'valid' => true];
+        $entity = new Entity\DocketAnnotation();
+        foreach(['docket','comment','priority'] as $field) {
+            $entity->{'set'.ucfirst($field)}($filter->getValue($field));
+        }
+        $now = new \DateTime();
+        $user = $this->em->find('InterpretersOffice\Entity\User',$this->auth->getIdentity()->id);
+        $entity->setCreated($now)->setCreatedBy($user);
+        $this->em->persist($entity);
+        /** @todo check duplicates? create unique index */
+        $this->em->flush();
+        unset($data['csrf']);
+        $data['created_by'] = $user->getUsername();
+        $data['created'] = $now->format('Y-m-d H:i:s');
+        return [ 'status' => 'success', 'data'=>$data ];
     }
 
-    public function update(array $data, $id)
+    public function update(string $id,array $data ) : array
     {
-
+        $filter = $this->getInputFilter();
+        $filter->setData($data);
+        if (! $filter->isValid()) {
+            return ['validation_errors' => $filter->getMessages(), 'status'=>'validation failed'];
+        }
+        $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
+        $entity = $repo->find($id);
+        if (!$entity) {
+            return [
+            'status'=>'error','updated'=>false,
+            'message'=>"docket annotation with id $id was not found in the database"];
+        }
+        $modified = false;
+        foreach(['docket','comment','priority'] as $field) {
+            if ($entity->{'get'.ucfirst($field)}() != $filter->getValue($field)) {
+                $modified = true;
+                break;
+            }
+        }
+        if (!$modified) {
+            return ['status'=>'not modified','updated'=>false];
+        }
+        $user = $this->em->find('InterpretersOffice\Entity\User',$this->auth->getIdentity()->id);
+        $now = new \DateTime();
+        foreach(['docket','comment','priority'] as $field) {
+            $entity->{'set'.ucfirst($field)}($filter->getValue($field));
+        }
+        $entity->setModified($now)->setModifiedBy($user);
+        $this->em->flush();
+        unset($data['csrf']);
+        $data['modified_by'] = $this->auth->getIdentity()->username;
+        $data['modified'] = $now->format('Y-m-d H:i:s');
+        return ['status'=>'success','updated'=>true,'entity'=>$data];
     }
 
-    public function delete()
+    /**
+     * deletes an annotation
+     *
+     * @param  string $id
+     * @param  string $csrf
+     * @return array
+     */
+    public function delete(string $id,string $csrf)
     {
+        $filter = $this->getInputFilter();
+        $filter->setValidationGroup(['csrf'])->setData(['csrf'=>$csrf]);
+        if (! $filter->isValid()) {
+            return ['validation_errors' => $filter->getMessages(), 'status'=>'validation failed'];
+        }
+        $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
+        $entity = $repo->find($id);
+        if (! $entity) {
+            return ['status'=>'not found','deleted'=>false];
+        }
+        $this->em->remove($entity);
+        $this->em->flush();
 
+        return ['status'=>'success','deleted'=> true,];
     }
-
-
 }

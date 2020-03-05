@@ -2,22 +2,23 @@
     $what = 'annotation';
     $count = count($this->data);
     if (! $count) :
-        echo "no {$what}s found";
+        $verbiage = "no {$what}s found";
     else:
         if ($count > 1 ): $what .= 's'; endif;
-        echo "$count $what found";
+        $verbiage ="$count $what found";
     endif;
 else: $count = false; $this->data = []; endif?>
+<p id="verbiage" class="my-1"><?=$verbiage ?? ''?></p>
 <table class="table" <?php if (!$count):?>hidden<?php endif?>>
     <thead class="text-info">
         <th class="font-weight-normal">priority</th>
         <th class="font-weight-normal">comment</th>
         <th class="font-weight-normal">meta</th>
-        <th></th>
+        <th colspan="2"></th>
     </thead>
     <tbody>
         <?php foreach($this->data as $note): $obj = $note[0]?>
-            <tr>
+            <tr data-id="<?=$obj->getId()?>">
                 <td><?= $obj->getPriority()?></td>
                 <td><?= $obj->getComment()?></td>
                 <td><?= "created {$obj->getCreated()->format('d-M-Y g:ia')} by {$note['created_by']}"?><?php
@@ -25,13 +26,12 @@ else: $count = false; $this->data = []; endif?>
                     ?><br><?= "updated {$obj->getModified()->format('d-M-Y g:ia')} by {$note['modified_by']}"?><?php
                     endif;
                 ?></td>
-                <td class="avoidwrap"><a title= "update this annotation" href="<?=$this->url('admin/docket-annotations/edit',['docket'=>$this->docket,'action'=>'edit','id'=>$obj->getId()])?>">
+                <td class="px-1"><a title= "update this annotation" href="<?=$this->url('admin/docket-annotations/edit',['docket'=>$this->docket,'action'=>'edit','id'=>$obj->getId()])?>">
                         <span class="fas fa-edit"></span><span class="sr-only">edit</span>
                     </a>
-                    <a title="delete this annotation" href="<?=$this->url('admin/docket-annotations/edit',['docket'=>$this->docket,'action'=>'delete','id'=>$obj->getId()])?>">
-                        <span class="fas fa-trash text-muted"></span><span class="sr-only">delete</span>
-                    </a>
-                </td>
+                </td><td class="px-1"><a title="delete this annotation" class="btn-delete" href="<?=$this->url('admin/docket-annotations/edit',['docket'=>$this->docket,'action'=>'delete','id'=>$obj->getId()])?>">
+                    <span class="fas fa-trash text-muted"></span><span class="sr-only">delete</span>
+                    </a></td>
             </tr>
         <?php endforeach ?>
     </tbody>

@@ -32,7 +32,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-for
             <label class="col-form-label col-sm-3" for="docket">
                 <span class="float-md-right">docket</span>
             </label>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <input type="text" id="docket" class="form-control" name="docket" value="<?=$this->note ? $this->note->getDocket() : ''?>">
             </div>
         </div>
@@ -70,7 +70,9 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-for
             </div>
         </div>
         <div class="form-row form-group">
-            <div class="col-sm-4 offset-sm-3 pt-2"><button type="button" id="btn-save" class="btn btn-success">save</button>
+            <div class="col-sm-4 offset-sm-3 pt-2"><button type="button" id="btn-save" class="btn btn-success">save</button><?php if ($this->note): ?>
+                <button type="button" class="btn btn-warning" id="btn-delete">delete</button>
+            <?php endif;?>
                 <input type="hidden" name="id" value="<?=$this->note ? $this->note->getId() : ''?>">
                 <input type="hidden" name="csrf" value="<?= $this->csrf ?>">
             </div>
