@@ -266,7 +266,8 @@ class DocketAnnotationService
         unset($data['csrf']);
         $data['created_by'] = $user->getUsername();
         $data['created'] = $now->format('Y-m-d H:i:s');
-        return [ 'status' => 'success', 'data'=>$data ];
+        $data['comment'] = $this->parsedown($filter->getValue('comment'));
+        return [ 'status' => 'success', 'entity'=>$data ];
     }
 
     public function countEventsForDocket($docket)
@@ -298,8 +299,9 @@ class DocketAnnotationService
                 break;
             }
         }
+        $data['comment'] = $this->parsedown($filter->getValue('comment'));
         if (!$modified) {
-            return ['status'=>'not modified','updated'=>false];
+            return ['status'=>'not modified','updated'=>false,'entity'=>$data];
         }
         $user = $this->em->find('InterpretersOffice\Entity\User',$this->auth->getIdentity()->id);
         $now = new \DateTime();
@@ -312,6 +314,7 @@ class DocketAnnotationService
         unset($data['csrf']);
         $data['modified_by'] = $this->auth->getIdentity()->username;
         $data['modified'] = $now->format('Y-m-d H:i:s');
+
         return ['status'=>'success','updated'=>true,'entity'=>$data];
     }
 
@@ -337,6 +340,6 @@ class DocketAnnotationService
         $this->em->remove($entity);
         $this->em->flush();
 
-        return ['status'=>'success','deleted'=> true,];
+        return ['status'=>'success','deleted'=> true,'entity'=>['docket'=>$entity->getDocket(),'id'=>$entity->getId()]];
     }
 }

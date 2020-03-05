@@ -27,7 +27,7 @@ $(function(){
             url, method
         }).then((res)=>{
             tr.addClass("text-muted").css({textDecoration:"line-through"});
-            $("#verbiage").text("1 annotation deleted");
+            $("#verbiage").text("annotation deleted");
         }).fail(fail);
     });
     $("#btn-create").on("click",function(e){

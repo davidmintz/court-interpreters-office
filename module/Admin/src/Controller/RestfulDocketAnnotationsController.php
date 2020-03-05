@@ -75,6 +75,11 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
         return new JsonModel($this->service->create($data));
     }
 
+    /**
+     * gets number of events bearing docket number
+     * 
+     * @return JsonModel
+     */
     public function countEventsAction()
     {
         $docket = $this->params()->fromQuery('docket');

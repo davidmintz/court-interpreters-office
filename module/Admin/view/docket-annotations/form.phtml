@@ -7,15 +7,17 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-for
     <?php
     if ($this->note):
         $priority = $this->note->getPriority();
+        $docket = $this->note->getDocket();
     else:
         $priority = null;
+        $docket = $this->docket ?? '';
     endif;
     if ($this->layout()->action == 'edit') :
         if (! $this->note) :
             ?>
-            <div class="alert alert-warning mt-2">
+            <div class="alert alert-warning mt-4 border border-warning py-2 px-2">
                 Docket annotation was not found in the database. It may have been deleted, or
-                your query may contain invalid id number.
+                your query may contain an invalid id number.
             </div>
         </div>
         <?php return;
@@ -27,13 +29,14 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-for
         $method = 'POST';
     endif;
     ?>
+    <div id="status" class="alert alert-success" style="display:none"></div>
     <form class="mt-4" id="annotation-form" action="<?=$action ?? ''?>" method="<?= $method ?? ''?>">
         <div class="form-row form-group">
             <label class="col-form-label col-sm-3" for="docket">
                 <span class="float-md-right">docket</span>
             </label>
             <div class="col-sm-4">
-                <input type="text" id="docket" class="form-control" name="docket" value="<?=$this->note ? $this->note->getDocket() : ''?>">
+                <input type="text" id="docket" class="form-control" name="docket" value="<?=$this->escapeHtml($docket)?>">
             </div>
         </div>
         <div class="form-row form-group">
@@ -41,7 +44,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-for
                 <span class="float-md-right">text</span>
             </label>
             <div class="col-sm-6">
-                <textarea name="comment" class="form-control" rows="5" cols="60"><?php if ($this->note): echo $this->note->getComment(); endif?></textarea>
+                <textarea id="comment" name="comment" class="form-control" rows="5" cols="60"><?php if ($this->note): echo $this->note->getComment(); endif?></textarea>
                 <span class="text-muted">You can use <a target="__blank" href="https://www.markdownguide.org/basic-syntax">Markdown</a> for formatting</span>
             </div>
         </div>
@@ -69,6 +72,9 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-for
                     </label>
                 </div>
             </div>
+        </div>
+        <div class="row mt-0 py-0">
+            <div id="error_priority" class="col-sm-4 offset-sm-3 alert alert-warning validation-error" style="display:none"></div>
         </div>
         <div class="form-row form-group">
             <div class="col-sm-4 offset-sm-3 pt-2"><button type="button" id="btn-save" class="btn btn-success">save</button><?php if ($this->note): ?>

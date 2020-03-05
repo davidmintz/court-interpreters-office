@@ -5,7 +5,7 @@ namespace InterpretersOffice\Admin\Controller\Factory;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Controller\DocketAnnotationsController;
-
+use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Admin\Service\DocketAnnotationService;
 
 /** factory */
@@ -21,10 +21,12 @@ class DocketAnnotationsControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        $service = new DocketAnnotationService(
-            $container->get('entity-manager'),
-            $container->get('auth')
-        );
+        $em = $container->get('entity-manager');
+        $auth = $container->get('auth');
+        $service = new DocketAnnotationService($em, $auth);
+        //attach the entity listeners
+        $resolver = $em->getConfiguration()->getEntityListenerResolver();
+        $resolver->register($container->get(Listener\UpdateListener::class)->setAuth($auth));
 
         return new $requestedName($service);
     }

@@ -36,8 +36,11 @@ $(function(){
         })
         .then((res)=>{
             console.log(res);
+            if ($("#status").is(":visible")) {
+                $("#status").hide();
+            }
             $("#annotation-form").replaceWith(
-                `<div style="max-width:400px" class="alert alert-success my-4">This docket annotation has been deleted.</div>`
+                `<div style="max-width:400px" class="alert alert-success my-4">This annotation for docket number ${res.entity.docket} has been deleted.</div>`
             );
         });
     });
@@ -54,13 +57,36 @@ $(function(){
             }
             data = form.serialize();
             console.debug(`gonna ${method} to ${url}`);
+            var btn = $(this);
             $.ajax({ url, method, data})
-            .then(
-                (res)=>{
+            .then((res)=>
+                {
                     if (res.validation_errors) {
                         return displayValidationErrors(res.validation_errors);
                     }
                     console.debug(res);
+                    $("#status").text("Annotation saved.").show();
+                    btn.attr({disabled:true});
+                    var textarea = $(`textarea[name="comment"]`);
+                    var parent = textarea.parent();
+                    // display the returned annotation text in a div
+                    // to replace the textarea
+                    var div = $(`<div class="mt-0 py-2 px-2 border border-primary rounded">${res.entity.comment}</div>`);
+                    div.css({minHeight: `${parent.height()}px`,cursor:"pointer" })
+                        .one("click", function(e){ form.trigger("change"); });
+                    textarea.hide();
+                    parent.prepend(div);
+                    // restore the textarea if they want to edit again
+                    form.one("change",()=>{
+                        if (parent.children("div.border").length) {
+                            textarea.show();
+                            parent.children("div.border").remove();
+                        }
+                        if ($("#status").is(":visible")) {
+                            $("#status").slideUp(function(){$(this).text("")});
+                        }
+                        btn.removeAttr("disabled");
+                    });
                 }
             );
         }
