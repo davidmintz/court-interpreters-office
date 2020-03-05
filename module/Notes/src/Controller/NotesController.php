@@ -257,7 +257,7 @@ class NotesController extends AbstractRestfulController
     {
         $header = $this->getRequest()->getHeaders('X-Security-Token');
         $type = $this->params()->fromRoute('type');
-        
-        return new JsonModel($this->notesService->delete($type, $id, $header));
+
+        return new JsonModel($this->notesService->delete($type, $id, $header ? $header->getFieldValue():''));
     }
 }

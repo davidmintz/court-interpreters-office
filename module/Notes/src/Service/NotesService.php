@@ -406,12 +406,10 @@ class NotesService
      * @param  string $id
      * @return null
      */
-    public function delete(string $type, string $id, $header)  {
+    public function delete(string $type, string $id, string $token)  {
 
         $filter = $this->getInputFilter();
         $filter->setValidationGroup(['csrf','type']);
-        $token = $header instanceof \Laminas\Http\Header\HeaderInterface ?
-            $header->getFieldValue('X-Security-Token') : '';
         $filter->setData(['csrf'=>$token,'type'=>$type]);
         if (! $filter->isValid()) {
             return [
