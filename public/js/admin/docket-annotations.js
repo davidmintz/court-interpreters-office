@@ -1,7 +1,6 @@
 /* global  $, fail, formatDocketElement, displayValidationErrors */
 $(function(){
-    var url = window.basePath + "/admin/docket-annotations";
-    // console.debug(url);
+    var url = "/admin/docket-annotations";
     $(".docket").on("change",formatDocketElement).trigger("change");
     var el = $("#docket");
     $("#btn-search").on("click",function(e){
@@ -19,7 +18,7 @@ $(function(){
         { return; }
         var tr = $(this).closest("tr");
         var id = tr.data("id");
-        var url = `${window.basePath}/admin/docket-notes/api/delete/${id}`;
+        var url = `/admin/docket-notes/api/delete/${id}`;
         var method = "DELETE";
         var csrf = $("#results").data("csrf");
         console.debug(`gonna ${method} to ${url}`);

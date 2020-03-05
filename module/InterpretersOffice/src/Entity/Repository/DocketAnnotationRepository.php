@@ -55,4 +55,13 @@ class DocketAnnotationRepository extends EntityRepository implements
        $this->cache->setNamespace($this->cache_namespace);
        return $this->cache->deleteAll();
    }
+
+   public function countEvents(string $docket) : string
+   {
+       $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+       WHERE e.docket = :docket AND e.deleted = false';
+       return $this->getEntityManager()->createQuery($dql)
+        ->setParameters([':docket'=>$docket])
+        ->useResultCache(false)->getSingleScalarResult();
+   }
 }

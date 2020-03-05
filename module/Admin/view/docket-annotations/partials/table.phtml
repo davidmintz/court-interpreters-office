@@ -20,7 +20,7 @@ else: $count = false; $this->data = []; endif?>
         <?php foreach($this->data as $note): $obj = $note[0]?>
             <tr data-id="<?=$obj->getId()?>">
                 <td><?= $obj->getPriority()?></td>
-                <td><?= $obj->getComment()?></td>
+                <td class="docket-annotation"><?= $this->parsedown($obj->getComment())?></td>
                 <td><?= "created {$obj->getCreated()->format('d-M-Y g:ia')} by {$note['created_by']}"?><?php
                     if ($note['modified_by']):
                     ?><br><?= "updated {$obj->getModified()->format('d-M-Y g:ia')} by {$note['modified_by']}"?><?php

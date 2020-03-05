@@ -1,7 +1,24 @@
 /* global  $, fail, displayValidationErrors, formatDocketElement */
+
+var get_event_count = function(docket)
+{
+    return $.get(`/admin/docket-notes/api/count-events?docket=${docket}`);
+}
+
 $(function(){
     var docket_element = $("#docket");
-    docket_element.on("change",formatDocketElement).trigger("change");
+    docket_element.on("change",function(e){
+        formatDocketElement(e);
+        if (docket_element.data("valid")) {
+            get_event_count(docket_element.val())
+            .then((res)=>{
+                if (!window.parseInt(res.count)) {
+                    displayValidationErrors({docket : { "bullshit": "no events have this docket number"}});
+                    docket_element.addClass("is-invalid");
+                }
+            });
+        }
+    }).trigger("change");
     if (docket_element.val()) {
         // hack the breadcrumb nav
         $("h2").first().children("a").get(1).href += "/"+docket_element.val();
@@ -11,7 +28,7 @@ $(function(){
             return;
         }
         var id = $(`input[name="id"]`).val();
-        var url = `${window.basePath}/admin/docket-notes/api/delete/${id}`;
+        var url = `/admin/docket-notes/api/delete/${id}`;
         var method = "DELETE";
         console.debug(`gonna ${method} to ${url}`);
         $.ajax({url, method,
@@ -44,7 +61,6 @@ $(function(){
                         return displayValidationErrors(res.validation_errors);
                     }
                     console.debug(res);
-
                 }
             );
         }

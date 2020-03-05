@@ -42,6 +42,7 @@ $this->headScript()->appendFile($this->basePath('js/admin/docket-annotations-for
             </label>
             <div class="col-sm-6">
                 <textarea name="comment" class="form-control" rows="5" cols="60"><?php if ($this->note): echo $this->note->getComment(); endif?></textarea>
+                <span class="text-muted">You can use <a target="__blank" href="https://www.markdownguide.org/basic-syntax">Markdown</a> for formatting</span>
             </div>
         </div>
         <div class="form-row form-group">

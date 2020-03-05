@@ -16,6 +16,7 @@ use Laminas\Authentication\AuthenticationServiceInterface;
 use Parsedown;
 use InterpretersOffice\Admin\Form\Validator\Docket as DocketValidator;
 use InterpretersOffice\Admin\Form\Filter\Docket as DocketFilter;
+use Laminas\Filter\HtmlEntities;
 
 /**
  * docket-annotation entity management
@@ -63,7 +64,7 @@ class DocketAnnotationService
      *
      * @return InputFilter
      */
-    public function createInputFilter() : InputFilter
+    public function createInputFilter() : InputFilter\InputFilter
     {
         return (new InputFilter\Factory)->createInputFilter([
             'csrf' => [
@@ -137,6 +138,17 @@ class DocketAnnotationService
                     [
                         'name'=> DocketValidator::class,
                     ],
+                    [
+                        'name' => Validator\Callback::class,
+                        'options' => [
+                            'callBack' => function($value, $context) {
+                                return (int)$this->countEventsForDocket($value) > 0;
+                            },
+                            'messages' => [
+                                'callbackValue' => 'no events have this docket number',
+                            ],
+                        ],
+                    ],
                 ],
                 'filters' => [
                     [
@@ -175,6 +187,15 @@ class DocketAnnotationService
                     [
                         'name' => Filter\StringTrim::class,
                     ],
+                    ['name' => Filter\PregReplace::class,
+                        'options'=> [
+                            'pattern' => '/( {2,})(\R)/m',
+                            'replacement' => "$2",
+                        ],
+                    ],
+                    [
+                        'name' => Filter\HtmlEntities::class,
+                    ]
                 ],
             ],
         ]);
@@ -185,7 +206,7 @@ class DocketAnnotationService
      *
      * @return
      */
-    public function getInputFilter() : InputFilter
+    public function getInputFilter() : InputFilter\InputFilter
     {
         if (! $this->filter) {
             $this->filter = $this->createInputFilter();
@@ -232,9 +253,10 @@ class DocketAnnotationService
             return ['validation_errors' => $filter->getMessages(), 'status'=>'validation failed'];
         }
         $entity = new Entity\DocketAnnotation();
-        foreach(['docket','comment','priority'] as $field) {
+        foreach(['docket','priority','comment'] as $field) {
             $entity->{'set'.ucfirst($field)}($filter->getValue($field));
         }
+        // $entity->setComment($this->escape($filter->getValue('comment')));
         $now = new \DateTime();
         $user = $this->em->find('InterpretersOffice\Entity\User',$this->auth->getIdentity()->id);
         $entity->setCreated($now)->setCreatedBy($user);
@@ -245,6 +267,14 @@ class DocketAnnotationService
         $data['created_by'] = $user->getUsername();
         $data['created'] = $now->format('Y-m-d H:i:s');
         return [ 'status' => 'success', 'data'=>$data ];
+    }
+
+    public function countEventsForDocket($docket)
+    {
+        $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
+
+        return $repo->countEvents($docket);
+
     }
 
     public function update(string $id,array $data ) : array
@@ -262,7 +292,7 @@ class DocketAnnotationService
             'message'=>"docket annotation with id $id was not found in the database"];
         }
         $modified = false;
-        foreach(['docket','comment','priority'] as $field) {
+        foreach(['comment','docket','priority',] as $field) {
             if ($entity->{'get'.ucfirst($field)}() != $filter->getValue($field)) {
                 $modified = true;
                 break;
@@ -273,9 +303,10 @@ class DocketAnnotationService
         }
         $user = $this->em->find('InterpretersOffice\Entity\User',$this->auth->getIdentity()->id);
         $now = new \DateTime();
-        foreach(['docket','comment','priority'] as $field) {
+        foreach(['docket','priority','comment'] as $field) {
             $entity->{'set'.ucfirst($field)}($filter->getValue($field));
         }
+        // $entity->setComment($this->escape($filter->getValue('comment')));
         $entity->setModified($now)->setModifiedBy($user);
         $this->em->flush();
         unset($data['csrf']);

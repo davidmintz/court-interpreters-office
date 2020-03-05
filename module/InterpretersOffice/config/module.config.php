@@ -341,6 +341,7 @@ return [
             'errorMessage' => ViewHelper\ErrorMessage::class,
             'diff' => ViewHelper\Diff::class,
             'dateTime' => ViewHelper\DateTime::class,
+            'parsedown' => ViewHelper\Parsedown::class,
         ],
         'factories' => [
             ViewHelper\Defendants::class => InvokableFactory::class,
@@ -348,6 +349,7 @@ return [
             ViewHelper\InterpreterNames::class => InvokableFactory::class,
             ViewHelper\Diff::class => InvokableFactory::class,
             ViewHelper\DateTime::class => InvokableFactory::class,
+            ViewHelper\Parsedown::class => InvokableFactory::class,
         ],
     ],
 

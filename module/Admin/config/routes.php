@@ -110,6 +110,15 @@ return  [
                         ],
                     ],
                 ],
+                'count-events'=>[
+                    'type' => Segment::class,
+                    'options'=>[
+                        'route' => '/count-events',
+                        'defaults'=>[
+                            'action' => 'count-events',
+                        ],
+                    ],
+                ],
             ],
         ],
         'events_index' => [
