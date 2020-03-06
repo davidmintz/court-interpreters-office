@@ -21,6 +21,14 @@ use InterpretersOffice\Entity\Defendant;
 class EventRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ProperNameParsingTrait;
+    /* note to self: this can work but the docket total is coming out 4X too high
+
+    SELECT e.id, e.docket, COUNT(e2.id) total, MAX(a.priority) max_priority
+    FROM InterpretersOffice\Entity\Event e
+    LEFT JOIN  InterpretersOffice\Entity\Event e2 WITH e.docket = e2.docket
+    LEFT JOIN InterpretersOffice\Entity\DocketAnnotation a WITH a.docket = e.docket
+    WHERE e.id = :id
+    */
 
     /**
      * DQL statement for human-friendly representation of Event
