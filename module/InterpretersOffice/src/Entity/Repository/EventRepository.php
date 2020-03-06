@@ -21,14 +21,6 @@ use InterpretersOffice\Entity\Defendant;
 class EventRepository extends EntityRepository implements CacheDeletionInterface
 {
     use ProperNameParsingTrait;
-    /* note to self: this can work but the docket total is coming out 4X too high
-
-    SELECT e.id, e.docket, COUNT(e2.id) total, MAX(a.priority) max_priority
-    FROM InterpretersOffice\Entity\Event e
-    LEFT JOIN  InterpretersOffice\Entity\Event e2 WITH e.docket = e2.docket
-    LEFT JOIN InterpretersOffice\Entity\DocketAnnotation a WITH a.docket = e.docket
-    WHERE e.id = :id
-    */
 
     /**
      * DQL statement for human-friendly representation of Event
@@ -71,7 +63,9 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          e.admin_comments,
          COALESCE(r.reason,'n/a') AS reason_for_cancellation,
          rq.id request_id, rq.comments AS submitter_comments,
-         rq.extraData submitter_extra_data
+         rq.extraData submitter_extra_data,
+         COUNT(DISTINCT e2.id) docket_total,
+         MAX(a.priority) annotation_max_priority
          FROM InterpretersOffice\Entity\Event e
          JOIN e.event_type t
          JOIN t.category c
@@ -94,6 +88,8 @@ class EventRepository extends EntityRepository implements CacheDeletionInterface
          LEFT JOIN user2.role u2_role
          LEFT JOIN user2.person u2_person
          LEFT JOIN InterpretersOffice\Requests\Entity\Request rq WITH e = rq.event
+         LEFT JOIN  InterpretersOffice\Entity\Event e2 WITH (e.docket <> '' AND e.docket = e2.docket)
+         LEFT JOIN InterpretersOffice\Entity\DocketAnnotation a WITH a.docket = e.docket
 
 DQL;
 
@@ -466,6 +462,9 @@ DQL;
             ->leftJoin('loc.parentLocation', 'ploc')
             ->leftJoin('e.cancellation_reason', 'cr');
         $params = [];
+        // first thing is filter out soft-deleted (issue #70)
+        // maybe later we decide to make this an option
+        $qb->where('e.deleted = false');
         if (!empty($query['language'])) {
             $qb->where('l.id = :language_id');
             $params['language_id'] = $query['language'];

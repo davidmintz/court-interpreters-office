@@ -51,8 +51,8 @@ if ($messenger->hasErrorMessages()) :
 else: ?>
 <div class="alert alert-warning mx-auto pt-3 pb-0" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
 <?php endif;
-if ($event['deleted']):
- echo "say shit, we have been deleted";
+if ($this->event['deleted']):
+ //echo "say shit, we have been deleted";
 endif;
 ?>
 <div data-modified="<?php echo $event['last_updated'] ? $event['last_updated']->format('Y-m-d H:i:s') : ''?>" data-event_category="<?php echo $event['category']?>" data-event_datetime="<?php echo $event['datetime']?>" data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
@@ -145,7 +145,7 @@ if (!$this->before):?>
     <?php
         printf('%s %s',
         $event['submission_date']->format('d-M-Y'),
-        $event['submission_time']->format('g:i a')
+        $event['submission_time'] ? $event['submission_time']->format('g:i a'):''
         );
     ?>
     </div>
@@ -339,13 +339,43 @@ endif;?></span>
         <?php endif; ?>
     </div>
 <?php endif; ?>
-    <div class="col-12 d-flex">
+    <div class="col-12 d-flex"><!--  buttons =============================   -->
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
         <?php if (!$event['deleted']):?>
             <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
             <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
             <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
             <a role="button" data-toggle="modal" data-target="#modal-confirm-delete" data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" class="btn btn-success">delete</a>
+            <?php if ($this->event['docket'] && $this->event['docket_total'] > 1):?>
+                <a role="button" id="btn-timeline" href="<?=$this->url('search/docket',['docket'=>$this->event['docket']])?>" class="btn btn-success">timeline</a>
+            <?php endif;
+                if ($this->event['docket']):
+                    $url = $this->url('admin/docket-annotations',['docket'=>$this->event['docket']]);
+                    if (!$this->event['annotation_max_priority']):
+                        ?><a role="button" class="btn btn-success" href="<?=$url?>" >annotate</a><?php
+                    else:
+                        switch ($this->event['annotation_max_priority']):
+                            case 1:
+                            $btn_class = 'btn-info';
+                            $span_class = 'fa-info-circle';
+                            break;
+                            case 2:
+                            $btn_class = 'btn-warning';
+                            $span_class = 'fa-exclamation-triangle';
+                            break;
+                            default:
+                            $btn_class = 'btn-danger';
+                            $span_class = 'fa-skull-crossbones';
+                            break;
+                        endswitch;
+                        ?>
+                        <a role="button" href="<?=$url?>" class="btn <?=$btn_class?>"><span class="fas <?=$span_class?>"></span> annotations</a><?php
+                    endif;
+                endif;
+            ?>
+            <!-- total events with this docket: <?=$this->event['docket_total']?><br>
+            docket-annotations max priority: <?=$this->event['annotation_max_priority']?><br> -->
+
         </div>
         <?php else: ?>
             <div class="alert alert-warning pt-2 border event-deleted">
