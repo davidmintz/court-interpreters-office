@@ -6,6 +6,9 @@ use Laminas\Form\View\Helper\AbstractHelper;
 
 /**
  * helper for displaying interpreter-languages
+ *
+ * hideously complicated, a consequence of naive ideas about using Laminas
+ * (formerly Zend) components for everything
  */
 class LanguageElementCollection extends AbstractHelper
 {
@@ -16,18 +19,18 @@ class LanguageElementCollection extends AbstractHelper
      * @var string
      */
     protected $template = <<<TEMPLATE
-<!-- shit begins -->
+<!-- begin template -->
 <div class="offset-sm-1 col-sm-3  interpreter-language language-name pt-2" id="language-%d">
 %s
 </div>
 <div class="col-sm-8 form-inline interpreter-language language-credential">
     <label for="language-credential-%d">credential:</label>
           %s
-   <button class="ml-3 btn btn-warning btn-xs btn-remove-language  border" title="remove this language"><span class="fas fa-times" aria-hidden="true"></span>
+   <button class="ml-3 btn btn-warning btn-remove-language border" title="remove this language"><span class="fas fa-times" aria-hidden="true"></span>
         <span class="sr-only">remove this language</span></button>
     %s
 </div>
-<!-- shit ends -->
+<!-- end template -->
 
 TEMPLATE;
 
@@ -91,13 +94,18 @@ TEMPLATE;
                 // echo "\$key is $key, label $label ...<br>";
                 $certifiable = $language_options[$key]['attributes']['data-certifiable'];
             }
+            // if the language is certifiable, disable "PQ";
+            // otherwise disable "AO"
             $cred_options = $credential->getValueOptions();
             if (! $certifiable) {
-                $i = array_search('AO', array_column($cred_options, 'label'));
-                if (false !== $i) {
-                    $cred_options[$i]['attributes'] = ['disabled' => 'disabled'];
-                    $credential->setValueOptions($cred_options);
-                }
+                $search = 'AO';
+            } else {
+                $search = 'PQ';
+            }
+            $i = array_search($search, array_column($cred_options, 'label'));
+            if (false !== $i) {
+                $cred_options[$i]['attributes'] = ['disabled' => 'disabled'];
+                $credential->setValueOptions($cred_options);
             }
             $hidden_element->setValue($language_id);
             $language_markup = $this->view->formElement($hidden_element);
@@ -111,6 +119,7 @@ TEMPLATE;
             } else {
                 $errors = sprintf($this->error_template, 'none', '');
             }
+            // one of the horrors of this:  too many positional parameters
             $html .= sprintf(
                 $this->template,
                 $language_id,
