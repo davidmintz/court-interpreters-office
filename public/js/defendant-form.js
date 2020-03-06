@@ -92,9 +92,9 @@ $(function(){
         var name = form.data("defendant_name");
         var url = form.data("redirect_url")
             ||`${window.basePath || ""}/admin/defendants`;
-        var id = $("input[name=\"id\"]").val();
-        $.post("/admin/defendants/delete/"+id,{name})
-        .then( ()=>window.document.location = url)
+        var id = $(`input[name="id"]`).val();
+        $.post("/admin/defendants/delete/"+id,{ name })
+        .then(() => window.document.location = url)
         .fail(fail);
     });
 });

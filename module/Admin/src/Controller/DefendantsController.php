@@ -201,7 +201,7 @@ class DefendantsController extends AbstractActionController
             $context = $this->params()->fromQuery('context', 'defendants');
             if ("success" == $result['status'] && 'events' !== $context) {
                 $this->flashMessenger()->addSuccessMessage(
-                    "The defendant name <strong>$entity</strong> name has been updated"
+                    "The defendant name <strong>$entity</strong> has been updated"
                 );
             }
             return new JsonModel($result);
