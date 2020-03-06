@@ -2,8 +2,6 @@
 $this->headScript()->appendFile($this->basePath('/js/defendant-form.js'));
 $form = $this->form;
 $action = $this->layout()->action;
-
-;
 $form->add([
     'name' => 'submit',
     'type' => 'Laminas\Form\Element\Submit',
@@ -28,7 +26,7 @@ if ($this->error_not_found) :
     </div>
     <?php return;
 endif;
-if ($action != 'add') :    
+if ($action != 'add') :
     $form->setAttribute('data-defendant_name', (string)$form->getObject());
 endif;
 $form->prepare();

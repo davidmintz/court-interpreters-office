@@ -1,14 +1,32 @@
-<main style="max-width:600px" class="center-block mx-auto">
-
+<main style="max-width:800px" class="center-block mx-auto">
 <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php
+$this->headScript()->appendFile($this->basePath('/js/admin/defendant-names-index.js'));
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
 endif;
 //echo $messenger->render('error', ['alert', 'alert-dismissible', 'alert-danger']);
-echo $this->errorMessage("not really, only a test");
+// echo $this->errorMessage("not really, only a test");
 ?>
-<h3>to do</h3>
-<p>more</p>
+<div class="form-row form-group mt-4">
+    <div class="col-sm-5">
+        <div class="input-group">
+          <input type="text" id="defendant-autocomplete" value="<?=$this->docket?>" class="form-control defendant" placeholder="last name(s)[, first name(s)]" aria-label="defendant name" aria-describedby="btn-search">
+          <div class="input-group-append"><button class="fas fa-search btn btn-primary" id="btn-search"><span class="sr-only">search</span></button>
+          </div>
+      </div>
+      <!-- <div style="display:none" id="error_docket" class="alert alert-warning validation-error"></div> -->
+    </div>
+</div>
+<div class="row">
+    <div id="results" class="col-md-5 results">
+
+    </div>
+</div>
+
+<?php //echo $this->render('defendants/form',);?>
+<div class="text-center">
+    <!-- <a role="button" href="<?= $this->url('admin/docket-annotations/add',['docket'=>$this->docket ?? ''])?>" type="button" id="btn-create" class="btn btn-primary btn-sm" name="button"><span class="fas fa-plus"></span> add</a> -->
+</div>
 </main>

@@ -57,7 +57,7 @@ class DefendantsController extends AbstractActionController
         //$query = $this->entityManager->createQuery();
         //echo get_class($query);
         //echo get_class($this->getRequest());//Laminas\Http\PhpEnvironment\Request
-        return new ViewModel();
+        return new ViewModel(['form'=>new DefendantForm($this->entityManager, ['action' => 'create'])]);
     }
 
     /**

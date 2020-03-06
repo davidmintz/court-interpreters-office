@@ -15,57 +15,55 @@ $(function(){
         var action = $("input[name=id]").val() ? "update":"insert";
 
         $.post(form.attr("action"),data)
-            .done(
-                function(response)
-                {
-                    if (response.validation_errors) {
-                        return displayValidationErrors(response.validation_errors);
-                    } else {
-                        $(".validation-error").hide();
-                    }
-                    var url;
-                    if (response.status === "success") {
-                        url = form.data().redirect_url || "/admin/defendants";
-                        return  window.document.location =
-                        `${window.basePath||""}${url}`;
-                    }
-                    if (response.existing_entity) {
-                        var existing = response.existing_entity;
-                        var name = `${existing.surnames}, ${existing.given_names}`;
-                    }
-                    if (response.duplicate_entry_error) {
-                        var msg;
-                        $("#error-div h3").text("error: duplicate entry");
-                        if (action === "insert") {
-                            if (is_literal_duplicate(existing)) {
-                                msg = "This name is already in your database.";
-                            } else {
-                            // inexact duplicate. they should update, not insert
-                                url = `${window.basePath||""}/admin/defendants/edit/${existing.id}`;
-                                msg = `This name cannot be inserted because there is
-                            already an inexact duplicate of it in your database:
-                            <strong>${name}</strong>.
-                            You can <a href="${url}">update it</a> instead.`;
-                            }
-                            return $("#error-message").html(msg).parent().show();
-                        } else { /* we are the update form */
-                            console.warn(
-                                "update returned duplicated entry error, deal with it");
+        .then(
+            function(response)
+            {
+                if (response.validation_errors) {
+                    return displayValidationErrors(response.validation_errors);
+                } else {
+                    $(".validation-error").hide();
+                }
+                var url;
+                if (response.status === "success") {
+                    url = form.data().redirect_url || "/admin/defendants";
+                    return  window.document.location = `${window.basePath||""}${url}`;
+                }
+                if (response.existing_entity) {
+                    var existing = response.existing_entity;
+                    var name = `${existing.surnames}, ${existing.given_names}`;
+                }
+                if (response.duplicate_entry_error) {
+                    var msg;
+                    $("#error-div h3").text("error: duplicate entry");
+                    if (action === "insert") {
+                        if (is_literal_duplicate(existing)) {
+                            msg = "This name is already in your database.";
+                        } else {
+                        // inexact duplicate. they should update, not insert
+                            url = `${window.basePath||""}/admin/defendants/edit/${existing.id}`;
+                            msg = `This name cannot be inserted because there is
+                        already an inexact duplicate of it in your database:
+                        <strong>${name}</strong>.
+                        You can <a href="${url}">update it</a> instead.`;
                         }
-                    } else if (response.inexact_duplicate_found) {
-
-                        form.prepend($("<input>").attr({type:"hidden",
-                            name:"duplicate_resolution_required",value:1}));
-                        $("#deft-existing-duplicate-name").text(name);
-                        var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
-                        console.warn("daFUQ?");
-                        return $(shit).show();
-                    } else {
-                        console.warn("all good?");
-                        url = form.data().redirect_url || "/admin/defendants";
-                        window.document.location = `${window.basePath||""}${url}`;
+                        return $("#error-message").html(msg).parent().show();
+                    } else { /* we are the update form */
+                        console.warn(
+                            "update returned duplicated entry error, deal with it");
                     }
-                })
+                } else if (response.inexact_duplicate_found) {
+                    form.prepend($("<input>").attr({type:"hidden",
+                        name:"duplicate_resolution_required",value:1}));
+                    $("#deft-existing-duplicate-name").text(name);
+                    var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
+                    console.warn("daFUQ?");
+                    return $(shit).show();
+                } else {
+                    console.warn("all good?");
+                    url = form.data().redirect_url || "/admin/defendants";
+                    window.document.location = `${window.basePath||""}${url}`;
+                }
+            })
             .fail((response)=> {
                 $("#error-div h3").text("system error");
                 fail(response);
@@ -96,8 +94,7 @@ $(function(){
             ||`${window.basePath || ""}/admin/defendants`;
         var id = $("input[name=\"id\"]").val();
         $.post("/admin/defendants/delete/"+id,{name})
-            .done( ()=>window.document.location = url)
-            .fail(fail);
-
+        .then( ()=>window.document.location = url)
+        .fail(fail);
     });
 });
