@@ -16,41 +16,47 @@ server such as [Apache](https://httpd.apache.org/); [MySQL](https://www.mysql.co
 [PHP](http://php.net/), minimum version 7.2. On the client side, users will need no more than a
 standard web browser and network access to the server where the application is installed.
 
-With [docker](https://www.docker.com/) having become such a thing, there's a good chance
-that we will also make this application available as a docker image. In English, this more or less means a single,
-self-contained thing that will depend on little else being installed on the computer where it resides.
-
 If you're planning to run InterpretersOffice on your court's intranet, your system administrators
 should readily understand this stuff. If you opt instead to install it on a commercial web hosting
 service, that will work as well, because as we said, the underlying software requirements are standard.
 
-For the entire software stack -- operating system, web and database servers, application code -- you can (and should)
-use open-source software costing you nothing. If you're running InterpretersOffice on your organization's network,
-even a single ordinary, inexpensive commodity PC should be powerful enough to do the job.
+With [docker](https://www.docker.com/) having become such a thing, there's a good chance
+that we will dockerize this application. In English, this means even less to worry about
+in terms of what else has to be installed on the computer where it resides.
 
-All of this is to say that in terms of cost, InterpretersOffice and the supporting software are
+The entire software stack -- operating system, web and database servers, application code -- is
+built on open-source software and available to you free of charge. If you're running InterpretersOffice
+on your organization's network, even a single ordinary, inexpensive commodity PC should be powerful enough to do the job.
+
+All of this is to say that in terms of cost, good news: InterpretersOffice and the supporting software are
 completely free; the hardware you'll need is inexpensive.
 
 
 # installation
 
-As of now, I don't recommend normal people attempt installing InterpretersOffice because setup is a chore. (If you're a technical person and want to give it a shot, by all means do -- and contact me if you have questions. We have some [installation notes here](https://github.com/davidmintz/court-interpreters-office/blob/master/doc/INSTALLATION.txt)).
+As of now, normal people are not encouraged to attempt installing InterpretersOffice because setup is a chore. (If you're a technical person and want to give it a shot, by all means feel free -- and contact me if you have questions. We have some [installation notes here](https://github.com/davidmintz/court-interpreters-office/blob/master/doc/INSTALLATION.txt)).
 
 But when the great day arrives, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Next, you'll need to create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in README files and comments in the config files themselves.
 
 # features
 
-There is an administrative interface with which authenticated users can manage the calendar for their office: view, add, update and delete events involving court interpreters. Events have attributes like date, time, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You will also  be able to record metadata such as the identity of the person making the request and the date and time it was made.
+There is an administrative interface with which authenticated users can manage the calendar for their office: view, add, update and delete events involving court interpreters. Events have attributes like date, time, place, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You can also record metadata such as the identity of the person making
+the request and the date and time it was made.
 
-You will be able to search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
+Among other features:
 
-An optional module allows users outside your Interpreters Office to log in and submit their requests themselves, a convenience to them that greatly reduces the amount of data entry required of the Interpreters and eliminates the opportunity for error.
+* You can search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
 
-Another optional module I have in mind will generate claim forms for contract interpreter compensation and keep track of the money expended. The work flow currently happening in our organization is preposterously tedious, and some automation could help immensely.
+* You can create notes relevant to a particular day or week to facilitate administration and intra-office communication, and configure their visibility, size and position to suit your taste.
+
+* You can create annotations based on docket numbers, so that you can flag any especially noteworthy aspects of a particular case.
+
+* An optional module allows users outside your Interpreters Office to log in and submit their requests themselves, a convenience to them that vastly
+reduces the amount of data entry required of the Interpreters and eliminates a major source of errors.
 
 # acknowledgments
 
-Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more.
+Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more. We are boundlessly grateful to the people who make these tools available.
 
 # the author
 
