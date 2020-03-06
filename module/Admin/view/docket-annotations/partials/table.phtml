@@ -1,4 +1,5 @@
 <?php if ($this->data !== false):
+    $classes = [1=>'fas fa-info-circle text-info','fas fa-exclamation-triangle text-warning','fas fa-skull-crossbones text-danger'];
     $what = 'annotation';
     $count = count($this->data);
     if (! $count) :
@@ -17,9 +18,9 @@ else: $count = false; $this->data = []; endif?>
         <th colspan="2"></th>
     </thead>
     <tbody>
-        <?php foreach($this->data as $note): $obj = $note[0]?>
+        <?php foreach($this->data as $note): $obj = $note[0]; $priority = $obj->getPriority()?>
             <tr data-id="<?=$obj->getId()?>">
-                <td><?= $obj->getPriority()?></td>
+                <td><span class="<?=$classes[$priority]?? ''?>"></span> <?= $priority ?></td>
                 <td class="docket-annotation"><?= $this->parsedown($obj->getComment())?></td>
                 <td><?= "created {$obj->getCreated()->format('d-M-Y g:ia')} by {$note['created_by']}"?><?php
                     if ($note['modified_by']):
