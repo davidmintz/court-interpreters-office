@@ -44,7 +44,7 @@ var delete_note = function(){
             var html = `<div class="alert alert-success">This ${type.toUpperCase()} has been deleted.</div>`;
             form.replaceWith(html);
         }
-    );
+    ).fail(fail);
 }
 
 $(function(){
