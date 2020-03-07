@@ -46,11 +46,10 @@ in terms of what else has to be installed and set up on the computer where it re
 
 The entire software stack -- operating system, web and database servers, application code -- is
 built on open-source software and available to you free of charge. If you're running InterpretersOffice
-on your organization's network, even a single ordinary, inexpensive commodity PC should be powerful enough to do the job.
+on your organization's network, a single inexpensive commodity PC should be powerful enough to do the job.
 
 All of this is to say that in terms of cost, good news: InterpretersOffice and the supporting software are
 completely free; the hardware you'll need is inexpensive.
-
 
 # installation
 
