@@ -56,13 +56,6 @@ completely free; the hardware you'll need is inexpensive.
 As of now, normal people are not encouraged to attempt installing InterpretersOffice because setup is a chore. (If you're a technical person and want to give it a shot, by all means feel free -- and contact me if you have questions. We have some [installation notes here](https://github.com/davidmintz/court-interpreters-office/blob/master/doc/INSTALLATION.txt)).
 
 But when the great day arrives, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Next, you'll need to create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in README files and comments in the config files themselves.
-# acknowledgments
-
-Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more. We are boundlessly grateful to the people who make these superb tools available.
-
-# the author
-
-My name is [David Mintz](https://davidmintz.org) and I'm a Spanish interpreter on staff at the [Interpreters Office](https://sdnyinterpreters.org/) of the US District Court, Southern District of New York, located in New York City. And I like coding web applications.
 
 # demonstration
 
@@ -71,3 +64,11 @@ Yes! A demonstration site is available. Please contact me for details.
 # questions? comments?
 
 Feel free to contact me with any questions or suggestions.
+
+# the author
+
+My name is [David Mintz](https://davidmintz.org) and I'm a Spanish interpreter on staff at the [Interpreters Office](https://sdnyinterpreters.org/) of the US District Court, Southern District of New York, located in New York City. And I like coding web applications.
+
+# acknowledgments
+
+Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more. We are boundlessly grateful to the people who make these superb tools available.
