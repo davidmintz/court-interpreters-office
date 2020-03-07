@@ -47,12 +47,16 @@ Among other features:
 
 * You can search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
 
-* You can create notes relevant to a particular day or week to facilitate administration and intra-office communication, and configure their visibility, size and position to suit your taste.
+* You can create notes relevant to a particular day or week to facilitate administration and intra-office communication, and configure their visibility, size and position to suit your taste -- analogous to a physical post-it note, but tidier and more powerful.
+
+* Support for quick and painless emailing of templated assignment details, confirmation and cancellation notices, etc., from within the application -- no switching over to your email program.
 
 * You can create annotations based on docket numbers, so that you can flag any especially noteworthy aspects of a particular case.
 
-* An optional module allows users outside your Interpreters Office to log in and submit their requests themselves, a convenience to them that vastly
-reduces the amount of data entry required of the Interpreters and eliminates a major source of errors.
+* An optional Requests module which, when enabled,
+
+    * allows users outside your Interpreters Office to log in and manage their own requests for interpreting services, a convenience to them that vastly reduces the amount of data entry required of the Interpreters and eliminates a major source of errors.
+    * can be configured to react automatically to certain events, e.g., when a user cancels a scheduled event, the schedule is automatically updated and the interpreter(s) are notified.
 
 # acknowledgments
 
