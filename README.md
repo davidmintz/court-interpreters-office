@@ -62,7 +62,7 @@ Yes! A demonstration site is available. Please contact me for details.
 
 # questions? comments?
 
-Feel free to contact me with any questions or suggestions.
+Feel free to contact me with any questions or suggestions: [david@davidmintz.org](mailto:david@davidmintz.org)
 
 # the author
 
