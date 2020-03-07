@@ -7,8 +7,7 @@ InterpretersOffice is designed primarily with the US District Court system in mi
 
 # features
 
-The administrative interface allows a authenticated users to manage the calendar for their office: view, add, update and delete events involving court interpreters. Events have attributes like date, time, place, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You can also record metadata such as the identity of the person making
-the request and the date and time it was made.
+The administrative interface allows authenticated users to manage the calendar for their office: view, add, update and delete events involving court interpreters. Events have attributes like date, time, place, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You can also record metadata such as the identity of the person making the request and the date and time it was made.
 
 Among other features:
 
