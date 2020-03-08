@@ -1,9 +1,28 @@
 # InterpretersOffice
 is a web application for managing busy court interpreters offices (in the English-speaking United States judicial system).
 
-As of now this app is not quite production-ready, but I am working on it. The intention is to make it available to any court interpreter offices that are interested in using it. The motivation is that there is to my knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote (and which sprang into being precisely because of this dearth of alternatives), and it works great, but needs updating and has too many baked-in features that are peculiar only to our Interpreters Office's needs. So this project will be far and away the world's finest federal court interpreter management system (true, the competition is scarce).
+As of now this app is not quite production-ready, but we're getting close. The intention is to make it available to any court interpreter offices that are interested in using it. The motivation is that there is to my knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote (and which sprang into being precisely because of this dearth of alternatives), and it works great, but needs updating and has too many baked-in features that are peculiar only to our Interpreters Office's needs. So this project will be far and away the world's finest federal court interpreter management system (true, the competition is scarce).
 
-InterpretersOffice is designed primarily with the US District Court system in mind, but I'm trying to keep it flexible enough for use in state courts as well. We should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is the language of the court.
+InterpretersOffice is designed primarily with the US District Court system in mind, but I'm trying to keep it flexible enough for possible use in state courts as well. We should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is the language of the court.
+
+# features
+
+The administrative interface allows authenticated users to manage the calendar for their office: view, add, update and delete events involving court interpreters. Events have attributes like date, time, place, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You can also record metadata such as the identity of the person making the request and the date and time it was made.
+
+Among other features:
+
+* You can search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
+
+* Support for quick and painless emailing of templated assignment details, confirmation and cancellation notices, etc., from within the application -- no need to copy/paste into your email program.
+
+* An optional Requests module which, when enabled,
+
+    * allows users outside your Interpreters Office to log in and manage their own requests for interpreting services, a convenience to them that vastly reduces the amount of data entry required of the Interpreters and eliminates a major source of errors.
+    * can be configured to react automatically to certain events, e.g., when a user cancels a scheduled event, the schedule is automatically updated and the interpreter(s) are notified.
+
+* You can create notes relevant to a particular day or week to facilitate administration and intra-office communication, and configure their visibility, size and position to suit your taste -- analogous to a physical post-it note, but tidier and more powerful.
+
+* You can create annotations based on docket numbers, so that you can flag any especially noteworthy aspects of a particular case.
 
 # requirements
 
@@ -21,16 +40,15 @@ should readily understand this stuff. If you opt instead to install it on a comm
 service, that will work as well, because as we said, the underlying software requirements are standard.
 
 With [docker](https://www.docker.com/) having become such a thing, there's a good chance
-that we will dockerize this application. In English, this means even less to worry about
-in terms of what else has to be installed on the computer where it resides.
+that we will eventually dockerize this application. In English, this means even less to worry about
+in terms of what else has to be installed and set up on the computer where it resides.
 
 The entire software stack -- operating system, web and database servers, application code -- is
 built on open-source software and available to you free of charge. If you're running InterpretersOffice
-on your organization's network, even a single ordinary, inexpensive commodity PC should be powerful enough to do the job.
+on your organization's network, a single inexpensive commodity PC should be powerful enough to do the job.
 
 All of this is to say that in terms of cost, good news: InterpretersOffice and the supporting software are
 completely free; the hardware you'll need is inexpensive.
-
 
 # installation
 
@@ -38,30 +56,18 @@ As of now, normal people are not encouraged to attempt installing InterpretersOf
 
 But when the great day arrives, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Next, you'll need to create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in README files and comments in the config files themselves.
 
-# features
+# demonstration
 
-There is an administrative interface with which authenticated users can manage the calendar for their office: view, add, update and delete events involving court interpreters. Events have attributes like date, time, place, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You can also record metadata such as the identity of the person making
-the request and the date and time it was made.
+Yes! A demonstration site is available. Please contact me for details.
 
-Among other features:
+# questions? comments?
 
-* You can search your database based on all these criteria (date range, docket, judge, language, etc.) and run activity reports.
-
-* You can create notes relevant to a particular day or week to facilitate administration and intra-office communication, and configure their visibility, size and position to suit your taste.
-
-* You can create annotations based on docket numbers, so that you can flag any especially noteworthy aspects of a particular case.
-
-* An optional module allows users outside your Interpreters Office to log in and submit their requests themselves, a convenience to them that vastly
-reduces the amount of data entry required of the Interpreters and eliminates a major source of errors.
-
-# acknowledgments
-
-Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more. We are boundlessly grateful to the people who make these tools available.
+Feel free to contact me with any questions or suggestions: [david@davidmintz.org](mailto:david@davidmintz.org)
 
 # the author
 
 My name is [David Mintz](https://davidmintz.org) and I'm a Spanish interpreter on staff at the [Interpreters Office](https://sdnyinterpreters.org/) of the US District Court, Southern District of New York, located in New York City. And I like coding web applications.
 
-# questions? comments?
+# acknowledgments
 
-Please feel free to contact me with any questions or suggestions.
+Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more. We are boundlessly grateful to the people who make these superb tools available.
