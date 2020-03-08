@@ -14,6 +14,8 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InterpretersOffice\Admin\Form\DefendantForm;
 use InterpretersOffice\Entity\Defendant;
 
+use Laminas\Session\Container as Session;
+
 /**
  * controller for admin/defendants.
  */
@@ -54,10 +56,11 @@ class DefendantsController extends AbstractActionController
      */
     public function indexAction()
     {
-        //$query = $this->entityManager->createQuery();
-        //echo get_class($query);
-        //echo get_class($this->getRequest());//Laminas\Http\PhpEnvironment\Request
-        return new ViewModel(['form'=>new DefendantForm($this->entityManager, ['action' => 'create'])]);
+        $session = new Session('admin_defendants');
+        if ($session->search_term) {
+            $paginator = $this->repository->paginate($session->search_term, $session->page ?? 1);
+            return ['paginator' => $paginator,'search_term' => $session->search_term];
+        }
     }
 
     /**

@@ -14,6 +14,8 @@ use InterpretersOffice\Entity;
 
 use InterpretersOffice\Form\Validator\ProperName;
 
+use Laminas\Session\Container as Session;
+
 /**
  *
  * for fetching defendant data for autocompletion, etc
@@ -86,12 +88,21 @@ class DefendantsController extends AbstractActionController
     public function searchAction()
     {
         $search = $this->params()->fromQuery('term');
+        $page = $this->params()->fromQuery('page',1);
         $repo = $this->entityManager->getRepository(Entity\Defendant::class);
-        $paginator = $repo->paginate($search, $this->params()->fromQuery('page'));
+        $paginator = $repo->paginate($search, $page);
         $viewModel = new ViewModel(['paginator' => $paginator,'search' => $search]);
         $request = $this->getRequest();
         if ($request->isXmlHttpRequest()) {
             $viewModel->setTerminal(true);
+        }
+        $referrer = $request->getServer()->get('HTTP_REFERER');
+        // remember state for next time...
+        // maybe make it 'admin/defendants' instead?
+        if (strstr($referrer,'admin')) {
+            $session = new Session('admin_defendants');
+            $session->search_term = $search;
+            $session->page = $page;
         }
 
         return $viewModel;
