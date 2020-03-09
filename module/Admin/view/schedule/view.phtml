@@ -41,9 +41,9 @@ $this->headTitle('event details');
 <?php
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
-    echo $messenger->render('success', ['alert','alert-success',], false);
+    echo $messenger->render('success', ['alert','alert-primary',], false);
 else : ?>
-<div class="alert alert-success mx-auto" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
+<div class="alert alert-primary mx-auto" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
 <?php
 endif;
 if ($messenger->hasErrorMessages()) :
@@ -342,17 +342,17 @@ endif;?></span>
     <div class="col-12 d-flex"><!--  buttons =============================   -->
         <div class="btn-group mx-auto" role="group" aria-label="available actions">
         <?php if (!$event['deleted']):?>
-            <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-success">edit</a>
-            <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">repeat</a>
-            <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-success">email</a>
-            <a role="button" data-toggle="modal" data-target="#modal-confirm-delete" data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" class="btn btn-success">delete</a>
+            <a href="<?php echo $this->url('events/edit', ['id' => $event['id']])?>" role="button" class="btn btn-primary"><span class="far fa-edit"></span> edit</a>
+            <a href="<?php echo $this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-primary"><span class="far fa-copy"></span> repeat</a>
+            <a id="btn-email" data-toggle="modal" data-target="#email-dialog" href="<?php echo "#";//$this->url('events/add', ['id' => $event['id']]);?>" role="button" class="btn btn-primary"><span class="far fa-envelope"></span> email</a>
+            <a role="button" data-toggle="modal" data-target="#modal-confirm-delete" data-csrf="<?php echo $this->csrf ?>" href="<?php echo $this->url('events/edit', ['action' => 'delete',  'id' => $event['id']])?>" id="btn-delete" class="btn btn-primary"><span class="far fa-trash-alt"></span> delete</a>
             <?php if ($this->event['docket'] && $this->event['docket_total'] > 1):?>
-                <a role="button" id="btn-timeline" href="<?=$this->url('search/docket',['docket'=>$this->event['docket']])?>" class="btn btn-success">timeline</a>
+                <a role="button" id="btn-timeline" href="<?=$this->url('search/docket',['docket'=>$this->event['docket']])?>" class="btn btn-primary"><span class="far fa-calendar-alt"></span> timeline</a>
             <?php endif;
                 if ($this->event['docket']):
                     $url = $this->url('admin/docket-annotations',['docket'=>$this->event['docket']]);
                     if (!$this->event['annotation_max_priority']):
-                        ?><a role="button" class="btn btn-success" href="<?=$url?>" >annotate</a><?php
+                        ?><a role="button" class="btn btn-primary" href="<?=$url?>" ><span class="fas fa-asterisk"></span> annotate</a><?php
                     else:
                         switch ($this->event['annotation_max_priority']):
                             case 1:
