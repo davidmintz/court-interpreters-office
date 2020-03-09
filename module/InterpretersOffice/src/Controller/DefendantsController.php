@@ -97,9 +97,8 @@ class DefendantsController extends AbstractActionController
             $viewModel->setTerminal(true);
         }
         $referrer = $request->getServer()->get('HTTP_REFERER');
-        // remember state for next time...
-        // maybe make it 'admin/defendants' instead?
-        if (strstr($referrer,'admin')) {
+        // remember state for next time...        
+        if (strstr($referrer,'admin/defendants')) {
             $session = new Session('admin_defendants');
             $session->search_term = $search;
             $session->page = $page;
