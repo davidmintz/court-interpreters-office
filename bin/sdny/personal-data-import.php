@@ -74,10 +74,9 @@ class PersonalDataImportCommand extends Command
             $outcome = $update->execute($params);
             // var_dump($outcome);
             //print_r($row);
-            printf ("completed: %d\r",++$i);
-            echo "\ndone\n";
+            printf ("completed: %d\r",++$i);            
         }
-
+        echo "\ndone\n";
         return 0;
     }   
 }
