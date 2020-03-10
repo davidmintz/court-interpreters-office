@@ -47,7 +47,7 @@ class PersonalDataImportCommand extends Command
         $old_cipher = $helper->ask($input, $output, $question2);        
         $db = require(__DIR__.'/connect.php');
         $source = $input->getOption('source-db') ?? 'dev_interpreters';
-        $db->exec("use dev_$source");
+        $db->exec("use $source");
         $select = $db->prepare('SELECT interp_id AS id, AES_DECRYPT(ssn,:cipher) AS ssn, '
         . 'AES_DECRYPT(dob,:cipher) AS dob FROM interpreters '
         . 'WHERE (ssn IS NOT NULL OR dob IS NOT NULL)');        
