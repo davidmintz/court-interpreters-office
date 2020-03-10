@@ -27,19 +27,13 @@ class PersonalDataImportCommand extends Command
      */
     protected function configure()
     {
-        // $this
-        //     ->setDescription('Describe args behaviors')
-        //     ->setDefinition(
-        //         new InputDefinition([
-        //             new InputOption('foo', 'f'),
-        //             new InputOption('bar', 'b', InputOption::VALUE_REQUIRED),
-        //             new InputOption('cat', 'c', InputOption::VALUE_OPTIONAL),
-        //         ])
-        //     );
+       $this
+            ->addOption('source-db', 's',InputOption::VALUE_REQUIRED,'Name of the source database');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $source_db = $input->getOption('source-db') ?? 'dev_interpreters';
         
         $helper = $this->getHelper('question');
         $question = new Question('Enter the encryption cipher for the target db:  ');
@@ -51,8 +45,9 @@ class PersonalDataImportCommand extends Command
         $question2->setHidden(true)->setHiddenFallback(false);
         
         $old_cipher = $helper->ask($input, $output, $question2);        
-        $db = require(__DIR__.'/connect.php');        
-        $db->exec("use dev_interpreters");
+        $db = require(__DIR__.'/connect.php');
+        $source = $input->getOption('source-db') ?? 'dev_interpreters';
+        $db->exec("use dev_$source");
         $select = $db->prepare('SELECT interp_id AS id, AES_DECRYPT(ssn,:cipher) AS ssn, '
         . 'AES_DECRYPT(dob,:cipher) AS dob FROM interpreters '
         . 'WHERE (ssn IS NOT NULL OR dob IS NOT NULL)');        
