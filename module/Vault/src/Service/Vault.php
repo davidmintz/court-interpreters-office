@@ -327,6 +327,7 @@ class Vault extends Client implements EventManagerAwareInterface
         $this->getRequest()->getHeaders()->addHeaderLine("X-Vault-Wrap-TTL: 10s");
         $this->setMethod('GET')->setUri($endpoint)->send();
         $response = $this->responseToArray($this->getResponse()->getBody());
+        
         if ($this->isError($response)) {
             $this->getEventManager()->trigger(__FUNCTION__, $this, [
                'message' => 'failed to get wrapped encryption-key response'
@@ -350,22 +351,21 @@ class Vault extends Client implements EventManagerAwareInterface
     public function getEncryptionKey() : string
     {
         if (! $this->key) {
-            $x = $this->authenticateTLSCert()
+            $this->authenticateTLSCert()
                 ->requestCipherAccessToken()
                 ->unwrap();
 
             $this->requestWrappedEncryptionKey();
+            
             $data = $this->unwrap()['data'];
-            if (key_exists('cipher',$data)) {
-                $this->key = $data['cipher'];
+            // it looks like the data structure we get may vary         
+            if (!key_exists('cipher',$data)) {
+                $this->key = $data['data']['cipher'] ?? null;
             } else {
-                // it may be nested a level deeper, depending on Vault version
-                $name = basename($this->path_to_secret);
-                if (key_exists($name,$data)){
-                    $this->key = $data[$name]['cipher'];
-                }
+                $this->key = $data['cipher'] ?? null;
             }
-            if (! is_string($this->key)) {
+            
+            if (! is_string($this->key)) {                
                 throw new VaultException(__FUNCTION__ . ' could not get encryption/decryption key');
             }
         }
