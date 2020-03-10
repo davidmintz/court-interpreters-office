@@ -162,4 +162,9 @@ class InterpretersController extends AbstractActionController
 
         return $repository->search($params, $this->params()->fromQuery('page', 1));
     }
+
+    public function availabilityListAction()
+    {
+        return false;
+    }
 }

@@ -132,7 +132,6 @@ return  [
                     'action' => 'index',
                 ],
             ],
-
         ],
 
         'events' => [
@@ -144,11 +143,6 @@ return  [
                     'module' => __NAMESPACE__,
                     'controller' => Controller\ScheduleController::class,
                     'action' => 'schedule',
-                    /*
-                    'year' => $today->format('Y'),
-                    'month' => $today->format('m'),
-                    'date' => $today->format('d'),
-                     */
                 ],
             ],
             'child_routes' => [
@@ -663,6 +657,26 @@ return  [
                             // any value, as long as it's -2, -1, 0 or 1
                             'security_clearance_expiration' => '-[12]|[01]',
                         ],
+                    ],
+                ],
+                'availability_list' => [
+                    'type' => Segment::class,
+                    'may_terminate' => false,
+                    'options' => [
+                        'route' => '/availability',
+                        
+                    ],
+                    'child_routes' => [
+                        'list'=> [
+                            'type' => Segment::class,
+                            'options'=>[
+                                'route'=>'/list',
+                                'defaults' => [
+                                    'action'=> 'availability-list',
+                                ],
+                            ],
+                        ],
+                        // to be continued: add another for update pointing to writecontroller
                     ],
                 ],
             ],
