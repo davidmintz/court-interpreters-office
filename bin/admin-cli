@@ -192,7 +192,7 @@ class CreateAdminUserCommand extends Command
                 $username = trim($helper->ask($input, $output, $question_username));
             }
 
-            $question_password = new Question($this->q('Please enter this administrative user\'s password:')
+            $question_password = new Question($this->q('Please enter this administrative user\'s password: ')
                     ,'boink'
             );
             $validator = function($value){
@@ -201,7 +201,7 @@ class CreateAdminUserCommand extends Command
                 }
                 return $value;
             };
-            $question_confirm_password = new Question($this->q('Confirm administrative user\'s password:'),
+            $question_confirm_password = new Question($this->q('Confirm administrative user\'s password: '),
                     'boink'
              );
 

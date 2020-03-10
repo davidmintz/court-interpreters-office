@@ -74,7 +74,7 @@ while ($data = $select->fetch(\PDO::FETCH_OBJ)) {
 
     $ssn = $data->ssn ? $cipher->encrypt($data->ssn) : null;
     $dob = $data->dob ?$cipher->encrypt($data->dob) : null;
-    printf("running update on  %d of %d\r",++$i, $total);
+    printf("running update on %d of %d\r",++$i, $total);
 
     if (! $update->execute(['ssn'=>$ssn,'dob'=>$dob,'id'=>$data->id])) {
          exit(print_r($old_db->errorInfo(),true));
