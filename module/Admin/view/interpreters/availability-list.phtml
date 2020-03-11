@@ -1,0 +1,46 @@
+<?php /**  module/Admin/view/interpreters/availability-list.phtml */
+$this->headTitle('admin | interpreters | email list');
+$this->headScript()->appendFile($this->basePath('js/admin/availability-list.js'));
+?>
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
+    <p>The list of active contract interpreters whom you email to ask their availability</p><br>
+    <div class="alert alert-warning validation-error" style="display:none"></div>
+    <main class="row">
+        <div class="col">       
+        <div style="max-width:400px; overflow-y:auto; max-height:750px" class="mx-auto">
+        <?php
+        if (is_array($this->data)):
+            if (!count($this->data)):?>
+            <p>No active interpreters found for language <?=$this->escapeHtml($this->language)?></p>
+            <?php else: ?>
+            <ol class="list-group">
+            <?php
+            foreach($this->data as $i): ?>
+                <li class="list-group-item py-2">
+                <div class="custom-control custom-switch">
+                <!-- <input type="hidden" name="interpreter[<?=$i['id']?>]" value="0"> -->
+                <input type="checkbox" value="<?=$i['id']?>" name="interpreter-<?=$i['id']?>" class="custom-control-input" id="<?="interpreter-{$i['id']}"?>"<?php if ($i['solicit_availability']):?> checked<?php endif;?>>
+                    <label class="custom-control-label" for="<?="interpreter-{$i['id']}" ?>"><?=$this->escapeHtml("{$i['lastname']}, {$i['firstname']}")?></label>
+                </div>        
+                </li>
+            <?php endforeach;
+            ?></ol><?php
+            endif;
+        endif;
+        ?>
+        </div>
+    </div>
+    <div class="col">
+        <?php echo $this->errorMessage()?>
+        <div id="message-success" class="alert alert-success alert-dismissible border border-success shadow-sm" role="alert" style="display:none">
+            <p class="mb-0"></p>
+            <button type="button" class="close" data-hide="alert" aria-label="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <input type="hidden" name="csrf" value="<?= (new Laminas\Validator\Csrf(['timeout'=>900]))->getHash()?>">
+        <button id="btn-save" class="btn btn-success">save</button><br>
+        <div id="error_csrf" class="alert alert-warning validation-error" style="display:none"></div>
+        <div id="error_data" class="alert alert-warning validation-error" style="display:none"></div>
+    </div>
+</main>

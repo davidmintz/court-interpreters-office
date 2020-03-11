@@ -667,16 +667,25 @@ return  [
                         
                     ],
                     'child_routes' => [
+                        'update' => [
+                            'type' => Segment::class,
+                            'options'=>[
+                                'route'=>'/list/update',
+                                'defaults' => [
+                                    'controller' => Controller\InterpretersWriteController::class,
+                                    'action'=> 'update-availability-list',
+                                ],
+                            ],
+                        ],
                         'list'=> [
                             'type' => Segment::class,
                             'options'=>[
-                                'route'=>'/list[/:language]',
+                                'route'=>'/list[/language/:language]',
                                 'defaults' => [
                                     'action'=> 'availability-list',
                                 ],
                             ],
-                        ],
-                        // to be continued: add another for update pointing to writecontroller
+                        ],                        
                     ],
                 ],
             ],

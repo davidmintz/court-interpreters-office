@@ -158,7 +158,10 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     }
 
     /**
-     * gets names,ids, availability-setting for $language
+     * gets names, ids, availability-solicitation setting for interpreters of $language
+     * 
+     * @param string $language
+     * @return array
      */
     public function getAvailabilityList(string $language) : array
     {
@@ -173,6 +176,34 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $qb->orderBy('i.lastname, i.firstname');
         $query = $qb->getQuery();//->useResultCache(true, null, 'interpreter-search-query');
         return $query->getResult();
+    }
+
+    /**
+     * updates availability-solicitation settings
+     */
+    public function updateAvailabilityList(array $data) : array
+    {
+        $remove = $data['remove'] ?? [];
+        $add = $data['add'] ?? [];
+        if (! is_array($remove) or !is_array($add)) {
+            return ['validation_errors'=> ['data' => 'data submitted was not in the expected format'],'status'=>'validation failed'];
+        }
+        $result = [];
+        $dql = 'UPDATE InterpretersOffice\Entity\Interpreter i SET i.solicit_availability = ';
+        if (count($add)) {
+            $q = $dql . " true WHERE i.id IN (:ids)";
+            $result['added'] = $this->getEntityManager()->createQuery($q)->setParameters(['ids'=>$add])->getResult();
+        } else {
+            $result['added'] = 0;
+        }
+        if (count($remove)) {
+            $q = $dql . " false WHERE i.id IN (:ids)";
+            $result['removed'] = $this->getEntityManager()->createQuery($q)->setParameters(['ids'=>$remove])->getResult();
+        } else {
+            $result['removed'] = 0;
+        }
+        $result['status'] = 'success';
+        return $result;
     }
 
     /**

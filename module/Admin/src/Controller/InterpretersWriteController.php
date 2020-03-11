@@ -6,6 +6,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
+use Laminas\Validator\Csrf as CsrfValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Form\InterpreterForm;
 use InterpretersOffice\Entity;
@@ -194,6 +195,23 @@ class InterpretersWriteController extends AbstractActionController
         return new JsonModel(['status'=>'success']);
     }
 
+    /**
+     * bulk-edits interpreter solicit-availability flag
+     */
+    public function updateAvailabilityListAction()
+    {
+        $data = $this->getRequest()->getPost();    
+        $validator = new CsrfValidator();
+        if (! $validator->isValid($data['csrf'] ?? '')) {
+            $result = ['validation_errors'=>
+                ['csrf'=>['invalid'=>'Expired or missing security token. Please reload the page and try again.']]];
+            return new JsonModel($result);
+        }
+        
+        $repo = $this->entityManager->getRepository(Entity\Interpreter::class);
+
+        return new JsonModel($repo->updateAvailabilityList($data->toArray()));
+    }
     /**
      * autocompletion for Interpreter form's "banned" element
      * @return JsonModel
