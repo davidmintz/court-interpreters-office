@@ -17,6 +17,7 @@ return [
     'interpreters-office/admin/interpreters-write/edit' => __DIR__ . '/../view/interpreters/form.phtml',
     'interpreters-office/admin/interpreters/view' => __DIR__ . '/../view/interpreters/view.phtml',
     'interpreters-office/admin/index/index' => __DIR__ . '/../view/index/index.phtml',
+    'interpreters-office/admin/interpreters/availability-list'=>  __DIR__ . '/../view/interpreters/availability-list.phtml',
     'interpreters-office/admin/court-closings/test' => __DIR__ . '/../view/court-closings/test.phtml',
     'interpreters-office/admin/court-closings/index' => __DIR__ . '/../view/court-closings/index.phtml',
     //'interpreters-office/admin/court-closings/would-be.form' => __DIR__ . '/../view/court-closings/would-be.form.phtml',
@@ -57,5 +58,8 @@ return [
     'interpreters-office/admin/docket-annotations/index' => __DIR__ . '/../view/docket-annotations/index.phtml',
     'interpreters-office/admin/docket-annotations/add' => __DIR__ . '/../view/docket-annotations/form.phtml',
     'interpreters-office/admin/docket-annotations/edit' => __DIR__ . '/../view/docket-annotations/form.phtml',
+
+   
+
 
 ];

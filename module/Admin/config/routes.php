@@ -670,7 +670,7 @@ return  [
                         'list'=> [
                             'type' => Segment::class,
                             'options'=>[
-                                'route'=>'/list',
+                                'route'=>'/list[/:language]',
                                 'defaults' => [
                                     'action'=> 'availability-list',
                                 ],

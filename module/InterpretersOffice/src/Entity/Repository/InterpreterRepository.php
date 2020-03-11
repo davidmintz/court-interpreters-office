@@ -158,6 +158,24 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     }
 
     /**
+     * gets names,ids, availability-setting for $language
+     */
+    public function getAvailabilityList(string $language) : array
+    {
+        $qb = $this->createQueryBuilder('i');
+        $qb->select('i.lastname','i.firstname','i.id','i.solicit_availability')
+            ->join('i.interpreterLanguages', 'il')->join('il.language', 'l')
+            ->join('i.hat', 'h')
+            ->where('i.active = true')
+            ->andWhere("h.name LIKE '%contract%'")
+            ->andWhere('l.name = :language')
+            ->setParameters([':language'=>$language]);
+        $qb->orderBy('i.lastname, i.firstname');
+        $query = $qb->getQuery();//->useResultCache(true, null, 'interpreter-search-query');
+        return $query->getResult();
+    }
+
+    /**
      * deletes cache
      *
      * implements CacheDeletionInterface

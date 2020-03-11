@@ -110,6 +110,10 @@ return [
                                         'label' => 'search',
                                         'route' => 'interpreters/find_by_name',
                                     ],
+                                    [
+                                        'label' => 'availability list',
+                                        'route' => 'interpreters/availability_list/list',
+                                    ],
                                 ],
                             ],
                             [

@@ -146,7 +146,7 @@ class InterpretersController extends AbstractActionController
         return $viewModel;
     }
 
-    /**
+    /**'
      * finds interpreters
      *
      * gets interpreters based on search criteria. if we are given an id
@@ -163,8 +163,19 @@ class InterpretersController extends AbstractActionController
         return $repository->search($params, $this->params()->fromQuery('page', 1));
     }
 
+
+    /**
+     * gets list of contract interpreters and solicit-availability setting
+     */
     public function availabilityListAction()
     {
-        return false;
+        $language = $this->params()->fromRoute('language','Spanish');
+        
+        $repository = $this->entityManager
+            ->getRepository(Entity\Interpreter::class);
+        $data = $repository->getAvailabilityList($language);
+              
+        return ['data'=>$data,'language'=>$language];
+        
     }
 }
