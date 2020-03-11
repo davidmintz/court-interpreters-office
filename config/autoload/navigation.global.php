@@ -110,10 +110,6 @@ return [
                                         'label' => 'search',
                                         'route' => 'interpreters/find_by_name',
                                     ],
-                                    [
-                                        'label' => 'availability list',
-                                        'route' => 'interpreters/availability_list/list',
-                                    ],
                                 ],
                             ],
                             [
@@ -221,6 +217,10 @@ return [
                             [
                                 'label' => 'broadcast',
                                 'route' => 'email/batch'
+                            ],
+                            [
+                                'label' => 'availability list',
+                                'route' => 'interpreters/availability_list/list',
                             ],
                         ],
                     ],

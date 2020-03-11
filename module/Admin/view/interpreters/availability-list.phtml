@@ -2,11 +2,15 @@
 $this->headTitle('admin | interpreters | email list');
 $this->headScript()->appendFile($this->basePath('js/admin/availability-list.js'));
 ?>
-<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
-    <p>The list of active contract interpreters whom you email to ask their availability</p><br>
-    <div class="alert alert-warning validation-error" style="display:none"></div>
+    <div class="row">
+        <div class="col offset-md-2">
+            <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
+            <p>The list of active contract interpreters whom you email to ask their availability</p><br>
+            <div class="alert alert-warning validation-error" style="display:none"></div>
+        </div>
+    </div>
     <main class="row">
-        <div class="col">       
+        <div class="col offset-md-2">       
         <div style="max-width:400px; overflow-y:auto; max-height:750px" class="mx-auto">
         <?php
         if (is_array($this->data)):
