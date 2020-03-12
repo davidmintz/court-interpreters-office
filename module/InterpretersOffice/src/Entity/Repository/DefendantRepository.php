@@ -21,6 +21,8 @@ use InterpretersOffice\Entity\Defendant;
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\Log\LoggerAwareTrait;
 
+use PDO;
+
 /**
  * custom EntityRepository class for the Defendant entity.
  *
@@ -249,7 +251,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         $all_occurrences = $this->findDocketAndJudges($defendant);
         // if what's in the database == what was submitted, it's a global update
         $GLOBAL_UPDATE = ($all_occurrences == $occurrences);
-        //$logger->debug("\$all_occurrences looks like: ".print_r($all_occurrences,true));
+        $logger->debug("\$all_occurrences looks like: ".print_r($all_occurrences,true));
         //$logger->debug("\$occurrences looks like: ".print_r($occurrences,true));
         $GLOBAL_OR_PARTIAL = $GLOBAL_UPDATE ? 'global' : 'partial';
 
@@ -281,8 +283,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         }
         $logger->debug(sprintf(
             'in %s at %d match is %s, update is %s',
-            __CLASS__,
-            __LINE__,
+            __CLASS__,  __LINE__,
             $MATCH ?: 'false',
             $GLOBAL_OR_PARTIAL
         ));
@@ -318,7 +319,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                         $result['updated_deftname'] = $existing_name->getId();
                     }
                     $db = $this->getEntityManager()->getConnection();
-                    $result['events_affected'] = $db->executeQuery(
+                    $result['events_affected'] = $db->executeUpdate(
                         'UPDATE defendants_events SET defendant_id = :new WHERE defendant_id = :old',
                         [':new' => $existing_name->getId(), ':old' => $defendant->getId()]
                     );
@@ -329,7 +330,17 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                         $result['deftname_deleted'] = $defendant->getId();
                         $em->remove($defendant);
                     } else {
-                        $logger->debug("we think not.");
+                        // this has to mean there are defendants_requests to be dealt with...
+                        // considering something like the following (not yet sure it works as intended):
+                        $logger->debug("we think not. trying requests");
+                        // but since the update is "global"
+                        // maybe update defendants_requests as well?
+                        $dockets = array_unique(array_column($occurrences,'docket'));
+                        $sql = 'UPDATE defendants_requests dr JOIN requests r ON dr.request_id = r.id SET defendant_id = :new WHERE defendant_id = :old AND r.docket IN (:dockets)';
+                        $docket_str = sprintf("'%'",implode("','",$dockets));
+                        $result['requests_affected'] = $db->executeUpdate($sql,
+                            [':dockets'=>$docket_str,':new' => $existing_name->getId(), ':old' => $defendant->getId()]);
+                        // to be continued...
                         $em->detach($defendant);
                     }
                     $result['deftname_replaced_by'] = $existing_name->getId();
@@ -468,8 +479,8 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
             $string = "($string)";
         }
         $dql .= $string;
-        //$this->getLogger()->debug("DQL: $dql\nparams:\n"
-        // . print_r(['id'=>$defendant->getId()],true));
+        $this->getLogger()->debug("DQL: $dql\nparams:\n"
+        . print_r(['id'=>$defendant->getId()],true));
         return $this->createQuery($dql)->useResultCache(false)
             ->setParameters(['id' => $defendant->getId()])
             ->getResult();
@@ -483,10 +494,38 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
      */
     public function hasRelatedEntities($id)
     {
-        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event
-            e  JOIN e.defendants d  WHERE d.id = :id';
-        return $this->getEntityManager()->createQuery($dql)->setParameters([
-            'id' => $id
-        ])->getSingleScalarResult() ? true : false;
+        
+        /* appears to work but it's too slow:
+        "SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e  
+        JOIN e.defendants d  
+        LEFT JOIN InterpretersOffice\Requests\Entity\Request r 
+        WITH r.event = e LEFT JOIN r.defendants rd 
+        WHERE d.id = 22668 OR rd.id = 22668"
+        */
+        /* this works fast in native SQL 
+        
+        SELECT (SELECT COUNT(e.id) FROM events e 
+        JOIN defendants_events de ON e.id = de.event_id 
+        WHERE de.defendant_id = 22668) + (SELECT COUNT(r.id) 
+        FROM requests r  JOIN defendants_requests dr 
+        ON r.id = dr.request_id WHERE dr.defendant_id = 22668) AS total;
+        */
+        /** @var \PDO $pdo */
+        $pdo = $this->getEntityManager()->getConnection();
+        $sql = 'SELECT (SELECT COUNT(e.id) FROM events e 
+        JOIN defendants_events de ON e.id = de.event_id 
+        WHERE de.defendant_id = :id) + (SELECT COUNT(r.id) 
+        FROM requests r  JOIN defendants_requests dr 
+        ON r.id = dr.request_id WHERE dr.defendant_id = :id) AS total';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':id'=>$id]);
+        $count = $stmt->fetch(\PDO::FETCH_COLUMN);
+        
+        return $count ? true : false;
+        // $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event
+        //     e  JOIN e.defendants d  WHERE d.id = :id';
+        // return $this->getEntityManager()->createQuery($dql)->setParameters([
+        //     'id' => $id
+        // ])->getSingleScalarResult() ? true : false;
     }
 }
