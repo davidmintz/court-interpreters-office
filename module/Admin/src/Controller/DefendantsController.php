@@ -169,7 +169,7 @@ class DefendantsController extends AbstractActionController
             }
         }
         $form->bind($entity);
-        // at least for now...
+        // at least for now... ----------------------------------
         $container = $this->getEvent()->getApplication()->getServiceManager();
         $logger = $container->get('log');
         $this->repository->setLogger($logger);
@@ -177,7 +177,7 @@ class DefendantsController extends AbstractActionController
         if (! $listener->getLogger()) {
             $listener->setLogger($logger);
         }
-        /////////
+        /////////               ----------------------------------
         $occurrences = $this->repository->findDocketAndJudges($id);
         if (count($occurrences) > 0) {
             $form->attachOccurencesValidator();
@@ -209,7 +209,7 @@ class DefendantsController extends AbstractActionController
             }
             return new JsonModel($result);
         }
-
+        
         return $viewModel->setVariables(
             ['form' => $form,
             'checked' => $request->getPost()->get('occurrences') ?: [],
