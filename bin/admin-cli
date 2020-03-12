@@ -232,13 +232,14 @@ class CreateAdminUserCommand extends Command
             $hat = $hats[$hat_id];
 
             $firstname = $helper->ask($input,$output,new Question($this->q("user's first name? ")
-                    ,'David'
+                    // ,'David'
              ));
             $lastname = $helper->ask($input,$output,new Question($this->q("user's last name? "),
-                    'Mintz'));
+                    // 'Mintz'
+                ));
 
             $email =  trim($helper->ask($input,$output,new Question($this->q("user's email address? ")
-                    ,'david@davidmintz.org'
+                    // ,'david@davidmintz.org'
                     )));
 
             $email_validator = new EmailValidator();
