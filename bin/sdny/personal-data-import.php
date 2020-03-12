@@ -72,8 +72,6 @@ class PersonalDataImportCommand extends Command
                 ':id'  => $row['id'],
             ];
             $outcome = $update->execute($params);
-            // var_dump($outcome);
-            //print_r($row);
             printf ("completed: %d\r",++$i);            
         }
         echo "\ndone\n";
