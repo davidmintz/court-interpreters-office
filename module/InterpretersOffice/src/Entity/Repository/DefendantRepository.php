@@ -341,7 +341,14 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                         $result['requests_affected'] = $db->executeUpdate($sql,
                             [':dockets'=>$docket_str,':new' => $existing_name->getId(), ':old' => $defendant->getId()]);
                         // to be continued...
-                        $em->detach($defendant);
+                        // ask again 
+                        if (! $this->hasRelatedEntities($defendant->getId())) {
+                            $logger->debug("removing old deft at ".__LINE__);
+                            $em->remove($defendant);
+                        } else {
+                            $logger->debug("NOT removing old deft at ".__LINE__);
+                            $em->detach($defendant);
+                        }
                     }
                     $result['deftname_replaced_by'] = $existing_name->getId();
                     break; // pro forma
