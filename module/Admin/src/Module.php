@@ -46,27 +46,14 @@ class Module
     public function onBootstrap(\Laminas\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
-        // $eventManager = $event->getApplication()->getEventManager();
-        // $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($container) {
-        //     $log = $container->get('log');
-        //     $log->debug("an EVENT_ROUTE listener running in ".__NAMESPACE__);
-        // });
-        //
-        // $log = $container->get('log');
+       
+        $log = $container->get('log');
         //$log->addWriter($container->get(DbWriter::class));
         /*
          * for TEMPORARY debugging
          */
          // ===============
-         // $path = 'data/log/sql.log';
-         // $fp = fopen($path,'w');
-         // ftruncate($fp,0);
-         // fclose($fp);
-         // $log = new \Laminas\Log\Logger();
-         // $log->addWriter(new \Laminas\Log\Writer\Stream($path,'a'));
-         // $sql_logger = new \InterpretersOffice\Service\SqlLogger($log);
-         // $em = $container->get('entity-manager');
-         // $em->getConfiguration()->setSQLLogger($sql_logger);
+        //  
          //==============
         // set the "breadcrumbs" navigation view-helper separator
         // unless there's a better way to make sure this gets done globally...

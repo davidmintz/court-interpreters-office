@@ -88,7 +88,7 @@ echo $this->form()->openTag($form);
     echo $this->formElement($form->get('id'));
     if (! $this->xhr) :
         echo $this->formSubmit($form->get('submit'));
-        if (! $this->occurrences  && $action == 'edit') :
+        if (! $this->has_related_entities  && $action == 'edit') :
             ?><input id="btn-delete" type="button" class="btn btn-lg btn-warning mt-2" title="delete this defendant name from your database" value="delete" id="btn-delete"><?php
         endif;
     endif;

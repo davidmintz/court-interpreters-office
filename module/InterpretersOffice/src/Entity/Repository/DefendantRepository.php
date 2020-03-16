@@ -211,7 +211,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
             ->setParameters($params)
             ->getResult();
     }
-
+    private $result = [];
     /**
      * updates Defendant and DefendantEvent entities
      *
@@ -294,7 +294,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                 case false:
                 case 'identical':
                     try {
-                        $logger->debug("flushing out global update");
+                        $logger->debug("flushing out global update at ".__LINE__);
                         $em->flush();
                         return array_merge($result, [
                         'status' => 'success',
@@ -332,15 +332,21 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
                     } else {
                         // this has to mean there are defendants_requests to be dealt with...
                         // considering something like the following (not yet sure it works as intended):
-                        $logger->debug("we think not. trying requests");
+                        $logger->debug("we think not. trying requests...");
+                       // $dql = 'SELECT COUNT(';
                         // but since the update is "global"
-                        // maybe update defendants_requests as well?
+                        // maybe update defendants_requests as well? unfortunately this is NOT working, possibly
+                        // for reasons related to https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/transactions-and-concurrency.html#approach-2-explicitly
                         $dockets = array_unique(array_column($occurrences,'docket'));
-                        $sql = 'UPDATE defendants_requests dr JOIN requests r ON dr.request_id = r.id SET defendant_id = :new WHERE defendant_id = :old AND r.docket IN (:dockets)';
-                        $docket_str = sprintf("'%'",implode("','",$dockets));
-                        $result['requests_affected'] = $db->executeUpdate($sql,
-                            [':dockets'=>$docket_str,':new' => $existing_name->getId(), ':old' => $defendant->getId()]);
+                        $sql = 'UPDATE defendants_requests dr JOIN requests r ON dr.request_id = r.id SET defendant_id = :new 
+                        WHERE defendant_id = :old AND r.docket IN (:dockets)';
+                        $docket_str = sprintf("'%s'",implode("','",$dockets));                        
+                        $params = [':dockets'=>$docket_str,':new' => $existing_name->getId(), ':old' => $defendant->getId()];
+                        // $em->transactional(function($em) use ($sql,$params){
+                        // });
+                        $result['requests_affected'] = $db->executeUpdate($sql, $params);
                         // to be continued...
+                        $logger->debug("did: $sql with params",$params);
                         // ask again 
                         if (! $this->hasRelatedEntities($defendant->getId())) {
                             $logger->debug("removing old deft at ".__LINE__);
@@ -527,7 +533,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id'=>$id]);
         $count = $stmt->fetch(\PDO::FETCH_COLUMN);
-        
+        $this->getLogger()->debug(__FUNCTION__.":  number of related entities is: $count");
         return $count ? true : false;
         // $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event
         //     e  JOIN e.defendants d  WHERE d.id = :id';

@@ -194,9 +194,22 @@ class DefendantsController extends AbstractActionController
             // do we have an existing match?
             $existing_name = $this->repository->findDuplicate($entity);
             $resolution = $form->get('duplicate_resolution')->getValue();
+            // $event_id = $this->params()->fromQuery('event_id');
+            // $this->entityManager->transactional(
+            //     function($em) use ($entity, $input, $existing_name, $resolution, $event_id)
+            //     {
+            //         $result = $this->repository->updateDefendantEvents(
+            //             $entity,
+            //             $input->get('occurrences', []),                
+            //             $existing_name,
+            //             $resolution,
+            //             $event_id   
+            //         );
+            //     }
+            // );
             $result = $this->repository->updateDefendantEvents(
                 $entity,
-                $input->get('occurrences', []),
+                $input->get('occurrences', []),                
                 $existing_name,
                 $resolution,
                 $this->params()->fromQuery('event_id')
@@ -209,10 +222,14 @@ class DefendantsController extends AbstractActionController
             }
             return new JsonModel($result);
         }
-        
+        //  a temporary hack...  because a name might have >0 related Request entities,
+        //  but no related Event entities
+        /** @todo something better */
         return $viewModel->setVariables(
             ['form' => $form,
             'checked' => $request->getPost()->get('occurrences') ?: [],
+            'has_related_entities' => count($occurrences) ? true : $this->repository->hasRelatedEntities($id),
+            'id' => $id,
             'occurrences' => $occurrences]
         );
     }
