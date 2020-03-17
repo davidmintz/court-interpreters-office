@@ -46,6 +46,12 @@ class DefendantNameService
         ])->getOneOrNullResult();
     }
 
+    /**
+     * attempts to insert a new defendant name 
+     * 
+     * @param array $data
+     * @return array
+     */
     public function insert(Array $data) : Array    
     {
         $entity = new Entity\Defendant();
@@ -68,9 +74,15 @@ class DefendantNameService
         return ['status'=>'WIP','data'=>$data];
     }
 
-    public function getMatchType(Entity\Defendant $a, Entity\Defendant $b) :? bool
+    /**
+     * 
+     * 
+     * @param Entity\Defendant $a
+     * @param Entity\Defendant $b
+     * @return bool true if match is exact (binary, literal)
+     */
+    public function isExactMatch(Entity\Defendant $a, Entity\Defendant $b) : bool
     {
-        
+        return $a->getGivenNames() == $b->getGivenNames()
+            && $a->getSurNames() == $b->getSurnames();
     }
-
-}
