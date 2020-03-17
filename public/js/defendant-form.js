@@ -52,15 +52,19 @@ $(function(){
                             "update returned duplicated entry error, deal with it");
                     }
                 } else if (response.inexact_duplicate_found) {
-                    form.prepend($("<input>").attr({type:"hidden",
-                        name:"duplicate_resolution_required",value:1}));
+                    //form.prepend($("<input>").attr({type:"hidden",name:"duplicate_resolution_required",value:1}));
                     $("#deft-existing-duplicate-name").text(name);
-                    var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
-                    console.warn("daFUQ?");
-                    return $(shit).show();
+                    var shit = $("p.duplicate-name-instructions, .duplicate-resolution-radio");
+                    if (shit.is(":visible")) {
+                        return displayValidationErrors({
+                            duplicate_resolution : {isEmpty : "One of the above options is required"}
+                        });
+                    }
+                    return shit.show();
                 } else {
                     console.warn("all good? NOT redirecting...");
                     url = form.data().redirect_url || "/admin/defendants";
+                   
                     //window.document.location = `${window.basePath||""}${url}`;
                 }
             })

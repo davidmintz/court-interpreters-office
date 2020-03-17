@@ -86,7 +86,7 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
 
         $this->add([
             'type' => 'Laminas\Form\Element\Select',
-            'name' => 'occurrences',
+            'name' => 'contexts',
             'attributes' => ['multiple' => 'multiple'],
 
         ]);

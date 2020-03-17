@@ -162,7 +162,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
             JOIN e.defendants d LEFT JOIN e.judge j
             LEFT JOIN e.anonymous_judge aj
             WHERE d.id = :id GROUP BY e.docket,aj.id,j.id
-            ORDER BY e.docket, judge';
+            ORDER BY e.docket, judge, judge_id, anon_judge_id';
 
         return $this->createQuery($dql)->setParameters(['id' => $id])
             ->getResult();

@@ -23,8 +23,8 @@ class DefendantNameService
     const INEXACT_DUPLICATE = 'inexact';
     const UPDATE_GLOBAL = 'global';
     const UPDATE_CONTEXTUAL = 'contextual';
-    const USE_EXISTING_DUPLICATE = 'use existing';
-    const UPDATE_EXISTING_DUPLICATE = 'update existing';
+    const USE_EXISTING_DUPLICATE = 'use_existing';
+    const UPDATE_EXISTING_DUPLICATE = 'update_existing';
 
     public function __construct(EntityManagerInterface $em)
     {
@@ -36,8 +36,7 @@ class DefendantNameService
      * 
      * @param Entity\Defendant $entity
      * @param array $data the entity data
-     * @param array $options extra data 
-     * possible keys: 'existing_entity','duplicate_resolution','event_id'
+     * @param array $options extra data.  possible keys: 'event_id'...?
      */
     public function update(Entity\Defendant $entity, array $data, array $options = [] ) : array
     {
@@ -50,12 +49,12 @@ class DefendantNameService
             }
         }
         if (! $modified) {
-            return ['modified'=>false,];
+            return ['modified'=>false,'status'=>'success'];
         }
         // the first questions is whether there is a duplicate
         $duplicate = $this->findDuplicate($entity);
         $debug[] = "duplicate? ".($duplicate ? "yes":"no");
-        
+        $match = null;
         // and if so, whether it is exact or inexact
         if ($duplicate) {
             if ($this->isExactMatch($entity,$duplicate)) {
@@ -65,21 +64,62 @@ class DefendantNameService
             }
             $debug[] = "match: '$match'" ;
         }
+       
+        // and if it is inexact, whether they submitted a resolution policy:
+        // use the existing one as is, or update the existing one        
+        if ($match == self::INEXACT_DUPLICATE && ! ($data['duplicate_resolution']))
+        {
+            return [
+                'status' => 'aborted',
+                'inexact_duplicate_found' => true,
+                'existing_entity' => [
+                    'given_names' => $duplicate['given_names'],
+                    'surnames'    => $duplicate['surnames'],
+                 ],
+            ];
+        }        
+        // now we need to know if the update is contextual or global
+        $contexts_submitted = $data['contexts'] ? 
+            array_map(function($i){ return json_decode($i, true);},$data['contexts']) :[];
 
-        $contexts = $data['contexts'] ? 
-        array_map(function($i){return json_decode($i);},$data['contexts']) :[];
+        $all_contexts =  $this->em->getRepository(Entity\Defendant::class)
+            ->findDocketAndJudges($entity->getId());
         
-        
+        $update_type =  $all_contexts == $contexts_submitted ? self::UPDATE_GLOBAL : self::UPDATE_CONTEXTUAL;
+        $debug[] = 'type of update: '.$update_type;
 
+        switch ($duplicate) {
+            case null:
+                if ($update_type == self::UPDATE_GLOBAL) {
+                    $debug[] = "no duplicate, global update";
+                } else {
+                    $debug[] = "no duplicate, contextual update";
+                }
+            break;
 
+            case self::EXACT_DUPLICATE:
+                if ($update_type == self::UPDATE_GLOBAL) {
+                    $debug[] = "EXACT duplicate, global update";
+                } else {
+                    $debug[] = "EXACT duplicate, contextual update";
+                }
+            break;
 
+            case self::INEXACT_DUPLICATE;
+                if ($update_type == self::UPDATE_GLOBAL) {
+                    $debug[] = "INEXACT duplicate, global update; dup resolution: " .$data['duplicate_resolution'];
+                } else {
+                    $debug[] = "INEXACT duplicate, contextual update; dup resolution: " .$data['duplicate_resolution'];
+                }
+            break;
+        }
 
         return [
             'debug' => $debug,
-            'status' => 'WIP',
-            'contexts' =>  $contexts,
-            'data' => $data,
+            'status' => 'WIP',            
+            'duplicate_resolution' => $data['duplicate_resolution'],
         ];
+
     }
 
     /**

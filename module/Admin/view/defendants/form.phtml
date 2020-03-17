@@ -36,6 +36,7 @@ echo $this->form()->openTag($form);
 <?php if ($form->has('duplicate_resolution')) :?>
     <p class="duplicate-name duplicate-name-instructions" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
     <div id="duplicate_resolution" class="form-group duplicate-resolution-radio mb-1" style="display:none" >
+        <input type="hidden" value="" name="duplicate_resolution">
         <?php $opts = $form->get('duplicate_resolution')->getValueOptions();
         foreach ($opts as $value => $label) :
             ?><div class="form-check"><input name="duplicate_resolution" value="<?php echo $value?>" class="form-check-input" type="radio" id="radio-<?php echo $value?>">
