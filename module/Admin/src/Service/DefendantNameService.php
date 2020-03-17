@@ -79,7 +79,7 @@ class DefendantNameService
             ];
         }        
         // now we need to know if the update is contextual or global
-        $contexts_submitted = $data['contexts'] ? 
+        $contexts_submitted = isset($data['contexts']) ? 
             array_map(function($i){ return json_decode($i, true);},$data['contexts']) :[];
 
         $all_contexts =  $this->em->getRepository(Entity\Defendant::class)
@@ -87,11 +87,16 @@ class DefendantNameService
         
         $update_type =  $all_contexts == $contexts_submitted ? self::UPDATE_GLOBAL : self::UPDATE_CONTEXTUAL;
         $debug[] = 'type of update: '.$update_type;
-
+        $db = $this->em->getConnection();
         switch ($duplicate) {
             case null:
                 if ($update_type == self::UPDATE_GLOBAL) {
-                    $debug[] = "no duplicate, global update";
+                    $debug[] = "no duplicate, doing global update";
+                    $result = $this->em->transactional(function($db) use ($entity,$data) {
+                        $entity->setGivenNames($data['given_names'])
+                            ->setSurnames($data['surnames']);
+                        return ['status'=>'success'];
+                    });
                 } else {
                     $debug[] = "no duplicate, contextual update";
                 }
@@ -116,7 +121,8 @@ class DefendantNameService
 
         return [
             'debug' => $debug,
-            'status' => 'WIP',            
+            'status' => 'WIP', 
+            'result' => $result ?? "TBD",          
             'duplicate_resolution' => $data['duplicate_resolution'],
         ];
 
