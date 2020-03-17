@@ -28,6 +28,17 @@ class DefendantNameService
     }
 
     /**
+     * attempts to update a defendant name
+     */
+    public function update(string $id,array $data ) : array
+    {
+        return [
+            'status' => 'WIP',
+            'data' => $data,
+        ];
+    }
+
+    /**
      * attempts to insert a new defendant name 
      * 
      * @param array $data
@@ -59,7 +70,8 @@ class DefendantNameService
                     'surnames' => $existing_entity->getSurnames(),
                     'given_names' => $existing_entity->getGivenNames(),
                     'id' => $existing_entity->getId(),
-                ]];            
+                ],
+            ];            
         }        
     }
 
