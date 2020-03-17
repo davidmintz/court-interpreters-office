@@ -28,25 +28,6 @@ class DefendantNameService
     }
 
     /**
-     * find existing entity with same properties except id
-     *
-     * @param  Entity\Defendant $defendant
-     * @return Defendant|null
-     */
-    public function findDuplicate(Entity\Defendant $defendant) :? Entity\Defendant
-    {
-        $dql = 'SELECT d FROM InterpretersOffice\Entity\Defendant d
-        WHERE d.given_names = :given_names
-        AND d.surnames = :surnames ';//AND d.id <> :id';
-
-        return $this->createQuery($dql)->setParameters([
-            'given_names' => $defendant->getGivenNames(),
-            'surnames' => $defendant->getSurnames(),
-            //'id' => $defendant->getId()
-        ])->getOneOrNullResult();
-    }
-
-    /**
      * attempts to insert a new defendant name 
      * 
      * @param array $data
@@ -68,10 +49,18 @@ class DefendantNameService
                 ]
             ];
         } catch (UniqueConstraintViolationException $e) {
-
-
-        }
-        return ['status'=>'WIP','data'=>$data];
+            $existing_entity = $this->findDuplicate($entity);
+            
+            return [
+                'status' => 'error',
+                'duplicate_entry_error' => true,
+                'exact_match' => $this->isExactMatch($entity, $existing_entity),
+                'existing_entity' => [
+                    'surnames' => $existing_entity->getSurnames(),
+                    'given_names' => $existing_entity->getGivenNames(),
+                    'id' => $existing_entity->getId(),
+                ]];            
+        }        
     }
 
     /**
@@ -86,3 +75,27 @@ class DefendantNameService
         return $a->getGivenNames() == $b->getGivenNames()
             && $a->getSurNames() == $b->getSurnames();
     }
+
+    /**
+     * find existing entity with same properties
+     *
+     * @param  Entity\Defendant $defendant
+     * @return Defendant|null
+     */
+    public function findDuplicate(Entity\Defendant $defendant) :? Entity\Defendant
+    {
+        $found = $this->em->getRepository(Entity\Defendant::class)->findOneBy([
+            'given_names'=>$defendant['given_names'],
+            'surnames'=>$defendant['surnames']
+        ]);
+        if (! $found) {
+            return null;
+        }
+        if ($defendant->getId() && $found->getId() == $defendant->getId()) {
+            // same object
+            return null;
+        }
+
+        return $found;
+    }
+}
