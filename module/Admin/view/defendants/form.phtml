@@ -60,16 +60,16 @@ echo $this->form()->openTag($form);
     ?>
     </div>
     <?php
-    if ($this->occurrences) :?>
-    occurrences <span class="text-muted">-- select the contexts where this update should apply:</span><br>
+    if ($this->contexts) :?>
+    contexts <span class="text-muted">-- select the contexts where this update should apply:</span><br>
     <div id="occurrences" class="form-group form-check mb-2">
         <?php
-        $count = count($this->occurrences);
-        foreach ($this->occurrences as $i => $item) :
+        $count = count($this->contexts);
+        foreach ($this->contexts as $i => $item) :
                 $value = json_encode($item);
             ?>
-            <input class="form-check-input" type="checkbox" name="occurrences[]" value="<?php echo $this->escapeHtml($value)?>" <?php
-            if (1 == $count or in_array($value, $this->checked)) :
+            <input class="form-check-input" type="checkbox" name="contexts[]" value="<?php echo $this->escapeHtml($value)?>" <?php
+            if (1 == $count) :
                 ?> checked="checked"<?php
             endif;
             ?> id="checkbox-<?php echo $i?>">
@@ -82,7 +82,7 @@ echo $this->form()->openTag($form);
         --><button id="btn-invert-selection" class="btn btn-sm btn-default border border-info">invert selection</button>
         <?php endif;?>
     </div>
-    <?php endif; //occurrences
+    <?php endif; // contexts
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));

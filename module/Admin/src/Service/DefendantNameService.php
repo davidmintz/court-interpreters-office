@@ -29,12 +29,16 @@ class DefendantNameService
 
     /**
      * attempts to update a defendant name
+     * @param string $id
+     * @param array $data the entity data
+     * @param array $options 
      */
-    public function update(string $id,array $data ) : array
+    public function update(string $id, array $data, array $options = [] ) : array
     {
         return [
             'status' => 'WIP',
             'data' => $data,
+            'options' => $options,
         ];
     }
 

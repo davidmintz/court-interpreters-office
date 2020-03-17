@@ -534,7 +534,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id'=>$id]);
         $count = $stmt->fetch(\PDO::FETCH_COLUMN);
-        $this->getLogger()->debug(__FUNCTION__.":  number of related entities is: $count");
+        //$this->getLogger()->debug(__FUNCTION__.":  number of related entities is: $count");
         return $count ? true : false;
         // $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event
         //     e  JOIN e.defendants d  WHERE d.id = :id';
