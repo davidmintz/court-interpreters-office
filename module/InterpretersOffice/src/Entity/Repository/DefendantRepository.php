@@ -167,6 +167,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         return $this->createQuery($dql)->setParameters(['id' => $id])
             ->getResult();
     }
+
     /**
      * find existing entity with same properties except id
      *
@@ -177,7 +178,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
     {
         $dql = 'SELECT d FROM InterpretersOffice\Entity\Defendant d
         WHERE d.given_names = :given_names
-        AND d.surnames = :surnames ';//AND d.id <> :id';
+        AND d.surnames = :surnames ';
 
         return $this->createQuery($dql)->setParameters([
             'given_names' => $defendant->getGivenNames(),

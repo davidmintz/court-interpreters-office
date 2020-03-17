@@ -1,16 +1,11 @@
 <?php
-/** module/Admin/src/Form/EventForm.php */
+/** module/Admin/src/Form/DefendantForm.php */
 
 namespace InterpretersOffice\Admin\Form;
 
 use Laminas\Form\Form as LaminasForm;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
-
-//use Laminas\EventManager\ListenerAggregateInterface;
-//use Laminas\EventManager\ListenerAggregateTrait;
-//use Laminas\EventManager\EventManagerInterface;
-//use Laminas\EventManager\EventInterface;
 
 use Laminas\InputFilter\InputFilterProviderInterface;
 
@@ -46,11 +41,15 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
      * @param ObjectManager $objectManager
      * @param array         $options
      */
-    public function __construct(ObjectManager $objectManager, $options = null)
+    public function __construct($options = null)
     {
         parent::__construct($this->formName, $options);
-        $this->setObjectManager($objectManager);
-        $this->setHydrator(new DoctrineHydrator($objectManager, true));
+        //$this->setObjectManager($objectManager);
+        /* no more of this for now. trying something different: 
+         * manage the hydration and transaction demarcation by hand
+         */ 
+
+        //$this->setHydrator(new DoctrineHydrator($objectManager, true));
 
         $this->addCsrfElement('defendant_csrf');
         $this->add(
@@ -82,32 +81,27 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
 
         $this->add([
             'type' => 'Laminas\Form\Element\Hidden',
-            'name' => 'id',
-            'required' => true,
-            'allow_empty' => true,
+            'name' => 'id',            
         ]);
 
+        $this->add([
+            'type' => 'Laminas\Form\Element\Select',
+            'name' => 'occurrences',
+            'attributes' => ['multiple' => 'multiple'],
 
-        /* TO BE CONTINUED: if $option['action'] == update, more elements... */
-        //if ($options['action'] == 'update') {
-            $this->add([
-                'type' => 'Laminas\Form\Element\Select',
-                'name' => 'occurrences',
-                'attributes' => ['multiple' => 'multiple'],
-
-            ]);
-            $this->add([
-                'type' => 'Laminas\Form\Element\Radio',
-                'name' => 'duplicate_resolution',
-                'attributes' => ['id' => 'duplicate_resolution'],
-                'options' => [
-                    'value_options' => [
-                        self::USE_EXISTING => 'use the existing version as is',
-                        self::UPDATE_EXISTING => 'update the existing version (as shown below)',
-                    ],
-                ]
-            ]);
-        //}
+        ]);
+        $this->add([
+            'type' => 'Laminas\Form\Element\Radio',
+            'name' => 'duplicate_resolution',
+            'attributes' => ['id' => 'duplicate_resolution'],
+            'options' => [
+                'value_options' => [
+                    self::USE_EXISTING => 'use the existing version as is',
+                    self::UPDATE_EXISTING => 'update the existing version (as shown below)',
+                ],
+            ]
+        ]);
+        
     }
 
     /**

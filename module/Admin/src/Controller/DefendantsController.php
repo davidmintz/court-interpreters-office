@@ -14,6 +14,8 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InterpretersOffice\Admin\Form\DefendantForm;
 use InterpretersOffice\Entity\Defendant;
 
+use InterpretersOffice\Admin\Service\DefendantNameService;
+
 use Laminas\Session\Container as Session;
 
 /**
@@ -63,10 +65,34 @@ class DefendantsController extends AbstractActionController
         }
     }
 
+    public function addAction()
+    {
+        $form = new DefendantForm(['action' => 'create']);
+        if ($this->getRequest()->isPost()) {
+            return $this->postInsert($form);
+        }
+        $viewModel = new ViewModel();
+        $viewModel->setVariables(['form' => $form, 'title' => 'add a defendant name']);
+
+        return $viewModel;
+    }
+
+    protected function postInsert(DefendantForm $form)
+    {
+        $form->setData($this->getRequest()->getPost());
+        if (! $form->isValid()) {
+            return new JsonModel(['validation_errors' => $form->getMessages()]);
+        }
+        $service = new DefendantNameService($this->entityManager);
+        $return = $service->insert($form->getData());
+        return new JsonModel($return);
+    }
+
+
     /**
      * adds a defendant-name entity to the database.
      */
-    public function addAction()
+    public function __addAction()
     {
         $viewModel = new ViewModel();
         $form = new DefendantForm($this->entityManager, ['action' => 'create']);
@@ -120,7 +146,7 @@ class DefendantsController extends AbstractActionController
                         ]])
                     :
                     $viewModel->setVariables(['duplicate_entry_error' => true,
-                            'existing_entity' => $existing_entity]);
+                        'existing_entity' => $existing_entity]);
             }
         }
 
