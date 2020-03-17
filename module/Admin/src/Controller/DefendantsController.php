@@ -88,26 +88,29 @@ class DefendantsController extends AbstractActionController
         return new JsonModel($return);
     }
 
-    protected function postUpdate(DefendantForm $form)
+    protected function postUpdate(DefendantForm $form, Entity\Defendant $entity)
     {
         $service = new DefendantNameService($this->entityManager);
         $data = $this->getRequest()->getPost()->toArray();
         $id = $this->params()->fromRoute('id');
 
-        return new JsonModel(
-            $service->update($id,$data)
-        );
+        $form->setData($this->getRequest()->getPost());
+        if (! $form->isValid()) {
+            $result = [ 'validation_errors' => $form->getMessages()];            
+        } else {
+            $result = $service->update($entity,$data);
+        }
+
+        return new JsonModel($result);
+           
 
     }
     public function editAction()
     {
-        $form = new DefendantForm(['action' => 'update']);
-        if ($this->getRequest()->isPost()) {
-            return $this->postUpdate($form);
-        }
+        $form = new DefendantForm(['action' => 'update']);        
         $id = $this->params()->fromRoute('id');
-        $entity = $this->entityManager->find(Entity\Defendant::class, $id);
         $xhr = $this->getRequest()->isXmlHttpRequest();
+        $entity = $this->entityManager->find(Entity\Defendant::class, $id);
         if (! $entity) {
             $message = "A defendant name with id $id was not found in the database.";
             if (! $xhr) {
@@ -119,15 +122,21 @@ class DefendantsController extends AbstractActionController
                 return  ['error_not_found' => $message,'form' => $form, 'id'=>$id];            
             }
         }
-        // we are a GET, and need to display the form, possibly with context/radio buttons
         $contexts = $this->repository->findDocketAndJudges($id);
+        if ($contexts) {
+            $form->attachContextsValidator();
+        }
+        if ($this->getRequest()->isPost()) {
+            return $this->postUpdate($form,$entity);
+        }
+
+        // we are a GET, and need to display the form, possibly with context/radio buttons        
         $form->setData(['given_names'=>$entity['given_names'],
             'surnames'  => $entity['surnames'], 'id' => $id,
         ]);
-        return ['form' => $form,            
+        return ['form' => $form, 'id' => $id,  'contexts' => $contexts,
             'has_related_entities' => count($contexts) ? true : 
-                $this->repository->hasRelatedEntities($id),
-            'id' => $id,  'contexts' => $contexts,
+                $this->repository->hasRelatedEntities($id),            
             'xhr' => $xhr,
         ];
     }

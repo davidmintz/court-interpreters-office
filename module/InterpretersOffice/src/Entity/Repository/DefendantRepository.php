@@ -188,32 +188,6 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
     }
 
     /**
-     * gets DefendantEvents for Defendant
-     *
-     * interesting fact: INDEX BY does not trigger an error but neither
-     * does it seem to work unless the other columns are scalar
-     *
-     * @param  Entity\Defendant $defendant
-     * @param  int $exclude_event_id event to exclude from query
-     * @return Array
-     */
-    public function __getDefendantEventsForDefendant(
-        Entity\Defendant $defendant,
-        $exclude_event_id = null
-    ) {
-        $dql = 'SELECT de FROM InterpretersOffice\Entity\DefendantEvent de
-            JOIN de.defendant d JOIN de.event e WHERE d.id = :id';
-        $params = ['id' => $defendant->getId()];
-        if ($exclude_event_id) {
-            $dql .= ' AND e.id <> :event_id';
-            $params['event_id'] = $exclude_event_id;
-        }
-        return   $this->createQuery($dql)
-            ->setParameters($params)
-            ->getResult();
-    }
-    private $result = [];
-    /**
      * updates Defendant and DefendantEvent entities
      *
      * still a work in progress

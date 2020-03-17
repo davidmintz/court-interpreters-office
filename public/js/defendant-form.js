@@ -59,9 +59,9 @@ $(function(){
                     console.warn("daFUQ?");
                     return $(shit).show();
                 } else {
-                    console.warn("all good?");
+                    console.warn("all good? NOT redirecting...");
                     url = form.data().redirect_url || "/admin/defendants";
-                    window.document.location = `${window.basePath||""}${url}`;
+                    //window.document.location = `${window.basePath||""}${url}`;
                 }
             })
             .fail((response)=> {

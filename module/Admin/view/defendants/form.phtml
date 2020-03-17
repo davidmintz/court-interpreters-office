@@ -62,7 +62,7 @@ echo $this->form()->openTag($form);
     <?php
     if ($this->contexts) :?>
     contexts <span class="text-muted">-- select the contexts where this update should apply:</span><br>
-    <div id="occurrences" class="form-group form-check mb-2">
+    <div id="contexts" class="form-group form-check mb-2">
         <?php
         $count = count($this->contexts);
         foreach ($this->contexts as $i => $item) :

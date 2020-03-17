@@ -21,6 +21,10 @@ class DefendantNameService
 
     const EXACT_DUPLICATE = 'exact';
     const INEXACT_DUPLICATE = 'inexact';
+    const UPDATE_GLOBAL = 'global';
+    const UPDATE_CONTEXTUAL = 'contextual';
+    const USE_EXISTING_DUPLICATE = 'use existing';
+    const UPDATE_EXISTING_DUPLICATE = 'update existing';
 
     public function __construct(EntityManagerInterface $em)
     {
@@ -29,16 +33,52 @@ class DefendantNameService
 
     /**
      * attempts to update a defendant name
-     * @param string $id
+     * 
+     * @param Entity\Defendant $entity
      * @param array $data the entity data
-     * @param array $options 
+     * @param array $options extra data 
+     * possible keys: 'existing_entity','duplicate_resolution','event_id'
      */
-    public function update(string $id, array $data, array $options = [] ) : array
+    public function update(Entity\Defendant $entity, array $data, array $options = [] ) : array
     {
+        $debug = [];
+        $modified = 0;
+        foreach (['given_names','surnames'] as $prop) {
+            if ($entity[$prop] != $data[$prop]) {
+                $entity[$prop] = $data[$prop];
+                $modified++;
+            }
+        }
+        if (! $modified) {
+            return ['modified'=>false,];
+        }
+        // the first questions is whether there is a duplicate
+        $duplicate = $this->findDuplicate($entity);
+        $debug[] = "duplicate? ".($duplicate ? "yes":"no");
+        
+        // and if so, whether it is exact or inexact
+        if ($duplicate) {
+            if ($this->isExactMatch($entity,$duplicate)) {
+                $match = self::EXACT_DUPLICATE;    
+            } else {
+                $match = self::INEXACT_DUPLICATE;
+            }
+            $debug[] = "match: '$match'" ;
+        }
+
+        $contexts = $data['contexts'] ? 
+        array_map(function($i){return json_decode($i);},$data['contexts']) :[];
+        
+        
+
+
+
+
         return [
+            'debug' => $debug,
             'status' => 'WIP',
+            'contexts' =>  $contexts,
             'data' => $data,
-            'options' => $options,
         ];
     }
 

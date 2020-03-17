@@ -154,7 +154,7 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
                     ['name' => 'StringTrim'],
                 ],
             ],
-            'occurrences' => [
+            'contexts' => [
                 'required' => false,
                 'allow_empty' => true,
             ],
@@ -167,13 +167,13 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
     }
 
     /**
-     * attaches validator for "occurrences" of a given name/docket
+     * attaches validator for "contexts" element
      *
      * @return DefendantForm
      */
-    public function attachOccurencesValidator()
+    public function attachContextsValidator()
     {
-        $input = $this->getInputFilter()->get('occurrences')
+        $input = $this->getInputFilter()->get('contexts')
             ->setRequired(true)->setAllowEmpty(false);
         $validator = new \Laminas\Validator\NotEmpty([
             'messages' => ['isEmpty' => "at least one of the above must be selected"],
