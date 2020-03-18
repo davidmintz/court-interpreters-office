@@ -7,6 +7,7 @@ namespace InterpretersOffice\Admin\Service;
 use InterpretersOffice\Entity;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 /**
  * insert|update|etc defendant names
@@ -124,12 +125,11 @@ class DefendantNameService
                     $id = $db->lastInsertId();
                     $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
                         defendant_id = ? AND event_id IN (?)';
-                    $event_ids = $this->em->getRepository(Entity\Defendant::class)
-                        ->getEventIdsForOccurrences($contexts_submitted,$entity);                    
-                    $params = [$id,$entity->getId(),array_column($event_ids, 'id'),];
+                    $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
+                    $params = [$id,$entity->getId(),$event_ids,];
                     $result['deft_events_updated'] = $db->executeUpdate($sql,$params,
                         [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
-                    /** @todo clear cache! */                    
+                           
                 }
             break;
 
@@ -147,9 +147,8 @@ class DefendantNameService
                     $debug[] = "EXACT duplicate, contextual update";
                     $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
                     defendant_id = ? AND event_id IN (?)';
-                    $event_ids = $this->em->getRepository(Entity\Defendant::class)
-                        ->getEventIdsForOccurrences($contexts_submitted,$entity);                    
-                    $params = [$duplicate->getId(),$entity->getId(),array_column($event_ids, 'id'),];
+                    $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
+                    $params = [$duplicate->getId(),$entity->getId(),$event_ids,];
                     $result['deft_events_updated'] = $db->executeUpdate($sql,$params,
                         [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
                     /** @todo again, consider defendants_requests and orphan removal */
@@ -169,9 +168,8 @@ class DefendantNameService
                         // use the existing name in the provided contexts
                         $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
                             defendant_id = ? AND event_id IN (?)';
-                        $event_ids = $this->em->getRepository(Entity\Defendant::class)
-                            ->getEventIdsForOccurrences($contexts_submitted,$entity);
-                        $params = [$duplicate->getId(),$entity->getId(),array_column($event_ids, 'id'),];
+                        $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity); 
+                        $params = [$duplicate->getId(),$entity->getId(),$event_ids,];
                         $result['deft_events_updated'] = $db->executeUpdate($sql,$params,
                             [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
                         /** @todo consider defendants_requests */
@@ -183,14 +181,12 @@ class DefendantNameService
                         $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
                         $params = [$data['surnames'],$data['given_names'],$duplicate->getId()];
                         $result['deft_name_updated'] = $db->executeUpdate($update,$params);
-                        // 
                     }
                     // and now use the duplicate to update defendants_events
                     $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
                     defendant_id = ? AND event_id IN (?)';
-                    $event_ids = $this->em->getRepository(Entity\Defendant::class)
-                        ->getEventIdsForOccurrences($contexts_submitted,$entity);
-                    $params = [$duplicate->getId(),$entity->getId(),array_column($event_ids, 'id'),];
+                    $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity); 
+                    $params = [$duplicate->getId(),$entity->getId(),$event_ids];
                     $result['deft_events_updated'] = $db->executeUpdate($sql,$params,
                         [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
                 }
@@ -198,6 +194,7 @@ class DefendantNameService
         }
 
         $db->commit();
+        $this->em->getRepository(Entity\Defendant::class)->deleteCache();
         
         return [
             'debug' => $debug,
@@ -206,6 +203,73 @@ class DefendantNameService
             'duplicate_resolution' => $data['duplicate_resolution'],
         ];
 
+    }
+
+    /**
+     * returns Event entity for docket-judge contexts
+     * 
+     * @param array $contexts
+     * @param Entity\Defendant $defendant defendant name
+     * 
+     * @return array
+     */
+    public function getEventIdsForContexts(array $contexts, Entity\Defendant $defendant) : array
+    {
+        $db = $this->em->getConnection();
+        $qb = $db->createQueryBuilder(); echo "class is ",get_class($qb),"\n";
+        $qb->select('e.id')->distinct()->from('events','e')
+            ->join('e', 'defendants_events','de','e.id = de.event_id')
+            ->where('de.defendant_id = '.$qb->createNamedParameter($defendant->getId()));
+        $sql = $this->composeAndWhere($qb,$contexts,'e');        
+        $qb->andWhere($sql);
+        $result = $db->executeQuery($qb->getSql(),$qb->getParameters());
+        
+        return $result->fetchAll(\PDO::FETCH_COLUMN);
+        
+    }
+
+    /**
+     * helper for assembling SQL clause
+     * 
+     * @param QueryBuilder $qb
+     * @param array $contexts
+     * @param string $alias
+     * @return string
+     */
+    public function composeAndWhere(QueryBuilder $qb, array $contexts, string $alias) : string
+    {
+        foreach ($contexts as $context) {           
+            $condition1 = "{$alias}.docket = ". $qb->createNamedParameter($context['docket']);
+            if ($context['judge_id']) {
+                $condition2 = "{$alias}.judge_id = ".$qb->createNamedParameter($context['judge_id']);
+            } else {
+                $condition2 = "{$alias}.anonymous_judge_id = ".$qb->createNamedParameter($context['anon_judge_id']);
+            }
+            $or[] = "($condition1 AND $condition2)";
+        }
+        return implode($or, ' OR ');
+    }
+
+    /**
+     * returns Request entity ids for docket-judge contexts
+     * 
+     * @param array $contexts
+     * @param Entity\Defendant $defendant defendant name
+     * 
+     * @return array
+     */
+    public function getRequestIdsForContexts(array $contexts, Entity\Defendant $defendant) : array
+    {
+        $db = $this->em->getConnection();
+        $qb = $db->createQueryBuilder();
+        $qb->select('r.id')->distinct()->from('requests','r')
+            ->join('r', 'defendants_requests','dr','r.id = dr.request_id')
+            ->where('dr.defendant_id = '.$qb->createNamedParameter($defendant->getId()));
+        $sql = $this->composeAndWhere($qb,$contexts,'r');        
+        $qb->andWhere($sql);
+        $result = $db->executeQuery($qb->getSql(),$qb->getParameters());
+        
+        return $result->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     /**
