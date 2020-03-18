@@ -101,7 +101,7 @@ class DefendantNameService
                     $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
                     $params = [$data['surnames'],$data['given_names'],$entity->getId()];
                     $deft_name_updated = $db->executeUpdate($update,$params);
-                    $result =[
+                    $result = [
                         'status'=>'success',
                         'deft_name_updated' => $deft_name_updated,
                         'entity' => [

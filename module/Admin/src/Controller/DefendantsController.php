@@ -71,10 +71,8 @@ class DefendantsController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             return $this->postInsert($form);
         }
-        $viewModel = new ViewModel();
-        $viewModel->setVariables(['form' => $form, 'title' => 'add a defendant name']);
-
-        return $viewModel;
+        return ['form' => $form, 'title' => 'add a defendant name', 
+        'xhr' => $this->getRequest()->isXmlHttpRequest()];
     }
 
     protected function postInsert(DefendantForm $form)
@@ -102,9 +100,12 @@ class DefendantsController extends AbstractActionController
         }
 
         return new JsonModel($result);
-           
 
     }
+
+    /**
+     * edits defendant name
+     */
     public function editAction()
     {
         $form = new DefendantForm(['action' => 'update']);        
@@ -153,99 +154,6 @@ class DefendantsController extends AbstractActionController
             return $this->postXhrUpdate($request);
         }
         return $this->redirect()->toRoute('admin-defendants');
-    }
-
-    /**
-     * updates a defendant entity.
-     */
-    public function _editAction()
-    {
-        $request = $this->getRequest();
-        $viewModel = new ViewModel();
-        $id = $this->params()->fromRoute('id');
-        $xhr = false;
-        if ($request->isXmlHttpRequest()) {
-            $xhr = true;
-            $viewModel->setTerminal(true)->setVariables(['xhr' => true]);
-        }
-        $form = new DefendantForm($this->entityManager, ['action' => 'update']);
-        $form->setAttribute('action', $this->getRequest()->getUriString());
-        $entity = $this->entityManager->find(Entity\Defendant::class, $id);
-        if (! $entity) {
-            $message = "A defendant name with id $id was not found in the database.";
-            if (! $xhr) {
-                $this->flashMessenger()->addWarningMessage($message);
-                return $this->redirect()->toRoute('admin-defendants');
-            } else {
-                return $viewModel->setVariables(
-                    ['error_not_found' => $message,'form' => $form]
-                );
-            }
-        }
-        $form->bind($entity);
-        // at least for now... ----------------------------------
-        $container = $this->getEvent()->getApplication()->getServiceManager();
-        $logger = $container->get('log');
-        $this->repository->setLogger($logger);
-        $listener = $container->get(Entity\Listener\EventEntityListener::class);
-        if (! $listener->getLogger()) {
-            $listener->setLogger($logger);
-        }
-        /////////               ----------------------------------
-        $occurrences = $this->repository->findDocketAndJudges($id);
-        if (count($occurrences) > 0) {
-            $form->attachOccurencesValidator();
-        }
-        if ($request->isPost()) {
-            $input = $request->getPost();
-            if (null !== $input->get('duplicate_resolution_required')) {
-                $form->attachDuplicateResolutionValidator();
-            }
-            $form->setData($input);
-            if (! $form->isValid()) {
-                return new JsonModel(['validation_errors' => $form->getMessages()]);
-            }
-            // do we have an existing match?
-            $existing_name = $this->repository->findDuplicate($entity);
-            $resolution = $form->get('duplicate_resolution')->getValue();
-            // $event_id = $this->params()->fromQuery('event_id');
-            // $this->entityManager->transactional(
-            //     function($em) use ($entity, $input, $existing_name, $resolution, $event_id)
-            //     {
-            //         $result = $this->repository->updateDefendantEvents(
-            //             $entity,
-            //             $input->get('occurrences', []),                
-            //             $existing_name,
-            //             $resolution,
-            //             $event_id   
-            //         );
-            //     }
-            // );
-            $result = $this->repository->updateDefendantEvents(
-                $entity,
-                $input->get('occurrences', []),                
-                $existing_name,
-                $resolution,
-                $this->params()->fromQuery('event_id')
-            );
-            $context = $this->params()->fromQuery('context', 'defendants');
-            if ("success" == $result['status'] && 'events' !== $context) {
-                $this->flashMessenger()->addSuccessMessage(
-                    "The defendant name <strong>$entity</strong> has been updated"
-                );
-            }
-            return new JsonModel($result);
-        }
-        //  a temporary hack...  because a name might have >0 related Request entities,
-        //  but no related Event entities
-        /** @todo something better */
-        return $viewModel->setVariables(
-            ['form' => $form,
-            'checked' => $request->getPost()->get('occurrences') ?: [],
-            'has_related_entities' => count($occurrences) ? true : $this->repository->hasRelatedEntities($id),
-            'id' => $id,
-            'occurrences' => $occurrences]
-        );
     }
 
     /**
