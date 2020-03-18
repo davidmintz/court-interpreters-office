@@ -87,18 +87,44 @@ class DefendantNameService
         
         $update_type =  $all_contexts == $contexts_submitted ? self::UPDATE_GLOBAL : self::UPDATE_CONTEXTUAL;
         $debug[] = 'type of update: '.$update_type;
-        $db = $this->em->getConnection();
+        // $db = $this->em->getConnection();
         switch ($duplicate) {
             case null:
+                // easiest case
                 if ($update_type == self::UPDATE_GLOBAL) {
                     $debug[] = "no duplicate, doing global update";
-                    $result = $this->em->transactional(function($db) use ($entity,$data) {
+                    $result = $this->em->transactional(function($em) use ($entity,$data ) {
                         $entity->setGivenNames($data['given_names'])
                             ->setSurnames($data['surnames']);
-                        return ['status'=>'success'];
+                        return ['status'=>'success', 
+                            'entity' => [
+                                'id'=>$entity['id'],
+                                'given_names'=>$entity['given_names'],
+                                'surnames' => $entity['surnames']
+                            ],
+                        ];
                     });
                 } else {
+                    // this means we have to insert a new name,
+                    // then update defendants_events where appropriate
                     $debug[] = "no duplicate, contextual update";
+                    $debug['context'] = $data['contexts'];
+                    // nope... duplicate entry error.
+                    //$this->em->transactional(function($em) use ($data) {
+                    $db = $this->em->getConnection();
+                    $db->executeUpdate(
+                        'INSERT INTO defendant_names (given_names,surnames)
+                            VALUES (?,?)',[$data['given_names'],$data['surnames']]
+                    );
+                    $id = $db->lastInsertId();
+                    $event_ids = $this->em->getRepository(Entity\Defendant::class)
+                        ->getEventIdsForOccurrences($contexts_submitted,$entity);
+                    
+                    $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
+                        defendant_id = ? AND event_id IN (?)';
+                    $params = [$id,$entity->getId(),array_column($event_ids, 'id'),];
+                    $result['affected'] = $db->executeUpdate($sql,$params,
+                        [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);                     
                 }
             break;
 

@@ -445,7 +445,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
      * @param  Entity\Defendant $defendant
      * @return array
      */
-    private function getEventIdsForOccurrences(
+    public function getEventIdsForOccurrences(
         array $occurrences,
         Entity\Defendant $defendant
     ) {
@@ -467,8 +467,8 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
             $string = "($string)";
         }
         $dql .= $string;
-        $this->getLogger()->debug("DQL: $dql\nparams:\n"
-        . print_r(['id'=>$defendant->getId()],true));
+        // $this->getLogger()->debug("DQL: $dql\nparams:\n"
+        // . print_r(['id'=>$defendant->getId()],true));
         return $this->createQuery($dql)->useResultCache(false)
             ->setParameters(['id' => $defendant->getId()])
             ->getResult();
