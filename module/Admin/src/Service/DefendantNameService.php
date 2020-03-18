@@ -87,64 +87,118 @@ class DefendantNameService
         
         $update_type =  $all_contexts == $contexts_submitted ? self::UPDATE_GLOBAL : self::UPDATE_CONTEXTUAL;
         $debug[] = 'type of update: '.$update_type;
-        // $db = $this->em->getConnection();
-        switch ($duplicate) {
+        $result = [];
+        
+        /**@todo consider defendants_requests as well. if the docket|judge are the same... */
+        $db = $this->em->getConnection();
+        $db->beginTransaction();
+        switch ($match) {
             case null:
                 // easiest case
                 if ($update_type == self::UPDATE_GLOBAL) {
                     $debug[] = "no duplicate, doing global update";
-                    $result = $this->em->transactional(function($em) use ($entity,$data ) {
-                        $entity->setGivenNames($data['given_names'])
-                            ->setSurnames($data['surnames']);
-                        return ['status'=>'success', 
-                            'entity' => [
-                                'id'=>$entity['id'],
-                                'given_names'=>$entity['given_names'],
-                                'surnames' => $entity['surnames']
-                            ],
-                        ];
-                    });
+                    $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
+                    $params = [$data['surnames'],$data['given_names'],$entity->getId()];
+                    $deft_name_updated = $db->executeUpdate($update,$params);
+                    $result =[
+                        'status'=>'success',
+                        'deft_name_updated' => $deft_name_updated,
+                        'entity' => [
+                            'id'=>$entity['id'],
+                            'given_names'=>$entity['given_names'],
+                            'surnames' => $entity['surnames']
+                    ]];
+                    // $result = $this->em->transactional(function($em) use ($entity,$data ) {                    
                 } else {
                     // this means we have to insert a new name,
                     // then update defendants_events where appropriate
                     $debug[] = "no duplicate, contextual update";
                     $debug['context'] = $data['contexts'];
-                    // nope... duplicate entry error.
+                    // nope... duplicate entry error. don't ask me why.
                     //$this->em->transactional(function($em) use ($data) {
-                    $db = $this->em->getConnection();
+                    // $db->beginTransaction();
                     $db->executeUpdate(
                         'INSERT INTO defendant_names (given_names,surnames)
                             VALUES (?,?)',[$data['given_names'],$data['surnames']]
                     );
                     $id = $db->lastInsertId();
-                    $event_ids = $this->em->getRepository(Entity\Defendant::class)
-                        ->getEventIdsForOccurrences($contexts_submitted,$entity);
-                    
                     $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
                         defendant_id = ? AND event_id IN (?)';
+                    $event_ids = $this->em->getRepository(Entity\Defendant::class)
+                        ->getEventIdsForOccurrences($contexts_submitted,$entity);                    
                     $params = [$id,$entity->getId(),array_column($event_ids, 'id'),];
-                    $result['affected'] = $db->executeUpdate($sql,$params,
-                        [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);                     
+                    $result['deft_events_updated'] = $db->executeUpdate($sql,$params,
+                        [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
+                    /** @todo clear cache! */                    
                 }
             break;
 
             case self::EXACT_DUPLICATE:
+                
                 if ($update_type == self::UPDATE_GLOBAL) {
+                    // this is the case where there may be an orphan to remove
+                    // after we're done
                     $debug[] = "EXACT duplicate, global update";
+                    $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE defendant_id = ?';
+                    $params = [$duplicate->getId(),$entity->getId(),];
+                    $result['deft_events_updated'] = $db->executeUpdate($sql,$params);
+                    /** @todo again, consider defendants_requests and orphan removal */
                 } else {
                     $debug[] = "EXACT duplicate, contextual update";
+                    $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
+                    defendant_id = ? AND event_id IN (?)';
+                    $event_ids = $this->em->getRepository(Entity\Defendant::class)
+                        ->getEventIdsForOccurrences($contexts_submitted,$entity);                    
+                    $params = [$duplicate->getId(),$entity->getId(),array_column($event_ids, 'id'),];
+                    $result['deft_events_updated'] = $db->executeUpdate($sql,$params,
+                        [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
+                    /** @todo again, consider defendants_requests and orphan removal */
                 }
             break;
 
             case self::INEXACT_DUPLICATE;
                 if ($update_type == self::UPDATE_GLOBAL) {
                     $debug[] = "INEXACT duplicate, global update; dup resolution: " .$data['duplicate_resolution'];
-                } else {
+                    if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
+                        $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
+                        $params = [$data['surnames'],$data['given_names'],$duplicate->getId()];
+                        $result['deft_name_updated'] = $db->executeUpdate($update,$params);
+                        // since it's global, no defendants_events update is required
+                        /** @todo again, consider defendants_requests and orphan removal */
+                    } else { 
+                        // use the existing name in the provided contexts
+                        $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
+                            defendant_id = ? AND event_id IN (?)';
+                        $event_ids = $this->em->getRepository(Entity\Defendant::class)
+                            ->getEventIdsForOccurrences($contexts_submitted,$entity);
+                        $params = [$duplicate->getId(),$entity->getId(),array_column($event_ids, 'id'),];
+                        $result['deft_events_updated'] = $db->executeUpdate($sql,$params,
+                            [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
+                        /** @todo consider defendants_requests */
+                    }
+                } else { // contextual update
                     $debug[] = "INEXACT duplicate, contextual update; dup resolution: " .$data['duplicate_resolution'];
+                    if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
+                        // ...first update the name
+                        $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
+                        $params = [$data['surnames'],$data['given_names'],$duplicate->getId()];
+                        $result['deft_name_updated'] = $db->executeUpdate($update,$params);
+                        // 
+                    }
+                    // and now use the duplicate to update defendants_events
+                    $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE 
+                    defendant_id = ? AND event_id IN (?)';
+                    $event_ids = $this->em->getRepository(Entity\Defendant::class)
+                        ->getEventIdsForOccurrences($contexts_submitted,$entity);
+                    $params = [$duplicate->getId(),$entity->getId(),array_column($event_ids, 'id'),];
+                    $result['deft_events_updated'] = $db->executeUpdate($sql,$params,
+                        [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]);
                 }
             break;
         }
 
+        $db->commit();
+        
         return [
             'debug' => $debug,
             'status' => 'WIP', 
