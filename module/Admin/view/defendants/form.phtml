@@ -75,7 +75,7 @@ echo $this->form()->openTag($form);
             endif;
             ?> id="checkbox-<?php echo $i?>">
             <label class="form-check-label" for="checkbox-<?php echo $i?>"><?php
-                printf("%s - %s (%d events)", $item['docket'] ?: "(no docket numer)", $item['judge'], $item['events']);
+                printf("%s - %s (%d events)", $item['docket'] ?: "(no docket number)", $item['judge'], $item['events']);
             ?></label><br>
         <?php endforeach;?>
         <?php if ($count > 2) : ?>
