@@ -187,6 +187,5 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         $count = $stmt->fetch(\PDO::FETCH_COLUMN);
         
         return $count ? true : false;
-        
     }
 }
