@@ -268,4 +268,17 @@ class Defendant implements \ArrayAccess
             // too bad
         }
     }
+
+    /**
+     * returns entity as array
+     * @return array
+     */
+    public function toArray() : array
+    {
+        return [
+            'id'=> $this->id,
+            'given_names'=> $this->given_names,
+            'surnames'=> $this->surnames,
+        ];
+    }
 }
