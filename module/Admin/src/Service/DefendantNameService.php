@@ -86,6 +86,8 @@ class DefendantNameService
         $update_type =  $all_contexts == $contexts_submitted ? self::UPDATE_GLOBAL : self::UPDATE_CONTEXTUAL;
         $debug[] = 'type of update: '.$update_type;
         $result = [];
+        $entity_to_delete = null;
+
         
         /**@todo consider defendants_requests as well. if the docket|judge are the same... */
         $db = $this->em->getConnection();
@@ -108,7 +110,8 @@ class DefendantNameService
                             VALUES (?,?)',[$data['given_names'],$data['surnames']]
                     );
                     $id = $db->lastInsertId();
-                    $result['deft_events_updated'] = $this->doDeftEventsUpdate((int)$id, $entity->getId(), $contexts_submitted);
+                    // $result['deft_events_updated'] = $this->doDeftEventsUpdate((int)$id, $entity->getId(), $contexts_submitted);
+                    $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                 }
             break;
 
@@ -116,15 +119,16 @@ class DefendantNameService
                 
                 $id = (int)$duplicate->getId();
                 if ($update_type == self::UPDATE_GLOBAL) {
-                    // this is the case where there may be an orphan to remove
-                    // after we're done
+                    // this is the case where there may be an orphan to remove after we're done
                     $debug[] = "EXACT duplicate, global update";
-                    $result['deft_events_updated'] = $this->doDeftEventsUpdate($id,$entity->getId());
-                    /** @todo again, consider defendants_requests and orphan removal */
+                    // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id,$entity->getId());
+                    $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
+                    $entity_to_delete = $entity;
                 } else {
                     $debug[] = "EXACT duplicate, contextual update, DUDE!";                    
                     // $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
-                    $result['deft_events_updated'] = $this->doDeftEventsUpdate($id, $entity->getId(), $contexts_submitted);
+                    // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id, $entity->getId(), $contexts_submitted);
+                    $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                     /** @todo again, consider defendants_requests and orphan removal */
                 }                                                     
             break;
@@ -138,10 +142,11 @@ class DefendantNameService
                         $params = [$data['surnames'],$data['given_names'],$id];
                         $result['deft_name_updated'] = $db->executeUpdate($update,$params);
                         // since it's global, no defendants_events update is required
-                        /** @todo again, consider defendants_requests and orphan removal */
+                        $entity_to_delete = $entity;
                     } else { 
                         // use the existing name in the provided contexts                        
-                        $result['deft_events_updated'] = $this->doDeftEventsUpdate($id,$entity->getId(),$contexts_submitted);                       
+                        // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id,$entity->getId(),$contexts_submitted);
+                        $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));                       
                         /** @todo consider defendants_requests */
                     }
                 } else { // contextual update
@@ -154,10 +159,17 @@ class DefendantNameService
                     }
                     // and now use the duplicate to update defendants_events                    
                     //$event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity); 
-                    $result['deft_events_updated'] =  $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$contexts_submitted);
+                    // $result['deft_events_updated'] =  $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$contexts_submitted);
+                    $result = array_merge($result, $this->doRelatedTableUpdates($id, $entity->getId(), $contexts_submitted));
                     $result['entity'] = ['given_names'=>$data['given_names'],'surnames'=>$data['surnames'],'id'=>$id];                  
                 }
             break;
+        }
+        // works fine with MySQL but not Sqlite
+        // $purge = 'DELETE d FROM defendant_names d LEFT JOIN defendants_events de ON d.id = de.defendant_id LEFT JOIN defendants_requests dr ON d.id = dr.defendant_id WHERE de.defendant_id IS NULL AND dr.defendant_id IS NULL';
+        // $result['orphaned_deftnames_deleted'] = $db->executeUpdate($purge);
+        if ($entity_to_delete) {
+            $result['orphaned_deftnames_deleted'] =  $db->executeUpdate('DELETE FROM defendant_names WHERE id = ?',[$entity->getId()]);
         }
         $db->commit();
         $this->em->getRepository(Entity\Defendant::class)->deleteCache();                
@@ -191,6 +203,47 @@ class DefendantNameService
         }
 
         return $db->executeUpdate($sql,$params,$types);
+    }
+
+    /**
+     * runs update query on defendants_requests
+     * 
+     * @param int $old_id
+     * @param int $new_id
+     * @param array $contexts
+     * @return int rows affected
+     */
+    public function doDeftRequestsUpdate(int $old_id, $new_id, array $contexts = []) : int
+    {
+        $db = $this->em->getConnection();
+        $sql = 'UPDATE defendants_requests SET defendant_id = ? WHERE defendant_id = ?';
+        $params = [$old_id, $new_id];
+        $types = null;
+        if ($contexts) {
+            $sql .= ' AND request_id IN (?)';
+            $in = $this->getRequestIdsForContexts($contexts, $new_id);
+            $params[] = $in;
+            $types = [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY];
+        }
+
+        return $db->executeUpdate($sql,$params,$types);
+
+    }
+
+    /**
+     * updates both defendants_events and defendants_requests
+     * 
+     * @param int $old_id
+     * @param int $new_id
+     * @param array $contexts
+     * @return array
+     */
+    public function doRelatedTableUpdates(int $old_id, $new_id, array $contexts = []) : array
+    {
+        $deft_events_updated = $this->doDeftEventsUpdate($old_id,$new_id,$contexts);
+        $deft_requests_updated = $this->doDeftRequestsUpdate($old_id,$new_id,$contexts);
+
+        return compact('deft_events_updated','deft_requests_updated');
     }
 
     /**
@@ -242,17 +295,17 @@ class DefendantNameService
      * returns Request entity ids for docket-judge contexts
      * 
      * @param array $contexts
-     * @param Entity\Defendant $defendant defendant name
+     * @param int $id
      * 
      * @return array
      */
-    public function getRequestIdsForContexts(array $contexts, Entity\Defendant $defendant) : array
+    public function getRequestIdsForContexts(array $contexts, int $id) : array
     {
         $db = $this->em->getConnection();
         $qb = $db->createQueryBuilder();
         $qb->select('r.id')->distinct()->from('requests','r')
             ->join('r', 'defendants_requests','dr','r.id = dr.request_id')
-            ->where('dr.defendant_id = '.$qb->createNamedParameter($defendant->getId()));
+            ->where('dr.defendant_id = '.$qb->createNamedParameter($id));
         $sql = $this->composeAndWhere($qb,$contexts,'r');        
         $qb->andWhere($sql);
         $result = $db->executeQuery($qb->getSql(),$qb->getParameters());

@@ -123,23 +123,25 @@ class DefendantsControllerTest extends AbstractControllerTest
         //['Rodríguez', 'Eusebio Morales']
         /** @var Entity\Defendant $eusebio */
         $eusebio = $this->repository->findOneBy(['given_names' => 'Eusebio Morales']);
+        // print_r($eusebio->toArray());
         $id = $eusebio->getId();
         $contexts = $this->repository->findDocketAndJudges($eusebio);
         // sanity check
         $this->assertTrue(is_array($contexts));
         $this->assertEquals(1, count($contexts));
         $this->assertEquals(2, $contexts[0]['events']);
-        $eusebio->setGivenNames("Eusebio")->setSurnames("Rodríguez Morales");
-        $data = $eusebio->toArray();
+       // $eusebio->setGivenNames("Eusebio")->setSurnames("Rodríguez Morales");
+        $data = ['given_names'=>'Eusebio','surnames'=>'Rodríguez Morales','id'=>$eusebio->getId()];
+        // print_r($eusebio->toArray());
         $data['contexts'] = [json_encode($contexts[0])];
         $result = $this->service->update($eusebio,$data);
         
         // NB: no events are considered to have been updated, because an element of
         // the Defendants collection has changed, but not the collection itself.
-
+        // print_r($result);
         // old version should be gone...
         $null = $this->repository->findOneBy(['given_names' => 'Eusebio Morales']);
-        //$this->assertNull($null);
+        $this->assertNull($null);
 
         $eusebio_redux = $this->repository->find($id);
         $this->assertEquals('Rodríguez Morales, Eusebio', (string)$eusebio_redux);
