@@ -288,7 +288,7 @@ class DefendantNameService
             }
             $or[] = "($condition1 AND $condition2)";
         }
-        return implode($or, ' OR ');
+        return implode(' OR ',$or);
     }
 
     /**
