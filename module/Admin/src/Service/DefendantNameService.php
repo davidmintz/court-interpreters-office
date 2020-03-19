@@ -120,8 +120,7 @@ class DefendantNameService
                             VALUES (?,?)',[$data['given_names'],$data['surnames']]
                     );
                     $id = $db->lastInsertId();                    
-                    $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
-                    $result['deft_events_updated'] = $this->doDeftEventsUpdate((int)$id, $entity->getId(), $event_ids);
+                    $result['deft_events_updated'] = $this->doDeftEventsUpdate((int)$id, $entity->getId(), $contexts_submitted);
                 }
             break;
 
@@ -135,11 +134,9 @@ class DefendantNameService
                     /** @todo again, consider defendants_requests and orphan removal */
                 } else {
                     $debug[] = "EXACT duplicate, contextual update, DUDE!";                    
-                    $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
+                    // $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
                     $params = [$duplicate->getId(),$entity->getId(),$event_ids,];
-                    $result['deft_events_updated'] = $this->doDeftEventsUpdate(
-                        $duplicate->getId(),$entity->getId(),$event_ids
-                    );                    
+                    $result['deft_events_updated'] = $this->doDeftEventsUpdate((int)$id, $entity->getId(), $contexts_submitted);                  
                     /** @todo again, consider defendants_requests and orphan removal */
                 }
             break;
@@ -154,9 +151,8 @@ class DefendantNameService
                         // since it's global, no defendants_events update is required
                         /** @todo again, consider defendants_requests and orphan removal */
                     } else { 
-                        // use the existing name in the provided contexts
-                        $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity); 
-                        $result['deft_events_updated'] = $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$event_ids);                       
+                        // use the existing name in the provided contexts                        
+                        $result['deft_events_updated'] = $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$contexts_submitted);                       
                         /** @todo consider defendants_requests */
                     }
                 } else { // contextual update
@@ -168,8 +164,8 @@ class DefendantNameService
                         $result['deft_name_updated'] = $db->executeUpdate($update,$params);
                     }
                     // and now use the duplicate to update defendants_events                    
-                    $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity); 
-                    $result['deft_events_updated'] =  $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$event_ids);                  
+                    //$event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity); 
+                    $result['deft_events_updated'] =  $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$contexts_submitted);                  
                 }
             break;
         }
@@ -191,17 +187,18 @@ class DefendantNameService
      * 
      * @param int $old_id
      * @param int $new_id
-     * @param array event_ids
+     * @param array $contexts
      * @return int rows affected
      */
-    public function doDeftEventsUpdate(int $old_id, int $new_id, array $in = []) : int
+    public function doDeftEventsUpdate(int $old_id, int $new_id, array $contexts = []) : int
     {
         $db = $this->em->getConnection();
         $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE defendant_id = ?';
         $params = [$old_id, $new_id];
         $types = null;
-        if ($in) {
+        if ($contexts) {
             $sql .= ' AND event_id IN (?)';
+            $in = $this->getEventIdsForContexts($contexts, $new_id);
             $params[] = $in;
             $types = [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY];
         }
@@ -217,13 +214,13 @@ class DefendantNameService
      * 
      * @return array
      */
-    public function getEventIdsForContexts(array $contexts, Entity\Defendant $defendant) : array
+    public function getEventIdsForContexts(array $contexts, int $id): array//Entity\Defendant $defendant) : array
     {
         $db = $this->em->getConnection();
         $qb = $db->createQueryBuilder();
         $qb->select('e.id')->distinct()->from('events','e')
             ->join('e', 'defendants_events','de','e.id = de.event_id')
-            ->where('de.defendant_id = '.$qb->createNamedParameter($defendant->getId()));
+            ->where('de.defendant_id = '.$qb->createNamedParameter($id));   //($defendant->getId()));
         $sql = $this->composeAndWhere($qb,$contexts,'e');        
         $qb->andWhere($sql);
         $result = $db->executeQuery($qb->getSql(),$qb->getParameters());
