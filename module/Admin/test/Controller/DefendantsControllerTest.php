@@ -123,22 +123,16 @@ class DefendantsControllerTest extends AbstractControllerTest
         //['Rodríguez', 'Eusebio Morales']
         /** @var Entity\Defendant $eusebio */
         $eusebio = $this->repository->findOneBy(['given_names' => 'Eusebio Morales']);
-        // print_r($eusebio->toArray());
         $id = $eusebio->getId();
         $contexts = $this->repository->findDocketAndJudges($eusebio);
         // sanity check
         $this->assertTrue(is_array($contexts));
         $this->assertEquals(1, count($contexts));
         $this->assertEquals(2, $contexts[0]['events']);
-       // $eusebio->setGivenNames("Eusebio")->setSurnames("Rodríguez Morales");
         $data = ['given_names'=>'Eusebio','surnames'=>'Rodríguez Morales','id'=>$eusebio->getId()];
-        // print_r($eusebio->toArray());
         $data['contexts'] = [json_encode($contexts[0])];
         $result = $this->service->update($eusebio,$data);
         
-        // NB: no events are considered to have been updated, because an element of
-        // the Defendants collection has changed, but not the collection itself.
-        // print_r($result);
         // old version should be gone...
         $null = $this->repository->findOneBy(['given_names' => 'Eusebio Morales']);
         $this->assertNull($null);
@@ -148,20 +142,10 @@ class DefendantsControllerTest extends AbstractControllerTest
     }
     public function testGlobalNameUpdateWithExistingMatchUsingExisting()
     {
-        //$objectManager = FixtureManager::getEntityManager();
         /** @var Entity\Defendant $rodriguez_jose */
         $rodriguez_jose = $this->repository->findOneBy(['surnames' => 'Rodriguez','given_names' => 'Jose']);
-        //printf("\nfound: $rodriguez_jose\n");
         $contexts = $this->repository->findDocketAndJudges($rodriguez_jose);
-        // WTF?
-        /*
-        $bullshit = $this->em->createQuery(
-            'SELECT d.given_names, d.surnames, d.id FROM InterpretersOffice\Entity\Defendant d '
-            . 'WHERE d.surnames LIKE :surnames  AND d.given_names LIKE :given_names'
-        )->useResultCache(false)->setParameters(['surnames'=>'rod%','given_names'=> 'Jo%'])->getResult();
-        print_r($bullshit);
-        */
-        // already existing: ['Rodríguez Medina', 'José'],
+        
         $rodriguez_jose->setSurnames('Rodriguez Medina')->setGivenNames('José');
         $match = $this->service->findDuplicate($rodriguez_jose);
         // issue: SQLite3 does not enforce duplicate entry constraints or
