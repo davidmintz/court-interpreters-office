@@ -14,6 +14,8 @@ use Laminas\Dom;
 use Laminas\Log\Writer\Noop;
 use Doctrine\ORM\EntityManager;
 
+use InterpretersOffice\Admin\Service\DefendantNameService;
+
 class DefendantsControllerTest extends AbstractControllerTest
 {
 
@@ -22,6 +24,9 @@ class DefendantsControllerTest extends AbstractControllerTest
 
     /** @var \Doctrine\ORM\EntityManager $em */
     private $em;
+
+    /** @var DefendantNameService $service */
+    protected $service;
 
     //
 
@@ -38,6 +43,8 @@ class DefendantsControllerTest extends AbstractControllerTest
         $log->addWriter(new \Laminas\Log\Writer\Noop());
         //$this->repository->setLogger($container->get('log'));
         $this->repository->setLogger($log);
+
+        $this->service = new DefendantNameService($this->em);
         //$fixtureExecutor->execute(
         //    [  new DataFixture\DefendantEventLoader(),]
         //);
@@ -76,44 +83,37 @@ class DefendantsControllerTest extends AbstractControllerTest
         $rodriguez_jose = $this->repository->findOneBy(['surnames' => 'Rodriguez','given_names' => 'Jose']);
         // sanity
         $this->assertTrue(is_object($rodriguez_jose));
-        $rodriguez_jose->setFirstname("José Improbable");
+       // $rodriguez_jose->setFirstname("José Improbable");
         $data = $this->repository->findDocketAndJudges($rodriguez_jose->getId());
         //printf("\n%s\n",'data for jose rodriguez'); print_r($data);
         // update only for Dinklesnort
         // // they are ordered by docket followed by judge, so
         // Dinklesnort 15-CR-... will be first
         list($dinklesnort_events, $noobieheimer_events) = $data;
-
-        $result = $this->repository->updateDefendantEvents(
-            $rodriguez_jose,
-            [json_encode($dinklesnort_events)]
-        );
+        $data['contexts'] = [json_encode($dinklesnort_events)];
+        $data['given_names'] = "José Improbable";
+        $data['surnames']  = 'Rodriguez';
+        $data['id'] = $rodriguez_jose->getId();
+        $result = $this->service->update($rodriguez_jose,$data);
         $this->assertTrue(is_array($result));
-        // 5 events should have been affected
-        /* (
-            [match] =>
-            [update_type] => partial
-            [events_affected] => int
-            [status] => success
-            [deft_events_updated] => 5
-            [insert_id] => 13
-        )
-        */
-        // five events should have been events_affected
-        $this->assertTrue(is_int($result['events_affected']));
-        $this->assertEquals(5, $result['events_affected']);
 
+        // five deft_event rows should have been updated
+        $this->assertTrue(is_int($result['deft_events_updated']));
+        $this->assertEquals(5, $result['deft_events_updated']);
         // a new name should have been inserted
-        $this->assertTrue(key_exists('insert_id', $result));
-
+        $this->assertTrue(key_exists('deft_name_inserted',$result));
+        $this->assertEquals(1,$result['deft_name_inserted']);
+        $this->assertTrue(key_exists('entity', $result));
+        $this->assertTrue(key_exists('id', $result['entity']));
+        $id = $result['entity']['id'];
         // check that other events are unchanged
-        $this->repository->deleteCache();
+        //$this->repository->deleteCache();
         $data = $this->repository->findDocketAndJudges($rodriguez_jose);
         $this->assertEquals(1, count($data));
         $this->assertEquals($noobieheimer_events, $data[0]);
 
         // new guy's events should look like former guy's Dinklesnort
-        $data = $this->repository->findDocketAndJudges($result['insert_id']);
+        $data = $this->repository->findDocketAndJudges($id);
         $this->assertEquals(1, count($data));
         $this->assertEquals($dinklesnort_events, $data[0]);
     }
@@ -130,19 +130,16 @@ class DefendantsControllerTest extends AbstractControllerTest
         $this->assertEquals(1, count($contexts));
         $this->assertEquals(2, $contexts[0]['events']);
         $eusebio->setGivenNames("Eusebio")->setSurnames("Rodríguez Morales");
-
-        $result = $this->repository->updateDefendantEvents(
-            $eusebio,
-            [json_encode($contexts[0])]
-        );
-
-        $this->repository->deleteCache();
+        $data = $eusebio->toArray();
+        $data['contexts'] = [json_encode($contexts[0])];
+        $result = $this->service->update($eusebio,$data);
+        
         // NB: no events are considered to have been updated, because an element of
         // the Defendants collection has changed, but not the collection itself.
 
         // old version should be gone...
         $null = $this->repository->findOneBy(['given_names' => 'Eusebio Morales']);
-        $this->assertNull($null);
+        //$this->assertNull($null);
 
         $eusebio_redux = $this->repository->find($id);
         $this->assertEquals('Rodríguez Morales, Eusebio', (string)$eusebio_redux);
@@ -164,19 +161,18 @@ class DefendantsControllerTest extends AbstractControllerTest
         */
         // already existing: ['Rodríguez Medina', 'José'],
         $rodriguez_jose->setSurnames('Rodriguez Medina')->setGivenNames('José');
-        $match = $this->repository->findDuplicate($rodriguez_jose);
+        $match = $this->service->findDuplicate($rodriguez_jose);
         // issue: SQLite3 does not enforce duplicate entry constraints or
         // compare strings the same way MySQL does, or at least not by default
-        printf("\nmatch: %s\n", gettype($match));
+        // printf("\nmatch: %s\n", gettype($match));
         //$shit = $this->getApplicationServiceLocator()->get('entity-manager');
         //$db = $this->em->getConnection()->getDatabase();
         //printf("\nour shit is: %s\n)",$db);
-        $result = $this->repository->updateDefendantEvents(
-            $rodriguez_jose,
-            [json_encode($contexts[0])],
-            $match,
-            'use_existing'
-        );
+        $data = $rodriguez_jose->toArray();
+        $data['contexts'] =  [json_encode($contexts[0])];
+        $data['duplicate_resolution'] = $this->service::USE_EXISTING_DUPLICATE;
+        $result = $this->service->update($rodriguez_jose,$data);
+        
         //print_r($result);
         $this->assertTrue(is_array($result));
         // $bullshit = $this->em->createQuery(
