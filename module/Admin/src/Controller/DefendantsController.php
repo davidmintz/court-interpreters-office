@@ -65,6 +65,9 @@ class DefendantsController extends AbstractActionController
         }
     }
 
+    /**
+     * adds a Defendant (name) entity
+     */
     public function addAction()
     {
         $form = new DefendantForm(['action' => 'create']);
@@ -75,6 +78,9 @@ class DefendantsController extends AbstractActionController
         'xhr' => $this->getRequest()->isXmlHttpRequest()];
     }
 
+    /**
+     * processes POST data for an insert
+     */
     protected function postInsert(DefendantForm $form)
     {
         $form->setData($this->getRequest()->getPost());
@@ -83,9 +89,13 @@ class DefendantsController extends AbstractActionController
         }
         $service = new DefendantNameService($this->entityManager);
         $return = $service->insert($form->getData());
+        
         return new JsonModel($return);
     }
 
+    /**
+     * processes POST data for an update
+     */
     protected function postUpdate(DefendantForm $form, Entity\Defendant $entity)
     {
         $service = new DefendantNameService($this->entityManager);
@@ -100,7 +110,6 @@ class DefendantsController extends AbstractActionController
         }
 
         return new JsonModel($result);
-
     }
 
     /**
@@ -159,8 +168,7 @@ class DefendantsController extends AbstractActionController
     /**
      * handles POST request to update entity
      *
-     * this is for the event form and adding a new defendant name to
-     * the database
+     * for the event form, when adding|updating a defendant name
      *
      * @param Request $request
      * @return JsonModel
@@ -180,7 +188,7 @@ class DefendantsController extends AbstractActionController
             return new JsonModel(['validation_errors' => $form->getMessages()]);
         }
         try {
-            $this->entityManager->persist($entity);
+            //$this->entityManager->persist($entity); // really?
             $this->entityManager->flush();
             return new JsonModel(['id' => $id,'error' => null, 'status' => 'success']);
         } catch (UniqueConstraintViolationException $e) {
@@ -203,7 +211,6 @@ class DefendantsController extends AbstractActionController
 
     /**
      * deletes a defendant
-     *
      */
     public function deleteAction()
     {
