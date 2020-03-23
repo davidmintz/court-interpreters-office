@@ -50,7 +50,8 @@ class DocketAnnotationsController extends AbstractActionController
         }
         $view = new ViewModel([
             'docket'=>$docket, 'data'=>$data ?? false,
-            'csrf'=>(new Csrf(['timeout'=>1200]))->getHash()
+            'csrf'=>(new Csrf(['timeout'=>1200]))->getHash(),
+            'referrer' =>  $request->getServer()->get('HTTP_REFERER'),
         ]);
         if ($this->getRequest()->isXmlHttpRequest()) {
             $view->setTemplate('docket-annotations/partials/table')
