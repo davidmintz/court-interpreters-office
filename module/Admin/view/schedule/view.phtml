@@ -350,10 +350,11 @@ endif;?></span>
                 <a role="button" id="btn-timeline" href="<?=$this->url('search/docket',['docket'=>$this->event['docket']])?>" class="btn btn-primary"><span class="far fa-calendar-alt"></span> timeline</a>
             <?php endif;
                 if ($this->event['docket']):
-                    $url = $this->url('admin/docket-annotations',['docket'=>$this->event['docket']]);
                     if (!$this->event['annotation_max_priority']):
+                        $url = $this->url('admin/docket-annotations/add',['docket'=>$this->event['docket']]);
                         ?><a role="button" class="btn btn-primary" href="<?=$url?>" ><span class="fas fa-asterisk"></span> annotate</a><?php
                     else:
+                        $url = $this->url('admin/docket-annotations',['docket'=>$this->event['docket']]);
                         switch ($this->event['annotation_max_priority']):
                             case 1:
                             $btn_class = 'btn-info';
