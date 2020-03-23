@@ -148,16 +148,14 @@ class DefendantsController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             return $this->postUpdate($form,$entity);
         }
-
         // we are a GET, so display the form, possibly with context/radio buttons        
         $form->setData(['given_names'=>$entity['given_names'],
             'surnames'  => $entity['surnames'], 'id' => $id,
         ]);
-        return ['form' => $form, 'id' => $id,  'contexts' => $contexts,
-            'has_related_entities' => count($contexts) ? true : 
-                $this->repository->hasRelatedEntities($id),            
-            'xhr' => $xhr,
-        ];
+        return (new ViewModel(['form' => $form, 'id' => $id,  'contexts' => $contexts,
+        'has_related_entities' => count($contexts) ? true : 
+            $this->repository->hasRelatedEntities($id),            
+        'xhr' => $xhr,]))->setTerminal(true);
     }
 
     /**

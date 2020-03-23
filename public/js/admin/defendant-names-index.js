@@ -24,9 +24,22 @@ $(function(){
     $("#results").on("click",".pagination a.page-link",function(e){
         e.preventDefault();
         $.get(this.href).then(res=>$("#results").html(res));
+    }).on("click","li a",function(e){
+        e.preventDefault();
     })
     .on("click",".defendant-names li",function(e){
         var id = $(this).data("id");
-        document.location = `${window.basePath}/admin/defendants/edit/${id}`;
+        // document.location = `${window.basePath}/admin/defendants/edit/${id}`;
+        $("#div-form").load(`/admin/defendants/edit/${id} form`,
+            ()=>{
+                $("div.card").removeAttr("hidden");
+                if (!$("#div-form form").data("has_related_entities")) {
+                    $("#btn-delete").removeAttr("hidden");
+                } else {
+                    $("#btn-delete").attr("hidden",true);
+                }
+                $("#div-form form").attr({action:`/admin/defendants/edit/${id}`});
+            }
+        );
     });
 });

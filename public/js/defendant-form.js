@@ -7,10 +7,10 @@ const is_literal_duplicate = (entity) => {
     entity.given_names === $("#given_names").val().trim();
 };
 $(function(){
-    var form = $("#defendant-form");
-
-    $("#btn-submit").on("click",function(event){
+    
+    $("#col-form").on("click","#btn-submit",function(event){
         event.preventDefault();
+        var form = $("#defendant-form");
         var data = form.serialize();
         var action = $("input[name=id]").val() ? "update":"insert";
 
@@ -25,8 +25,10 @@ $(function(){
                 }
                 var url;
                 if (response.status === "success") {
-                    url = form.data().redirect_url || "/admin/defendants";
-                    return  window.document.location = `${window.basePath||""}${url}`;
+                    console.log("success! (NOT) redirecting...");
+                    console.log(response);
+                    // url = form.data().redirect_url || "/admin/defendants";
+                    // return  window.document.location = `${window.basePath||""}${url}`;
                 }
                 if (response.existing_entity) {
                     var existing = response.existing_entity;
@@ -62,18 +64,18 @@ $(function(){
                     }
                     return shit.show();
                 } else {
-                    console.log("all good? redirecting...");
-                    url = form.data().redirect_url || "/admin/defendants";
-                    window.document.location = `${window.basePath||""}${url}`;
+                    console.log("all good? (NOT) redirecting...");
+                    console.log(response);
+                    // url = form.data().redirect_url || "/admin/defendants";
+                    // window.document.location = `${window.basePath||""}${url}`;
                 }
             })
             .fail((response)=> {
                 $("#error-div h3").text("system error");
                 fail(response);
             });
-    });
-
-    form.on("click","#btn-select-all, #btn-invert-selection",function(event){
+    })
+    .on("click","#btn-select-all, #btn-invert-selection",function(event){
         event.preventDefault();
         var checkboxes = $("form input[type=checkbox]");
         if ($(event.target).attr("id")=="btn-select-all") {
@@ -85,8 +87,8 @@ $(function(){
                 checkbox.prop("checked",!checked);
             });
         }
-    });
-    $("#btn-delete").on("click",function(event){
+    })
+    .on("click","#btn-delete",function(event){
         event.preventDefault();
         if (! window.confirm(
             "Are you sure you want to delete this defendant name?")) {
