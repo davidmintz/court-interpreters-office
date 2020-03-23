@@ -25,7 +25,7 @@ $(function(){
                 }
                 var url;
                 if (response.status === "success") {
-                    console.log("success! (NOT) redirecting...");
+                    $("#success-div div").text("Name has been successfully updated.").parent().show();
                     console.log(response);
                     // url = form.data().redirect_url || "/admin/defendants";
                     // return  window.document.location = `${window.basePath||""}${url}`;
@@ -73,6 +73,7 @@ $(function(){
             .fail((response)=> {
                 $("#error-div h3").text("system error");
                 fail(response);
+                console.warn("shit failed");
             });
     })
     .on("click","#btn-select-all, #btn-invert-selection",function(event){

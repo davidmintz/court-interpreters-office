@@ -23,6 +23,7 @@
             <?php echo $this->partial('interpreters-office/defendants/search.phtml',['paginator'=>$this->paginator,'search'=>$this->search_term,'url'=>'/admin/defendants/edit']) ; endif?>
         </div>
         <div id="col-form" class="col-md-7">
+            <?php echo $this->successMessage()?>
             <div class="card" hidden>
                 <div class="card-header">
                     <h3>edit name</h3>
@@ -36,6 +37,9 @@
                     <button id="btn-cancel" class="btn btn-secondary">cancel</button>
                 </div>
             </div>
-        </div>
+        </div>        
+    </div>
+    <div id="pagination" class="row">
+        <div class="col-sm-12"></div>
     </div>
 </main>
