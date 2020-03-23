@@ -8,12 +8,16 @@ const is_literal_duplicate = (entity) => {
 };
 $(function(){
     
-    $("#col-form").on("click","#btn-submit",function(event){
+    $("#col-form")
+    .on("click","#btn-cancel",function(){
+        var card = $(this).closest("div.card");
+        card.slideUp(()=>card.attr("hidden",true).show());
+    })
+    .on("click","#btn-submit",function(event){
         event.preventDefault();
         var form = $("#defendant-form");
         var data = form.serialize();
-        var action = $("input[name=id]").val() ? "update":"insert";
-
+        var action = $("input[name=id]").val() ? "update":"insert";        
         $.post(form.attr("action"),data)
         .then(
             function(response)
@@ -26,9 +30,7 @@ $(function(){
                 var url;
                 if (response.status === "success") {
                     $("#success-div div").text("Name has been successfully updated.").parent().show();
-                    console.log(response);
-                    // url = form.data().redirect_url || "/admin/defendants";
-                    // return  window.document.location = `${window.basePath||""}${url}`;
+                    console.log(response);                    
                 }
                 if (response.existing_entity) {
                     var existing = response.existing_entity;

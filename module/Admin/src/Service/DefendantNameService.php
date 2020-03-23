@@ -178,7 +178,11 @@ class DefendantNameService
         // LEFT JOIN defendants_requests dr ON d.id = dr.defendant_id WHERE de.defendant_id IS NULL AND dr.defendant_id IS NULL';
         // $result['orphaned_deftnames_deleted'] = $db->executeUpdate($purge);
         if ($entity_to_delete) {
-            $result['orphaned_deftnames_deleted'] =  $db->executeUpdate('DELETE FROM defendant_names WHERE id = ?',[$entity->getId()]);
+            try {
+                $result['orphaned_deftnames_deleted'] =  $db->executeUpdate('DELETE FROM defendant_names WHERE id = ?',[$entity->getId()]);
+            } catch (\Exception $e) {
+                $result['orphaned_deftnames_deleted'] = $e->getMessage();
+            }
         }
         $db->commit();
         $this->em->getRepository(Entity\Defendant::class)->deleteCache();                
@@ -203,7 +207,7 @@ class DefendantNameService
         $db = $this->em->getConnection();
         $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE defendant_id = ?';
         $params = [$old_id, $new_id];
-        $types = null;
+        $types = [];
         if ($contexts) {
             $sql .= ' AND event_id IN (?)';
             $in = $this->getEventIdsForContexts($contexts, $new_id);
@@ -227,7 +231,7 @@ class DefendantNameService
         $db = $this->em->getConnection();
         $sql = 'UPDATE defendants_requests SET defendant_id = ? WHERE defendant_id = ?';
         $params = [$old_id, $new_id];
-        $types = null;
+        $types = [];
         if ($contexts) {
             $sql .= ' AND request_id IN (?)';
             $in = $this->getRequestIdsForContexts($contexts, $new_id);
