@@ -20,6 +20,13 @@ use Laminas\Session\Container as Session;
 
 /**
  * controller for admin/defendants.
+ * 
+ * currently this is a little weird and inconsistent because before, the entity was bound to a form. later
+ * we decided a different approach would be better:  introduce a Service class and hydrate things 
+ * ourselves, manually, so we could handle the complexities in a discreet, separate class. so in 
+ * the case where they are updating/inserting names from the /admin/defendants route, we go that way. 
+ * but when they edit a name in the /admin/schedule/(edit|add) context, we're still handling the same way 
+ * as before.
  */
 class DefendantsController extends AbstractActionController
 {
@@ -53,6 +60,8 @@ class DefendantsController extends AbstractActionController
 
     /**
      * index action.
+     * 
+     * preserves the search state in the session for their convenience when they come back.
      *
      * @return ViewModel
      */
@@ -140,7 +149,7 @@ class DefendantsController extends AbstractActionController
             return $this->postUpdate($form,$entity);
         }
 
-        // we are a GET, and need to display the form, possibly with context/radio buttons        
+        // we are a GET, so display the form, possibly with context/radio buttons        
         $form->setData(['given_names'=>$entity['given_names'],
             'surnames'  => $entity['surnames'], 'id' => $id,
         ]);
@@ -154,7 +163,6 @@ class DefendantsController extends AbstractActionController
     /**
      * for posting updates to an inexact-duplicate defendant name
      * in the events/form context
-     *
      */
     public function updateExistingAction()
     {
@@ -188,7 +196,8 @@ class DefendantsController extends AbstractActionController
             return new JsonModel(['validation_errors' => $form->getMessages()]);
         }
         try {
-            //$this->entityManager->persist($entity); // really?
+            /** note to self: maybe better to use the Service?  */
+            $this->entityManager->persist($entity); // may be necessary, or not
             $this->entityManager->flush();
             return new JsonModel(['id' => $id,'error' => null, 'status' => 'success']);
         } catch (UniqueConstraintViolationException $e) {

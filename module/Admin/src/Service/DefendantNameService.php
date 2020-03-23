@@ -33,7 +33,17 @@ class DefendantNameService
     }
 
     /**
-     * attempts to update a defendant name
+     * Handles defendant-name updates.
+     * 
+     * This can get complicated. When they edit a name-entity, the entity as revised might 
+     * collide with an existing one, and if so, the duplicate may be exact, or it may differ 
+     * in capitalization or diactriticals. In the latter case, we have to ask them which they
+     * prefer:  use the existing entity as is, or update it. 
+     * 
+     * On top of that, the names themselves do not represent distinct people, but rather 
+     * more like attributes of Event entities. Therefore, if a name is associated with events 
+     * bearing more than one docket number, we need to know whether the update is being applied 
+     * to just one or more of those docket-contexts, or globally.
      * 
      * @param Entity\Defendant $entity
      * @param array $data the entity data
@@ -88,8 +98,6 @@ class DefendantNameService
         $result = [];
         $entity_to_delete = null;
 
-        
-        /**@todo consider defendants_requests as well. if the docket|judge are the same... */
         $db = $this->em->getConnection();
         $db->beginTransaction();
         switch ($match) {
@@ -165,8 +173,9 @@ class DefendantNameService
                 }
             break;
         }
-        // works fine with MySQL but not Sqlite
-        // $purge = 'DELETE d FROM defendant_names d LEFT JOIN defendants_events de ON d.id = de.defendant_id LEFT JOIN defendants_requests dr ON d.id = dr.defendant_id WHERE de.defendant_id IS NULL AND dr.defendant_id IS NULL';
+        // works fine with MySQL, but not Sqlite
+        // $purge = 'DELETE d FROM defendant_names d LEFT JOIN defendants_events de ON d.id = de.defendant_id 
+        // LEFT JOIN defendants_requests dr ON d.id = dr.defendant_id WHERE de.defendant_id IS NULL AND dr.defendant_id IS NULL';
         // $result['orphaned_deftnames_deleted'] = $db->executeUpdate($purge);
         if ($entity_to_delete) {
             $result['orphaned_deftnames_deleted'] =  $db->executeUpdate('DELETE FROM defendant_names WHERE id = ?',[$entity->getId()]);
