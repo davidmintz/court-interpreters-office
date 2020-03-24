@@ -200,7 +200,7 @@ class Module
             if (! $this->checkAcl($event, $role)) {
                 $flashMessenger = $container
                     ->get('ControllerPluginManager')->get('FlashMessenger');
-                $flashMessenger->addWarningMessage('Access denied.');
+                $flashMessenger->addWarningMessage('Your user account is not authorized to access the requested resource.');
                 $allowed = false;
             }
         }
@@ -251,6 +251,7 @@ class Module
     {
         $container = $event->getApplication()->getServiceManager();
         $log = $container->get('log');
+        $log->warn("error condition!");
         if ($event->getParam('exception')) {
             $exception = $event->getParam('exception');
             //$message = "error thrown on event {$event->getName()}\n";

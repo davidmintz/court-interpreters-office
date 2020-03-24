@@ -10,6 +10,9 @@ $(function(){
     
     $("#col-form")
     .on("click","#btn-cancel",function(){
+        if ($("#success-div").is(":visible")) {
+            $("#success-div").hide();
+        }
         var card = $(this).closest("div.card");
         card.slideUp(()=>card.attr("hidden",true).show());
     })

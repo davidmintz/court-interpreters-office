@@ -106,95 +106,105 @@ class DefendantNameService
         $entity_to_delete = null;
 
         $db = $this->em->getConnection();
-        $db->beginTransaction();
-        switch ($match) {
-            case null:
-                // easiest case
-                if ($update_type == self::UPDATE_GLOBAL) {
-                    $debug[] = "no duplicate, doing global update";
-                    $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
-                    $params = [$data['surnames'],$data['given_names'],$entity->getId()];
-                    $result['deft_name_updated'] = $db->executeUpdate($update,$params);
-                    $id = $entity->getId();                    
-                } else { 
-                    // we have to insert a new name, then update defendants_events as appropriate
-                    $debug[] = "DUDE! no duplicate, CONTEXTUAL update";                    
-                    // $this->em->transactional(function($em) use ($data) { ...})              
-                    // nope... duplicate entry error. don't ask me why.
-                    $result['deft_name_inserted'] = $db->executeUpdate('INSERT INTO defendant_names (given_names,surnames)
-                            VALUES (?,?)',[$data['given_names'],$data['surnames']]
-                    );
-                    $id = $db->lastInsertId();
-                    // $result['deft_events_updated'] = $this->doDeftEventsUpdate((int)$id, $entity->getId(), $contexts_submitted);
-                    $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
-                }
-            break;
-
-            case self::EXACT_DUPLICATE:
-                
-                $id = (int)$duplicate->getId();
-                if ($update_type == self::UPDATE_GLOBAL) {
-                    // this is the case where there may be an orphan to remove after we're done
-                    $debug[] = "EXACT duplicate, global update";
-                    // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id,$entity->getId());
-                    $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
-                    $entity_to_delete = $entity;
-                } else {
-                    $debug[] = "EXACT duplicate, contextual update, DUDE!";                    
-                    // $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
-                    // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id, $entity->getId(), $contexts_submitted);
-                    $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));                    
-                }                                                     
-            break;
-
-            case self::INEXACT_DUPLICATE;
-                $id = (int)$duplicate->getId();
-                if ($update_type == self::UPDATE_GLOBAL) {
-                    $debug[] = "INEXACT duplicate, global update; duplicate resolution: " .$data['duplicate_resolution'];
-                    if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
+        try {
+            $db->beginTransaction();
+            switch ($match) {
+                case null:
+                    // easiest case
+                    if ($update_type == self::UPDATE_GLOBAL) {
+                        $debug[] = "no duplicate, doing global update";
                         $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
-                        $params = [$data['surnames'],$data['given_names'],$id];
+                        $params = [$data['surnames'],$data['given_names'],$entity->getId()];
                         $result['deft_name_updated'] = $db->executeUpdate($update,$params);
-                        // since it's global, no defendants_events update is required
-                        $entity_to_delete = $entity;
-                        $debug[] = "planning to remove submitted entity {$entity->getId()}";
+                        $id = $entity->getId();                    
                     } else { 
-                        // we use the existing name in the provided contexts                                                
+                        // we have to insert a new name, then update defendants_events as appropriate
+                        $debug[] = "DUDE! no duplicate, CONTEXTUAL update";                    
+                        // $this->em->transactional(function($em) use ($data) { ...})              
+                        // nope... duplicate entry error. don't ask me why.
+                        $result['deft_name_inserted'] = $db->executeUpdate('INSERT INTO defendant_names (given_names,surnames)
+                                VALUES (?,?)',[$data['given_names'],$data['surnames']]
+                        );
+                        $id = $db->lastInsertId();
+                        // $result['deft_events_updated'] = $this->doDeftEventsUpdate((int)$id, $entity->getId(), $contexts_submitted);
                         $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
-                        // therefore... the one they submitted can be deleted?
-                        $entity_to_delete = $duplicate;
-                        $debug[] = "planning to remove duplicate entity {$entity->getId()}";
                     }
-                } else { // contextual update
-                    $debug[] = "INEXACT duplicate, contextual update; duplicate resolution: " .$data['duplicate_resolution'];
-                    if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
-                        // ...first update the name
-                        $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
-                        $params = [$data['surnames'],$data['given_names'],$duplicate->getId()];
-                        $result['deft_name_updated'] = $db->executeUpdate($update,$params);
+                break;
+
+                case self::EXACT_DUPLICATE:
+                    
+                    $id = (int)$duplicate->getId();
+                    if ($update_type == self::UPDATE_GLOBAL) {
+                        // this is the case where there may be an orphan to remove after we're done
+                        $debug[] = "EXACT duplicate, global update";
+                        // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id,$entity->getId());
+                        $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
+                        $entity_to_delete = $entity;
+                    } else {
+                        $debug[] = "EXACT duplicate, contextual update, DUDE!";                    
+                        // $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
+                        // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id, $entity->getId(), $contexts_submitted);
+                        $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));                    
+                    }                                                     
+                break;
+
+                case self::INEXACT_DUPLICATE;
+                    $id = (int)$duplicate->getId();
+                    if ($update_type == self::UPDATE_GLOBAL) {
+                        $debug[] = "INEXACT duplicate, global update; duplicate resolution: " .$data['duplicate_resolution'];
+                        if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
+                            $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
+                            $params = [$data['surnames'],$data['given_names'],$id];
+                            $result['deft_name_updated'] = $db->executeUpdate($update,$params);
+                            // since it's global, no defendants_events update is required
+                            $entity_to_delete = $entity;
+                            $debug[] = "planning to remove submitted entity {$entity->getId()}";
+                        } else { 
+                            // we use the existing name in the provided contexts                                                
+                            $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
+                            // therefore... the one they submitted can be deleted?
+                            $entity_to_delete = $duplicate;
+                            $debug[] = "planning to remove duplicate entity {$entity->getId()}";
+                        }
+                    } else { // contextual update
+                        $debug[] = "INEXACT duplicate, contextual update; duplicate resolution: " .$data['duplicate_resolution'];
+                        if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
+                            // ...first update the name
+                            $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
+                            $params = [$data['surnames'],$data['given_names'],$duplicate->getId()];
+                            $result['deft_name_updated'] = $db->executeUpdate($update,$params);
+                        }
+                        // and now use the duplicate to update defendants_events                    
+                        //$event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity); 
+                        // $result['deft_events_updated'] =  $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$contexts_submitted);
+                        $result = array_merge($result, $this->doRelatedTableUpdates($id, $entity->getId(), $contexts_submitted));
+                        $result['entity'] = ['given_names'=>$data['given_names'],'surnames'=>$data['surnames'],'id'=>$id];                  
                     }
-                    // and now use the duplicate to update defendants_events                    
-                    //$event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity); 
-                    // $result['deft_events_updated'] =  $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$contexts_submitted);
-                    $result = array_merge($result, $this->doRelatedTableUpdates($id, $entity->getId(), $contexts_submitted));
-                    $result['entity'] = ['given_names'=>$data['given_names'],'surnames'=>$data['surnames'],'id'=>$id];                  
-                }
-            break;
-        }
-        // works fine with MySQL, but not Sqlite
-        // $purge = 'DELETE d FROM defendant_names d LEFT JOIN defendants_events de ON d.id = de.defendant_id 
-        // LEFT JOIN defendants_requests dr ON d.id = dr.defendant_id WHERE de.defendant_id IS NULL AND dr.defendant_id IS NULL';
-        // $result['orphaned_deftnames_deleted'] = $db->executeUpdate($purge);
-        if ($entity_to_delete) {
-            try {
-                $result['orphaned_deftnames_deleted'] =  $db->executeUpdate('DELETE FROM defendant_names WHERE id = ?',[$entity->getId()]);
-            } catch (\Exception $e) {
-                $result['orphaned_deftnames_deleted'] = $e->getMessage();
+                break;
             }
+            // works fine with MySQL, but not Sqlite
+            // $purge = 'DELETE d FROM defendant_names d LEFT JOIN defendants_events de ON d.id = de.defendant_id 
+            // LEFT JOIN defendants_requests dr ON d.id = dr.defendant_id WHERE de.defendant_id IS NULL AND dr.defendant_id IS NULL';
+            // $result['orphaned_deftnames_deleted'] = $db->executeUpdate($purge);
+            if ($entity_to_delete) {
+                try {
+                    $result['orphaned_deftnames_deleted'] =  $db->executeUpdate('DELETE FROM defendant_names WHERE id = ?',[$entity->getId()]);
+                } catch (\Exception $e) {
+                    $result['orphaned_deftnames_deleted'] = $e->getMessage();
+                }
+            }
+            
+            $db->commit();
+            $result['status'] = 'success';
+            $this->em->getRepository(Entity\Defendant::class)->deleteCache();
+        } catch (\Exception $e) {
+            $db->rollBack();
+            $result['status'] = 'error';
+            $result['message'] = $e->getMessage();
+            $result['exception'] = $e;
+            // throw $e;
+
         }
-        $db->commit();
-        $this->em->getRepository(Entity\Defendant::class)->deleteCache();                
-        $result['status'] = 'success';
         $result['entity'] = ['given_names'=>$data['given_names'],'surnames'=>$data['surnames'],'id'=>$id];
         $result['debug'] = $debug;
 
