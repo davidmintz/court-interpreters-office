@@ -15,8 +15,9 @@ var input = $("#defendant-autocomplete");
 $("#results").on(
     "defendants.loaded",
     function(e){ 
-        console.log("custom event triggered");
+        console.log("'defendants.loaded' event triggered");
         $("#pagination > div").html($("#results nav"));
+        $("#btn-submit").removeAttr("disabled");
     }
 );
 $(function(){

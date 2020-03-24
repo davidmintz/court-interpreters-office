@@ -19,6 +19,7 @@ $(function(){
     .on("click","#btn-submit",function(event){
         event.preventDefault();
         var form = $("#defendant-form");
+        var btn = $(this);
         var data = form.serialize();
         var action = $("input[name=id]").val() ? "update":"insert";        
         $.post(form.attr("action"),data)
@@ -37,7 +38,11 @@ $(function(){
                         .parent().show();
                     // refresh results
                     $.get("/admin/defendants").then(res =>$("#results").html(res).trigger("defendants.loaded"));
-                    form.one("change",()=>$("#success-div").slideUp());
+                    btn.attr("disabled",true);
+                    form.one("change",()=>{
+                        btn.removeAttr("disabled");
+                        $("#success-div").slideUp();
+                    });
                 }
                 if (response.existing_entity) {
                     var existing = response.existing_entity;
@@ -54,13 +59,12 @@ $(function(){
                             url = `${window.basePath||""}/admin/defendants/edit/${existing.id}`;
                             msg = `This name cannot be inserted because there is
                         already an inexact duplicate of it in your database:
-                        <strong>${name}</strong>.
-                        You can <a href="${url}">update it</a> instead.`;
+                        <strong>${name}</strong>. You can <a href="${url}">update it</a> instead.`;
                         }
                         return $("#error-message").html(msg).parent().show();
                     } else { /* we are the update form */
                         console.warn(
-                            "update returned duplicated entry error, deal with it");
+                            "update returned duplicate entry error, deal with it");
                     }
                 } else if (response.inexact_duplicate_found) {                    
                     $("#deft-existing-duplicate-name").text(name);
@@ -72,10 +76,8 @@ $(function(){
                     }
                     return shit.show();
                 } else {
-                    console.log("all good? (NOT) redirecting...");
-                    console.log(response);
-                    // url = form.data().redirect_url || "/admin/defendants";
-                    // window.document.location = `${window.basePath||""}${url}`;
+                    console.log("what? (NOT) redirecting...");
+                    console.log(response);                    
                 }
             })
             .fail((response)=> {

@@ -122,7 +122,7 @@ class DefendantsController extends AbstractActionController
             $result = [ 'validation_errors' => $form->getMessages()];            
         } else {
             $result = $service->update($entity,$data);
-            if ($result['status'] == "error") {
+            if (!isset($result['status']) or $result['status'] == "error") {
                 $this->getResponse()->setStatusCode(500);                
             }
         }

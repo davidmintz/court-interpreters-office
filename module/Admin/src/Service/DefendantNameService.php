@@ -201,11 +201,9 @@ class DefendantNameService
             $db->rollBack();
             $result['status'] = 'error';
             $result['message'] = $e->getMessage();
-            $result['exception'] = $e;
-            // throw $e;
-
+            $result['exception'] = $e;            
         }
-        $result['entity'] = ['given_names'=>$data['given_names'],'surnames'=>$data['surnames'],'id'=>$id];
+        $result['entity'] = ['given_names'=>$data['given_names'],'surnames'=>$data['surnames'],'id'=>$data['id'] ?? null];
         $result['debug'] = $debug;
 
         return $result;
@@ -225,7 +223,6 @@ class DefendantNameService
         $db = $this->em->getConnection();
         $sql = 'UPDATE defendants_events SET defendant_id = ? WHERE defendant_id = ?';
         $params = [$old_id, $new_id];
-        $types = [];
         if ($contexts) {
             $sql .= ' AND event_id IN (?)';
             $in = $this->getEventIdsForContexts($contexts, $new_id);
@@ -233,7 +230,7 @@ class DefendantNameService
             $types = [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY];
         }
 
-        return $db->executeUpdate($sql,$params,$types);
+        return $db->executeUpdate($sql,$params,$types ?? []);
     }
 
     /**
@@ -244,12 +241,11 @@ class DefendantNameService
      * @param array $contexts
      * @return int rows affected
      */
-    public function doDeftRequestsUpdate(int $old_id, $new_id, array $contexts = []) : int
+    public function doDeftRequestsUpdate(int $old_id, int $new_id, array $contexts = []) : int
     {
         $db = $this->em->getConnection();
         $sql = 'UPDATE defendants_requests SET defendant_id = ? WHERE defendant_id = ?';
         $params = [$old_id, $new_id];
-        $types = [];
         if ($contexts) {
             $sql .= ' AND request_id IN (?)';
             $in = $this->getRequestIdsForContexts($contexts, $new_id);
@@ -257,7 +253,7 @@ class DefendantNameService
             $types = [null, null, \Doctrine\DBAL\Connection::PARAM_INT_ARRAY];
         }
 
-        return $db->executeUpdate($sql,$params,$types);
+        return $db->executeUpdate($sql, $params, $types ?? []);
 
     }
 
