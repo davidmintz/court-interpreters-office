@@ -125,8 +125,7 @@ class DefendantNameService
                         $result['deft_name_inserted'] = $db->executeUpdate('INSERT INTO defendant_names (given_names,surnames)
                                 VALUES (?,?)',[$data['given_names'],$data['surnames']]
                         );
-                        $id = $db->lastInsertId();
-                        // $result['deft_events_updated'] = $this->doDeftEventsUpdate((int)$id, $entity->getId(), $contexts_submitted);
+                        $id = $db->lastInsertId();                        
                         $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                     }
                 break;
@@ -406,7 +405,7 @@ class DefendantNameService
             return null;
         }
         if ($defendant->getId() && $found->getId() == $defendant->getId()) {
-            // same object
+            // same object             
             return null;
         }
 

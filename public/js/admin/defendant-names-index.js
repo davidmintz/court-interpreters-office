@@ -22,6 +22,8 @@ $("#results").on(
 );
 $(function(){
     input.autocomplete(autocomplete_options);
+    $("#error-div, #success-div").removeClass("mt-4");
+    
     /* kind of warped, but the pagination needs to move 
       to another div.row or else the right-most links apparently 
       run under the right div.col, and don't work.
