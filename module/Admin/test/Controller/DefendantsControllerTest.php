@@ -85,18 +85,20 @@ class DefendantsControllerTest extends AbstractControllerTest
         $this->assertTrue(is_object($rodriguez_jose));
        // $rodriguez_jose->setFirstname("José Improbable");
         $data = $this->repository->findDocketAndJudges($rodriguez_jose->getId());
-        //printf("\n%s\n",'data for jose rodriguez'); print_r($data);
+        // printf("\n%s\n",'data for jose rodriguez'); print_r($data);
         // update only for Dinklesnort
         // // they are ordered by docket followed by judge, so
         // Dinklesnort 15-CR-... will be first
         list($dinklesnort_events, $noobieheimer_events) = $data;
+        // sanity check
+        $this->assertEquals($dinklesnort_events['judge'],'Dinklesnort');
         $data['contexts'] = [json_encode($dinklesnort_events)];
         $data['given_names'] = "José Improbable";
         $data['surnames']  = 'Rodriguez';
         $data['id'] = $rodriguez_jose->getId();
         $result = $this->service->update($rodriguez_jose,$data);
         $this->assertTrue(is_array($result));
-
+        // print_r($result);
         // five deft_event rows should have been updated
         $this->assertTrue(is_int($result['deft_events_updated']));
         $this->assertEquals(5, $result['deft_events_updated']);
@@ -107,14 +109,17 @@ class DefendantsControllerTest extends AbstractControllerTest
         $this->assertTrue(key_exists('id', $result['entity']));
         $id = $result['entity']['id'];
         // check that other events are unchanged
-        //$this->repository->deleteCache();
+        $this->repository->deleteCache();
         $data = $this->repository->findDocketAndJudges($rodriguez_jose);
         $this->assertEquals(1, count($data));
         $this->assertEquals($noobieheimer_events, $data[0]);
 
         // new guy's events should look like former guy's Dinklesnort
-        $data = $this->repository->findDocketAndJudges($id);
+        $new_guy = $this->repository->findOneBy(['surnames' => 'Rodriguez','given_names' => 'José Improbable']);
+        $data = $this->repository->findDocketAndJudges($new_guy->getId());
         $this->assertEquals(1, count($data));
+        // print_r($dinklesnort_events);
+        // print_r($data);return;
         $this->assertEquals($dinklesnort_events, $data[0]);
     }
 
