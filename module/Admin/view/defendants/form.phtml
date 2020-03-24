@@ -8,26 +8,27 @@ $form->add([
     'attributes' => ['value' => 'save','id' => 'btn-submit', 'class' => 'btn btn-success btn-lg mt-2'],
 ])->setAttribute('method', 'post')->setAttribute('data-redirect_url', $this->url("admin-defendants"));
 
-$this->headTitle('admin | defendants |'.$action);
+// $this->headTitle('admin | defendants |'.$action);
 $form->prepare();
 ?>
-<div class="center-block mx-auto" style="max-width:500px"><!-- wrapper -->
-    <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<!-- wrapper -->
+<!-- <div class="center-block mx-auto" style="max-width:500px"> -->
+    <!-- <h2 class="navigation mb-3 mt-4"><?php // echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2> -->
 <?php
 echo $this->errorMessage($this->errorMessage);
-if ($this->errorMessage): ?></div><?php
-    return;
-endif;
+// if ($this->errorMessage): ?><?php //</div>
+//     return;
+// endif;
 if ($this->error_not_found) :
     $form->setAttribute('data-error_not_found',1);
     echo $this->form()->openTag($form);
     echo $this->errorMessage($this->error_not_found);
     echo $this->form()->closeTag() ?>
-    </div>
+    <!-- </div> -->
     <?php return;
 endif;
 if ($action != 'add') :
-    $form->setAttribute('data-defendant_name', (string)$form->getObject());
+    $form->setAttribute('data-defendant_name', (string)$form->getObject())->setAttribute('data-has_related_entities',$this->has_related_entities ? 1 : 0);
 endif;
 $form->prepare();
 echo $this->form()->openTag($form);
@@ -36,6 +37,7 @@ echo $this->form()->openTag($form);
 <?php if ($form->has('duplicate_resolution')) :?>
     <p class="duplicate-name duplicate-name-instructions" style="display:none">There already exists an inexact duplicate of this name in your database: <span id="deft-existing-duplicate-name" style="font-weight:bold"></span>. Please choose one of the following:</p>
     <div id="duplicate_resolution" class="form-group duplicate-resolution-radio mb-1" style="display:none" >
+        <input type="hidden" value="" name="duplicate_resolution">
         <?php $opts = $form->get('duplicate_resolution')->getValueOptions();
         foreach ($opts as $value => $label) :
             ?><div class="form-check"><input name="duplicate_resolution" value="<?php echo $value?>" class="form-check-input" type="radio" id="radio-<?php echo $value?>">
@@ -60,21 +62,21 @@ echo $this->form()->openTag($form);
     ?>
     </div>
     <?php
-    if ($this->occurrences) :?>
-    occurrences <span class="text-muted">-- select the contexts where this update should apply:</span><br>
-    <div id="occurrences" class="form-group form-check mb-2">
+    if ($this->contexts) :?>
+    contexts <span class="text-muted">-- select the contexts where this update should apply:</span><br>
+    <div id="contexts" class="form-group form-check mb-2">
         <?php
-        $count = count($this->occurrences);
-        foreach ($this->occurrences as $i => $item) :
+        $count = count($this->contexts);
+        foreach ($this->contexts as $i => $item) :
                 $value = json_encode($item);
             ?>
-            <input class="form-check-input" type="checkbox" name="occurrences[]" value="<?php echo $this->escapeHtml($value)?>" <?php
-            if (1 == $count or in_array($value, $this->checked)) :
+            <input class="form-check-input" type="checkbox" name="contexts[]" value="<?php echo $this->escapeHtml($value)?>" <?php
+            if (1 == $count) :
                 ?> checked="checked"<?php
             endif;
             ?> id="checkbox-<?php echo $i?>">
             <label class="form-check-label" for="checkbox-<?php echo $i?>"><?php
-                printf("%s - %s (%d events)", $item['docket'] ?: "(no docket numer)", $item['judge'], $item['events']);
+                printf("%s - %s (%d events)", $item['docket'] ?: "(no docket number)", $item['judge'], $item['events']);
             ?></label><br>
         <?php endforeach;?>
         <?php if ($count > 2) : ?>
@@ -82,7 +84,7 @@ echo $this->form()->openTag($form);
         --><button id="btn-invert-selection" class="btn btn-sm btn-default border border-info">invert selection</button>
         <?php endif;?>
     </div>
-    <?php endif; //occurrences
+    <?php endif; // contexts
     $csrf = $form->get('defendant_csrf');
     echo $this->formHidden($csrf),$this->formElementErrors($csrf) ;
     echo $this->formElement($form->get('id'));
@@ -93,4 +95,4 @@ echo $this->form()->openTag($form);
         endif;
     endif;
     echo $this->form()->closeTag() ?>
-</div>
+<!-- </div> -->

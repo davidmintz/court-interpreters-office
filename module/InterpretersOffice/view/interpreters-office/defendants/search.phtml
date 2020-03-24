@@ -11,7 +11,7 @@ endif;
 ?><ul class="list-group defendant-names" style="font-size:90%"><?php
 foreach ($paginator as $deft) :
     ?><li data-id="<?php echo $deft->getId()?>" class="list-group-item align-middle py-1 ">
-    <a href="javascript:void(0)">
+    <a href="<?= $this->url ? "{$this->url}/{$deft->getId()}" : 'javascript:void(0)'?>">
     <?php
     echo $this->escapeHtml(sprintf('%s, %s', $deft->getLastname(),
         $deft->getFirstname()));

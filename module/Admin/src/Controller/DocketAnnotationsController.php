@@ -48,11 +48,13 @@ class DocketAnnotationsController extends AbstractActionController
         if ($docket) {
             $data = $this->service->getAnnotations($docket);
         }
+        $request = $this->getRequest();
         $view = new ViewModel([
             'docket'=>$docket, 'data'=>$data ?? false,
-            'csrf'=>(new Csrf(['timeout'=>1200]))->getHash()
+            'csrf'=>(new Csrf(['timeout'=>1200]))->getHash(),
+            'referrer' =>  $request->getServer()->get('HTTP_REFERER'),
         ]);
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($request->isXmlHttpRequest()) {
             $view->setTemplate('docket-annotations/partials/table')
                 ->setTerminal(true);
         }

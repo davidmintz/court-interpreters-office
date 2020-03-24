@@ -7,13 +7,21 @@ const is_literal_duplicate = (entity) => {
     entity.given_names === $("#given_names").val().trim();
 };
 $(function(){
-    var form = $("#defendant-form");
-
-    $("#btn-submit").on("click",function(event){
+    
+    $("#col-form")
+    .on("click","#btn-cancel",function(){
+        if ($("#success-div").is(":visible")) {
+            $("#success-div").hide();
+        }
+        var card = $(this).closest("div.card");
+        card.slideUp(()=>card.attr("hidden",true).show());
+    })
+    .on("click","#btn-submit",function(event){
         event.preventDefault();
+        var form = $("#defendant-form");
+        var btn = $(this);
         var data = form.serialize();
-        var action = $("input[name=id]").val() ? "update":"insert";
-
+        var action = $("input[name=id]").val() ? "update":"insert";        
         $.post(form.attr("action"),data)
         .then(
             function(response)
@@ -25,8 +33,18 @@ $(function(){
                 }
                 var url;
                 if (response.status === "success") {
-                    url = form.data().redirect_url || "/admin/defendants";
-                    return  window.document.location = `${window.basePath||""}${url}`;
+                    console.debug(response);
+                    $("#success-div div").text(`Name has been successfully ${ action === "update" ? "updated" :"added"}.`)
+                        .parent().show();
+                    $("#error-div").hide();
+                    btn.attr("disabled",true);
+                    // refresh results
+                    $.get("/admin/defendants").then(res =>$("#results").html(res).trigger("defendants.loaded"));
+                    form.one("change",()=>{
+                        btn.removeAttr("disabled");
+                        $("#success-div").slideUp();
+                    });
+                    return;
                 }
                 if (response.existing_entity) {
                     var existing = response.existing_entity;
@@ -43,34 +61,39 @@ $(function(){
                             url = `${window.basePath||""}/admin/defendants/edit/${existing.id}`;
                             msg = `This name cannot be inserted because there is
                         already an inexact duplicate of it in your database:
-                        <strong>${name}</strong>.
-                        You can <a href="${url}">update it</a> instead.`;
+                        <strong>${name}</strong>. You can <a href="${url}">update it</a> instead.`;
                         }
                         return $("#error-message").html(msg).parent().show();
                     } else { /* we are the update form */
                         console.warn(
-                            "update returned duplicated entry error, deal with it");
+                            "update returned duplicate entry error, deal with it");
                     }
-                } else if (response.inexact_duplicate_found) {
-                    form.prepend($("<input>").attr({type:"hidden",
-                        name:"duplicate_resolution_required",value:1}));
+                } else if (response.inexact_duplicate_found) {                    
                     $("#deft-existing-duplicate-name").text(name);
-                    var shit = "p.duplicate-name-instructions, .duplicate-resolution-radio";
-                    console.warn("daFUQ?");
-                    return $(shit).show();
+                    var shit = $("p.duplicate-name-instructions, .duplicate-resolution-radio");
+                    if (shit.is(":visible")) {
+                        return displayValidationErrors({
+                            duplicate_resolution : {isEmpty : "One of the above options is required"}
+                        });
+                    }
+                    return shit.show();
+                } else if (response.status === "aborted" && response.message) {
+                    $("#error-div h3").text("");
+                    return $("#error-message").text(response.message).parent().show();
+                    
                 } else {
-                    console.warn("all good?");
-                    url = form.data().redirect_url || "/admin/defendants";
-                    window.document.location = `${window.basePath||""}${url}`;
+                    console.log("what? (NOT) redirecting...");
+                    console.log(response);                    
+
                 }
             })
             .fail((response)=> {
                 $("#error-div h3").text("system error");
                 fail(response);
+                console.warn("shit failed");
             });
-    });
-
-    form.on("click","#btn-select-all, #btn-invert-selection",function(event){
+    })
+    .on("click","#btn-select-all, #btn-invert-selection",function(event){
         event.preventDefault();
         var checkboxes = $("form input[type=checkbox]");
         if ($(event.target).attr("id")=="btn-select-all") {
@@ -82,13 +105,14 @@ $(function(){
                 checkbox.prop("checked",!checked);
             });
         }
-    });
-    $("#btn-delete").on("click",function(event){
+    })
+    .on("click","#btn-delete",function(event){
         event.preventDefault();
         if (! window.confirm(
             "Are you sure you want to delete this defendant name?")) {
             return;
         }
+        var form = $("#defendant-form");
         var name = form.data("defendant_name");
         var url = form.data("redirect_url")
             ||`${window.basePath || ""}/admin/defendants`;

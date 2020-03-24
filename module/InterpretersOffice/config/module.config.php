@@ -339,6 +339,7 @@ return [
             'defendants' => ViewHelper\Defendants::class,
             'interpreters' => ViewHelper\InterpreterNames::class,
             'errorMessage' => ViewHelper\ErrorMessage::class,
+            'successMessage' => ViewHelper\SuccessMessage::class,
             'diff' => ViewHelper\Diff::class,
             'dateTime' => ViewHelper\DateTime::class,
             'parsedown' => ViewHelper\Parsedown::class,
@@ -346,6 +347,7 @@ return [
         'factories' => [
             ViewHelper\Defendants::class => InvokableFactory::class,
             ViewHelper\ErrorMessage::class => InvokableFactory::class,
+            ViewHelper\SuccessMessage::class => InvokableFactory::class,
             ViewHelper\InterpreterNames::class => InvokableFactory::class,
             ViewHelper\Diff::class => InvokableFactory::class,
             ViewHelper\DateTime::class => InvokableFactory::class,
