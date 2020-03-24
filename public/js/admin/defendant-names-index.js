@@ -16,14 +16,13 @@ $("#results").on(
     "defendants.loaded",
     function(e){ 
         console.log("'defendants.loaded' event triggered");
-        $("#pagination > div").html($("#results nav"));
-        $("#btn-submit").removeAttr("disabled");
+        $("#pagination > div").html($("#results nav"));        
     }
 );
 $(function(){
     input.autocomplete(autocomplete_options);
     $("#error-div, #success-div").removeClass("mt-4");
-    
+
     /* kind of warped, but the pagination needs to move 
       to another div.row or else the right-most links apparently 
       run under the right div.col, and don't work.
@@ -57,6 +56,7 @@ $(function(){
                 } else {
                     $("#btn-delete").attr("hidden",true);
                 }
+                $("#btn-submit").removeAttr("disabled");
                 $("#div-form form").attr({action:`/admin/defendants/edit/${id}`});
                 if ($("#success-div").is(":visible")) {
                     $("#success-div").slideUp();

@@ -36,13 +36,15 @@ $(function(){
                     console.debug(response);
                     $("#success-div div").text(`Name has been successfully ${ action === "update" ? "updated" :"added"}.`)
                         .parent().show();
+                    $("#error-div").hide();
+                    btn.attr("disabled",true);
                     // refresh results
                     $.get("/admin/defendants").then(res =>$("#results").html(res).trigger("defendants.loaded"));
-                    btn.attr("disabled",true);
                     form.one("change",()=>{
                         btn.removeAttr("disabled");
                         $("#success-div").slideUp();
                     });
+                    return;
                 }
                 if (response.existing_entity) {
                     var existing = response.existing_entity;
@@ -75,9 +77,14 @@ $(function(){
                         });
                     }
                     return shit.show();
+                } else if (response.status === "aborted" && response.message) {
+                    $("#error-div h3").text("");
+                    return $("#error-message").text(response.message).parent().show();
+                    
                 } else {
                     console.log("what? (NOT) redirecting...");
                     console.log(response);                    
+
                 }
             })
             .fail((response)=> {

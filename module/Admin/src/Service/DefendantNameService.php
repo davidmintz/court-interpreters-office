@@ -29,6 +29,7 @@ class DefendantNameService
 
     const EXACT_DUPLICATE = 'exact';
     const INEXACT_DUPLICATE = 'inexact';
+    const MATCH_IDENTICAL = 'identical';
     const UPDATE_GLOBAL = 'global';
     const UPDATE_CONTEXTUAL = 'contextual';
     const USE_EXISTING_DUPLICATE = 'use_existing';
@@ -75,11 +76,7 @@ class DefendantNameService
         $match = null;
         // and if so, whether it is exact or inexact
         if ($duplicate) {
-            if ($this->isExactMatch($entity,$duplicate)) {
-                $match = self::EXACT_DUPLICATE;    
-            } else {
-                $match = self::INEXACT_DUPLICATE;
-            }
+            $match = $duplicate['match'];            
             $debug[] = "match: '$match'" ;
         }
        
@@ -90,7 +87,7 @@ class DefendantNameService
             return [
                 'status' => 'aborted',
                 'inexact_duplicate_found' => true,
-                'existing_entity' => $duplicate->toArray(),
+                'existing_entity' => $duplicate['entity']->toArray(),
             ];
         }        
         // now we need to know if the update is contextual or global
@@ -129,10 +126,27 @@ class DefendantNameService
                         $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                     }
                 break;
+                case self::MATCH_IDENTICAL:
+                    // the thing they want to turn it into matches itself. typically that means 
+                    // changing capitalization or an accent.
+                    if ($update_type == self::UPDATE_GLOBAL) {
+                        $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
+                        $params = [$data['surnames'],$data['given_names'],$entity->getId()];
+                        $result['deft_name_updated'] = $db->executeUpdate($update,$params);
+
+                    } else {
+                        $result['status'] = 'aborted';
+                        $result['message'] = 'If you\'re only changing capitalization or accents, the update has to be universal 
+                        rather than limited to specific docket numbers/judges. To continue, please select all the "context" checkboxes and hit "save."';
+                        $result['existing_entity'] = $duplicate['entity']->toArray();
+
+                        return $result;
+                    }
+                break;
 
                 case self::EXACT_DUPLICATE:
                     
-                    $id = (int)$duplicate->getId();
+                    $id = (int)$duplicate['entity']->getId();
                     if ($update_type == self::UPDATE_GLOBAL) {
                         // this is the case where there may be an orphan to remove after we're done
                         $debug[] = "EXACT duplicate, global update";
@@ -148,7 +162,7 @@ class DefendantNameService
                 break;
 
                 case self::INEXACT_DUPLICATE;
-                    $id = (int)$duplicate->getId();
+                    $id = (int)$duplicate['entity']->getId();
                     if ($update_type == self::UPDATE_GLOBAL) {
                         $debug[] = "INEXACT duplicate, global update; duplicate resolution: " .$data['duplicate_resolution'];
                         if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
@@ -162,8 +176,8 @@ class DefendantNameService
                             // we use the existing name in the provided contexts                                                
                             $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                             // therefore... the one they submitted can be deleted?
-                            $entity_to_delete = $duplicate;
-                            $debug[] = "planning to remove duplicate entity {$entity->getId()}";
+                            $entity_to_delete = $duplicate['entity'];
+                            $debug[] = "planning to remove duplicate entity {$duplicated['entity']->getId()}";
                         }
                     } else { // contextual update
                         $debug[] = "INEXACT duplicate, contextual update; duplicate resolution: " .$data['duplicate_resolution'];
@@ -361,7 +375,7 @@ class DefendantNameService
                 ]
             ];
         } catch (UniqueConstraintViolationException $e) {
-            $existing_entity = $this->findDuplicate($entity);
+            $existing_entity = $this->findDuplicate($entity)['entity'];
             
             return [
                 'status' => 'error',
@@ -395,7 +409,8 @@ class DefendantNameService
      * @param  Entity\Defendant $defendant
      * @return Defendant|null
      */
-    public function findDuplicate(Entity\Defendant $defendant) :? Entity\Defendant
+    // public function findDuplicate(Entity\Defendant $defendant) :? Entity\Defendant
+    public function findDuplicate(Entity\Defendant $defendant) :? array
     {
         $found = $this->em->getRepository(Entity\Defendant::class)->findOneBy([
             'given_names'=>$defendant['given_names'],
@@ -405,10 +420,12 @@ class DefendantNameService
             return null;
         }
         if ($defendant->getId() && $found->getId() == $defendant->getId()) {
-            // same object             
-            return null;
+            // same object !             
+            $match = self::MATCH_IDENTICAL;
+        } else {
+            $match = $this->isExactMatch($defendant,$found) ? self::EXACT_DUPLICATE : self::INEXACT_DUPLICATE;
         }
 
-        return $found;
+        return ['entity'=>$found,'match'=>$match];
     }
 }
