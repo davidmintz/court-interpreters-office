@@ -29,8 +29,12 @@ $(function(){
                 }
                 var url;
                 if (response.status === "success") {
-                    $("#success-div div").text("Name has been successfully updated.").parent().show();
-                    console.log(response);                    
+                    console.debug(response);
+                    $("#success-div div").text(`Name has been successfully ${ action === "update" ? "updated" :"added"}.`)
+                        .parent().show();
+                    // refresh results
+                    //$.get("/admin/defendants").then(res =>$("#results").html(res).trigger("defendants.loaded"));
+                    form.one("change",()=>$("#success-div").slideUp());
                 }
                 if (response.existing_entity) {
                     var existing = response.existing_entity;
@@ -55,8 +59,7 @@ $(function(){
                         console.warn(
                             "update returned duplicated entry error, deal with it");
                     }
-                } else if (response.inexact_duplicate_found) {
-                    
+                } else if (response.inexact_duplicate_found) {                    
                     $("#deft-existing-duplicate-name").text(name);
                     var shit = $("p.duplicate-name-instructions, .duplicate-resolution-radio");
                     if (shit.is(":visible")) {

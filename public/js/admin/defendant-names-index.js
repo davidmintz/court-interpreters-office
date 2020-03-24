@@ -12,30 +12,33 @@ var autocomplete_options = {
     },
 };
 var input = $("#defendant-autocomplete");
+$("#results").on(
+    "defendants.loaded",
+    function(e){ 
+        console.log("custom event triggered");
+        $("#pagination > div").html($("#results nav"));
+    }
+);
 $(function(){
     input.autocomplete(autocomplete_options);
-    /* the pagination needs to move to another div.row 
-     or else the right-most links apparently run under 
-     the right div.col and don't work.
+    /* kind of warped, but the pagination needs to move 
+      to another div.row or else the right-most links apparently 
+      run under the right div.col, and don't work.
     */
-   $("#results nav").appendTo($("#pagination > div"));
+    $("#results nav").appendTo($("#pagination > div"));
     $("#btn-search").on("click",function(e){
         var term = input.val().trim();
         if (! term) { return; }
         $.get("/defendants/search",{term}).then(
             res=>{
-                $("#results").html(res);
-                // as as above...
-                $("#pagination > div").html($("#results nav"));
+                $("#results").html(res).trigger("defendants.loaded");
             }
         );
     });    
     $("#pagination").on("click",".pagination a.page-link",function(e){
         e.preventDefault();
         $.get(this.href).then(res=>{
-            $("#results").html(res);
-            // and again...
-            $("#pagination > div").html($("#results nav"));
+            $("#results").html(res).trigger("defendants.loaded");;
         });
     })
     $("#results").on("click","li a",function(e){
@@ -51,7 +54,10 @@ $(function(){
                 } else {
                     $("#btn-delete").attr("hidden",true);
                 }
-                $("#div-form form").attr({action:`/admin/defendants/edit/${id}`});                                
+                $("#div-form form").attr({action:`/admin/defendants/edit/${id}`});
+                if ($("#success-div").is(":visible")) {
+                    $("#success-div").slideUp();
+                }                             
             }
         );
     });
