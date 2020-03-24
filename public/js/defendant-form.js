@@ -33,7 +33,7 @@ $(function(){
                     $("#success-div div").text(`Name has been successfully ${ action === "update" ? "updated" :"added"}.`)
                         .parent().show();
                     // refresh results
-                    //$.get("/admin/defendants").then(res =>$("#results").html(res).trigger("defendants.loaded"));
+                    $.get("/admin/defendants").then(res =>$("#results").html(res).trigger("defendants.loaded"));
                     form.one("change",()=>$("#success-div").slideUp());
                 }
                 if (response.existing_entity) {
@@ -100,6 +100,7 @@ $(function(){
             "Are you sure you want to delete this defendant name?")) {
             return;
         }
+        var form = $("#defendant-form");
         var name = form.data("defendant_name");
         var url = form.data("redirect_url")
             ||`${window.basePath || ""}/admin/defendants`;

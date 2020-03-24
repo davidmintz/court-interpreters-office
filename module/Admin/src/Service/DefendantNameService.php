@@ -12,6 +12,13 @@ use Doctrine\DBAL\Query\QueryBuilder;
 /**
  * insert|update|etc defendant names
  */
+
+/*
+// https://stackoverflow.com/questions/1017599/how-do-i-remove-accents-from-characters-in-a-php-string#10790734
+$string = "Fóø Bår";
+$transliterator = Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: Lower(); :: NFC;', Transliterator::FORWARD);
+echo $normalized = $transliterator->transliterate($string);
+*/
 class DefendantNameService
 {
     
@@ -136,8 +143,7 @@ class DefendantNameService
                     $debug[] = "EXACT duplicate, contextual update, DUDE!";                    
                     // $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);                    
                     // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id, $entity->getId(), $contexts_submitted);
-                    $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
-                    /** @todo again, consider defendants_requests and orphan removal */
+                    $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));                    
                 }                                                     
             break;
 
@@ -151,11 +157,13 @@ class DefendantNameService
                         $result['deft_name_updated'] = $db->executeUpdate($update,$params);
                         // since it's global, no defendants_events update is required
                         $entity_to_delete = $entity;
+                        $debug[] = "planning to remove submitted entity {$entity->getId()}";
                     } else { 
-                        // use the existing name in the provided contexts                        
-                        // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id,$entity->getId(),$contexts_submitted);
-                        $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));                       
-                        /** @todo consider defendants_requests */
+                        // we use the existing name in the provided contexts                                                
+                        $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
+                        // therefore... the one they submitted can be deleted?
+                        $entity_to_delete = $duplicate;
+                        $debug[] = "planning to remove duplicate entity {$entity->getId()}";
                     }
                 } else { // contextual update
                     $debug[] = "INEXACT duplicate, contextual update; duplicate resolution: " .$data['duplicate_resolution'];

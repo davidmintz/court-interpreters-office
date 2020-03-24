@@ -1,8 +1,10 @@
+<?php  $this->headScript()->appendFile($this->basePath('/js/admin/defendant-names-index.js'))
+    ->appendFile($this->basePath('/js/defendant-form.js'));
+$this->headTitle('admin | defendant names');?>
 <main style="max-width:900px" class="center-block mx-auto">
     <h2 class="navigation mb-3 mt-4"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
     <?php
-    $this->headScript()->appendFile($this->basePath('/js/admin/defendant-names-index.js'))
-    ->appendFile($this->basePath('/js/defendant-form.js'));
+   
     $messenger = $this->flashMessenger();
     if ($messenger->hasSuccessMessages()) :
         echo $messenger->render('success', ['alert','alert-success',], false);

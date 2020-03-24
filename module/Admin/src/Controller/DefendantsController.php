@@ -70,8 +70,14 @@ class DefendantsController extends AbstractActionController
         $session = new Session('admin_defendants');
         if ($session->search_term) {
             $paginator = $this->repository->paginate($session->search_term, $session->page ?? 1);
-            return ['paginator' => $paginator,'search_term' => $session->search_term];
+            $data = ['paginator' => $paginator,'search_term' => $session->search_term];
         }
+        $viewModel = new ViewModel($data??[]);
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $viewModel->setTerminal(true)
+                ->setTemplate('interpreters-office/defendants/search')->search =  $session->search_term;
+        }
+        return $viewModel;
     }
 
     /**
