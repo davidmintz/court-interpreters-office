@@ -250,11 +250,9 @@ class Module
     public function logError(MvcEvent $event)
     {
         $container = $event->getApplication()->getServiceManager();
-        $log = $container->get('log');
-        $log->warn("error condition!");
+        $log = $container->get('log');        
         if ($event->getParam('exception')) {
-            $exception = $event->getParam('exception');
-            //$message = "error thrown on event {$event->getName()}\n";
+            $exception = $event->getParam('exception');           
             $message = $exception->getMessage();
             if ($event->getParam('details')) {
                 $message .= sprintf(
