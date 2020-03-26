@@ -88,9 +88,11 @@ $(function(){
     });
     $(`button[name="revise"]`).on("click",(e)=>{form.carousel("prev");});
     $(`button[name="send"]`).on("click",submit_form);
+    var list_help = $("#list-help");
     $("#recipient_list").on("change",function(){
         var is_availability_list = $(this).children(":selected").text().includes("availab");
         if (is_availability_list) {
+            list_help.html(`To view or modify this list see <a target="_blank" href="${window.basePath}/admin/interpreters/availability/list">${window.basePath}/admin/interpreters/availability/list</a>`  );
             var next_monday = moment().add(1,'weeks').startOf('isoWeek');
             var from = next_monday.format("ddd DD-MMM-YYYY");
             var to = next_monday.add(4,'days').format("ddd DD-MMM-YYYY");
@@ -100,7 +102,7 @@ $(function(){
                 organization_name = `the ${organization_name}`;
             } else {
                 organization_name = `our office`;
-            }
+            }            
             // subject to further tweaking etc...
             $("#body").text(
                 `We write to ask when you would be available to accept contract interpreting assignments for ${organization_name} `
@@ -108,6 +110,7 @@ $(function(){
         } else {
             $("#subject").val("");
             $("#message").text("");
+            list_help.empty();
         }
     });
     //test();
