@@ -317,12 +317,6 @@ class Module
             }
             $log->err($message,$context);
         }
-
-        // experimental
-        $request = $container->get('Request');
-        if ($request->isXmlHttpRequest()) {
-
-        }        
     }
 
 
