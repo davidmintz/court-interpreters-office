@@ -14,10 +14,14 @@ $this->headTitle('admin | defendant names');?>
         <div class="col-sm-5">
             <div class="input-group">
               <input value="<?=$this->escapeHtml($this->search_term ?? '')?>" type="text" id="defendant-autocomplete" value="<?=$this->docket?>" class="form-control defendant" placeholder="last name(s)[, first name(s)]" aria-label="defendant name" aria-describedby="btn-search">
-              <div class="input-group-append"><button class="fas fa-search btn btn-primary" id="btn-search"><span class="sr-only">search</span></button>
+              <div class="input-group-append">
+              <button class="fas fa-search btn btn-primary" id="btn-search"><span class="sr-only">search</span></button>                
               </div>
           </div>
-        </div>
+        </div>        
+        <!-- <div class="col-md-auto"> -->
+            <button data-url="<?= $this->url('admin-defendants/add')?>" title="add a new name" class="fas fa-plus btn btn-primary" id="btn-add" <?php if (!$this->paginator):?> hidden<?php endif ?>><span class="sr-only">add new name</span></button>
+        <!-- </div> -->
     </div>
     <div class="row">
         <div id="results" class="col-md-5 results">
@@ -42,7 +46,7 @@ $this->headTitle('admin | defendant names');?>
             </div>
         </div>        
     </div>
-    <div id="pagination" class="row">
+    <div id="pagination" class="row mt-1">
         <div class="col-sm-12"></div>
     </div>
 </main>

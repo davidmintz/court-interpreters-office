@@ -89,8 +89,11 @@ class DefendantsController extends AbstractActionController
         if ($this->getRequest()->isPost()) {
             return $this->postInsert($form);
         }
-        return ['form' => $form, 'title' => 'add a defendant name', 
-        'xhr' => $this->getRequest()->isXmlHttpRequest()];
+        if (! $this->getRequest()->isXmlHttpRequest()) {
+            return $this->redirect()->toRoute('admin-defendants');
+        }
+        return (new ViewModel(['form' => $form,'xhr' =>true]))->setTerminal(true);
+        
     }
 
     /**
