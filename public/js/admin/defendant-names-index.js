@@ -36,6 +36,7 @@ var load_edit_form = function(id)
     if ($("#success-div").is(":visible")) {
         $("#success-div").slideUp();
     }
+    document.location.hash = "col-form";
 };
 
 $(function(){
@@ -55,6 +56,7 @@ $(function(){
             $("div.card .alert-sucess").hide();
             $(".card-header h3").text("add name");
             $("#btn-submit").removeAttr("disabled");
+            document.location.hash = "col-form";
         });
     });
     /* kind of warped, but the pagination needs to move 
