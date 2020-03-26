@@ -48,6 +48,7 @@ class Module
         $container = $event->getApplication()->getServiceManager();
        
         $log = $container->get('log');
+        
         //$log->addWriter($container->get(DbWriter::class));
         /*
          * for TEMPORARY debugging
@@ -101,8 +102,41 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function($e) use ($log,$db_writer){
             $log->addWriter($db_writer);
         });
-        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
+        // desperation shot. note to self: learn how to do this properly.
+        // I'm sick of getting the HTML error page when there's an error 
+        // in response to an xhr request
+        /*$json_error = function($e){
+            $container = $e->getApplication()->getServiceManager();
+            $request = $container->get('Request');
+            $response = $container->get('Response');
+            if ($request->isXmlHttpRequest()) {                
+                $exception = $e->getParam("exception");
+                if ($exception) {
+                    $data = [
+                        'message' => $exception->getMessage(),
+                        'file' => $exception->getFile(),
+                        'line' => $exception->getLine(),
+                        'code' => $exception->getCode(),
+                        'class' => get_class($exception),
+                        'uri'  => (string)$request->getUri()
+                    ];
+                } else {
+                    $data = [
+                        'message' => 'unexpected error encounted, no exception available',
+                        'uri'  => (string)$request->getUri(),
+                    ];
+                }                
+                $response->getHeaders()
+                ->addHeaderLine('Content-type', 'application/json');
+                $response->setContent(json_encode($data));
+                $response->sendHeaders();
+                exit((string)$response->getContent());
+            }
+        };*/
+        // $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,$json_error);
+        // $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,$json_error);
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,[$this,'logError']);
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($viewModel)
         {
@@ -250,7 +284,7 @@ class Module
     public function logError(MvcEvent $event)
     {
         $container = $event->getApplication()->getServiceManager();
-        $log = $container->get('log');        
+        $log = $container->get('log');
         if ($event->getParam('exception')) {
             $exception = $event->getParam('exception');           
             $message = $exception->getMessage();
@@ -286,8 +320,6 @@ class Module
 
     /**
      * returns a Response redirecting to the login page.
-     *
-     * @todo see about handling xhr/JSON redirects
      *
      * @param MvcEvent $event
      *

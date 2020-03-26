@@ -73,7 +73,7 @@ class DefendantsController extends AbstractActionController
             $data = ['paginator' => $paginator,'search_term' => $session->search_term];
         }
         $viewModel = new ViewModel($data??[]);
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        if ($this->getRequest()->isXmlHttpRequest()) {           
             $viewModel->setTerminal(true)
                 ->setTemplate('interpreters-office/defendants/search')->search =  $session->search_term;
         }
@@ -139,6 +139,7 @@ class DefendantsController extends AbstractActionController
         $id = $this->params()->fromRoute('id');
         $xhr = $this->getRequest()->isXmlHttpRequest();
         $entity = $this->entityManager->find(Entity\Defendant::class, $id);
+        
         if (! $entity) {
             $message = "A defendant name with id $id was not found in the database.";
             if (! $xhr) {

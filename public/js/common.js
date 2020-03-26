@@ -109,9 +109,8 @@ const fail = function(response) {  // eslint-disable-line
     }
     $(".alert-success").hide();
     $("#error-message").html(msg).parent().show();
-    // for development...
-    //$("html").html(response.responseText);
-    console.log(response.responseText);
+    // for development...    
+    console.debug(response.responseJSON || response.responseText);
 };
 
 $(".alert button[data-hide]").on("click",function(){

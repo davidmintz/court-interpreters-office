@@ -156,7 +156,7 @@ class NotesController extends AbstractRestfulController
                 'settings' => $service->getSession()->settings,
                 'note_types' => $note_types,
                 'view' => $view,
-            ]);
+            ]);           
         }
 
         return $view;
