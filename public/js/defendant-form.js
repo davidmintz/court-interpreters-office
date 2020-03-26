@@ -1,6 +1,6 @@
 /** public/js/defendant-form.js */
 
-/* global  $, displayValidationErrors, fail */
+/* global  $, displayValidationErrors, fail, load_edit_form */
 
 const is_literal_duplicate = (entity) => {
     return entity.surnames === $("#surnames").val().trim() &&
@@ -62,8 +62,18 @@ $(function(){
                             msg = `This name cannot be inserted because there is
                         already an inexact duplicate of it in your database:
                         <strong>${name}</strong>. You can <a href="${url}">update it</a> instead.`;
-                        }
-                        return $("#error-message").html(msg).parent().show();
+                        }                        
+                        $("#error-message").html(msg).parent().show();
+                        $("#error-message a").on("click",function (e){
+                            e.preventDefault();
+                            console.log(`fuck you: ${this.href}`);
+                            $("#div-form").load(url,()=>{
+                                $("#error-div").hide();
+                                load_edit_form(existing.id);
+                            }                
+                        );
+
+                        })
                     } else { /* we are the update form */
                         console.warn(
                             "update returned duplicate entry error, deal with it");

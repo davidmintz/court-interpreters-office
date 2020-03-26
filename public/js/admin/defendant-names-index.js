@@ -12,16 +12,32 @@ var autocomplete_options = {
     },
 };
 var input = $("#defendant-autocomplete");
-$("#results").on(
-    "defendants.loaded",
+$("#results").on("defendants.loaded",
     function(e){ 
-        console.log("'defendants.loaded' event triggered");
+        // console.log("'defendants.loaded' event triggered");
         $("#pagination > div").html($("#results nav"));
         if ($("#btn-add").attr("hidden")) {
             $("#btn-add").removeAttr("hidden");
         }
     }
 );
+var load_edit_form = function(id)
+{
+    $("div.card").removeAttr("hidden");
+    $(".card-header h3").text("edit name");
+    $("div.card .alert-success").hide();
+    if (!$("#div-form form").data("has_related_entities")) {
+        $("#btn-delete").removeAttr("hidden");
+    } else {
+        $("#btn-delete").attr("hidden",true);
+    }
+    $("#btn-submit").removeAttr("disabled");
+    $("#div-form form").attr({action:`/admin/defendants/edit/${id}`});
+    if ($("#success-div").is(":visible")) {
+        $("#success-div").slideUp();
+    }
+};
+
 $(function(){
     input.autocomplete(autocomplete_options);
     $("#error-div, #success-div").removeClass("mt-4");
@@ -36,7 +52,7 @@ $(function(){
         $("#div-form").load(url,(r)=>{
             $("div.card").removeAttr("hidden");
             $("div.card form").attr({action:url});
-            $("div.card.alert-sucess").hide();
+            $("div.card .alert-sucess").hide();
             $(".card-header h3").text("add name");
             $("#btn-submit").removeAttr("disabled");
         });
@@ -67,21 +83,7 @@ $(function(){
     .on("click",".defendant-names li",function(e){
         var id = $(this).data("id");        
         $("#div-form").load(`/admin/defendants/edit/${id}`,
-            ()=>{                
-                $("div.card").removeAttr("hidden");
-                $(".card-header h3").text("edit name");
-                $("div.card.alert-sucess").hide();
-                if (!$("#div-form form").data("has_related_entities")) {
-                    $("#btn-delete").removeAttr("hidden");
-                } else {
-                    $("#btn-delete").attr("hidden",true);
-                }
-                $("#btn-submit").removeAttr("disabled");
-                $("#div-form form").attr({action:`/admin/defendants/edit/${id}`});
-                if ($("#success-div").is(":visible")) {
-                    $("#success-div").slideUp();
-                }                             
-            }
+            ()=>{ load_edit_form(id); }                
         );
     });
 });
