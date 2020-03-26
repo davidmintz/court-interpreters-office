@@ -61,12 +61,13 @@ EOD;
     const ACTIVE_SPANISH_INTERPRETERS = 'all active Spanish interpreters';
     const ACTIVE_SUBMITTERS = 'all active request submitters';
     const AVAILABILITY_SOLICITATION_LIST = 'contract interpreters on your availability-solicitation list';
-
+    const OFFICE_STAFF = 'all Interpreters Office staff';
     public static $recipient_list_options = [
         self::ACTIVE_INTERPRETERS => self::ACTIVE_INTERPRETERS,
         self::ACTIVE_SPANISH_INTERPRETERS => self::ACTIVE_SPANISH_INTERPRETERS,
         self::ACTIVE_SUBMITTERS => self::ACTIVE_SUBMITTERS,
         self::AVAILABILITY_SOLICITATION_LIST => self::AVAILABILITY_SOLICITATION_LIST,
+        self::OFFICE_STAFF => self::OFFICE_STAFF,
     ];
 
     /**
@@ -138,6 +139,12 @@ EOD;
                     ->join('u.role','r')
                     ->where('u.active = true')->andWhere('r.name = :role')
                     ->setParameters([':role'=>'submitter']);
+            break;
+            case self::OFFICE_STAFF:
+                $qb->from(Entity\Person::class, 'p')->join(Entity\User::class, 'u','WITH','u.person = p')
+                ->join('u.role','r')
+                ->where('u.active = true')->andWhere('r.name IN (:role)')
+                ->setParameters([':role'=>['administrator','manager']]);
             break;
             default:
             throw new \RunTimeException("unknown email recipient list: $list");
