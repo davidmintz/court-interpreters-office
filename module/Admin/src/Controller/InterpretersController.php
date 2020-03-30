@@ -52,7 +52,6 @@ class InterpretersController extends AbstractActionController
     /**
      * display Interpreter details view
      *
-     * to be implemented
      */
     public function viewAction()
     {
@@ -80,7 +79,6 @@ class InterpretersController extends AbstractActionController
         $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
         $viewModel = new ViewModel([
             'title' => 'interpreters',
-            //'objectManager' => $this->entityManager,
             ] + compact('form', 'params', 'isQuery', 'routeName'));
         if ('interpreters/find_by_id' == $routeName) {
             $viewModel->interpreter = $this->entityManager->find(
@@ -177,5 +175,19 @@ class InterpretersController extends AbstractActionController
               
         return ['data'=>$data,'language'=>$language];
         
+    }
+
+    /**
+     * sends a list of interpreters
+     */
+    public function sendListAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+
+            return new JsonModel(['status'=>'yet to be implemented']);
+        }
+
+        return false;
     }
 }

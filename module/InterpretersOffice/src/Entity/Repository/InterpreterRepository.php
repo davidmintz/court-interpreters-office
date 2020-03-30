@@ -69,7 +69,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $queryParams = [];
 
         //https://github.com/doctrine/doctrine2/issues/2596#issuecomment-162359725
-        $qb->select('PARTIAL i.{lastname, firstname, id, active, security_clearance_date}', 'h.name AS hat')
+        $qb->select('PARTIAL i.{lastname, firstname, id, active, security_clearance_date, email, mobile_phone}', 'h.name AS hat')
             ->join('i.hat', 'h');
 
         if (! empty($params['lastname'])) {

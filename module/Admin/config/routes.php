@@ -659,6 +659,18 @@ return  [
                         ],
                     ],
                 ],
+                'send-list' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/send-list',
+                        'defaults' => [
+                            'action' => 'send-list'
+                        ],
+                        'constraints' => [
+                        
+                        ],
+                    ],
+                ],
                 'availability_list' => [
                     'type' => Segment::class,
                     'may_terminate' => false,
