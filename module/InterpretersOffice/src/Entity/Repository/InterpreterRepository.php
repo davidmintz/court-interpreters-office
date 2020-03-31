@@ -69,7 +69,10 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $queryParams = [];
 
         //https://github.com/doctrine/doctrine2/issues/2596#issuecomment-162359725
-        $qb->select('PARTIAL i.{lastname, firstname, id, active, security_clearance_date, email, mobile_phone}', 'h.name AS hat')
+
+        //  "SELECT i.lastname,c.name FROM InterpretersOffice\Entity\Interpreter i JOIN i.interpreterLanguages il JOIN il.language l JOIN il.languageCredential c WHERE l.name = 'Spanish'"
+
+        $qb->select('PARTIAL i.{lastname, firstname, id, active, security_clearance_date, email, mobile_phone}', 'h.name AS hat', 'cred.abbreviation AS rating')
             ->join('i.hat', 'h');
 
         if (! empty($params['lastname'])) {
@@ -80,9 +83,10 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
                 $queryParams[':firstname'] = "$params[firstname]%";
             }
         } else {
-            //orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i
-            //JOIN i.interpreterLanguages il
-            //JOIN il.language l WHERE l.name = 'Spanish'"
+            // orm:run-dql "SELECT i.lastname FROM InterpretersOffice\Entity\Interpreter i
+            // JOIN i.interpreterLanguages il
+            // JOIN il.language l WHERE l.name = 'Spanish'"
+
             // keep track of whether we need to set any WHERE clauses
             $hasWhereConditions = false;
 
@@ -107,6 +111,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
                 $method = $hasWhereConditions ? 'andWhere' : 'where';
                 $qb->join('i.interpreterLanguages', 'il')
                     ->join('il.language', 'l')
+                    ->join('il.languageCredential', 'cred')
                     ->$method('l.id = :id');
                 $queryParams[':id'] = $params['language_id'];
             }
@@ -145,12 +150,12 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
 
         $paginator = new LaminasPaginator($adapter);
-        //echo $qb->getDQL();
+        
         $found = $paginator->getTotalItemCount();
         if (! $found) {
             return null;
         }
-        //echo "<br>".__METHOD__. " found $found ...";
+        
         $paginator
             ->setCurrentPageNumber($page)
             ->setItemCountPerPage(40);

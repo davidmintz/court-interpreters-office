@@ -56,13 +56,23 @@ endif;
 <div class="mx-auto" style="max-width:700px">
 <?php
 if ($this->results) : ?>
-<table class="table table-hover table-bordered table-sm mx-auto">
+<p class="border p-2 rounded">
+    <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?> interpreters found
+</p>
+<table class="table table-hover table-bordered table-sm mx-auto w-auto">
     <thead>
-        <tr><th colspan="4" class="font-weight-normal pl-3">
-            <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?> interpreters found</th></tr>
+    <tr>
+        <th class="font-weight-normal text-info">name/email</th>
+        <th class="font-weight-normal text-info">rating</th>
+        <th class="font-weight-normal text-info">mobile</th>
+        <th colspan="2" class="font-weight-normal text-info"></th>
+    </tr>
     </thead>
     <tbody>
         <?php
+        $ratings = [
+            ''
+        ];
         foreach ($this->results as $row) : /** note to self: use array hydration? */
             $interpreter = $row[0];
             // seems very weird, needs to be investigated
@@ -71,8 +81,8 @@ if ($this->results) : ?>
             $status = $interpreter->isActive() ? 'active' : 'inactive';
             $view_url = $this->url('interpreters/find_by_id', ['id' => $id])?>
         <tr>
-            <td class="pl-2 align-middle border-left-0 border-right-0 col-9">
-                <a   data-toggle="tooltip" title="view interpreter details" href="<?php echo $view_url?>">
+            <td class="px-2 align-middle border-left-0 border-right-0 ">
+                <a data-toggle="tooltip" title="view interpreter details" href="<?php echo $view_url?>">
                 <?php echo $this->escapeHtml(sprintf('%s, %s', $interpreter->getLastname(), $interpreter->getFirstname())) ?></a>
                   
                 <?php if ($row['hat'] == 'staff court interpreter') :
@@ -80,28 +90,39 @@ if ($this->results) : ?>
                 endif; ?>
                 <?php if ($interpreter->getEmail()): echo $this->escapeHtml( "<{$interpreter->getEmail()}>") ; endif;?>
             </td>
-            <td>
+            <td><span class="avoidwrap"><?= $row['rating']?></span>
+            </td>
+            <td class="px-2">
                 <span class="avoidwrap">
                 <?php if ($interpreter->getMobilePhone()): echo $this->escapeHtml($interpreter->getMobilePhone()); endif;?>
                 </span>
             </td>
-            <td class="align-middle text-center border-left-0 border-right-0 col-2 text-md-right">
+            <td class="align-middle text-center border-left-0 border-right-0 pl-2">
                 <span style="opacity:.7" data-toggle="tooltip" title="this interpreter is currently flagged as <?php
                     echo $status ?>" class="pr-2 fas fa-<?php echo $status == 'active' ? "check text-success" : "times text-danger"?>"></span>
-            </td><td class="border-left-0 text-md-left">
+            </td><td class="border-left-0">
                 <a data-toggle="tooltip" title="edit interpreter details" href="<?php echo $this->url('interpreters/edit', ['id' => $interpreter->getId()])?>"><span class="fas fa-edit"></span><span class="sr-only">edit details</span></a>
             </td>
         </tr>
         <?php  endforeach;  ?>
     </tbody>
-</table>
-
+</table>    
     <?php echo $this->paginationControl(
         $this->results,
         'sliding',
         'partials/pagination_control',
         ['route' => $this->routeName,'params' => $this->params]
     );?>
+    <br>
+    <?php if ($form->get('language_id')->getValue()) :
+        // stuff form state into a data attribute
+        $data = [];
+        foreach (['language_id','active','security_clearance_expiration'] as $field):
+            $data[$field] = $params[$field] ?? -1;
+        endforeach;
+        ?>        
+        <a data-toggle="modal" data-target="#modal-email" id="btn-send-list-modal" class="btn btn-primary" role="button" href="#"> <span class="far fa-envelope"></span> email</a>
+    <?php endif;?>
     <?php
 else :
     if ($this->isQuery and ! $this->interpreter) :
@@ -112,9 +133,40 @@ endif;
 // make them work for it
 if ($this->isQuery) :
     ?>
-<br>
+
 <a href="<?php echo $this->url('interpreters/add') ?>" role="button" title="add a new interpreter" id="btn-add-interpreter" class="btn btn-primary">
 <span aria-hidden="true" class="icon fa fa-plus"></span> new interpreter
 </a>
-<?php endif; ?>
+<?php endif; if ($this->results):?>
+    
+<?php endif;?>
+</div>
+<div class="modal" id="modal-email" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="label-modal-email">email this list to...</h5>
+        <button type="button" class="close" data-hide="modal" aria-label="close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <form data-params="<?= htmlspecialchars(json_encode($data))?>" id="form-send-list" action="<?= $this->url('interpreters/send-list')?>">
+                <div class="form-group">
+                    <label for="recipient" class="sr-only">recipient name (optional)</label>
+                    <input class="form-control" id="recipient" name="recipient" placeholder="recipient name (optional)" type="text">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="sr-only">email address  (required)</label>
+                    <input class="form-control" id="email" name="email" placeholder="email address (required)" type="text">
+                </div>
+                <input name="csrf" value="<?= (new \Laminas\Validator\Csrf(['timeout'=>600]))->getHash()?>" type="hidden">
+            </form>
+      </div>
+      <div class="modal-footer">
+          <button id="btn-send-list" type="button" class="btn btn-primary">send</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+      </div>
+    </div>
+  </div>
 </div>

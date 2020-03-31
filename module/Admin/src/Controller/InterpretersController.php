@@ -14,6 +14,7 @@ use Laminas\View\Model\JsonModel;
 use InterpretersOffice\Admin\Form\InterpreterRosterForm;
 use Laminas\Session\Container as Session;
 use Laminas\Stdlib\Parameters;
+use InterpretersOffice\Admin\Service\EmailService;
 
 /**
  * controller for admin/interpreters.
@@ -177,17 +178,4 @@ class InterpretersController extends AbstractActionController
         
     }
 
-    /**
-     * sends a list of interpreters
-     */
-    public function sendListAction()
-    {
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-
-            return new JsonModel(['status'=>'yet to be implemented']);
-        }
-
-        return false;
-    }
 }

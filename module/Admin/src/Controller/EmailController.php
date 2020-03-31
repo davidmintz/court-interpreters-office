@@ -209,6 +209,25 @@ class EmailController extends AbstractActionController
 
         return new JsonModel($result);
     }
+
+    /**
+     * sends a list of interpreters
+     */
+    public function sendInterpreterListAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+
+            $service = $this->emailService;
+            $params = $this->params()->fromPost();
+            $response = $service->sendInterpreterList($params);
+            
+            return new JsonModel($response);
+        }
+
+        return false;
+    }
+
 }
 
 /* ---------- remind me to clean this up

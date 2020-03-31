@@ -664,7 +664,8 @@ return  [
                     'options' => [
                         'route' => '/send-list',
                         'defaults' => [
-                            'action' => 'send-list'
+                            'controller' => Controller\EmailController::class,
+                            'action' => 'send-interpreter-list'
                         ],
                         'constraints' => [
                         

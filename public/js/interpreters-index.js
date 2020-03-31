@@ -1,6 +1,8 @@
 /** public/js/interpreters-index.js */
 $(function(){
     $('[data-toggle="tooltip"]').tooltip();
+    $(".modal-header button[data-hide]").on("click",()=>$("#modal-email").modal("hide"));
+
     var languageSelect = $('#language_id');
     var languageButton = $('#btn-search-language');
     languageButton.on("click",function(event){
@@ -46,8 +48,6 @@ $(function(){
             }
         }
         document.location = url;
-
-
     });
 
     /**
@@ -86,6 +86,26 @@ $(function(){
             } else {
                 return $('#div-auth-error').text(response.error).show();
             }
+        });
+    });
+
+    /**
+     * emails current listing to whomever
+     */
+    $("#btn-send-list").on("click",function(){
+        $("#modal-email button").attr("disabled",true);
+        var form = $("#form-send-list");
+        var data = form.data().params;
+        data.email = $("input[name=email]").val().trim();
+        data.recipient = $("input[name=recipient").val().trim();
+        data.csrf = $("[name=csrf").val();
+        $.post(form.attr("action"),data)
+        .then((res)=>{
+            $("#modal-email button").removeAttr("disabled");
+            if (res.validation_errors) {
+                return displayValidationErrors(res.validation_errors);
+            }
+            console.log(res.data);
         });
     });
 });

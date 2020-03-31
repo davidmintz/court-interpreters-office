@@ -7,8 +7,6 @@ namespace InterpretersOffice\Admin\Service;
 
 use InterpretersOffice\Service\EmailTrait;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
-use InterpretersOffice\Admin\Service\EmailService;
-//use Doctrine\ORM\EntityManagerInterface;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Laminas\Validator\EmailAddress;
 use Laminas\View\Renderer\RendererInterface as Renderer;
@@ -23,6 +21,7 @@ use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\Log\LoggerAwareTrait;
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\InputFilter;
+
 use Parsedown;
 
 /**
@@ -395,6 +394,114 @@ EOD;
         return $this->viewRenderer->render($layout);
     }
 
+    /**
+     * sends list of interpreters
+     *      
+     * @param array $params
+     */
+    public function sendInterpreterList(Array $params) : array
+    {
+        $factory = new InputFilter\Factory();
+        $input_filter = $factory->createInputFilter([
+            'email' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty' => 'email is required'],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'Callback',
+                        'options' => [
+                            'callBack' => function($value){
+                                return (new EmailAddress())->isValid($value);
+                            },
+                            'messages' => [
+                                'callbackValue' => '%value% does not appear to be a valid email address',
+                            ],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+            ],
+            'recipient' => [
+                'required' => false,
+
+            ],
+            'csrf' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty' => 'required security token is missing'],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                    [
+                        'name' => 'Csrf',
+                        'options' => [
+                            'messages' => [
+                                'notSame' => 'Invalid or expired security token. Please reload the page and try again.'
+                            ],
+                        ],
+                    ]
+                ],
+            ],
+            'language_id' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty' => 'missing language_id parameter'],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+                'filters' => [
+                    [
+                        'name' => 'Int'
+                    ]
+                ],
+            ],
+            'active' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty' => 'missing "active" parameter'],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],
+                'filters' => [
+                    [
+                        'name' => 'Int'
+                    ]
+                ],
+            ],
+        ]
+        );
+        $input_filter->setData($params);
+        if ($input_filter->isValid()) {
+            $data = $input_filter->getValues();
+        } else {
+            return [
+                'status' => 'validation failed',
+                'validation_errors' => $input_filter->getMessages(),
+            ];
+        }
+        return [
+             'status' => "OK; implementation in progress",
+             'data' => $data,
+        ];
+    }
+
     private function log(Array $data,string $channel = 'email')
     {
 
@@ -426,6 +533,8 @@ EOD;
      *
      * This is crude, but using Laminas\InputFilter\etc for this was too
      * complicated and we don't want or need a Laminas\Form\Form.
+     * 
+     * @todo we can do better.
      *
      * @param  Array $data
      * @return Array
