@@ -115,11 +115,16 @@ if ($this->results) : ?>
     );?>
     <br>
     <?php if ($form->get('language_id')->getValue()) :
+        $language_id = $form->get('language_id')->getValue();
         // stuff form state into a data attribute
         $data = [];
         foreach (['language_id','active','security_clearance_expiration'] as $field):
             $data[$field] = $params[$field] ?? -1;
         endforeach;
+        // get the textual language out of the select element
+        $opts =  $form->get('language_id')->getValueOptions();
+        $language = array_combine(array_column($opts,'value'), array_column($opts,'label'))[$language_id];            
+        $data['language'] = $language;
         ?>        
         <a data-toggle="modal" data-target="#modal-email" id="btn-send-list-modal" class="btn btn-primary" role="button" href="#"> <span class="far fa-envelope"></span> email</a>
     <?php endif;?>
@@ -151,7 +156,7 @@ if ($this->isQuery) :
         </button>
       </div>
       <div class="modal-body">
-            <form data-params="<?= htmlspecialchars(json_encode($data))?>" id="form-send-list" action="<?= $this->url('interpreters/send-list')?>">
+            <form <?php if (isset($data)):?>data-params="<?= htmlspecialchars(json_encode($data))?>"<?php endif?>id="form-send-list" action="<?= $this->url('interpreters/send-list')?>">
                 <div class="form-group">
                     <label for="recipient" class="sr-only">recipient name (optional)</label>
                     <input class="form-control" id="recipient" name="recipient" placeholder="recipient name (optional)" type="text">

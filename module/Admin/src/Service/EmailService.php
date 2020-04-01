@@ -295,6 +295,7 @@ EOD;
     {
         return $this->config;
     }
+
     /**
      * sends email message
      *
@@ -482,6 +483,18 @@ EOD;
                     ]
                 ],
             ],
+            'language' => [
+                'required' => true,
+                'validators' => [
+                    [
+                        'name' => 'NotEmpty',
+                        'options' => [
+                            'messages'=>['isEmpty' => 'language parameter'],
+                        ],
+                        'break_chain_on_failure' => true,
+                    ],
+                ],                
+            ],
             'active' => [
                 'required' => true,
                 'validators' => [
@@ -515,10 +528,33 @@ EOD;
         $paginator = $repository->search($input);
         $total = $paginator->getTotalItemCount();
         $paginator->setItemCountPerPage($total);
+        $view = new ViewModel();
+        $view->setVariables(['paginator'=>$paginator,'language'=>$input['language']]);
+        $view->setTemplate('email/interpreter-list.phtml');
+        $layout = $this->getLayout();
+        $layout->setVariable('content', $this->viewRenderer->render($view));
+        $content = $this->viewRenderer->render($layout);
+        $mail_config = $this->config['mail'];
+        $message = $this->createEmailMessage();
+        $message->setFrom($mail_config['from_address'], $mail_config['from_entity'])
+            ->setBcc($mail_config['from_address'])
+            ->setSubject("list of {$input['language']} interpreters")
+            ->setTo($input['email'],$input['recipient']??null);
+        $parts = $message->getBody()->getParts();
+        $html = new MimePart($content);
+        $html->type = Mime::TYPE_HTML;
+        $html->charset = 'UTF-8';
+        $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
+        $message->getBody()->setParts([$parts[0],$html]);
+        /* DEBUG */
+        file_put_contents("data/email-list-output.html", $content);
+        $this->getMailTransport()->send($message);
+        
+
         return [
-             'status' => "OK; implementation in progress",
+             'status' => "success",
              'data' => $input,
-             'debug' => "total is $total, pages: ".$paginator->getPages()->pageCount
+            //  'debug' => "total is $total, pages: ".$paginator->getPages()->pageCount
         ];
     }
 
