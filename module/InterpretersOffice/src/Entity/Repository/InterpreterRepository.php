@@ -117,7 +117,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             }
 
             // are they filtering for security clearance?
-            switch ($params['security_clearance_expiration']) {
+            switch ($params['security_clearance_expiration']??-1) {
                 case -1: // any status whatsoever
                     $security_expiration_clause = '';
                     break;

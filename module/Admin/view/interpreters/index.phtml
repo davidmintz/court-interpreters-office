@@ -160,7 +160,7 @@ if ($this->isQuery) :
                     <label for="email" class="sr-only">email address  (required)</label>
                     <input class="form-control" id="email" name="email" placeholder="email address (required)" type="text">
                 </div>
-                <input name="csrf" value="<?= (new \Laminas\Validator\Csrf(['timeout'=>600]))->getHash()?>" type="hidden">
+                <input id="csrf" name="csrf" value="<?= (new \Laminas\Validator\Csrf(['timeout'=>600]))->getHash()?>" type="hidden">
             </form>
       </div>
       <div class="modal-footer">

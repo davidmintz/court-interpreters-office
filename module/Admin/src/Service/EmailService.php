@@ -429,6 +429,20 @@ EOD;
             ],
             'recipient' => [
                 'required' => false,
+                'validators' => [
+                    [
+                        'name' => 'StringLength',
+                        'required' => true,
+                        'options' => [
+                            'max' => '60',
+                            'min' => '2',
+                            'messages' => [
+                                'stringLengthTooShort' => 'recipient name should be a minimum %min% characters',
+                                'stringLengthTooLong' => 'recipient cannot exceed %max% characters',
+                            ],
+                        ],
+                    ],
+                ],
 
             ],
             'csrf' => [
@@ -489,16 +503,22 @@ EOD;
         );
         $input_filter->setData($params);
         if ($input_filter->isValid()) {
-            $data = $input_filter->getValues();
+            $input = $input_filter->getValues();
         } else {
             return [
                 'status' => 'validation failed',
                 'validation_errors' => $input_filter->getMessages(),
             ];
         }
+        /** @var \InterpretersOffice\Entity\Repository\InterpreterRepository] $repository  */
+        $repository = $this->objectManager->getRepository(Entity\Interpreter::class);
+        $paginator = $repository->search($input);
+        $total = $paginator->getTotalItemCount();
+        $paginator->setItemCountPerPage($total);
         return [
              'status' => "OK; implementation in progress",
-             'data' => $data,
+             'data' => $input,
+             'debug' => "total is $total, pages: ".$paginator->getPages()->pageCount
         ];
     }
 
