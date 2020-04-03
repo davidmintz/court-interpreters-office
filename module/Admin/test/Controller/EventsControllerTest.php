@@ -139,6 +139,51 @@ class EventControllerTest extends AbstractControllerTest
         return $entity;
     }
 
+    public function testBatchInsertInCourtEvent()
+    {
+        $em = FixtureManager::getEntityManager();
+
+        $count_before = $em
+          ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+          ->getSingleScalarResult();
+        $event = $this->getDummyData();
+        $event['dates'] = call_user_func(function(string $monday){
+            $dates = [preg_replace('|(\d\d)/(\d\d)/(\d\d\d\d)|','$3-$1-$2',$monday)];
+            $obj = new \DateTimeImmutable($monday);
+            for ($i = 1; $i <= 4; $i++) {
+                $interval = new \DateInterval("P${i}D");
+                $dates[] = $obj->add($interval)->format("Y-m-d");
+            }
+            //print_r($dates);
+            return $dates;
+        },$event['date']);
+        $trial = $em->getRepository(Entity\EventType::class)->findOneBy(['name'=>'trial']);
+        $data['event_type'] = $trial->getId();
+        $this->login('david', 'boink');
+        $this->reset(true);
+        $token = $this->getCsrfToken('/admin/schedule/add');
+        $this->getRequest()->setMethod('POST')->setPost(
+            new Parameters([
+                    'event' => $event,
+                    'csrf' => $token,
+                ])
+        );
+        $this->dispatch('/admin/schedule/add');
+        $this->assertResponseStatusCode(200);
+        $response = $this->getResponse()->getBody();
+        $obj = json_decode($response);
+        $this->assertTrue(is_object($obj),"response is not an object");
+        $this->assertTrue(is_array($obj->ids));
+        $this->assertEquals(5, count($obj->ids));
+        $count_after = $em
+          ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
+          ->getSingleScalarResult();
+        $this->assertEquals(
+            5, $count_after - $count_before,
+            "count $count_after was not incrememented by 5 (from $count_before)"
+        );
+    }
+
     /**
      * @depends testAddInCourtEvent
      *
