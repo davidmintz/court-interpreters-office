@@ -226,7 +226,7 @@ const send_email = function(){
         message.request_id = $("div#request-details").data("id");
         message.entity_class = "Request";
     }
-    //var csrf = 'shit';// testing
+
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
     $.post(url,{message, csrf}).done((response)=> {
@@ -260,8 +260,8 @@ const send_email = function(){
                 }
             }
         } else {
-            $("#error-message").hide();
-            var div = $("div.alert-success").first();
+            $(".modal-body .alert-warning").hide();
+            var div = $("div.alert-primary").first();
             var to = response.sent_to;
             var message = "Email has been sent to: ";
             message += to.map((p)=>{
@@ -279,7 +279,6 @@ const send_email = function(){
             }
             message += ".";
             div.children("p").html(message);
-
             div.show();
             $(".modal-header button.close").trigger("click");
             $("div.email-prompt").hide();
