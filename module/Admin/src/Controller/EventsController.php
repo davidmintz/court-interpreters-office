@@ -202,11 +202,12 @@ class EventsController extends AbstractActionController
         $this->entityManager->persist($event);
         $dates = $input['dates'];
         sort($dates);
+        $entities = [$event];
         foreach($dates as $d) {
             $entity = new Entity\Event();
             $entity->setDate(new \DateTime($d));
-            foreach(['time','docket','judge','language','event_type','location','anonymous_judge',
-            'submissionDate','submissionTime', 'submitter','anonymous_submitter','endTime','cancellation_reason',
+            foreach(['time','docket','judge','language','eventType','location','anonymousJudge',
+            'submissionDate','submissionTime', 'submitter','anonymousSubmitter','endTime','cancellationReason',
             'comments','adminComments',
             ]  as $prop) {
                 $getter = 'get'.ucfirst($prop);
@@ -218,9 +219,10 @@ class EventsController extends AbstractActionController
                 $entity->addDefendant($d);
             }
             foreach($event->getInterpreterEvents() as $ie) {
-                $entity->addInterpreterEvent($ie);
+                $entity->assignInterpreter($ie->getInterpreter());
             }
             $this->entityManager->persist($entity);
+            $entities[] = $entity;
         }
         $this->entityManager->flush();
         $url = $this->getEvent()->getApplication()->getServiceManager()
@@ -232,7 +234,7 @@ class EventsController extends AbstractActionController
             count($dates), (count($dates) > 1 ? 'dates':'date')
         ));
 
-        return new JsonModel(['status'=>'success','id'=> $event->getId()]);
+        return new JsonModel(['status'=>'success','ids'=> array_map(function($e){return $e->getId();},$entities)]);
     }
 
     /**
