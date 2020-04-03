@@ -43,7 +43,7 @@ $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-primary',], false);
 else : ?>
-<div class="alert alert-primary mx-auto" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
+<div class="alert alert-primary mx-auto pt-3" style="max-width:900px;display:none"><button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button><p></p></div>
 <?php
 endif;
 if ($messenger->hasErrorMessages()) :
