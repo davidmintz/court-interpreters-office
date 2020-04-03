@@ -234,12 +234,10 @@ class CreateAdminUserCommand extends Command
             $firstname = $helper->ask($input,$output,new Question($this->q("user's first name? ")
                     // ,'David'
              ));
-            $lastname = $helper->ask($input,$output,new Question($this->q("user's last name? "),
-                    // 'Mintz'
-                ));
+            $lastname = $helper->ask($input,$output,new Question($this->q("user's last name? ") //, 'Mintz'
+            ));
 
-            $email =  trim($helper->ask($input,$output,new Question($this->q("user's email address? ")
-                    // ,'david@davidmintz.org'
+            $email =  trim($helper->ask($input,$output,new Question($this->q("user's email address? ")// ,'david@davidmintz.org'
                     )));
 
             $email_validator = new EmailValidator();
