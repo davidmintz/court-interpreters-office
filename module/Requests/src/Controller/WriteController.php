@@ -290,6 +290,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
                     $form->getMessages()]);
             }
             // post-validation: make sure it is not a near-exact duplicate
+            /** @var InterpretersOffice\Requests\Entity\RequestRepository $repo */
             $repo = $this->objectManager->getRepository(Entity\Request::class);
             if ($repo->findDuplicate($entity)) {
                 return  new JsonModel(

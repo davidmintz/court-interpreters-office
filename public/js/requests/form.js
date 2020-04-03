@@ -1,5 +1,5 @@
-var $, formatDocketElement, parseTime,
-    toggleSelectClass, moment;
+var $, formatDocketElement, parseTime, toggleSelectClass, moment;
+/* global displayValidationErrors, fail, enable_multidate, disable_multidate */
 
 /**
  * when they select a name from autocompletion, add it to the form
@@ -41,16 +41,16 @@ var appendDefendant = function(data)
  */
 var minDate;
 switch (moment().day()) {
-    case 0:
-        // Sunday: next shot is Wednesday
-        minDate = "+3";
-        break;
-    case 5:
-    case 6:
-        minDate = "+4";
-        break;
-    default :
-        minDate = "+2";
+case 0:
+    // Sunday: next shot is Wednesday
+    minDate = "+3";
+    break;
+case 5:
+case 6:
+    minDate = "+4";
+    break;
+default :
+    minDate = "+2";
 }
 
 var datepicker_options = {
@@ -84,61 +84,8 @@ const deftname_autocomplete_options = {
 };
 $("form").on("click","li .btn-remove-item",function(e){
     e.preventDefault();
-    $(this).closest("li").slideUp(function(){$(this).remove()});
+    $(this).closest("li").slideUp(function(){$(this).remove();});
 });
-// var append_date = function(date,namespace){
-//     var m = moment(date,"MM/DD/YYYY");
-//     var value = m.format("YYYY-MM-DD");
-//     if ($(`#dates input[value="${value}"]`).length) {
-//         return;
-//     }
-//     var display = m.format("ddd DD-MMM-YYYY");
-//     $("#dates .form-text").hide();
-//     $("#dates .list-group").append(
-//         `<li style="font-size:90%;font-family:monospace" class="list-group-item pl-2 pr-1 py-1 multidate">
-//         <span class="float-left pt-1 align-middle">${display}</span>
-//         <button class="btn btn-warning btn-sm btn-remove-item float-right border" title="remove this date">
-//         <span class="fas fa-times" aria-hidden="true"></span>
-//         <span class="sr-only">remove this date</span></button>
-//         <input type="hidden" name="${namespace}[dates][]" value="${value}">
-//         </li>`
-//     );
-//     var sorted = $("ul.list-group li.multidate").sort((a,b)=>{
-//         var date1 = $(a).children("input").val();
-//         var date2 = $(b).children("input").val();
-//         if (date1 == date2) { return 0; } // should not be necessary
-//         return date1 > date2 ? 1 : -1; });
-//     $("#dates .list-group").html(sorted);
-// };
-// var enable_multidate = function(namespace){
-//     console.log("enabling multi-date");
-//     var div_exists = $("#div-multi-dates").length > 0;
-//     var date_element = $("#date");
-//     if (! div_exists) {
-//         var form_row = date_element.closest("div.form-row");
-//         form_row.after(
-//         `<div style="display:none" id="div-multi-dates" class="form-group form-row">
-//             <label for="dates" class="col-form-label col-sm-3 pr-1">dates</label>
-//             <div id="dates" class="col-sm-4">
-//                 <p class="form-text text-muted mt-2">please select your dates</p>
-//                 <ul class="list-group"></ul>
-//                 <div id="error_dates" class="alert alert-warning validation-error" style="display:none"></div>
-//             </div>
-//             <div id="cal-multi-dates" class="col-sm-5"></div>
-//         </div>`
-//         );
-//         var opts = Object.assign(datepicker_options,{onSelect: function(date){append_date(date,"request");}})
-//         $("#cal-multi-dates").datepicker(opts);
-//     }
-//     $("#div-multi-dates").slideDown();
-//     $("#date").attr({disabled:true});
-// };
-//
-// var disable_multidate = function(){
-//     console.log("disable multi-date");
-//     $("#div-multi-dates").slideUp();
-//     $("#date").attr({disabled:false});
-// };
 
 $(function(){
 
@@ -148,23 +95,23 @@ $(function(){
     const defendant_name_form = $("#form-add-deft");
     const slideout = $("#deft-results-slideout");
     const location = $("#location");
-    var event_type_element = $("#eventType");
+    var event_type_element = $("#event_type");
+    console.warn(event_type_element.length);
 
     // set default location if possible. TO DO: do this server-side?
     if (! location.val() && $("#judge").val()) {
         location.val(($("#judge :selected").data().default_location));
     }
     if (! is_update) {
-        event_type_element.on("change",function(e){
+        event_type_element.on("change",function(){
             var type = $(this).children("option:selected").text();
             if ("trial" === type) {
                 enable_multidate("request",{datepicker: datepicker_options});
             } else {
                 disable_multidate();
             }
-        });
+        }); 
     }
-
 
     defendant_search.autocomplete(deftname_autocomplete_options);
     $("#time").on("change",parseTime);
@@ -175,11 +122,11 @@ $(function(){
         event.preventDefault();
         $(this).closest(".list-group-item").slideUp(
             function(){ $(this).remove();} );
-        }
+    }
     );
 
     $("select").on("change",toggleSelectClass).trigger("change");
-    const help_button = $("#btn-help-deft-search")
+    const help_button = $("#btn-help-deft-search");
     const help_text = $("#help-defendant-search");
     help_button.on("click",() => help_text.slideToggle());
     help_text.children("button.close")
@@ -196,7 +143,7 @@ $(function(){
                 } else if (response.status === "success"){
                     return document.location = `${window.basePath}/requests/list`;
                 } else {
-                    console.warn("shit blew up?")
+                    console.warn("shit blew up?");
                     fail(response);
                 }
             }).fail(fail);
@@ -214,7 +161,7 @@ $(function(){
         if (term.length < 2) {
             return window.alert("please type at least two letters of the surname");
         }
-        $.get('/defendants/search',{term:term})
+        $.get("/defendants/search",{term:term})
             .done((response)=>{
                 $("#deft-results").html(response);
                 if (0 === $("#deft-results ul.defendant-names").length) {
