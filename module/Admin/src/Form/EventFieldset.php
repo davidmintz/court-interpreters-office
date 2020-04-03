@@ -123,7 +123,7 @@ class EventFieldset extends AbstractEventFieldset
             ],
 
         ]);
-        if ($options['optional_elements'] && is_array($options['optional_elements']))
+        if (isset($options['optional_elements']) && is_array($options['optional_elements']))
         {
             if (!empty($options['optional_elements']['end_time'])) {
 

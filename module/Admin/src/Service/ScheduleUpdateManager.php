@@ -501,22 +501,28 @@ class ScheduleUpdateManager
         );
     }
 
+    /**
+     * event listener for event-deletion
+     * 
+     * @param EventInterface $e
+     * @return array
+     *      
+     */
     public function onDeleteEvent(EventInterface $e) {
         $params = $e->getParams();
         if (empty($params['email_notification'])) {
-            return;
+           return ['messages_queued'=> 0];
         }
         /* otherwise... */
         $this->remove_interpreters = true;
         $this->notify_interpreters = true;// superfluous?
         $this->user_event = 'delete';
         $event = $params['entity'];
-        $this->logger->debug(
-            __METHOD__. " calling notifyAssignedInterpreters()"
-        );
+        $this->logger->debug(__METHOD__. " calling notifyAssignedInterpreters()"        );
         $this->notifyAssignedInterpreters($event);
-
-
+        
+        return ['messages_queued'=>  count($this->email_messages)];
+        
     }
 
     /**

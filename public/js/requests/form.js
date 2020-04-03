@@ -230,9 +230,7 @@ $(function(){
             }).fail(fail);
     });
 });
-
-
-
+/*
 var stuff = function()
 {
     $("#date").val("09/27/2018");
@@ -250,3 +248,4 @@ var force_error = function() {
     $("#eventType").val($("option:contains('conference')").val()).trigger("change");
     $(".btn-success").trigger("click");
 };
+*/

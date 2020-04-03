@@ -28,8 +28,8 @@ $(function(){
                         // we are in admin/schedule/view/<id>
                             $(".alert-success").addClass("event-deleted");
                             /* this is getting ugly, but if we are already showing
-                        them a prompt to send email, we don't need to put another
-                        prompt on the screen. on the contrary... */
+                            them a prompt to send email, we don't need to put another
+                            prompt on the screen. on the contrary... */
                             // if (email_notification && $("div.email-prompt").length) {
                             $("div.email-prompt").hide();
                             // }
@@ -45,7 +45,7 @@ $(function(){
                                     $("#btn-email").trigger("click",{interpreter_update_notice: "cancellation"});
                                 });
                             }
-                            $(".alert-success p").html(html).parent().show();
+                            $(".alert-primary p").html(html).parent().show();
                             // "edit" and "delete" buttons should be disabled
                             $("a.btn:contains(\"edit\"), a.btn:contains(\"delete\")")
                                 .addClass("disabled").attr({disabled:"disabled"});

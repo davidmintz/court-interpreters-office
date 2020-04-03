@@ -338,9 +338,10 @@ class EventsController extends AbstractActionController
             ['entity'=>$entity,
             'email_notification'=> $this->params()->fromPost('email_notification')]);
         $this->entityManager->flush();
-        $this->getEventManager()->trigger('postFlush',$this);
+        $x = $this->getEventManager()->trigger('postFlush',$this);
 
         return new JsonModel(['deleted' => true,'status' => 'success',
+            'debug' => 'FYI trigger returns: '.get_class($x),
             'message' => "this event has been deleted"]);
     }
 
