@@ -519,16 +519,13 @@ DQL;
             $qb->andWhere($qb->expr()->in('e.id',$qb2->getDQL()));
             $params[':interpreter_id'] = $query['interpreter_id'];
         }
-        if (! empty($query['order'])) {
-            $order_by = $query['order'];
-            // date ASCENDING
-            if ($order_by == 'desc') {
-                $qb->orderBy('e.date', 'DESC')->addOrderBy('e.time', 'ASC');
-            }
-        } else {
-            // on second thought let's try making latest-first the default
+        if (empty($query['order'])) {
+            // default
             $qb->orderBy('e.date', 'DESC')->addOrderBy('e.time', 'ASC');
+        } else {
+            $qb->orderBy('e.date',$query['order'])->addOrderBy('e.time', 'ASC');            
         }
+
         $qb->setParameters($params);
         $query = $qb->getQuery();
         //$query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
