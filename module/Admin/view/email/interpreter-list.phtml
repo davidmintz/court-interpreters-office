@@ -1,0 +1,25 @@
+<?php /** template for emailing lists of interpreters of a particular language */?>
+<p>
+    Hello,
+</p>
+<p>
+    The following is a list of names and contact information of <?=$this->language?> interpreters that you 
+    (or someone on your behalf) recently requested of us.
+</p>
+<table>
+    <?php foreach ($this->paginator as $record): $interpreter = $record[0];?>
+    <tr>
+        <td colspan="2">
+            <?=$this->escapeHtml("{$interpreter->getLastname()}, {$interpreter->getFirstname()}")?>
+        </td>
+    </tr>
+    <tr>
+        <td><?=$this->escapeHtml($interpreter->getEmail())?></td>
+        <td><?=$this->escapeHtml($interpreter->getMobilePhone() ?? '' )?></td>
+    </tr>
+    <?php endforeach;?>
+</table>
+
+<p>
+
+</p>
