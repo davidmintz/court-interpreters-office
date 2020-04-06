@@ -38,8 +38,6 @@ $flavors['Magistrate'] = $flavors['USMJ'];
 $active = 1;
 $courthouses =  $db->query('SELECT name,id FROM locations WHERE type_id = '.TYPE_COURTHOUSE)->fetchAll(PDO::FETCH_KEY_PAIR);
 
-
-
 // ctrm-cthouse => location_id
 $courtrooms = $db->query('SELECT CONCAT(name,"-",parent) AS location, id FROM view_locations WHERE category = "courtroom"')
         ->fetchAll(PDO::FETCH_KEY_PAIR);
