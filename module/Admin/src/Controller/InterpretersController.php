@@ -105,7 +105,7 @@ class InterpretersController extends AbstractActionController
      */
     public function autocomplete($term)
     {
-        /** @var  Entity\Repository\InterpreterRepository $repository*/
+        /** @var  Entity\Repository\InterpreterRepository $repository */
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
         return new JsonModel(
             $repository->autocomplete($term)
@@ -158,6 +158,7 @@ class InterpretersController extends AbstractActionController
      */
     public function find(array $params)
     {
+        /** @var  Entity\Repository\InterpreterRepository $repository */
         $repository = $this->entityManager
                 ->getRepository(Entity\Interpreter::class);
 
@@ -171,7 +172,7 @@ class InterpretersController extends AbstractActionController
     public function availabilityListAction()
     {
         $language = $this->params()->fromRoute('language','Spanish');
-        
+        /** @var  Entity\Repository\InterpreterRepository $repository */
         $repository = $this->entityManager
             ->getRepository(Entity\Interpreter::class);
         $data = $repository->getAvailabilityList($language);

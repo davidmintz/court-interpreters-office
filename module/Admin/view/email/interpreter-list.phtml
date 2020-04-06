@@ -2,24 +2,24 @@
 <p>
     Hello,
 </p>
-<p>
+<p style="line-height:1.3em; margin-bottom:2em">
     The following is a list of names and contact information of <?=$this->language?> interpreters that you 
     (or someone on your behalf) recently requested of us.
 </p>
-<table>
-    <?php foreach ($this->paginator as $record): $interpreter = $record[0];?>
-    <tr>
-        <td colspan="2">
-            <?=$this->escapeHtml("{$interpreter->getLastname()}, {$interpreter->getFirstname()}")?>
-        </td>
-    </tr>
-    <tr>
-        <td><?=$this->escapeHtml($interpreter->getEmail())?></td>
-        <td><?=$this->escapeHtml($interpreter->getMobilePhone() ?? '' )?></td>
-    </tr>
-    <?php endforeach;?>
-</table>
-
-<p>
-
+<?php /* 
+Note: These interpreters are not certified by the US District Court, but most are otherwise qualified by virtue of background and/or experience. 
+Not all have necessarily worked before in a federal court. This list should be taken as a guide, not a guarantee of competence. 
+Anyone seeking the services of an interpreter is encouraged to request a c.v. and inquire as to background and experience.
+*/?>
+<?php foreach ($this->paginator as $record): $interpreter = $record[0];?>
+<?=$this->escapeHtml("{$interpreter->getLastname()}, {$interpreter->getFirstname()}")?><br>
+<?=$this->escapeHtml($interpreter->getEmail())?>;  <?=$this->escapeHtml($interpreter->getMobilePhone() ?? '' )?>
+</p>   
+<?php endforeach;?>
+<p style="border-top: 1px solid #6c757d; padding-top: 2em; line-height:1.3em;">
+Please feel free to contact us with any questions.
 </p>
+
+<p>Yours,</p>
+
+<p><?= $this->escapeHtml($this->layout()->organization_name) ?? "The Interpreters Office" ?></p>

@@ -93,7 +93,7 @@ $(function(){
     });
 
     /**
-     * emails current listing to whomever
+     * emails current listing to email address they enter into the dialog
      */
     $("#btn-send-list").on("click",function(){
         $("#modal-email button").attr("disabled",true);
@@ -109,6 +109,7 @@ $(function(){
                     return displayValidationErrors(res.validation_errors);
                 }
                 console.log(res);
+                /** @todo complete it */
             })
             .fail(fail);
     });
