@@ -69,7 +69,7 @@ class EventFieldset extends AbstractEventFieldset
             'attributes' => ['label' => ' ']];
         if ($options['object']) {
             $entity = $options['object'];
-            $language_id = $entity->getLanguage()->getId();event
+            $language_id = $entity->getLanguage()->getId();
             $repository = $objectManager->getRepository(Entity\Interpreter::class);
             $value_options = // $empty_option +
                 $repository->getInterpreterOptionsForLanguage($language_id,['with_banned_data'=>true]);
@@ -148,8 +148,8 @@ class EventFieldset extends AbstractEventFieldset
         $this->addSubmissionDateTimeElements();
 
         // reason for cancellation
-        $repository = $objectManager->getRepository(Entity\Event::class);
         /** @var Entity\Repository\EventRepository $repository */
+        $repository = $objectManager->getRepository(Entity\Event::class);
         $cancellation_options = $repository->getCancellationOptions();
         $default_label = 'N/A';
         $default_opt = [
