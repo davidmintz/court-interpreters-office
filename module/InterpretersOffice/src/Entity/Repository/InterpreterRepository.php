@@ -72,7 +72,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
 
         //  "SELECT i.lastname,c.name FROM InterpretersOffice\Entity\Interpreter i JOIN i.interpreterLanguages il JOIN il.language l JOIN il.languageCredential c WHERE l.name = 'Spanish'"
 
-        $qb->select('PARTIAL i.{lastname, firstname, id, active, security_clearance_date, email, mobile_phone}', 'h.name AS hat', 'cred.abbreviation AS rating')
+        $qb->select('PARTIAL i.{lastname, firstname, id, active, security_clearance_date, email, mobile_phone}', 'h.name AS hat')
             ->join('i.hat', 'h');
 
         if (! empty($params['lastname'])) {
@@ -109,7 +109,8 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             // are they filtering for language?
             if (! empty($params['language_id'])) {
                 $method = $hasWhereConditions ? 'andWhere' : 'where';
-                $qb->join('i.interpreterLanguages', 'il')
+                $qb->addSelect('cred.abbreviation AS rating')
+                    ->join('i.interpreterLanguages', 'il')
                     ->join('il.language', 'l')
                     ->join('il.languageCredential', 'cred')
                     ->$method('l.id = :id');

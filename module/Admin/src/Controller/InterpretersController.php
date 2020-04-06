@@ -82,6 +82,7 @@ class InterpretersController extends AbstractActionController
             'title' => 'interpreters',
             ] + compact('form', 'params', 'isQuery', 'routeName'));
         if ('interpreters/find_by_id' == $routeName) {
+            /** @todo optimize */
             $viewModel->interpreter = $this->entityManager->find(
                 Entity\Interpreter::class,
                 $this->params()->fromRoute('id')
@@ -92,7 +93,8 @@ class InterpretersController extends AbstractActionController
                 $viewModel->results = $this->find($params);
             }
         }
-        return $this->initView($viewModel, $params, $isQuery);
+        
+        return $this->initView($viewModel, $params, $routeName);
     }
 
     /**
@@ -103,7 +105,7 @@ class InterpretersController extends AbstractActionController
      */
     public function autocomplete($term)
     {
-
+        /** @var  Entity\Repository\InterpreterRepository $repository*/
         $repository = $this->entityManager->getRepository('InterpretersOffice\Entity\Interpreter');
         return new JsonModel(
             $repository->autocomplete($term)
@@ -115,15 +117,15 @@ class InterpretersController extends AbstractActionController
      *
      * @param ViewModel $viewModel
      * @param Array $params GET (route) parameters
-     * @param boolean $isQuery whether submitting search terms, or just arriving
+     * @param string $routeName
      *
      * @todo consider making this a method of the form instead
      */
-    public function initView(ViewModel $viewModel, array $params, $isQuery)
+    public function initView(ViewModel $viewModel, array $params, $routeName)
     {
 
         $session = new Session('interpreter_roster');//$session->clear();return;
-
+        $isQuery = ($routeName != 'interpreters');
         if (! $isQuery) {
         // if no search parameters, get previous state from session if possible
             if ($session->params) {
@@ -140,7 +142,7 @@ class InterpretersController extends AbstractActionController
             }
             $session->params = $merged = array_merge($session->params ?: [], $params);
             $viewModel->params = $merged;
-            //var_dump($session->params);
+            $viewModel->routeName = $routeName;
         }
         return $viewModel;
     }

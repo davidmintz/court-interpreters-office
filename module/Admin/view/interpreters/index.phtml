@@ -7,6 +7,8 @@ $this->headScript()
         ->appendFile($this->basePath('js/interpreters-index.js'));
 $this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.css'));
 $form = $this->form;
+?><!-- <pre><?php //print_r($this->params)?></pre> -->
+<?php
 // set some defaults for the search form
 foreach (['language_id','active','security_clearance_expiration'] as $e) :
     $element = $form->get($e);
@@ -53,44 +55,42 @@ if ($this->interpreter) :
     echo $this->render('view');
 endif;
 ?>
-<div class="mx-auto" style="max-width:700px">
+<div class="mx-auto" style="max-width:750px">
 <?php
 if ($this->results) : ?>
 <p class="border p-2 rounded">
     <?php echo $this->paginationControl($this->results, null, 'partials/pagination_head');?> interpreters found
 </p>
-<table class="table table-hover table-bordered table-sm mx-auto w-auto">
+<table class="table table-hover table-bordered table-sm mx-auto">
     <thead>
     <tr>
-        <th class="font-weight-normal text-info">name/email</th>
-        <th class="font-weight-normal text-info">rating</th>
+        <th class="font-weight-normal text-info">name</th>
+        <?php if ($this->routeName != 'interpreters/find_by_name' && $this->params['language_id']):?><th class="font-weight-normal text-info">rating</th><?php endif?>
+        <th class="font-weight-normal text-info">email</th>
         <th class="font-weight-normal text-info">mobile</th>
         <th colspan="2" class="font-weight-normal text-info"></th>
     </tr>
     </thead>
     <tbody>
         <?php
-        $ratings = [
-            ''
-        ];
+        $ratings = [''];
         foreach ($this->results as $row) : /** note to self: use array hydration? */
-            $interpreter = $row[0];
-            // seems very weird, needs to be investigated
-            if (! $interpreter) { continue; }
+            $interpreter = $row[0];           
+            //if (! $interpreter) { continue; }
             $id = $interpreter->getId();
             $status = $interpreter->isActive() ? 'active' : 'inactive';
             $view_url = $this->url('interpreters/find_by_id', ['id' => $id])?>
         <tr>
             <td class="px-2 align-middle border-left-0 border-right-0 ">
                 <a data-toggle="tooltip" title="view interpreter details" href="<?php echo $view_url?>">
-                <?php echo $this->escapeHtml(sprintf('%s, %s', $interpreter->getLastname(), $interpreter->getFirstname())) ?></a>
-                  
+                <?php echo $this->escapeHtml(sprintf('%s, %s', $interpreter->getLastname(), $interpreter->getFirstname())) ?></a>                  
                 <?php if ($row['hat'] == 'staff court interpreter') :
-                    ?> <span class="text-muted">staff interpreter</span><?php
+                    ?> <span class="text-muted avoidwrap">staff interpreter</span><?php
                 endif; ?>
-                <?php if ($interpreter->getEmail()): echo $this->escapeHtml( "<{$interpreter->getEmail()}>") ; endif;?>
             </td>
-            <td><span class="avoidwrap"><?= $row['rating']?></span>
+            <?php if (isset($row['rating'])):?><td><span class="avoidwrap"><?= $row['rating']?></span></td><?php endif ?>
+            <td>
+                <?php if ($interpreter->getEmail()): echo $this->escapeHtml( "<{$interpreter->getEmail()}>") ; endif;?>
             </td>
             <td class="px-2">
                 <span class="avoidwrap">
