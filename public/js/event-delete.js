@@ -1,6 +1,13 @@
 /*
 global $, fail, should_suggest_email
 */
+
+/**
+ * Event listener for "delete" button.
+ * 
+ * There's a delete button in two viewscripts: /admin/schedule/edit/<id> and
+ * /admin/schedule/view/id
+ */
 $(function(){
     var event_id =  $("#event_id").val() || $(".event-details").data("event_id");
     var csrf = $("#csrf").val() || $("#btn-delete").data("csrf");
@@ -13,7 +20,7 @@ $(function(){
         event.preventDefault();
         var context = document.location.pathname.indexOf("admin/schedule/edit") > -1 ?
             "edit" : "view";
-        console.warn("this is "+context);
+        
         $("#btn-confirm-delete").on("click",function(){
             var url = `/admin/schedule/delete/${event_id}`;
             var email_notification =  ($("#email-notification").length
@@ -24,15 +31,12 @@ $(function(){
                     if (response.status === "success" ) {
                         var html;
                         $("#modal-confirm-delete").modal("hide");
-                        if (context === "view") {
-                        // we are in admin/schedule/view/<id>
+                        if (context === "view") { // we are in admin/schedule/view/<id>
                             $(".alert-success").addClass("event-deleted");
                             /* this is getting ugly, but if we are already showing
                             them a prompt to send email, we don't need to put another
-                            prompt on the screen. on the contrary... */
-                            // if (email_notification && $("div.email-prompt").length) {
+                            prompt on the screen. on the contrary... */                            
                             $("div.email-prompt").hide();
-                            // }
                             html = "This event has now been deleted from the schedule.";
                             if (! email_notification && should_suggest_email()) {
                                 var who = "interpreter";
@@ -49,8 +53,7 @@ $(function(){
                             // "edit" and "delete" buttons should be disabled
                             $("a.btn:contains(\"edit\"), a.btn:contains(\"delete\")")
                                 .addClass("disabled").attr({disabled:"disabled"});
-                        } else {
-                        // it's the edit form
+                        } else {  // it's the edit form
                             $("#event-form").find("textarea, .btn, option, select, input, .list-group li")
                                 .addClass("disabled").attr({disabled:"disabled"});
                             $(".list-group li").css({backgroundColor: "#e9ecef"});
