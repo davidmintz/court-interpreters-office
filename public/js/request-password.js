@@ -1,5 +1,5 @@
-var displayValidationErrors, $;
 
+/* global displayValidationErrors, $ */
 $(function(){
     $("#btn-submit").on("click",function(){
 
