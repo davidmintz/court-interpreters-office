@@ -22,7 +22,7 @@ before_script:
     #- echo 'CREATE DATABASE IF NOT EXISTS test_office' |mysql
     #- bin/initialize-test-db.sh
     - cp config/autoload/doctrine.test.php config/autoload/doctrine.local.php
-    - cp config/autoload/development.local.php.dist config/autoload/local.development.php
+    - cp config/autoload/local.development.php.dist config/autoload/local.development.php
     - cp module/Admin/config/forms.json.dist module/Admin/config/forms.json
     - mkdir -p data/log
     - mkdir data/mail
