@@ -6,7 +6,8 @@
  * @see https://docs.zendframework.com/tutorials/advanced-config/#environment-specific-system-configuration
  * @see https://docs.zendframework.com/tutorials/advanced-config/#environment-specific-application-configuration
  */
-return [
+
+ return [
     // Retrieve list of modules used in this application.
     'modules' => require __DIR__.'/modules.config.php',
 
@@ -25,7 +26,7 @@ return [
         // modules are loaded. These effectively override configuration
         // provided by modules themselves. Paths may use GLOB_BRACE notation.
         'config_glob_paths' => [
-            realpath(__DIR__).'/autoload/{{,*.}global,{,*.}local}.php',
+            realpath(__DIR__) . sprintf('/autoload/{,*.}{global,%s,local}.php', getenv('environment') ?: 'production')
         ],
 
         // Whether or not to enable a configuration cache.

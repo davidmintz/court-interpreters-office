@@ -14,6 +14,7 @@ composer.phar
 court-interpreters-office.sublime-*
 data/*
 dev.local.conf
+config/*gpg
 bower.json
 codeception.yml
 bin/scratch/*sh
