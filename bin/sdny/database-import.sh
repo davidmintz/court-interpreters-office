@@ -49,7 +49,9 @@ echo -n "importing interpreters and languages..."
 mysql office < bin/sdny/interpreter-language-import.sql
 OK;
 
-echo  -n "importing (some) user accounts..."
+echo  -n "importing 'request_user' accounts..."
+
+mysql dev_interpreters < bin/sdny/cleanup_user_data.sql
 mysql office < bin/sdny/import-users.sql
 OK;
 

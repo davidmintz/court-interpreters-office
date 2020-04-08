@@ -1,6 +1,5 @@
 /*
-	import some users for test purposes.
-	you can use 'mysql office --force < import-users.sql
+	import users from old database "request_users"
 */
 
 INSERT INTO people (
@@ -33,25 +32,26 @@ SELECT
 	"person"
 
 FROM dev_interpreters.request_users
-	WHERE group_id <> 5 /* the "unknown" category, strongly deprecated
-	/* AND id = 494 temp */
-;
+	WHERE group_id <> 5; /* the "unknown" category, strongly deprecated */
+
 
 INSERT INTO users (
 	person_id,
 	role_id,
 	username,
 	password,
-	active, created)
+	active,
+	created,
+	last_login)
 SELECT
-	id,
+	p.id,
 	1, /* role is "submitter" */
-	lower(email), /* temp(?) username */
-	"shit", /* temp password */
-	active,NOW()
-FROM people WHERE hat_id IN (6,7,8,9)
- /*ORDER BY id DESC LIMIT 1 temp ! */
-;
+	lower(p.email), /* temporary username */
+	ru.password, /* copy the password */
+	p.active,
+	ru.created,
+	IF(ru.last_login,FROM_UNIXTIME(ru.last_login),NULL)
+FROM people p JOIN dev_interpreters.request_users ru ON p.email = ru.email WHERE hat_id IN (6,7,8,9);
 
 /*
 UPDATE T1, T2,
@@ -61,10 +61,11 @@ SET T1.C2 = T2.C2,
 WHERE condition
 */
 
-UPDATE users
-	JOIN people ON users.person_id = people.id
-	JOIN dev_interpreters.request_users old_users ON  people.email = old_users.email
-SET users.password = old_users.password, users.created = old_users.created,
-users.last_login = IF(old_users.last_login,FROM_UNIXTIME(old_users.last_login),NULL)
-/*WHERE old_users.active*/
-;
+-- UPDATE users
+-- 	JOIN people ON users.person_id = people.id
+-- 	JOIN dev_interpreters.request_users old_users ON  people.email = old_users.email
+-- SET 
+-- -- users.password = old_users.password, users.created = old_users.created,
+-- users.last_login = IF(old_users.last_login,FROM_UNIXTIME(old_users.last_login),NULL)
+-- /*WHERE old_users.active*/
+-- ;
