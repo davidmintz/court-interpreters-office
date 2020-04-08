@@ -24,6 +24,10 @@ echo $this->headStyle();?>
     ) ?>
 <?php endif ?>
     <div class="container" style="min-height:400px">
+    <?php if ('staging' == getenv('environment')):  // ----------------------------------------- //?>
+        <div class="alert py-1 px-4 alert-danger my-0">
+        <p class="my-1 mx-auto" style="max-width:800px;font-size:1.1em">CAUTION:  This is a "staging" environment. The database is for test purposes but  <strong>email is live</strong>.</p></div>
+        <?php endif;                                    // ----------------------------------------- //?>           
         <nav class="navbar navbar-expand-lg  navbar-light bg-light rounded mb-3 py-1 shadow-sm">
                 <a class="navbar-brand" href="<?php echo $this->url('home')?>">InterpretersOffice</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +54,7 @@ echo $this->headStyle();?>
     <?php  echo $this->content; ?>
     </div>
     <div class="container">
+        <?= getenv("environment") ?>
         <footer class="border-top border-bottom mt-4 text-center text-muted"><?php
             echo
                 $this->layout()->organization_name," &bull; ",
