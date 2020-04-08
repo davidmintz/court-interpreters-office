@@ -100,8 +100,8 @@ $(function(){
         var form = $("#form-send-list");
         var data = form.data().params;
         data.email = $("input[name=email]").val().trim();
-        data.recipient = $("input[name=recipient").val().trim();
-        data.csrf = $("[name=csrf").val();
+        data.recipient = $("input[name=recipient]").val().trim();
+        data.csrf = $("[name=csrf]").val();
         $.post(form.attr("action"),data)
             .then((res)=>{
                 $("#modal-email button").removeAttr("disabled");
