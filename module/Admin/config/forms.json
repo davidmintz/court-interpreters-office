@@ -13,5 +13,12 @@
         "optional_elements": {
             "end_time": "1"
         }
+    },
+    "users" : {
+        "allow_email_domains" : [
+            "nysd.uscourts.gov",
+            "nysp.uscourts.gov",
+            "nyspt.uscourts.gov"
+        ]
     }
 }
