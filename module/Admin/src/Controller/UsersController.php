@@ -239,6 +239,7 @@ class UsersController extends AbstractActionController implements Authentication
         $options = [
             'action' => 'create',
             'auth_user_role' => $this->auth_user_role,
+            'constrain_email'=>true,
         ];
 
         if ($person_id) {
@@ -317,7 +318,7 @@ class UsersController extends AbstractActionController implements Authentication
         $form = new UserForm($this->entityManager, [
             'action' => 'update',
             'auth_user_role' => $this->auth_user_role,
-            'user' => $user,
+            'user' => $user,'constrain_email'=>true,
             ]);
         /** @var $person \InterpretersOffice\Entity\Person */
         $person = $user->getPerson();

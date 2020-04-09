@@ -110,7 +110,7 @@ class AccountController extends AbstractActionController
         // it's a 3-step form. the first two are handled as partial validation
         $form_step = $this->params()->fromQuery('step');
         $form = new RegistrationForm($this->objectManager, [
-            'action' => 'create', 'auth_user_role' => 'anonymous',
+            'action' => 'create', 'auth_user_role' => 'anonymous','constrain_email'=>true,
             ]);
         $validation_group = [
             'csrf',
@@ -144,7 +144,7 @@ class AccountController extends AbstractActionController
     {
         /** @var InterpretersOffice\Form\User\RegistrationForm $form  */
         $form = new RegistrationForm($this->objectManager, [
-            'action' => 'create','auth_user_role' => 'anonymous',
+            'action' => 'create','auth_user_role' => 'anonymous','constrain_email'=>true,
             ]);
         /** @var Laminas\Http\PhpEnvironment\Request $request */
         $request = $this->getRequest();        
@@ -307,7 +307,7 @@ class AccountController extends AbstractActionController
         $form = new UserForm($em, [
             'action' => 'update',
             'auth_user_role' => $auth->role,
-            'user' =>  $user,
+            'user' =>  $user,'constrain_email'=>true,
             ]);
         $form->addCurrentPasswordElement()->addUniqueEmailValidator();
         /** @todo move this initialization somewhere else */
@@ -320,7 +320,6 @@ class AccountController extends AbstractActionController
         $form->getInputFilter()->get('user')->remove('role')->remove('id');
         if ($auth->role == 'submitter') {
             // we may decide we want to let a newly registered user correct her/his "hat" if there is
-            // zero data history
             $related_entities = $this->objectManager->getRepository('InterpretersOffice\Entity\User')
                 ->countRelatedEntities($user);
         } else {

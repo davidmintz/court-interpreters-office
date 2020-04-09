@@ -10,8 +10,8 @@ use InterpretersOffice\Controller\AccountController;
 
 use InterpretersOffice\Service\AccountManager;
 use InterpretersOffice\Entity\Listener;
-use Laminas\EventManager\EventInterface;
-use InterpretersOffice\Entity\User;
+use InterpretersOffice\Form\User\RegistrationForm;
+use InterpretersOffice\Admin\Form\UserForm;
 
 /**
  * Factory class for instantiating AccountController.
@@ -31,34 +31,20 @@ class AccountControllerFactory implements FactoryInterface
     {
         $auth = $container->get('auth');
         $em = $container->get('entity-manager');
-        if ($auth->hasIdentity()) {
-            // initialize listener
+        if ($auth->hasIdentity()) {            
             $container->get(Listener\UpdateListener::class)->setAuth($auth);
         }
+        $accountManager = $container->get(AccountManager::class);
         $controller = (new AccountController($em, $auth))
-            ->setAccountManager($container->get(AccountManager::class));
+            ->setAccountManager($accountManager);
+
+        // attach event listeners
         /** @var $sharedEvents Laminas\EventManager\SharedEventManagerInterface */
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
         $sharedEvents->attach(
-            $requestedName,
-            AccountManager::EVENT_REGISTRATION_SUBMITTED,
-            function (EventInterface $event) use ($log) {
-                $user = $event->getParam('user');
-                $person = $user->getPerson();
-                $log->info(
-                    sprintf(
-                        "new user registration submitted by %s %s, %s",
-                        $person->getFirstname(),
-                        $person->getLastname(),
-                        $person->getEmail()
-                    ),[
-                        'channel' => 'users',
-                        'entity_class' => User::class,
-                        'entity_id'    => $user->getId(),
-                    ]
-                );
-            }
+            $requestedName, AccountManager::EVENT_REGISTRATION_SUBMITTED,
+            [$accountManager,'onSubmitRegistration']
         );
 
         $sharedEvents->attach($requestedName,AccountManager::EVENT_EMAIL_VERIFIED,
@@ -74,63 +60,28 @@ class AccountControllerFactory implements FactoryInterface
         });
 
         $sharedEvents->attach(
-            $requestedName,
-            AccountManager::USER_ACCOUNT_MODIFIED,
-            function (EventInterface $event) use ($log)
-            {
-                $account_updated = $judges_updated = false;
-                $before = $event->getParam('before');
-                $after = $event->getParam('after');
-                $entity = $event->getParam('user');
-                if (array_diff($before->judge_ids,$after->judge_ids)
-                    or array_diff($after->judge_ids,$before->judge_ids)) {
-                    $judges_updated = true;
-                }
-                foreach (array_keys(get_object_vars($after)) as $prop) {
-                    if ('judge_ids' == $prop) {
-                        continue;
-                    }
-                    if ($before->$prop != $after->$prop) {
-                        $account_updated = true;
-                        $log->debug($before->$prop . ' != ' . $after->$prop);
-                        break;
-                    }
-                }
-                if (! $account_updated) {
-                    $person_before = $event->getParam('person_before');
-                    $person_after = [
-                        'mobile'=>$entity->getPerson()->getMobilePhone(),
-                        'office'=>$entity->getPerson()->getOfficePhone()
-                    ];
-                    if ($person_before != $person_after) {
-                        $account_updated = true;
-                    }
-                }
-                $username = $entity->getUsername();
-                if (! $account_updated and ! $judges_updated) {
-                    $log->debug(sprintf(
-                        'user %s saved her/his profile without modification',
-                        $username
-                    ));
-                    return;
-                }
-                if ($account_updated && ! $judges_updated) {
-                    $did_what = 'updated her/his account profile';
-                } elseif($judges_updated && !$account_updated) {
-                    $did_what = 'updated her/his judges';
-                } else {
-                    $did_what = 'updated her/his account profile, including judges';
-                }
-                $log->info(
-                    "user $username $did_what",
-                    [   'entity_class' => get_class($entity),
-                        'entity_id'=>$entity->getId(),
-                        'account_updated' => $account_updated,
-                        'judges_updated' => $judges_updated,
-                    ]
-                );
-            }
+            $requestedName, AccountManager::USER_ACCOUNT_MODIFIED,
+            [$accountManager,'onModifyAccount']            
         );
+
+        // figure out what form to inject
+        // /** @var Laminas\Router\Http\RouteMatch $route_match */
+        // $route_match = $container->get('Application')->getMvcEvent()->getRouteMatch();
+        // if (! $route_match) {
+        //     return $controller;
+        // }
+        // $action = $route_match->getParams()['action'];
+        // if (in_array($action,['register','validate'])) {
+        //     $form = $container->get(RegistrationForm::class);
+        // } else if ('edit' == $action) {
+        //     $form = $container->get(UserForm::class);
+        // }
+        // var_dump(get_class($route_match));
+        // printf(
+        //     '<pre>%s</pre>', print_r($route_match->getParams(),true)
+        // );
+
+
 
         return $controller;
     }

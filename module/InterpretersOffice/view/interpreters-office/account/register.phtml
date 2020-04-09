@@ -23,7 +23,7 @@ echo $this->form()->openTag($form);
         <fieldset id="fieldset-personal-data" class="carousel-item active"><legend class="offset-sm-3 py-3">step 1 of 3: contact details</legend>
         <?php
              // text inputs
-            $person_fieldset->get('email')->setAttribute('placeholder','your uscourts.gov address');
+            $person_fieldset->get('email')->setAttribute('placeholder','your official court address');
             foreach (['lastname','middlename','firstname','office_phone','mobile_phone'] as $elementName) :
                 $element = $person_fieldset->get($elementName);?>
             <div class="form-group form-row">

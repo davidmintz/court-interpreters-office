@@ -23,7 +23,6 @@ class InterpreterForm extends PersonForm
      */
     protected $formName = 'interpreter-form';
 
-
     /**
      * name of Fieldset class to instantiate and add to the form.
      *

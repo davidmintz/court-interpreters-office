@@ -118,7 +118,7 @@ class PeopleController extends AbstractActionController
         $viewModel = new ViewModel();
         $form = new PersonForm(
             $this->entityManager,
-            ['action' => 'create',]
+            ['action' => 'create','constrain_email'=>false]
         );
         $viewModel->setVariables(['form' => $form, 'title' => 'add a person']);
         $request = $this->getRequest();
@@ -168,7 +168,7 @@ class PeopleController extends AbstractActionController
         }
 
         $viewModel->id = $id;
-        $form = new PersonForm($this->entityManager, ['action' => 'update']);
+        $form = new PersonForm($this->entityManager, ['action' => 'update','constrain_email'=>false]);
         $form->bind($person);
         $has_related = $repo->hasRelatedEntities($id);
         if ($has_related) {

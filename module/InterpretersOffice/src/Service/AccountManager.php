@@ -2,20 +2,13 @@
 
 namespace InterpretersOffice\Service;
 
-use Laminas\Mail;
+use InterpretersOffice\Entity\User;
 use Laminas\View\Model\ViewModel;
 use Laminas\EventManager\EventManagerAwareTrait;
-use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventInterface;
 
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\Log\LoggerAwareTrait;
-use Laminas\EventManager\EventInterface;
-
-use Laminas\Mail\Message;
-use Laminas\Mime\Message as MimeMessage;
-use Laminas\Mime\Mime;
-use Laminas\Mime\Part as MimePart;
-use Laminas\Mail\Transport\TransportInterface;
 
 use Laminas\InputFilter\Factory;
 use Laminas\InputFilter\InputFilterInterface;
@@ -404,6 +397,84 @@ class AccountManager implements LoggerAwareInterface
         return $this->emailInputFilter;
     }
 
+    /**
+     * 
+     */
+    public function onSubmitRegistration(EventInterface $event)    
+    {
+        $log = $this->getLogger();
+        $user = $event->getParam('user');
+        $person = $user->getPerson();
+        $log->info(
+        sprintf("new user registration submitted by %s %s, %s",
+            $person->getFirstname(),
+            $person->getLastname(),
+            $person->getEmail()
+            ),
+            ['channel' => 'security',
+            'entity_class' => User::class,
+            'entity_id'    => $user->getId(),]
+        );
+    }
+    
+    public function onModifyAccount(EventInterface $event)
+    {
+
+        $account_updated = $judges_updated = false;
+        $before = $event->getParam('before');
+        $after = $event->getParam('after');
+        $entity = $event->getParam('user');
+        if (array_diff($before->judge_ids,$after->judge_ids)
+            or array_diff($after->judge_ids,$before->judge_ids)) {
+            $judges_updated = true;
+        }
+        foreach (array_keys(get_object_vars($after)) as $prop) {
+            if ('judge_ids' == $prop) {
+                continue;
+            }
+            if ($before->$prop != $after->$prop) {
+                $account_updated = true;
+                $log->debug($before->$prop . ' != ' . $after->$prop);
+                break;
+            }
+        }
+        if (! $account_updated) {
+            $person_before = $event->getParam('person_before');
+            $person_after = [
+                'mobile'=>$entity->getPerson()->getMobilePhone(),
+                'office'=>$entity->getPerson()->getOfficePhone()
+            ];
+            if ($person_before != $person_after) {
+                $account_updated = true;
+            }
+        }
+        $username = $entity->getUsername();
+        $log = $this->getLogger();
+        if (! $account_updated and ! $judges_updated) {
+            $log->debug(sprintf(
+                'user %s saved her/his profile without modification',
+                $username
+            ));
+            return;
+        }
+        if ($account_updated && ! $judges_updated) {
+            $did_what = 'updated her/his account profile';
+        } elseif($judges_updated && !$account_updated) {
+            $did_what = 'updated her/his judges';
+        } else {
+            $did_what = 'updated her/his account profile, including judges';
+        }
+        $log->info(
+            "user $username $did_what",
+            [   'entity_class' => get_class($entity),
+                'entity_id'=>$entity->getId(),
+                'account_updated' => $account_updated,
+                'judges_updated' => $judges_updated,
+                'channel' => 'security',
+            ]
+        );
+
+    }
 
     /**
      * gets the 'submitter' role
