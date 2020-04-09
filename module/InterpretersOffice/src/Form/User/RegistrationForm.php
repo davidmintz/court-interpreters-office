@@ -8,7 +8,6 @@ use Laminas\Validator\Callback;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
-use InterpretersOffice\Form\User\RegistrationForm;
 use InterpretersOffice\Admin\Form\UserFieldset;
 use InterpretersOffice\Entity;
 
@@ -175,6 +174,7 @@ class RegistrationForm extends Form
         $form = $this;
         $validator = new Callback([
             'callback' => function ($value, $context) use ($objectManager, $form) {
+                /** @var Entity\Repository\UserRepository $repo */
                 $repo = $objectManager->getRepository(Entity\User::class);
                 $user = $repo->findSubmitterByEmail($value);
                 if ($user) {
@@ -196,8 +196,11 @@ class RegistrationForm extends Form
             ]);
         $chain->prependValidator($validator, true);
     }
+
     /**
-     * returns flattened error messages
+     * returns flattened error messages.
+     * 
+     * @todo get rid of this. it's a foolish idea.
      *
      * @return Array
      */

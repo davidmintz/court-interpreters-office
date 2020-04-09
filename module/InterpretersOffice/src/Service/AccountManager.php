@@ -27,7 +27,6 @@ use Laminas\View\Renderer\RendererInterface as Renderer;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
-use InterpretersOffice\Service\AccountManager;
 use InterpretersOffice\Service\EmailTrait;
 use Laminas\Session\Container as SessionContainer;
 
