@@ -7,14 +7,10 @@ namespace InterpretersOffice;
 
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
-
 use Laminas\ServiceManager\Factory\InvokableFactory;
-use Laminas\Session\Config\SessionConfig;
-
 use InterpretersOffice\View\Helper as ViewHelper;
-use InterpretersOffice\Admin\Form\View\Helper\DefendantElementCollection;
 use InterpretersOffice\Service;
-use InterpretersOffice\Service\AccountManager;
+
 
 $environment = getenv('environment') ?: 'development';
 
@@ -24,9 +20,7 @@ $doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
 return [
     'form_elements' => [
         'factories' => [
-            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
-            //Entity\Language::class => Form\Factory\AnnotatedEntityFormFactory::class,
-            //Entity\Location::class => Form\Factory\AnnotatedEntityFormFactory::class,
+            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,            
         ],
     ],
     'controllers' => [
@@ -83,11 +77,7 @@ return [
                 'drivers' => [
                     // register `my_annotation_driver` for any entity under namespace `My\Namespace`
                     __NAMESPACE__.'\Entity' => 'application_annotation_driver',
-                ],
-                // oops, does not work
-                // 'datetime_functions' => [
-                //     'YEAR' => 'DoctrineExtensions\Query\Mysql\Year',
-                // ],
+                ],               
             ],
         ],
         'configuration' => [
@@ -111,20 +101,8 @@ return [
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
             \Laminas\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
-            Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
-            //Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
+            Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,           
             Service\AccountManager::class => Service\Factory\AccountManagerFactory::class,
-
-            // don't quite understand this.
-            /*
-            'Laminas\Session\SessionManager'=>function($container) {
-                echo "WTF?";
-                $options = $container->get('config')['session_manager'];
-                $config = new \Laminas\Session\Config\SessionConfig($options);
-                return new \Laminas\Session\SessionManager($config);
-            },
-            */
-            // 'Laminas\Session\Config\ConfigInterface' => 'Laminas\Session\Service\SessionConfigFactory',
 
         ],
         'abstract_factories' => [
