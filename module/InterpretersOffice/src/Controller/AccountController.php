@@ -110,7 +110,7 @@ class AccountController extends AbstractActionController
         // it's a 3-step form. the first two are handled as partial validation
         $form_step = $this->params()->fromQuery('step');
         $form = new RegistrationForm($this->objectManager, [
-            'action' => 'create','auth_user_role' => 'anonymous',
+            'action' => 'create', 'auth_user_role' => 'anonymous',
             ]);
         $validation_group = [
             'csrf',
@@ -142,15 +142,17 @@ class AccountController extends AbstractActionController
      */
     public function registerAction()
     {
+        /** @var InterpretersOffice\Form\User\RegistrationForm $form  */
         $form = new RegistrationForm($this->objectManager, [
             'action' => 'create','auth_user_role' => 'anonymous',
             ]);
+        /** @var Laminas\Http\PhpEnvironment\Request $request */
+        $request = $this->getRequest();        
         if (! $this->getRequest()->isPost()) {
             return new ViewModel(['form' => $form]);
         }
         // handle POST
         $user = new Entity\User();
-        $request = $this->getRequest();
         $form->bind($user);
         $input = $request->getPost();
         $data = $input->get('user');
