@@ -8,12 +8,10 @@ namespace InterpretersOffice\Admin\Controller;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use Laminas\Http\Response;
-//use Doctrine\ORM\EntityManagerInterface;
-//use InterpretersOffice\Entity;
-//use InterpretersOffice\Entity\Event;
-//use Laminas\Session\Container as Session;
+
 use InterpretersOffice\Admin\Service\EmailService;
+use InterpretersOffice\Admin\Service\BatchEmailService;
+use Swift_Message;
 
 /**
  * EmailController
@@ -66,13 +64,84 @@ class EmailController extends AbstractActionController
         
     }
 
+    /**
+     * batch email
+     * 
+     * currently under revision to get away from Laminas\Mail which is
+     * needlessly clumsy in our humble opinion
+     */
+    public function batchEmailAction(){
 
+        $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
+        $file = './data/progress.txt';
+        if (! \file_exists($file)) {
+            touch($file);
+        } else {
+            $contents = trim(file_get_contents($file));
+            if ($contents && $contents != 'done') {
+                $log->info("aborting batch email job",['progress_file_contents'=>$contents]);
+                $this->getResponse()->setStatusCode(503);
+                return new JsonModel(['status'=>'error',
+                'message'=> $this->emailService::ERROR_JOB_IN_PROGRESS]);
+            }
+            $fp = fopen($file,'w');
+            \ftruncate($fp,0);
+            fclose($fp);
+        }
+        $filter = $this->filter($this->getRequest()->getPost());
+        if (! $filter->isValid()) {
+            return new JsonModel(['validation_errors'=>$filter->getMessages()]);
+        }
+        $data = $filter->getValues();
+        
+        $service = $this->emailService;
+        $config = $service->getConfig()['mail'];       
+        $transport = (new BatchEmailService($config))->getTransport();
+        /** @todo maybe move this to the BatchEmailService class */
+        $recipients = $service->getRecipientList($data['recipient_list']);
+        $total = count($recipients);
+        header("content-type: application/json");
+        echo json_encode(['status'=>'started','total'=>count($recipients)]);
+        // this here is critical ...
+        if (function_exists('fastcgi_finish_request')) {
+            session_write_close();
+            \fastcgi_finish_request();
+            // ...otherwise it will NOT work
+        } else {
+            /* good question. */
+        }
+        
+        /** @var Swift_Message $message */
+        $message = new Swift_Message();
+        $message->setSubject($data['subject']);
+        
+        $message->setFrom([$config['from_address']=>$config['from_entity']]);
+        $layout = $service->getLayout();
+        $i = 0;
+        foreach($recipients as $person) {
+            $markup = $service->renderMarkdown($data['body']);
+            $name = "{$person['firstname']} {$person['lastname']}";
+            if ($data['salutation'] == 'personalized') {
+                $markup = "<p>Dear $name:</p>" . $markup;
+            }
+            $html = $service->render($layout,$markup);
+            $message->setBody($html,'text/html');
+            $message->addPart($data['body'],'text/plain')
+            ->setTo([$person['email']=>$name]);
+            $log->debug("sending mail re {$data['subject']} to {$person['email']}");
+            $transport->send($message);
+            file_put_contents($file,++$i ." of $total");
+        }
+        file_put_contents($file,"done");
+
+        return new JsonModel(['total'=>$total,'current'=> $i]);
+    }
 
     /**
-     *
+     * not in use, desting to be removed
      * processes batch email
      */
-    public function batchEmailAction()
+    public function __batchEmailAction()
     {
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         $file = './data/progress.txt';
