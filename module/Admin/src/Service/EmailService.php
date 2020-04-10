@@ -318,10 +318,10 @@ EOD;
         if (isset($data['cc'])) {
             $log_comments .= "Cc: ";
             foreach ($data['cc'] as $address) {
-                $message->addCc($address['email'], ! empty($address['name']) ? $address['name'] : null);
+                $message->addCc($address['email'], ! empty($address['name']) ? $address['name'] : null);               
             }
             $log_comments .= implode('; ', array_map(function ($a) {
-                return ! empty($address['name']) ? "{$a['name']} <{$a['email']}>"
+                return ! empty($a['name']) ? "{$a['name']} <{$a['email']}>"
                     : $a['email'];
             }, $data['cc']));
         }

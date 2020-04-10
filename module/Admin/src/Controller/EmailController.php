@@ -63,15 +63,7 @@ class EmailController extends AbstractActionController
 
     public function indexAction()
     {
-        // $response = $this->getResponse();
-        // $response->getHeaders()->addHeaders(['Content-type' => 'application/json']);
-        // $response->setContent(json_encode(['status'=>'OK']));
-        // //(new JsonModel())->setTerminal(true);
-        // // echo $response->toString();
-        // // return false;
-        // return $response;
-
-
+        
     }
 
 
@@ -125,7 +117,7 @@ class EmailController extends AbstractActionController
         $layout = $service->getLayout();
         $i = 0;
         foreach($recipients as $person) {
-            // work in progress !
+            
             $body = $message->getBody();
             $text_part = $body->getParts()[0];
             $name = "{$person['firstname']} {$person['lastname']}";
