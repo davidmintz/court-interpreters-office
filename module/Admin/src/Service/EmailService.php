@@ -7,7 +7,6 @@ namespace InterpretersOffice\Admin\Service;
 
 use InterpretersOffice\Service\EmailTrait;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
-use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use Laminas\Validator\EmailAddress;
 use Laminas\View\Renderer\RendererInterface as Renderer;
 use Laminas\View\Model\ViewModel;
@@ -61,12 +60,15 @@ EOD;
     const ACTIVE_SUBMITTERS = 'all active request submitters';
     const AVAILABILITY_SOLICITATION_LIST = 'contract interpreters on your availability-solicitation list';
     const OFFICE_STAFF = 'all Interpreters Office staff';
+    const TEST_GROUP = 'test recipients';
+
     public static $recipient_list_options = [
         self::ACTIVE_INTERPRETERS => self::ACTIVE_INTERPRETERS,
         self::ACTIVE_SPANISH_INTERPRETERS => self::ACTIVE_SPANISH_INTERPRETERS,
         self::ACTIVE_SUBMITTERS => self::ACTIVE_SUBMITTERS,
         self::AVAILABILITY_SOLICITATION_LIST => self::AVAILABILITY_SOLICITATION_LIST,
         self::OFFICE_STAFF => self::OFFICE_STAFF,
+        self::TEST_GROUP => self::TEST_GROUP,
     ];
 
     /**
@@ -88,6 +90,10 @@ EOD;
     public function __construct(Array $config)
     {
         $this->config = $config;
+        $env = getenv('environment');
+        if ($env == 'production') {
+            unset(self::$recipient_list_options[self::TEST_GROUP]);
+        }
     }
 
     /**
@@ -145,6 +151,12 @@ EOD;
                 ->where('u.active = true')->andWhere('r.name IN (:role)')
                 ->setParameters([':role'=>['administrator','manager']]);
             break;
+            case self::TEST_GROUP:
+                $data = [
+                    ['id'=> 123,'lastname'=>'Mintz','firstname'=>'David','email'=>'mintz@vernontbludgeon.com'],
+                    ['id'=> 124,'lastname'=>'Mintz','firstname'=>'David','email'=>'david_mintz@nysd.uscourts.gov'],
+                ];
+                return $data;
             default:
             throw new \RunTimeException("unknown email recipient list: $list");
         }
