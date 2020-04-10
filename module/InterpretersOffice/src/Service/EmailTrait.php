@@ -48,7 +48,7 @@ trait EmailTrait
     {
         $html = new MimePart($markup);
         $html->type = Mime::TYPE_HTML;
-        $html->charset = 'utf-8';
+        $html->charset = 'UTF-8';
         $html->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
 
         return $html;
