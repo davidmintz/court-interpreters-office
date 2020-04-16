@@ -63,7 +63,9 @@ class EmailController extends AbstractActionController
     {
         // $config = $this->emailService->getConfig()['mail'];       
         // $service = new BatchEmailService($config);
-        // $service->test();
+        // $result = $service->test();
+        // echo "send test email: $result";
+
     }
 
     /**

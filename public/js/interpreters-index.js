@@ -3,9 +3,8 @@
 /* global  $, displayValidationErrors, fail */
 
 $(function(){
-    $("[data-toggle=\"tooltip\"]").tooltip();
-    $(".modal-header button[data-hide]").on("click",()=>$("#modal-email").modal("hide"));
-
+    $(`[data-toggle="tooltip"]`).tooltip();
+    $(".modal-header button[data-hide]").on("click",()=>$("#modal-email").modal("hide"));   
     var languageSelect = $("#language_id");
     var languageButton = $("#btn-search-language");
     languageButton.on("click",function(event){
@@ -17,7 +16,7 @@ $(function(){
         var security = $("#security_clearance_expiration").val();
         url += "/security/"+security;
         document.location = url;
-    });
+    });    
     var nameElement = $("#name");
     nameElement.autocomplete({
         source : "/admin/interpreters",
@@ -109,7 +108,15 @@ $(function(){
                     return displayValidationErrors(res.validation_errors);
                 }
                 console.log(res);
-                /** @todo complete it */
+                var success_message = $("#email-success");
+                if (res.status === "success") {
+                    success_message.removeClass("d-none").addClass("d-flex align-items-start");
+                    $("#modal-email").one("hide.bs.modal",()=>{
+                        success_message.addClass("d-none").removeClass("d-flex align-items-start");
+                        document.getElementById("form-send-list").reset();                        
+                    });
+                }
+                form.one("change",()=> success_message.addClass("d-none").removeClass("d-flex align-items-start"));
             })
             .fail(fail);
     });

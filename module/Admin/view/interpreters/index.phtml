@@ -156,6 +156,12 @@ if ($this->isQuery) :
         </button>
       </div>
       <div class="modal-body">
+            <div id="email-success" class="d-none email-success p-2 alert alert-success rounded border border-success shadow-sm mb-3" >
+                <div class="p-2"><span style="font-size:1.2em" class="fa fa-check text-success"></span></div>
+                <div class="p-2">Message has been sent.</div>
+                <!-- <button type="button" class="close" data-hide="alert" aria-label="close"> 
+                <span aria-hidden="true">&times;</span></button>-->
+            </div>                  
             <form <?php if (isset($data)):?>data-params="<?= htmlspecialchars(json_encode($data))?>"<?php endif?>id="form-send-list" action="<?= $this->url('interpreters/send-list')?>">
                 <div class="form-group">
                     <label for="recipient" class="sr-only">recipient name (optional)</label>
