@@ -1,21 +1,22 @@
 <?php
-
+/** reports-controller factory */
 namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use InterpretersOffice\Admin\Controller\NormalizationController;
+use InterpretersOffice\Admin\Controller\ReportsController;
 
-class NormalizationControllerFactory implements FactoryInterface
+/** factory */
+class ReportsControllerFactory implements FactoryInterface
 {
     /**
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options
-     * @return NormalizationController
+     * @return SearchController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new NormalizationController($container->get('entity-manager'));
+        return new ReportsController($container->get('entity-manager'));
     }
 }

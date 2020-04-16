@@ -8,6 +8,7 @@ use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Form\SearchForm;
 use InterpretersOffice\Entity;
+use Laminas\Session\Container as SessionContainer;
 
 /**
  * search controller
@@ -21,6 +22,14 @@ class SearchController extends AbstractActionController
      * @var EntityManagerInterface
      */
     private $em;
+
+    /**
+     * @var SessionContainer
+     * 
+     * session
+     */
+    private $session;
+
     /**
      * constructor
      *
@@ -29,7 +38,7 @@ class SearchController extends AbstractActionController
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
-        $this->session = new \Laminas\Session\Container("event_search");
+        $this->session = new SessionContainer("event_search");
     }
 
     public function docketSearchAction()

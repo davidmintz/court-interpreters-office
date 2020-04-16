@@ -38,6 +38,7 @@ return [
             Controller\EmailController::class => Controller\Factory\EmailControllerFactory::class,
             Controller\NormalizationController::class => Controller\Factory\NormalizationControllerFactory::class,
             Controller\SearchController::class => Controller\Factory\SearchControllerFactory::class,
+            Controller\ReportsController::class => Controller\Factory\ReportsControllerFactory::class,
             Controller\ConfigController::class => Controller\Factory\ConfigControllerFactory::class,
             Controller\DocketAnnotationsController::class => Controller\Factory\DocketAnnotationsControllerFactory::class,
             Controller\RestfulDocketAnnotationsController::class => Controller\Factory\DocketAnnotationsControllerFactory::class,

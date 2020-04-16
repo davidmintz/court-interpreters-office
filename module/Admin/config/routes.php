@@ -1038,5 +1038,17 @@ return  [
                 ],
             ]
         ],
+        'reports' => [
+            'type' => Segment::class,
+            'may_terminate' => true,
+            'options' => [
+                'route' => '/admin/reports',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\ReportsController::class,
+                    'action' => 'index',
+                ],
+            ],
+        ],
     ],
  ];

@@ -9,20 +9,22 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Query\QueryBuilder;
 
-/**
- * insert|update|etc defendant names
- */
-
 /*
 // https://stackoverflow.com/questions/1017599/how-do-i-remove-accents-from-characters-in-a-php-string#10790734
 $string = "Fóø Bår";
 $transliterator = Transliterator::createFromRules(':: Any-Latin; :: Latin-ASCII; :: NFD; :: [:Nonspacing Mark:] Remove; :: Lower(); :: NFC;', Transliterator::FORWARD);
 echo $normalized = $transliterator->transliterate($string);
 */
+
+/**
+ * insert|update|etc defendant names
+ */
 class DefendantNameService
 {
 
     /**
+     * entity manager
+     * 
      * @var EntityManagerInterface $em
      */
     private $em;
@@ -386,8 +388,9 @@ class DefendantNameService
     }
 
     /**
-     *
-     *
+     * 
+     * tests for equality of Defendant name entities
+     * 
      * @param Entity\Defendant $a
      * @param Entity\Defendant $b
      * @return bool true if match is exact (binary, literal)
@@ -399,12 +402,11 @@ class DefendantNameService
     }
 
     /**
-     * find existing entity with same properties
+     * finds existing entity with same properties
      *
      * @param  Entity\Defendant $defendant
      * @return Defendant|null
      */
-    // public function findDuplicate(Entity\Defendant $defendant) :? Entity\Defendant
     public function findDuplicate(Entity\Defendant $defendant) :? array
     {
         $found = $this->em->getRepository(Entity\Defendant::class)->findOneBy([
