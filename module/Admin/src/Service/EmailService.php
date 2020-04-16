@@ -562,7 +562,6 @@ EOD;
         file_put_contents("data/email-list-output.html", $content);
         $this->getMailTransport()->send($message);
         
-
         return [
              'status' => "success",
              'data' => $input,

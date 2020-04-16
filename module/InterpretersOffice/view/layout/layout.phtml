@@ -53,8 +53,7 @@ echo $this->headStyle();?>
       </nav>
     <?php  echo $this->content; ?>
     </div>
-    <div class="container">
-        <?= getenv("environment") ?>
+    <div class="container">        
         <footer class="border-top border-bottom mt-4 text-center text-muted"><?php
             echo
                 $this->layout()->organization_name," &bull; ",

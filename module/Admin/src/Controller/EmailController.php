@@ -61,13 +61,15 @@ class EmailController extends AbstractActionController
 
     public function indexAction()
     {
-        
+        // $config = $this->emailService->getConfig()['mail'];       
+        // $service = new BatchEmailService($config);
+        // $service->test();
     }
 
     /**
      * batch email
      * 
-     * currently under revision to get away from Laminas\Mail which is
+     * a revision to get us away from Laminas\Mail which is
      * needlessly clumsy in our humble opinion
      */
     public function batchEmailAction(){
@@ -225,6 +227,7 @@ class EmailController extends AbstractActionController
 
         return $filter;
     }
+
     /**
      * validates draft email
      * @return JsonModel
