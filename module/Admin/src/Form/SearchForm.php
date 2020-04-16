@@ -50,23 +50,24 @@ class SearchForm extends AbstractSearchForm
             'name' => 'interpreter',
             'attributes' => ['id' => 'interpreter',
                 'placeholder' => 'last name[, first name]',
-                'class'=> 'form-control'],
+                'class' => 'form-control'],
             ]
         );
         return $this;
     }
 
-    public function getInputFilterSpecification() {
+    public function getInputFilterSpecification()
+    {
 
         $spec = parent::getInputFilterSpecification();
         $spec['interpreter_id'] = [
-            'required'=>false, 'allow_empty' => true,
+            'required' => false, 'allow_empty' => true,
         ];
         $spec['interpreter'] = [
-            'required'=>false, 'allow_empty' => true,
+            'required' => false, 'allow_empty' => true,
         ];
         $spec['event_type'] = [
-            'required'=>false, 'allow_empty' => true,
+            'required' => false, 'allow_empty' => true,
         ];
 
         return $spec;

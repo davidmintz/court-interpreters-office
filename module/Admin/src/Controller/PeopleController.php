@@ -77,7 +77,7 @@ class PeopleController extends AbstractActionController
         $paginator = null;
         if ((! $get) && $this->session->defaults) {
             // not xhr, no query parameters, yes session parameters
-            $paginator =  $this->entityManager
+            $paginator = $this->entityManager
                 ->getRepository(Entity\Person::class)
                 ->paginate($this->session->defaults);
         }
@@ -106,7 +106,7 @@ class PeopleController extends AbstractActionController
         $hat  = $this->params()->fromQuery('hat');
         $active = $this->params()->fromQuery('active');
         $value_column = $this->params()->fromQuery('value_column', 'id');
-        $data = $repo->autocomplete($term, compact('hat', 'active','value_column'));
+        $data = $repo->autocomplete($term, compact('hat', 'active', 'value_column'));
 
         return new JsonModel($data);
     }
@@ -118,7 +118,7 @@ class PeopleController extends AbstractActionController
         $viewModel = new ViewModel();
         $form = new PersonForm(
             $this->entityManager,
-            ['action' => 'create','constrain_email'=>false]
+            ['action' => 'create','constrain_email' => false]
         );
         $viewModel->setVariables(['form' => $form, 'title' => 'add a person']);
         $request = $this->getRequest();
@@ -168,7 +168,7 @@ class PeopleController extends AbstractActionController
         }
 
         $viewModel->id = $id;
-        $form = new PersonForm($this->entityManager, ['action' => 'update','constrain_email'=>false]);
+        $form = new PersonForm($this->entityManager, ['action' => 'update','constrain_email' => false]);
         $form->bind($person);
         $has_related = $repo->hasRelatedEntities($id);
         if ($has_related) {
@@ -249,8 +249,7 @@ class PeopleController extends AbstractActionController
             ->setTerminal(true)
             ->setTemplate('people/results');
 
-        return $view->setVariables(['paginator'=>$paginator]);
-
+        return $view->setVariables(['paginator' => $paginator]);
     }
 
     /**
@@ -281,26 +280,26 @@ class PeopleController extends AbstractActionController
     public function viewAction()
     {
         $id = $this->params()->fromRoute('id');
-        $class = $this->params()->fromRoute('class','person');
+        $class = $this->params()->fromRoute('class', 'person');
         $entity = null;
         switch ($class) {
             case 'person':
-            $repo = $this->entityManager->getRepository(Entity\Person::class);
-            $template = 'people/view';
-            break;
+                $repo = $this->entityManager->getRepository(Entity\Person::class);
+                $template = 'people/view';
+                break;
             case 'judge':
-            $repo = $this->entityManager
+                $repo = $this->entityManager
                 ->getRepository(Entity\Judge::class);
-            $template = 'judges/view';
-            break;
+                $template = 'judges/view';
+                break;
             case 'user':
-            $repo = $this->entityManager
+                $repo = $this->entityManager
                 ->getRepository(Entity\User::class);
-            $template = 'users/view';
-            break;
+                $template = 'users/view';
+                break;
         }
         $entity = $repo->view($id);
-        $view = new ViewModel(compact('id','class','entity'));
+        $view = new ViewModel(compact('id', 'class', 'entity'));
         $view->setTemplate($template);
 
         return $view;

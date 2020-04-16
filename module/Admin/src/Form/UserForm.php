@@ -60,10 +60,10 @@ class UserForm extends Form
             // }
             $fieldset->setObject($user);
 
-            $username =  strtolower($user->getUserName());
+            $username = strtolower($user->getUserName());
             $person_email = strtolower($user->getPerson()->getEmail());
             if ($username != $person_email) {
-                $fieldset->get('username')->setAttribute('disabled','disabled');
+                $fieldset->get('username')->setAttribute('disabled', 'disabled');
                 $this->getInputFilter()->get('user')->remove('username');
             }
         }
@@ -90,7 +90,7 @@ class UserForm extends Form
         $input->getFilterChain()->attachByName('StringTrim');
         $chain->attachByName('NotEmpty', [
                 'required' => true,
-                'break_chain_on_failure'=> true,
+                'break_chain_on_failure' => true,
                 'messages' => ['isEmpty' => 'password field is required',]
                 , true])
             ->attachByName('StringLength', ['min' => 8,'max' => '150','messages' => [
@@ -103,7 +103,7 @@ class UserForm extends Form
         $chain = $confirmation_input->getValidatorChain()
             ->attachByName('NotEmpty', [
                 'required' => true,
-                'break_chain_on_failure'=> true,
+                'break_chain_on_failure' => true,
                 'messages' => ['isEmpty' => 'password-confirmation field is required',]
                 , true])
 
@@ -133,16 +133,17 @@ class UserForm extends Form
         $chain->attachByName('NotEmpty', [
             'required' => true,
             'allow_empty' => false,
-            'break_chain_on_failure'=> true,
+            'break_chain_on_failure' => true,
             'messages' => ['isEmpty' => 'current password is required',]
             ])
-            ->attachByName('Callback',[
-                'callback'=>function($password) use ($hash) {
+            ->attachByName('Callback', [
+                'callback' => function ($password) use ($hash) {
                     /** @todo trigger a failed-authentication/security event? */
-                    return password_verify($password,$hash);},
+                    return password_verify($password, $hash);
+                },
                 'messages' => [
                     Callback::INVALID_VALUE => 'Authentication failed: invalid password.'
-                ]
+                    ]
             ]);
         $inputFilter->get('user')->add($input);
 
@@ -160,9 +161,9 @@ class UserForm extends Form
         $chain = $inputFilter->get('user')->get('person')->get('email')->getValidatorChain();
         $repo = $this->get('user')->getObjectManager()->getRepository(Entity\User::class);
         $user = $this->get('user')->getObject();
-        $chain->attachByName('Callback',[
-            'callback'=>function($email) use ($repo, $user) {
-                $count = $repo->countExistingUserEmail($user,$email);
+        $chain->attachByName('Callback', [
+            'callback' => function ($email) use ($repo, $user) {
+                $count = $repo->countExistingUserEmail($user, $email);
                 return ! $count;
             },
             'messages' => [
@@ -170,6 +171,4 @@ class UserForm extends Form
             ]
         ]);
     }
-
-
 }

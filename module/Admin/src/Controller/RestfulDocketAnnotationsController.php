@@ -27,7 +27,7 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
 
     public function testAction()
     {
-        return new JsonModel(['status'=>'test is working']);
+        return new JsonModel(['status' => 'test is working']);
     }
 
     /**
@@ -49,8 +49,8 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
     public function delete($id)
     {
         $headers = $this->getRequest()->getHeaders("X-Security-Token");
-        $token = $headers ? $headers->getFieldValue():'';
-        return new JsonModel($this->service->delete($id,$token));
+        $token = $headers ? $headers->getFieldValue() : '';
+        return new JsonModel($this->service->delete($id, $token));
     }
 
     /**
@@ -60,8 +60,9 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
      * @param  array $data
      * @return array
      */
-    public function update($id, $data) {
-        return new JsonModel($this->service->update($id,$data));
+    public function update($id, $data)
+    {
+        return new JsonModel($this->service->update($id, $data));
     }
 
     /**
@@ -77,14 +78,13 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
 
     /**
      * gets number of events bearing docket number
-     * 
+     *
      * @return JsonModel
      */
     public function countEventsAction()
     {
         $docket = $this->params()->fromQuery('docket');
 
-        return new JsonModel(['count'=>$this->service->countEventsForDocket($docket)]);
-
+        return new JsonModel(['count' => $this->service->countEventsForDocket($docket)]);
     }
 }

@@ -113,7 +113,7 @@ class InterpretersWriteController extends AbstractActionController
         if ($request->isPost()) {
             $form->setData($request->getPost());
             if (! $form->isValid()) {
-                return new JsonModel(['validation_errors'=>$form->getMessages()]);
+                return new JsonModel(['validation_errors' => $form->getMessages()]);
             }
             try {
                 $this->entityManager->persist($entity);
@@ -121,9 +121,11 @@ class InterpretersWriteController extends AbstractActionController
                 $this->flashMessenger()->addSuccessMessage(
                     sprintf(
                         'The interpreter <strong>%s %s</strong> has been added to the database',
-                        $entity->getFirstname(), $entity->getLastname())
-                    );
-                return new JsonModel(['status'=>'success','id'=>$entity->getId()]);
+                        $entity->getFirstname(),
+                        $entity->getLastname()
+                    )
+                );
+                return new JsonModel(['status' => 'success','id' => $entity->getId()]);
             } catch (VaultException $e) {
                 $viewModel->vault_error = $e->getMessage();
                 return $viewModel;
@@ -178,21 +180,22 @@ class InterpretersWriteController extends AbstractActionController
 
         $form->setData($request->getPost());
         if (! $form->isValid()) {
-            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+            return new JsonModel(['validation_errors' => $form->getMessages()]);
         }
         try {
             $this->entityManager->flush();
         } catch (VaultException $e) {
             return new JsonModel([
-                'status'=>'error', 'error' => $e->getMessage(),
+                'status' => 'error', 'error' => $e->getMessage(),
             ]);
         }
         $this->flashMessenger()->addSuccessMessage(sprintf(
             'Data for interpreter <strong>%s %s</strong> has been updated.',
-            $entity->getFirstname(),  $entity->getLastname()
+            $entity->getFirstname(),
+            $entity->getLastname()
         ));
 
-        return new JsonModel(['status'=>'success']);
+        return new JsonModel(['status' => 'success']);
     }
 
     /**
@@ -200,14 +203,14 @@ class InterpretersWriteController extends AbstractActionController
      */
     public function updateAvailabilityListAction()
     {
-        $data = $this->getRequest()->getPost();    
+        $data = $this->getRequest()->getPost();
         $validator = new CsrfValidator();
         if (! $validator->isValid($data['csrf'] ?? '')) {
-            $result = ['validation_errors'=>
-                ['csrf'=>['invalid'=>'Expired or missing security token. Please reload the page and try again.']]];
+            $result = ['validation_errors' =>
+                ['csrf' => ['invalid' => 'Expired or missing security token. Please reload the page and try again.']]];
             return new JsonModel($result);
         }
-        
+
         $repo = $this->entityManager->getRepository(Entity\Interpreter::class);
 
         return new JsonModel($repo->updateAvailabilityList($data->toArray()));
@@ -219,8 +222,8 @@ class InterpretersWriteController extends AbstractActionController
     public function autocompleteBannedListAction()
     {
         $repo = $this->entityManager->getRepository(Entity\Person::class);
-        $term = $this->params()->fromQuery('term','');
-        $data = $repo->autocomplete($term,['banned_list'=>true]);
+        $term = $this->params()->fromQuery('term', '');
+        $data = $repo->autocomplete($term, ['banned_list' => true]);
 
         return new JsonModel($data);
     }

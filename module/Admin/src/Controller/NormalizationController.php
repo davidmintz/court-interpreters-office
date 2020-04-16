@@ -31,7 +31,5 @@ class NormalizationController extends AbstractActionController
 
     public function indexAction()
     {
-        
     }
-
 }

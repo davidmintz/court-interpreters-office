@@ -28,12 +28,12 @@ class EventFormFactory implements FactoryInterface
         $options = [];
         if (is_readable($config_path)) {
             $json = file_get_contents($config_path);
-            $config = json_decode($json,\JSON_OBJECT_AS_ARRAY);
+            $config = json_decode($json, \JSON_OBJECT_AS_ARRAY);
             if (isset($config['events']) && isset($config['events']['optional_elements'])) {
                 $options['optional_elements'] = $config['events']['optional_elements'];
             }
         }
-        if (!$options) {
+        if (! $options) {
             $container->get('log')->warn("EventFormFactory: unable to load events form configuration file");
         }
         if ('edit' == $params['action']) {
@@ -45,10 +45,9 @@ class EventFormFactory implements FactoryInterface
             $form = new EventForm($em, $options);
             $form->setObject($entity);
         } else {
-            $form =  new EventForm($em, $options + ['object' => null, 'action' => 'create',]);
+            $form = new EventForm($em, $options + ['object' => null, 'action' => 'create',]);
         }
 
         return $form;
-
     }
 }

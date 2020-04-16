@@ -67,7 +67,7 @@ class Writer extends AbstractWriter
         $params['timestamp'] = $timestamp;
         $extra = $event['extra'];
         if (strlen($params['message']) > 250) {
-            $message = substr($params['message'],0,247).'...';
+            $message = substr($params['message'], 0, 247).'...';
             $params['message'] = $message;
         }
         $defaults = ['entity_id' => null, 'entity_class' => '', 'channel' => ''];
@@ -84,7 +84,7 @@ class Writer extends AbstractWriter
             $params['extra'] = json_encode($params['extra']);
             $length = strlen($params['extra']);
             if ($length > 5000) {
-                $params['extra'] = json_encode(['db_storage_error'=>'"extra" data exceeded 5000 character limit' . " ($length)"]);
+                $params['extra'] = json_encode(['db_storage_error' => '"extra" data exceeded 5000 character limit' . " ($length)"]);
             }
         } else {
             $params['extra'] = '';

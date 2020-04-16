@@ -104,7 +104,7 @@ EOD;
      */
     public function renderMarkdown(string $text) : string
     {
-        if (!$this->parseDown) {
+        if (! $this->parseDown) {
             $this->parseDown = new Parsedown();
         }
 
@@ -129,36 +129,36 @@ EOD;
             break;
             case self::ACTIVE_SPANISH_INTERPRETERS;
                 $qb->from(Entity\Interpreter::class, 'p')
-                    ->join('p.interpreterLanguages', 'il')->join('il.language','l')
+                    ->join('p.interpreterLanguages', 'il')->join('il.language', 'l')
                     ->where('l.name = :spanish')
                     ->andWhere('p.active = true')
-                    ->setParameters([':spanish'=>'Spanish']);
+                    ->setParameters([':spanish' => 'Spanish']);
             break;
             case self::AVAILABILITY_SOLICITATION_LIST:
                 $qb->from(Entity\Interpreter::class, 'p')
                 ->where('p.active = true')->andWhere('p.solicit_availability = true');
-            break;
+                break;
             case self::ACTIVE_SUBMITTERS:
                 $qb->from(Entity\Person::class, 'p')
-                    ->join(Entity\User::class, 'u','WITH','u.person = p')
-                    ->join('u.role','r')
+                    ->join(Entity\User::class, 'u', 'WITH', 'u.person = p')
+                    ->join('u.role', 'r')
                     ->where('u.active = true')->andWhere('r.name = :role')
-                    ->setParameters([':role'=>'submitter']);
-            break;
+                    ->setParameters([':role' => 'submitter']);
+                break;
             case self::OFFICE_STAFF:
-                $qb->from(Entity\Person::class, 'p')->join(Entity\User::class, 'u','WITH','u.person = p')
-                ->join('u.role','r')
+                $qb->from(Entity\Person::class, 'p')->join(Entity\User::class, 'u', 'WITH', 'u.person = p')
+                ->join('u.role', 'r')
                 ->where('u.active = true')->andWhere('r.name IN (:role)')
-                ->setParameters([':role'=>['administrator','manager']]);
-            break;
+                ->setParameters([':role' => ['administrator','manager']]);
+                break;
             case self::TEST_GROUP:
                 $data = [
-                    ['id'=> 123,'lastname'=>'Mintz','firstname'=>'David','email'=>'mintz@vernontbludgeon.com'],
-                    ['id'=> 124,'lastname'=>'Mintz','firstname'=>'David','email'=>'david_mintz@nysd.uscourts.gov'],
+                    ['id' => 123,'lastname' => 'Mintz','firstname' => 'David','email' => 'mintz@vernontbludgeon.com'],
+                    ['id' => 124,'lastname' => 'Mintz','firstname' => 'David','email' => 'david_mintz@nysd.uscourts.gov'],
                 ];
                 return $data;
             default:
-            throw new \RunTimeException("unknown email recipient list: $list");
+                throw new \RunTimeException("unknown email recipient list: $list");
         }
 
         return $qb->getQuery()->getResult();
@@ -181,7 +181,7 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'recipient list is required'],
+                            'messages' => ['isEmpty' => 'recipient list is required'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
@@ -193,7 +193,7 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'subject is required'],
+                            'messages' => ['isEmpty' => 'subject is required'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
@@ -217,7 +217,7 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'message body is required'],
+                            'messages' => ['isEmpty' => 'message body is required'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
@@ -241,7 +241,7 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'salutation option is required'],
+                            'messages' => ['isEmpty' => 'salutation option is required'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
@@ -330,7 +330,7 @@ EOD;
         if (isset($data['cc'])) {
             $log_comments .= "Cc: ";
             foreach ($data['cc'] as $address) {
-                $message->addCc($address['email'], ! empty($address['name']) ? $address['name'] : null);               
+                $message->addCc($address['email'], ! empty($address['name']) ? $address['name'] : null);
             }
             $log_comments .= implode('; ', array_map(function ($a) {
                 return ! empty($a['name']) ? "{$a['name']} <{$a['email']}>"
@@ -342,7 +342,7 @@ EOD;
         /**  set template based on input etc */
         $template = $this->template_map[$data['template_hint']];
         // however...
-        if (!isset($data['event_details'])) {
+        if (! isset($data['event_details'])) {
             $template = 'blank-page';
         }
         $view->setTemplate("email/{$template}.phtml");
@@ -376,7 +376,7 @@ EOD;
             $message->setTo($address['email'], ! empty($address['name']) ? $address['name'] : null);
             $transport->send($message);
             $result['sent_to'][] = $address;
-            $data['entity_id'] = isset($data['event_id']) ? $data['event_id']:$data['request_id'];
+            $data['entity_id'] = isset($data['event_id']) ? $data['event_id'] : $data['request_id'];
             if (isset($data['event_id'])) {
                 $data['entity_id'] = $data['event_id'];
                 $data['entity_class'] = Entity\Event::class;
@@ -385,14 +385,14 @@ EOD;
                 $data['entity_class'] = Request::class;
             }
              $this->log([
-                'recipient_id'=>! empty($address['id']) ? $address['id'] : null,
+                'recipient_id' => ! empty($address['id']) ? $address['id'] : null,
                 'entity_id' => $data['entity_id'],
                 'entity_class' => $data['entity_class'],
                 'email' => $address,
                 'subject' => $data['subject'],
                 'comments' => $log_comments,
                 'address' => $address,
-            ]);
+             ]);
         }
         if (! empty($data['cc'])) {
             $result['cc_to'] = $data['cc']; // for confirmation
@@ -400,7 +400,8 @@ EOD;
         return array_merge($result, ['status' => 'success','info' => "template: $template",]);
     }
 
-    public function render($layout,$markup = null) {
+    public function render($layout, $markup = null)
+    {
         if ($markup) {
             $layout->content = $markup;
         }
@@ -409,7 +410,7 @@ EOD;
 
     /**
      * sends list of interpreters
-     *      
+     *
      * @param array $params
      */
     public function sendInterpreterList(Array $params) : array
@@ -422,14 +423,14 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'email is required'],
+                            'messages' => ['isEmpty' => 'email is required'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
                     [
                         'name' => 'Callback',
                         'options' => [
-                            'callBack' => function($value){
+                            'callBack' => function ($value) {
                                 return (new EmailAddress())->isValid($value);
                             },
                             'messages' => [
@@ -464,7 +465,7 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'required security token is missing'],
+                            'messages' => ['isEmpty' => 'required security token is missing'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
@@ -484,7 +485,7 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'missing language_id parameter'],
+                            'messages' => ['isEmpty' => 'missing language_id parameter'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
@@ -501,11 +502,11 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'language parameter'],
+                            'messages' => ['isEmpty' => 'language parameter'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
-                ],                
+                ],
             ],
             'active' => [
                 'required' => true,
@@ -513,7 +514,7 @@ EOD;
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages'=>['isEmpty' => 'missing "active" parameter'],
+                            'messages' => ['isEmpty' => 'missing "active" parameter'],
                         ],
                         'break_chain_on_failure' => true,
                     ],
@@ -524,8 +525,7 @@ EOD;
                     ]
                 ],
             ],
-        ]
-        );
+        ]);
         $input_filter->setData($params);
         if ($input_filter->isValid()) {
             $input = $input_filter->getValues();
@@ -541,7 +541,7 @@ EOD;
         $total = $paginator->getTotalItemCount();
         $paginator->setItemCountPerPage($total);
         $view = new ViewModel();
-        $view->setVariables(['paginator'=>$paginator,'language'=>$input['language']]);
+        $view->setVariables(['paginator' => $paginator,'language' => $input['language']]);
         $view->setTemplate('email/interpreter-list.phtml');
         $layout = $this->getLayout();
         $layout->setVariable('content', $this->viewRenderer->render($view));
@@ -551,7 +551,7 @@ EOD;
         $message->setFrom($mail_config['from_address'], $mail_config['from_entity'])
             ->setBcc($mail_config['from_address'])
             ->setSubject("list of {$input['language']} interpreters")
-            ->setTo($input['email'],$input['recipient']??null);
+            ->setTo($input['email'], $input['recipient'] ?? null);
         $parts = $message->getBody()->getParts();
         $html = new MimePart($content);
         $html->type = Mime::TYPE_HTML;
@@ -561,7 +561,7 @@ EOD;
         /* DEBUG */
         file_put_contents("data/email-list-output.html", $content);
         $this->getMailTransport()->send($message);
-        
+
         return [
              'status' => "success",
              'data' => $input,
@@ -569,7 +569,7 @@ EOD;
         ];
     }
 
-    private function log(Array $data,string $channel = 'email')
+    private function log(Array $data, string $channel = 'email')
     {
 
         $user = $this->auth->getIdentity()->username;
@@ -579,10 +579,13 @@ EOD;
         }
         $message = sprintf(
             "user %s sent email to %s re: '%s'",
-            $user,$recipient,$data['subject']
+            $user,
+            $recipient,
+            $data['subject']
         );
         $this->getLogger()->info(
-            $message,[
+            $message,
+            [
                 'entity_class' => $data['entity_class'],
                 'entity_id'    => $data['entity_id'],
                 'channel'  => $channel,
@@ -600,7 +603,7 @@ EOD;
      *
      * This is crude, but using Laminas\InputFilter\etc for this was too
      * complicated and we don't want or need a Laminas\Form\Form.
-     * 
+     *
      * @todo we can do better.
      *
      * @param  Array $data
@@ -612,7 +615,8 @@ EOD;
         $alpha = $whitespace = null;
         $validator = new EmailAddress();
         $whitespace = new \Laminas\Filter\PregReplace(
-                 ['pattern' =>  '/\s+/', 'replacement' => ' ' ]);
+            ['pattern' => '/\s+/', 'replacement' => ' ' ]
+        );
         if (! isset($data['to'])) {
             $validation_errors['to'][] = 'at least one "To" address is required';
         } elseif (! is_array($data['to'])) {

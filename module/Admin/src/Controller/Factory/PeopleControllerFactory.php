@@ -33,7 +33,7 @@ class PeopleControllerFactory implements FactoryInterface
     {
 
         $em = $container->get('entity-manager');
-        if ($requestedName == Controller\InterpretersWriteController::class) {           
+        if ($requestedName == Controller\InterpretersWriteController::class) {
             $form = $container->get(Form\InterpreterForm::class);
             $controller = new $requestedName($em, $form);
             $listener = $container->get('interpreter-listener');

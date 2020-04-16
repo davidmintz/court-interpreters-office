@@ -46,15 +46,15 @@ class Module
     public function onBootstrap(\Laminas\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
-       
+
         $log = $container->get('log');
-        
+
         //$log->addWriter($container->get(DbWriter::class));
         /*
          * for TEMPORARY debugging
          */
          // ===============
-        //  
+        //
          //==============
         // set the "breadcrumbs" navigation view-helper separator
         // unless there's a better way to make sure this gets done globally...
@@ -99,17 +99,17 @@ class Module
         $log = $container->get('log');
         $log->debug("\n----------------------------------------\n");
         $eventManager = $event->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function($e) use ($log,$db_writer){
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($e) use ($log, $db_writer) {
             $log->addWriter($db_writer);
         });
         // desperation shot. note to self: learn how to do this properly.
-        // I'm sick of getting the HTML error page when there's an error 
+        // I'm sick of getting the HTML error page when there's an error
         // in response to an xhr request
         /*$json_error = function($e){
             $container = $e->getApplication()->getServiceManager();
             $request = $container->get('Request');
             $response = $container->get('Response');
-            if ($request->isXmlHttpRequest()) {                
+            if ($request->isXmlHttpRequest()) {
                 $exception = $e->getParam("exception");
                 if ($exception) {
                     $data = [
@@ -125,7 +125,7 @@ class Module
                         'message' => 'unexpected error encounted, no exception available',
                         'uri'  => (string)$request->getUri(),
                     ];
-                }                
+                }
                 $response->getHeaders()
                 ->addHeaderLine('Content-type', 'application/json');
                 $response->setContent(json_encode($data));
@@ -135,11 +135,10 @@ class Module
         };*/
         // $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,$json_error);
         // $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,$json_error);
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,[$this,'logError']);
-        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,[$this,'logError']);
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this,'logError']);
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($viewModel)
-        {
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($viewModel) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
                 $viewModel->setVariables($routeMatch->getParams());
@@ -168,7 +167,9 @@ class Module
         // database updates were run when, in the event of an Exception, they
         // really weren't.
         $sharedEvents->attach(
-            '*','postFlush', [$scheduleManager,'dispatchEmail']
+            '*',
+            'postFlush',
+            [$scheduleManager,'dispatchEmail']
         );
         /*  -------------------------------------------------------------    */
     }
@@ -220,7 +221,7 @@ class Module
                 if ($http_referrer) {
                     $referrer = UriFactory::factory($http_referrer);
                     if ($referrer->getHost() == $request_uri->getHost()) {
-                        $session->redirect_url = $referrer->getPath()?:"/";
+                        $session->redirect_url = $referrer->getPath() ?: "/";
                     }
                 }
             } else {
@@ -273,8 +274,11 @@ class Module
         $log = $event->getApplication()->getServiceManager()->get('log');
         // $log->warn("WTF? action is '$privilege'");
         $log->debug(
-            sprintf(__METHOD__." checking role %s access to resource %s, privilege %s",
-            $role, is_object($resource) ? get_class($resource):$resource, $privilege
+            sprintf(
+                __METHOD__." checking role %s access to resource %s, privilege %s",
+                $role,
+                is_object($resource) ? get_class($resource) : $resource,
+                $privilege
             )
         );
         $acl = $event->getApplication()->getServiceManager()->get('acl');
@@ -286,7 +290,7 @@ class Module
         $container = $event->getApplication()->getServiceManager();
         $log = $container->get('log');
         if ($event->getParam('exception')) {
-            $exception = $event->getParam('exception');           
+            $exception = $event->getParam('exception');
             $message = $exception->getMessage();
             if ($event->getParam('details')) {
                 $message .= sprintf(
@@ -296,7 +300,7 @@ class Module
                     : json_encode($event->getParam('details'))
                 );
             }
-            $stacktrace =  $exception->getTraceAsString();
+            $stacktrace = $exception->getTraceAsString();
             $previous = '';
             do {
                 $previous .= sprintf(
@@ -308,12 +312,12 @@ class Module
                     get_class($exception)
                 );
             } while ($exception = $exception->getPrevious());
-            $context = ['stacktrace'=> $stacktrace,'channel'=> 'error'];
+            $context = ['stacktrace' => $stacktrace,'channel' => 'error'];
             $context['event'] = $event->getName();
             if ($previous) {
                 $context['previous'] = $previous;
             }
-            $log->err($message,$context);
+            $log->err($message, $context);
         }
     }
 

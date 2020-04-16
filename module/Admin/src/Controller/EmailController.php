@@ -61,20 +61,20 @@ class EmailController extends AbstractActionController
 
     public function indexAction()
     {
-        // $config = $this->emailService->getConfig()['mail'];       
+        // $config = $this->emailService->getConfig()['mail'];
         // $service = new BatchEmailService($config);
         // $result = $service->test();
         // echo "send test email: $result";
-
     }
 
     /**
      * batch email
-     * 
+     *
      * a revision to get us away from Laminas\Mail which is
      * needlessly clumsy in our humble opinion
      */
-    public function batchEmailAction(){
+    public function batchEmailAction()
+    {
 
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         $file = './data/progress.txt';
@@ -83,29 +83,29 @@ class EmailController extends AbstractActionController
         } else {
             $contents = trim(file_get_contents($file));
             if ($contents && $contents != 'done') {
-                $log->info("aborting batch email job",['progress_file_contents'=>$contents]);
+                $log->info("aborting batch email job", ['progress_file_contents' => $contents]);
                 $this->getResponse()->setStatusCode(503);
-                return new JsonModel(['status'=>'error',
-                'message'=> $this->emailService::ERROR_JOB_IN_PROGRESS]);
+                return new JsonModel(['status' => 'error',
+                'message' => $this->emailService::ERROR_JOB_IN_PROGRESS]);
             }
-            $fp = fopen($file,'w');
-            \ftruncate($fp,0);
+            $fp = fopen($file, 'w');
+            \ftruncate($fp, 0);
             fclose($fp);
         }
         $filter = $this->filter($this->getRequest()->getPost());
         if (! $filter->isValid()) {
-            return new JsonModel(['validation_errors'=>$filter->getMessages()]);
+            return new JsonModel(['validation_errors' => $filter->getMessages()]);
         }
         $data = $filter->getValues();
-        
+
         $service = $this->emailService;
-        $config = $service->getConfig()['mail'];       
+        $config = $service->getConfig()['mail'];
         $transport = (new BatchEmailService($config))->getTransport();
         /** @todo maybe move this to the BatchEmailService class */
         $recipients = $service->getRecipientList($data['recipient_list']);
         $total = count($recipients);
         header("content-type: application/json");
-        echo json_encode(['status'=>'started','total'=>count($recipients)]);
+        echo json_encode(['status' => 'started','total' => count($recipients)]);
         // this here is critical ...
         if (function_exists('fastcgi_finish_request')) {
             session_write_close();
@@ -114,31 +114,31 @@ class EmailController extends AbstractActionController
         } else {
             /* good question. */
         }
-        
+
         /** @var Swift_Message $message */
         $message = new Swift_Message();
         $message->setSubject($data['subject']);
-        
-        $message->setFrom([$config['from_address']=>$config['from_entity']]);
+
+        $message->setFrom([$config['from_address'] => $config['from_entity']]);
         $layout = $service->getLayout();
         $i = 0;
-        foreach($recipients as $person) {
+        foreach ($recipients as $person) {
             $markup = $service->renderMarkdown($data['body']);
             $name = "{$person['firstname']} {$person['lastname']}";
             if ($data['salutation'] == 'personalized') {
                 $markup = "<p>Dear $name:</p>" . $markup;
             }
-            $html = $service->render($layout,$markup);
-            $message->setBody($html,'text/html');
-            $message->addPart($data['body'],'text/plain')
-            ->setTo([$person['email']=>$name]);
+            $html = $service->render($layout, $markup);
+            $message->setBody($html, 'text/html');
+            $message->addPart($data['body'], 'text/plain')
+            ->setTo([$person['email'] => $name]);
             $log->debug("sending mail re {$data['subject']} to {$person['email']}");
             $transport->send($message);
-            file_put_contents($file,++$i ." of $total");
+            file_put_contents($file, ++$i ." of $total");
         }
-        file_put_contents($file,"done");
+        file_put_contents($file, "done");
 
-        return new JsonModel(['total'=>$total,'current'=> $i]);
+        return new JsonModel(['total' => $total,'current' => $i]);
     }
 
     /**
@@ -154,25 +154,25 @@ class EmailController extends AbstractActionController
         } else {
             $contents = trim(file_get_contents($file));
             if ($contents && $contents != 'done') {
-                $log->info("aborting batch email job",['progress_file_contents'=>$contents]);
+                $log->info("aborting batch email job", ['progress_file_contents' => $contents]);
                 $this->getResponse()->setStatusCode(503);
-                return new JsonModel(['status'=>'error',
-                    'message'=> $this->emailService::ERROR_JOB_IN_PROGRESS]);
+                return new JsonModel(['status' => 'error',
+                    'message' => $this->emailService::ERROR_JOB_IN_PROGRESS]);
             }
-            $fp = fopen($file,'w');
-            \ftruncate($fp,0);
+            $fp = fopen($file, 'w');
+            \ftruncate($fp, 0);
             fclose($fp);
         }
         $filter = $this->filter($this->getRequest()->getPost());
         if (! $filter->isValid()) {
-            return new JsonModel(['validation_errors'=>$filter->getMessages()]);
+            return new JsonModel(['validation_errors' => $filter->getMessages()]);
         }
         $data = $filter->getValues();
         $service = $this->emailService;
         $recipients = $service->getRecipientList($data['recipient_list']);
         $total = count($recipients);
         header("content-type: application/json");
-        echo json_encode(['status'=>'started','total'=>count($recipients)]);
+        echo json_encode(['status' => 'started','total' => count($recipients)]);
         // this here is critical ...
         if (function_exists('fastcgi_finish_request')) {
             session_write_close();
@@ -186,11 +186,10 @@ class EmailController extends AbstractActionController
         $message = $service->createEmailMessage();
         $message->setSubject($data['subject']);
         $config = $service->getConfig()['mail'];
-        $message->setFrom($config['from_address'],$config['from_entity']);
+        $message->setFrom($config['from_address'], $config['from_entity']);
         $layout = $service->getLayout();
         $i = 0;
-        foreach($recipients as $person) {
-            
+        foreach ($recipients as $person) {
             $body = $message->getBody();
             $text_part = $body->getParts()[0];
             $name = "{$person['firstname']} {$person['lastname']}";
@@ -198,16 +197,16 @@ class EmailController extends AbstractActionController
             if ($data['salutation'] == 'personalized') {
                 $markup = "<p>Dear $name:</p>" . $markup;
             }
-            $html = $service->render($layout,$markup);
+            $html = $service->render($layout, $markup);
             $body->setParts([$text_part,$service->createHtmlPart($html),]);
-            $message->setBody($body)->setTo($person['email'],$name);
+            $message->setBody($body)->setTo($person['email'], $name);
             $log->debug("sending mail re {$data['subject']} to {$person['email']}");
             $transport->send($message);
-            file_put_contents($file,++$i ." of $total");
+            file_put_contents($file, ++$i ." of $total");
         }
-        file_put_contents($file,"done");
+        file_put_contents($file, "done");
 
-        return new JsonModel(['total'=>$total,'current'=> $i]);
+        return new JsonModel(['total' => $total,'current' => $i]);
     }
 
     /**
@@ -219,7 +218,7 @@ class EmailController extends AbstractActionController
     {
         $text = file_get_contents('./data/progress.txt');
 
-        return new JsonModel(['status'=>$text,]);
+        return new JsonModel(['status' => $text,]);
     }
 
     private function filter(\Laminas\Stdlib\Parameters $data)
@@ -238,12 +237,12 @@ class EmailController extends AbstractActionController
     {
 
         $filter = $this->filter($this->getRequest()->getPost());
-        if (!$filter->isValid()) {
+        if (! $filter->isValid()) {
             $validation_errors = $filter->getMessages();
-            return new JsonModel(['validation_errors'=>$validation_errors]);
+            return new JsonModel(['validation_errors' => $validation_errors]);
         }
         return new JsonModel([
-            'status'=>'OK',
+            'status' => 'OK',
             'markdown' => $this->emailService->renderMarkdown($filter->getValue('body')),
         ]);
     }
@@ -283,17 +282,15 @@ class EmailController extends AbstractActionController
     {
         $request = $this->getRequest();
         if ($request->isPost()) {
-
             $service = $this->emailService;
             $params = $this->params()->fromPost();
             $response = $service->sendInterpreterList($params);
-            
+
             return new JsonModel($response);
         }
 
         return false;
     }
-
 }
 
 /* ---------- remind me to clean this up

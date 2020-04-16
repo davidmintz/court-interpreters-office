@@ -11,6 +11,7 @@ use InterpretersOffice\Admin\Controller\EventsController;
 use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Admin\Service\ScheduleUpdateManager;
 use InterpretersOffice\Admin\Form\EventForm;
+
 /**
  * Factory for instantiating EventController
  */
@@ -57,12 +58,12 @@ class EventsControllerFactory implements FactoryInterface
         $sharedEvents->attach(
             Listener\EventEntityListener::class,
             'postLoad',
-            function ($e) use ($updateManager,$log) {
+            function ($e) use ($updateManager, $log) {
                 //return;
                 $params = $e->getParams();
                 $entity = $params['entity'];
                 $id = $entity->getId();
-                
+
                 $log->debug("using in-memory entity to get event snapshot");
                 $view_before = [
                     'date' => $entity->getDate(),
@@ -167,7 +168,7 @@ class EventsControllerFactory implements FactoryInterface
         );
         $action = $container->get('Application')->getMvcEvent()
             ->getRouteMatch()->getParams()['action'];
-        if (in_array($action,['edit','add'])) {
+        if (in_array($action, ['edit','add'])) {
             $controller->setForm($container->get(EventForm::class));
         }
         return $controller;

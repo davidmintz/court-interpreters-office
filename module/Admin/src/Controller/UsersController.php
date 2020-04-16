@@ -102,8 +102,7 @@ class UsersController extends AbstractActionController implements Authentication
         $entityManager = $this->entityManager;
         $role_id = $this->auth_user_role;
         // echo " the fuck? ... not sure why this runs twice";
-        $events->attach('load-person', function (EventInterface $e) use ($entityManager, $role_id)
-        {
+        $events->attach('load-person', function (EventInterface $e) use ($entityManager, $role_id) {
             $person = $e->getParam('person');
             $hat = $person->getHat();
             $form = $e->getParam('form');
@@ -176,7 +175,6 @@ class UsersController extends AbstractActionController implements Authentication
                                 ->getServiceManager();
                 $services->get(Entity\Listener\UpdateListener::class)
                     ->setAuth($this->auth);
-
             }
         });
 
@@ -239,7 +237,7 @@ class UsersController extends AbstractActionController implements Authentication
         $options = [
             'action' => 'create',
             'auth_user_role' => $this->auth_user_role,
-            'constrain_email'=>true,
+            'constrain_email' => true,
         ];
 
         if ($person_id) {
@@ -259,7 +257,9 @@ class UsersController extends AbstractActionController implements Authentication
         $user = new Entity\User();
         if ($person) {
             $this->events->trigger(
-                'load-person', $this, compact('person', 'form')
+                'load-person',
+                $this,
+                compact('person', 'form')
             );
             $user->setPerson($person);
             $form->get('user')->get('person')->setObject($person);
@@ -307,7 +307,7 @@ class UsersController extends AbstractActionController implements Authentication
         $id = $this->params()->fromRoute('id');
         $viewModel = new ViewModel(['title' => 'edit a user','id' => $id]);
 
-        $entity = $this->params()->fromRoute('entity','user');
+        $entity = $this->params()->fromRoute('entity', 'user');
         $repo = $this->entityManager->getRepository('InterpretersOffice\Entity\User');
         $user = $repo->getUser($id, $entity);
         if (! $user) {
@@ -318,7 +318,7 @@ class UsersController extends AbstractActionController implements Authentication
         $form = new UserForm($this->entityManager, [
             'action' => 'update',
             'auth_user_role' => $this->auth_user_role,
-            'user' => $user,'constrain_email'=>true,
+            'user' => $user,'constrain_email' => true,
             ]);
         /** @var $person \InterpretersOffice\Entity\Person */
         $person = $user->getPerson();
@@ -377,12 +377,17 @@ class UsersController extends AbstractActionController implements Authentication
         if ((! $get) && $this->session->params) {
             // not xhr, no query parameters, yes session parameters
             $page = isset($this->session->params['page']) ?
-                $this->session->params['page']:1;
-            $paginator =  $this->entityManager
+                $this->session->params['page'] : 1;
+            $paginator = $this->entityManager
                 ->getRepository(Entity\User::class)
-                ->paginate($this->session->params['term'],
-                    ['search_by'=>$this->session->params['search_by'],
-                    'page'=>$this->params()->fromQuery('page',$page)]);
+                ->paginate(
+                    $this->session->params['term'],
+                    ['search_by' => $this->session->params['search_by'],
+                    'page' => $this->params()->fromQuery(
+                        'page',
+                        $page
+                    )]
+                );
         }
         $repository = $this->entityManager
             ->getRepository('InterpretersOffice\Entity\Judge');
@@ -391,7 +396,7 @@ class UsersController extends AbstractActionController implements Authentication
         return new ViewModel(
             ['role' => $this->auth_user_role, 'judges' => $judges,
             'acl' => $this->acl,
-            'defaults' => $this->session->params,'paginator'=>$paginator ]
+            'defaults' => $this->session->params,'paginator' => $paginator ]
         );
     }
 
@@ -409,18 +414,23 @@ class UsersController extends AbstractActionController implements Authentication
             ->setTemplate('users/results');
         $get = $this->params()->fromQuery();
         /** @todo legit validation */
-        if ( empty($get['search_by']) or empty($get['term']))
-            {
+        if (empty($get['search_by']) or empty($get['term'])) {
             return $view->setVariables(
-                ['errorMessage'=> 'Sorry, invalid request parameters']);
+                ['errorMessage' => 'Sorry, invalid request parameters']
+            );
         }
         $this->session->params = $get;
         /** @var Laminas\Paginator\Paginator $paginator */
-        $paginator = $repository->paginate($get['term'],
-            ['search_by'=>$get['search_by'],
-            'page'=>$this->params()->fromQuery('page',1)]);
+        $paginator = $repository->paginate(
+            $get['term'],
+            ['search_by' => $get['search_by'],
+            'page' => $this->params()->fromQuery(
+                'page',
+                1
+            )]
+        );
 
-        return $view->setVariables(['paginator'=>$paginator,'acl'=>$this->acl]);
+        return $view->setVariables(['paginator' => $paginator,'acl' => $this->acl]);
     }
 
     /**
@@ -431,9 +441,9 @@ class UsersController extends AbstractActionController implements Authentication
         $repo = $this->entityManager
             ->getRepository(Entity\User::class);
         $id = $this->params()->fromRoute('id');
-        $entity = $this->params()->fromRoute('entity','user');
-        $user = $repo->getUser($id,$entity);
-        return ['entity'=>$user,'id'=>$id ];
+        $entity = $this->params()->fromRoute('entity', 'user');
+        $user = $repo->getUser($id, $entity);
+        return ['entity' => $user,'id' => $id ];
     }
 
     /**
@@ -463,11 +473,11 @@ class UsersController extends AbstractActionController implements Authentication
      */
     public function deleteAction()
     {
-        if (!$this->getRequest()->isPost()) {
-            return new JsonModel(['status'=>'error','message'=> 'POST method required']);
+        if (! $this->getRequest()->isPost()) {
+            return new JsonModel(['status' => 'error','message' => 'POST method required']);
         }
         $id = $this->params()->fromRoute('id');
-        $user = $this->entityManager->find(Entity\User::class,$id);
+        $user = $this->entityManager->find(Entity\User::class, $id);
         $this->getEventManager()->trigger('load-user', $this, ['user' => $user,]);
         $person = $user->getPerson();
         $this->entityManager->remove($user);
@@ -477,9 +487,10 @@ class UsersController extends AbstractActionController implements Authentication
             $this->flashMessenger()
                 ->addSuccessMessage(sprintf(
                     'The user <strong>%s %s</strong> has been deleted.',
-                    $person->getFirstname(),$person->getLastname()
-            ));
-            return new JsonModel(['status'=>'success','message'=>"This user has now been deleted."]);
+                    $person->getFirstname(),
+                    $person->getLastname()
+                ));
+            return new JsonModel(['status' => 'success','message' => "This user has now been deleted."]);
         } catch (ForeignKeyConstraintViolationException $e) {
             return new JsonModel([
                 'status' => 'error',
@@ -500,8 +511,10 @@ class UsersController extends AbstractActionController implements Authentication
         $repository = $this->entityManager
                 ->getRepository(Entity\User::class);
         $get = $this->params()->fromQuery();
-        $data = $repository->autocomplete($get['term'],
-            ['search_by'=>$get['search_by']]);
+        $data = $repository->autocomplete(
+            $get['term'],
+            ['search_by' => $get['search_by']]
+        );
 
         return new JsonModel($data);
     }

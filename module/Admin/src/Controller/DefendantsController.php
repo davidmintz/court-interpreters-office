@@ -20,12 +20,12 @@ use Laminas\Session\Container as Session;
 
 /**
  * controller for admin/defendants.
- * 
+ *
  * currently this is a little weird and inconsistent because before, the entity was bound to a form. later
- * we decided a different approach would be better:  introduce a Service class and hydrate things 
- * ourselves, manually, so we could handle the complexities in a discreet, separate class. so in 
- * the case where they are updating/inserting names from the /admin/defendants route, we go that way. 
- * but when they edit a name in the /admin/schedule/(edit|add) context, we're still handling the same way 
+ * we decided a different approach would be better:  introduce a Service class and hydrate things
+ * ourselves, manually, so we could handle the complexities in a discreet, separate class. so in
+ * the case where they are updating/inserting names from the /admin/defendants route, we go that way.
+ * but when they edit a name in the /admin/schedule/(edit|add) context, we're still handling the same way
  * as before.
  */
 class DefendantsController extends AbstractActionController
@@ -60,7 +60,7 @@ class DefendantsController extends AbstractActionController
 
     /**
      * index action.
-     * 
+     *
      * preserves the search state in the session for their convenience when they come back.
      *
      * @return ViewModel
@@ -72,10 +72,10 @@ class DefendantsController extends AbstractActionController
             $paginator = $this->repository->paginate($session->search_term, $session->page ?? 1);
             $data = ['paginator' => $paginator,'search_term' => $session->search_term];
         }
-        $viewModel = new ViewModel($data??[]);
-        if ($this->getRequest()->isXmlHttpRequest()) {           
+        $viewModel = new ViewModel($data ?? []);
+        if ($this->getRequest()->isXmlHttpRequest()) {
             $viewModel->setTerminal(true)
-                ->setTemplate('interpreters-office/defendants/search')->search =  $session->search_term;
+                ->setTemplate('interpreters-office/defendants/search')->search = $session->search_term;
         }
         return $viewModel;
     }
@@ -92,8 +92,7 @@ class DefendantsController extends AbstractActionController
         if (! $this->getRequest()->isXmlHttpRequest()) {
             return $this->redirect()->toRoute('admin-defendants');
         }
-        return (new ViewModel(['form' => $form,'xhr' =>true]))->setTerminal(true);
-        
+        return (new ViewModel(['form' => $form,'xhr' => true]))->setTerminal(true);
     }
 
     /**
@@ -107,7 +106,7 @@ class DefendantsController extends AbstractActionController
         }
         $service = new DefendantNameService($this->entityManager);
         $return = $service->insert($form->getData());
-        
+
         return new JsonModel($return);
     }
 
@@ -122,11 +121,11 @@ class DefendantsController extends AbstractActionController
 
         $form->setData($this->getRequest()->getPost());
         if (! $form->isValid()) {
-            $result = [ 'validation_errors' => $form->getMessages()];            
+            $result = [ 'validation_errors' => $form->getMessages()];
         } else {
-            $result = $service->update($entity,$data);
-            if (!isset($result['status']) or $result['status'] == "error") {
-                $this->getResponse()->setStatusCode(500);                
+            $result = $service->update($entity, $data);
+            if (! isset($result['status']) or $result['status'] == "error") {
+                $this->getResponse()->setStatusCode(500);
             }
         }
 
@@ -138,11 +137,11 @@ class DefendantsController extends AbstractActionController
      */
     public function editAction()
     {
-        $form = new DefendantForm(['action' => 'update']);        
+        $form = new DefendantForm(['action' => 'update']);
         $id = $this->params()->fromRoute('id');
         $xhr = $this->getRequest()->isXmlHttpRequest();
         $entity = $this->entityManager->find(Entity\Defendant::class, $id);
-        
+
         if (! $entity) {
             $message = "A defendant name with id $id was not found in the database.";
             if (! $xhr) {
@@ -151,7 +150,7 @@ class DefendantsController extends AbstractActionController
                 return $this->redirect()->toRoute('admin-defendants');
             } else {
                 // the context is admin/schedule/(edit|add)
-                return  ['error_not_found' => $message,'form' => $form, 'id'=>$id];            
+                return  ['error_not_found' => $message,'form' => $form, 'id' => $id];
             }
         }
         $contexts = $this->repository->findDocketAndJudges($id);
@@ -159,15 +158,15 @@ class DefendantsController extends AbstractActionController
             $form->attachContextsValidator();
         }
         if ($this->getRequest()->isPost()) {
-            return $this->postUpdate($form,$entity);
+            return $this->postUpdate($form, $entity);
         }
-        // we are a GET, so display the form, possibly with context/radio buttons        
-        $form->setData(['given_names'=>$entity['given_names'],
+        // we are a GET, so display the form, possibly with context/radio buttons
+        $form->setData(['given_names' => $entity['given_names'],
             'surnames'  => $entity['surnames'], 'id' => $id,
         ]);
         return (new ViewModel(['form' => $form, 'id' => $id,  'contexts' => $contexts,
-        'has_related_entities' => count($contexts) ? true : 
-            $this->repository->hasRelatedEntities($id),            
+        'has_related_entities' => count($contexts) ? true :
+            $this->repository->hasRelatedEntities($id),
         'xhr' => $xhr,]))->setTerminal(true);
     }
 

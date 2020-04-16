@@ -73,7 +73,7 @@ class EventFieldset extends AbstractEventFieldset
             /** @var Entity\Repository\InterpreterRepository $repository */
             $repository = $objectManager->getRepository(Entity\Interpreter::class);
             $value_options = // $empty_option +
-                $repository->getInterpreterOptionsForLanguage($language_id,['with_banned_data'=>true]);
+                $repository->getInterpreterOptionsForLanguage($language_id, ['with_banned_data' => true]);
             array_unshift($value_options, $empty_option);
         } else {
             $value_options = [$empty_option];
@@ -124,10 +124,8 @@ class EventFieldset extends AbstractEventFieldset
             ],
 
         ]);
-        if (isset($options['optional_elements']) && is_array($options['optional_elements']))
-        {
-            if (!empty($options['optional_elements']['end_time'])) {
-
+        if (isset($options['optional_elements']) && is_array($options['optional_elements'])) {
+            if (! empty($options['optional_elements']['end_time'])) {
                 $this->add(
                     [
                         'name' => 'end_time',
@@ -200,7 +198,7 @@ class EventFieldset extends AbstractEventFieldset
                         function ($hat) {
                             return $hat->getAnonymity();
                         },
-                    'data-role' => function($hat) {
+                    'data-role' => function ($hat) {
                         return (string)$hat->getRole();
                     }
                 ],
@@ -261,7 +259,7 @@ class EventFieldset extends AbstractEventFieldset
                 'id' => 'submission_date',
                 'class' => 'date form-control',
                 'placeholder' => 'date',
-            ],
+             ],
              'options' => [
                 'label' => 'requested on',
                 //'format' => 'Y-m-d',

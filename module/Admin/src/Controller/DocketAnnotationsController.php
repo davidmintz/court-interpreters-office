@@ -22,7 +22,7 @@ class DocketAnnotationsController extends AbstractActionController
 
     /**
      * annotation service
-     * 
+     *
      * @var DocketAnnotationService
      */
     private $service;
@@ -50,9 +50,9 @@ class DocketAnnotationsController extends AbstractActionController
         }
         $request = $this->getRequest();
         $view = new ViewModel([
-            'docket'=>$docket, 'data'=>$data ?? false,
-            'csrf'=>(new Csrf(['timeout'=>1200]))->getHash(),
-            'referrer' =>  $request->getServer()->get('HTTP_REFERER'),
+            'docket' => $docket, 'data' => $data ?? false,
+            'csrf' => (new Csrf(['timeout' => 1200]))->getHash(),
+            'referrer' => $request->getServer()->get('HTTP_REFERER'),
         ]);
         if ($request->isXmlHttpRequest()) {
             $view->setTemplate('docket-annotations/partials/table')
@@ -67,12 +67,13 @@ class DocketAnnotationsController extends AbstractActionController
      *
      * @return ViewModel
      */
-    public function editAction(){
+    public function editAction()
+    {
 
         $id = $this->params()->fromRoute('id');
         $note = $this->service->get((int)$id);
-        $token = (new Csrf(['timeout'=>1200]))->getHash();
-        return ['note'=>$note, 'csrf'=>$token];
+        $token = (new Csrf(['timeout' => 1200]))->getHash();
+        return ['note' => $note, 'csrf' => $token];
     }
 
     /**
@@ -80,9 +81,9 @@ class DocketAnnotationsController extends AbstractActionController
      *
      * @return ViewModel
      */
-    public function addAction(){
-        $token = (new Csrf(['timeout'=>1200]))->getHash();
-        return ['csrf'=>$token,'docket'=>$this->params()->fromRoute('docket')];
-
+    public function addAction()
+    {
+        $token = (new Csrf(['timeout' => 1200]))->getHash();
+        return ['csrf' => $token,'docket' => $this->params()->fromRoute('docket')];
     }
 }

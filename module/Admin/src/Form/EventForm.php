@@ -131,8 +131,9 @@ class EventForm extends LaminasForm implements
             ->getServiceManager()->get('log');
         $input = $e->getTarget()->getRequest()->getPost();
         $event = $input->get('event');
-        $this->interpreters_before = array_map(function($i){
-               return $i->getId();},$this->getObject()->getInterpreters());
+        $this->interpreters_before = array_map(function ($i) {
+               return $i->getId();
+        }, $this->getObject()->getInterpreters());
 
         /* there is one form control for the judge, but its value may
          * correspond to either the 'judge' or the 'anonymous_judge' property,
@@ -150,7 +151,6 @@ class EventForm extends LaminasForm implements
             $judge_input->getValidatorChain()->attach($validator);
             $this->getInputFilter()->get('event')->remove('anonymous_judge');
             $log->debug("added NotEmpty validator to the judge input, removed anon-judge input");
-
         } else {
             // one or the other is non-empty
             $entity = $this->getObject();
@@ -179,7 +179,8 @@ class EventForm extends LaminasForm implements
         // prevent Doctrine from wasting an update
         $this->filterDateTimeFields(
             ['date','time','end_time','submission_date','submission_time'],
-            $event, 'event'
+            $event,
+            'event'
         );
 
         // if the source of this Event was a Request, the metadata -- who
@@ -206,7 +207,7 @@ class EventForm extends LaminasForm implements
         // find out if this "hat" can be anonymous without hitting the database
         $can_be_anonymous = (! $key) ? false :
                 $hat_options[$key]['attributes']['data-anonymity'] <> "0";
-        $log->debug('can be anonymous? '.($can_be_anonymous ? 'true':'false'));
+        $log->debug('can be anonymous? '.($can_be_anonymous ? 'true' : 'false'));
         $submitter_input = $this->getInputFilter()->get('event')
                 ->get('submitter');
 
@@ -242,20 +243,20 @@ class EventForm extends LaminasForm implements
             $log->debug(__METHOD__. " multi-dates were submitted");
             $this->getInputFilter()->get('event')->remove('date');
             $this->getInputFilter()->get('event')->add([
-                'name'=>'dates',
+                'name' => 'dates',
                 'required' => true,
-                'validators'=>[
+                'validators' => [
                     [
-                        'name'=>'NotEmpty',
+                        'name' => 'NotEmpty',
                         'options' => [
-                             'messages' => ['isEmpty'=> 'at least one date is required']
+                             'messages' => ['isEmpty' => 'at least one date is required']
                         ],
                         'break_chain_on_failure' => true,
                     ],
                     [
                         'name' => 'Callback',
                         'options' => [
-                            'callBack' => function($value, $context) {
+                            'callBack' => function ($value, $context) {
                                 return is_array($value);
                             },
                             'messages' => [
@@ -267,11 +268,11 @@ class EventForm extends LaminasForm implements
                     [
                         'name' => 'Callback',
                         'options' => [
-                            'callBack' => function($value, $context) {
+                            'callBack' => function ($value, $context) {
 
-                                $validator = new \Laminas\Validator\Date(['format'=>'Y-m-d']);
+                                $validator = new \Laminas\Validator\Date(['format' => 'Y-m-d']);
                                 foreach ($value as $date) {
-                                    if (!$validator->isValid($date)) {
+                                    if (! $validator->isValid($date)) {
                                         return false;
                                     }
                                 }
@@ -286,7 +287,8 @@ class EventForm extends LaminasForm implements
             ]);
             $log->debug("tried to rig shit up");
         }
-        $shit = print_r($event,true); $log->debug($shit);
+        $shit = print_r($event, true);
+        $log->debug($shit);
         $input->set('event', $event);
     }
 
@@ -430,11 +432,10 @@ class EventForm extends LaminasForm implements
 
         $fieldset = $this->get('event');
         $input = $this->getInputFilter()->get('event')->get('interpreterEvents')->getValue();
-        $interpreters_posted = $input ? array_column($input,'interpreter'): [];
+        $interpreters_posted = $input ? array_column($input, 'interpreter') : [];
         $entity = $this->getObject();
         if (array_diff($interpreters_posted, $this->interpreters_before)
-            || array_diff( $this->interpreters_before,$interpreters_posted))
-        {
+            || array_diff($this->interpreters_before, $interpreters_posted)) {
             $entity->setModified(new \DateTime());
             // and this suffices to make the Doctrine EventEntityListener's
             // preUpdate take note and set the last-modified-by

@@ -48,7 +48,7 @@ class ConfigController extends AbstractActionController
         if ($error) {
             return ['errorMessage' => $error ];
         }
-        return ['config'=> $config ] + $this->permissions;
+        return ['config' => $config ] + $this->permissions;
     }
 
     public function getInputFilter()
@@ -63,7 +63,7 @@ class ConfigController extends AbstractActionController
                     [
                         'name' => 'NotEmpty',
                         'options' => [
-                            'messages' => ['isEmpty'=> "$field field is required"],
+                            'messages' => ['isEmpty' => "$field field is required"],
                         ],
                         'break_chain_on_failure' => true,
                     ],
@@ -84,13 +84,13 @@ class ConfigController extends AbstractActionController
         $eventFormFilter = new InputFilter\InputFilter();
         $field = 'end time';
         $eventFormFilter->add([
-            'name'=>'end_time',
+            'name' => 'end_time',
             'required' => true,
             'validators' => [
                 [
                     'name' => 'NotEmpty',
                     'options' => [
-                        'messages' => ['isEmpty'=> "$field field is required"],
+                        'messages' => ['isEmpty' => "$field field is required"],
                     ],
                     'break_chain_on_failure' => true,
                 ],
@@ -107,8 +107,8 @@ class ConfigController extends AbstractActionController
             ],
         ]);
         $inputFilter = new InputFilter\InputFilter();
-        $inputFilter->add($interpreterFormFilter,'interpreters');
-        $inputFilter->add($eventFormFilter,'events');
+        $inputFilter->add($interpreterFormFilter, 'interpreters');
+        $inputFilter->add($eventFormFilter, 'events');
         $inputFilter->add([
             'name' => 'csrf',
             'validators' => [
@@ -127,7 +127,7 @@ class ConfigController extends AbstractActionController
                         'messages' => [
                             'notSame' =>
                             'Invalid or expired security token. Please reload this page and try again.'
-                    ]],
+                        ]],
                 ],
             ],
         ]);
@@ -145,11 +145,11 @@ class ConfigController extends AbstractActionController
         }
         $data = $inputFilter->getValues();
         $array = [
-            'interpreters' => ['optional_elements'=> $data['interpreters']],
-            'events' => ['optional_elements'=> $data['events']],
+            'interpreters' => ['optional_elements' => $data['interpreters']],
+            'events' => ['optional_elements' => $data['events']],
         ];
-        $json = \json_encode($array,\JSON_PRETTY_PRINT);
-        \file_put_contents($this->form_config_path,$json);
+        $json = \json_encode($array, \JSON_PRETTY_PRINT);
+        \file_put_contents($this->form_config_path, $json);
         return new JsonModel([
             'status' => 'success',
             'data' => $data,

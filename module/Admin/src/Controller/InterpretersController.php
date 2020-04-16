@@ -93,7 +93,7 @@ class InterpretersController extends AbstractActionController
                 $viewModel->results = $this->find($params);
             }
         }
-        
+
         return $this->initView($viewModel, $params, $routeName);
     }
 
@@ -171,14 +171,12 @@ class InterpretersController extends AbstractActionController
      */
     public function availabilityListAction()
     {
-        $language = $this->params()->fromRoute('language','Spanish');
+        $language = $this->params()->fromRoute('language', 'Spanish');
         /** @var  Entity\Repository\InterpreterRepository $repository */
         $repository = $this->entityManager
             ->getRepository(Entity\Interpreter::class);
         $data = $repository->getAvailabilityList($language);
-              
-        return ['data'=>$data,'language'=>$language];
-        
-    }
 
+        return ['data' => $data,'language' => $language];
+    }
 }

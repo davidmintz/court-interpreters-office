@@ -11,11 +11,11 @@ use Swift_Transport;
 
 /**
  * service for sending batch email
- * 
- * A work in progress as we transition away from the inordinately 
+ *
+ * A work in progress as we transition away from the inordinately
  * unwieldy Laminas\Mail
  */
-class BatchEmailService 
+class BatchEmailService
 {
     /**
      * @var array
@@ -28,12 +28,11 @@ class BatchEmailService
     public function __construct(array $config)
     {
         $this->config = $config;
-
     }
 
     /**
      * gets transport
-     * 
+     *
      * @return Swift_Transport
      */
     public function getTransport() : Swift_Transport
@@ -41,18 +40,19 @@ class BatchEmailService
 
         $config = $this->config['transport_options']['options'];
         $transport = new Swift_SmtpTransport(
-            $config['host'],$config['port'],'ssl'
+            $config['host'],
+            $config['port'],
+            'ssl'
         );
         $transport->setUserName($config['connection_config']['username'])
             ->setPassword($config['connection_config']['password']);
-            
-        return $transport;
 
+        return $transport;
     }
 
     /**
      * sends test email
-     * 
+     *
      * @param string $address
      * @return int
      */
@@ -60,7 +60,9 @@ class BatchEmailService
     {
         $config = $this->config['transport_options']['options'];
         $transport = new Swift_SmtpTransport(
-            $config['host'],$config['port'],'ssl'
+            $config['host'],
+            $config['port'],
+            'ssl'
         );
         $transport->setUserName($config['connection_config']['username'])
             ->setPassword($config['connection_config']['password']);
@@ -70,14 +72,12 @@ class BatchEmailService
 
         // Add alternative parts with addPart()
         $message->addPart('My amazing body in plain text', 'text/plain');
-        $message->setFrom($this->config['from_address'])   
+        $message->setFrom($this->config['from_address'])
             ->setTo($address ?? 'david@davidmintz.org');
         $mailer = new Swift_Mailer($transport);
-        
+
         $result = $mailer->send($message);
 
         return $result;
-            
     }
-    
 }

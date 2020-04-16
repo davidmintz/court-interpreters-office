@@ -92,8 +92,8 @@ class EventSubmissionDateTime extends AbstractValidator
      */
     public function isValid($value, $context = null)
     {
-        if (!isset($context['date'])) { // multi-date mode
-            if (isset($context['dates']) && is_array($context['dates'])){
+        if (! isset($context['date'])) { // multi-date mode
+            if (isset($context['dates']) && is_array($context['dates'])) {
                 $dates = $context['dates'];
                 sort($dates);
                 $context['date'] = $dates[0];

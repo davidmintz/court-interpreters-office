@@ -45,9 +45,10 @@ class DocketAnnotationService
      * @param EntityManagerInterface         $em
      * @param AuthenticationServiceInterface $auth
      */
-    public function __construct(EntityManagerInterface $em,
-        AuthenticationServiceInterface $auth)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        AuthenticationServiceInterface $auth
+    ) {
         $this->em = $em;
         $this->auth = $auth;
     }
@@ -136,12 +137,12 @@ class DocketAnnotationService
                         'break_chain_on_failure' => true,
                     ],
                     [
-                        'name'=> DocketValidator::class,
+                        'name' => DocketValidator::class,
                     ],
                     [
                         'name' => Validator\Callback::class,
                         'options' => [
-                            'callBack' => function($value, $context) {
+                            'callBack' => function ($value, $context) {
                                 return (int)$this->countEventsForDocket($value) > 0;
                             },
                             'messages' => [
@@ -188,7 +189,7 @@ class DocketAnnotationService
                         'name' => Filter\StringTrim::class,
                     ],
                     ['name' => Filter\PregReplace::class,
-                        'options'=> [
+                        'options' => [
                             'pattern' => '/( {2,})(\R)/m',
                             'replacement' => "$2",
                         ],
@@ -250,15 +251,15 @@ class DocketAnnotationService
         $filter = $this->getInputFilter();
         $filter->setData($data);
         if (! $filter->isValid()) {
-            return ['validation_errors' => $filter->getMessages(), 'status'=>'validation failed'];
+            return ['validation_errors' => $filter->getMessages(), 'status' => 'validation failed'];
         }
         $entity = new Entity\DocketAnnotation();
-        foreach(['docket','priority','comment'] as $field) {
+        foreach (['docket','priority','comment'] as $field) {
             $entity->{'set'.ucfirst($field)}($filter->getValue($field));
         }
         // $entity->setComment($this->escape($filter->getValue('comment')));
         $now = new \DateTime();
-        $user = $this->em->find('InterpretersOffice\Entity\User',$this->auth->getIdentity()->id);
+        $user = $this->em->find('InterpretersOffice\Entity\User', $this->auth->getIdentity()->id);
         $entity->setCreated($now)->setCreatedBy($user);
         $this->em->persist($entity);
         /** @todo check duplicates? create unique index */
@@ -267,7 +268,7 @@ class DocketAnnotationService
         $data['created_by'] = $user->getUsername();
         $data['created'] = $now->format('Y-m-d H:i:s');
         $data['comment'] = $this->parsedown($filter->getValue('comment'));
-        return [ 'status' => 'success', 'entity'=>$data ];
+        return [ 'status' => 'success', 'entity' => $data ];
     }
 
     public function countEventsForDocket($docket)
@@ -275,37 +276,36 @@ class DocketAnnotationService
         $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
 
         return $repo->countEvents($docket);
-
     }
 
-    public function update(string $id,array $data ) : array
+    public function update(string $id, array $data) : array
     {
         $filter = $this->getInputFilter();
         $filter->setData($data);
         if (! $filter->isValid()) {
-            return ['validation_errors' => $filter->getMessages(), 'status'=>'validation failed'];
+            return ['validation_errors' => $filter->getMessages(), 'status' => 'validation failed'];
         }
         $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
         $entity = $repo->find($id);
-        if (!$entity) {
+        if (! $entity) {
             return [
-            'status'=>'error','updated'=>false,
-            'message'=>"docket annotation with id $id was not found in the database"];
+            'status' => 'error','updated' => false,
+            'message' => "docket annotation with id $id was not found in the database"];
         }
         $modified = false;
-        foreach(['comment','docket','priority',] as $field) {
+        foreach (['comment','docket','priority',] as $field) {
             if ($entity->{'get'.ucfirst($field)}() != $filter->getValue($field)) {
                 $modified = true;
                 break;
             }
         }
         $data['comment'] = $this->parsedown($filter->getValue('comment'));
-        if (!$modified) {
-            return ['status'=>'not modified','updated'=>false,'entity'=>$data];
+        if (! $modified) {
+            return ['status' => 'not modified','updated' => false,'entity' => $data];
         }
-        $user = $this->em->find('InterpretersOffice\Entity\User',$this->auth->getIdentity()->id);
+        $user = $this->em->find('InterpretersOffice\Entity\User', $this->auth->getIdentity()->id);
         $now = new \DateTime();
-        foreach(['docket','priority','comment'] as $field) {
+        foreach (['docket','priority','comment'] as $field) {
             $entity->{'set'.ucfirst($field)}($filter->getValue($field));
         }
         // $entity->setComment($this->escape($filter->getValue('comment')));
@@ -315,7 +315,7 @@ class DocketAnnotationService
         $data['modified_by'] = $this->auth->getIdentity()->username;
         $data['modified'] = $now->format('Y-m-d H:i:s');
 
-        return ['status'=>'success','updated'=>true,'entity'=>$data];
+        return ['status' => 'success','updated' => true,'entity' => $data];
     }
 
     /**
@@ -325,21 +325,21 @@ class DocketAnnotationService
      * @param  string $csrf
      * @return array
      */
-    public function delete(string $id,string $csrf) : array
+    public function delete(string $id, string $csrf) : array
     {
         $filter = $this->getInputFilter();
-        $filter->setValidationGroup(['csrf'])->setData(['csrf'=>$csrf]);
+        $filter->setValidationGroup(['csrf'])->setData(['csrf' => $csrf]);
         if (! $filter->isValid()) {
-            return ['validation_errors' => $filter->getMessages(), 'status'=>'validation failed'];
+            return ['validation_errors' => $filter->getMessages(), 'status' => 'validation failed'];
         }
         $repo = $this->em->getRepository(Entity\DocketAnnotation::class);
         $entity = $repo->find($id);
         if (! $entity) {
-            return ['status'=>'not found','deleted'=>false];
+            return ['status' => 'not found','deleted' => false];
         }
         $this->em->remove($entity);
         $this->em->flush();
 
-        return ['status'=>'success','deleted'=> true,'entity'=>['docket'=>$entity->getDocket(),'id'=>$entity->getId()]];
+        return ['status' => 'success','deleted' => true,'entity' => ['docket' => $entity->getDocket(),'id' => $entity->getId()]];
     }
 }

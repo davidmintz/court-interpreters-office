@@ -160,8 +160,11 @@ class EventsController extends AbstractActionController
         $data = $request->getPost();
         $input = $data->get('event');
         $form->bind($event);
-        $this->getEventManager()->trigger('pre.validate', $this,
-            ['input' => $data,]);
+        $this->getEventManager()->trigger(
+            'pre.validate',
+            $this,
+            ['input' => $data,]
+        );
         $form->setData($data);
         if (! $form->isValid()) {
             return new JsonModel(
@@ -183,7 +186,8 @@ class EventsController extends AbstractActionController
         $date = $event->getDate();
         $this->flashMessenger()->addSuccessMessage(sprintf(
             'This event has been added to the schedule for <a href="%s">%s</a>',
-            $url . $date->format('/Y/m/d'), $date->format('l d-M-Y')
+            $url . $date->format('/Y/m/d'),
+            $date->format('l d-M-Y')
         ));
 
         return new JsonModel(['status' => 'success','id' => $event->getId()]);
@@ -196,20 +200,21 @@ class EventsController extends AbstractActionController
      * @param  EntityEvent $event
      * @return JsonModel
      */
-    protected function batchCreate(Array $input,Entity\Event $event ) {
+    protected function batchCreate(Array $input, Entity\Event $event)
+    {
 
         $event->setDate(new \DateTime(\array_shift($input['dates'])));
         $this->entityManager->persist($event);
         $dates = $input['dates'];
         sort($dates);
         $entities = [$event];
-        foreach($dates as $d) {
+        foreach ($dates as $d) {
             $entity = new Entity\Event();
             $entity->setDate(new \DateTime($d));
-            foreach(['time','docket','judge','language','eventType','location','anonymousJudge',
+            foreach (['time','docket','judge','language','eventType','location','anonymousJudge',
             'submissionDate','submissionTime', 'submitter','anonymousSubmitter','endTime','cancellationReason',
             'comments','adminComments',
-            ]  as $prop) {
+            ] as $prop) {
                 $getter = 'get'.ucfirst($prop);
                 $datum = $event->$getter();
                 $setter = 'set'.ucfirst($prop);
@@ -218,7 +223,7 @@ class EventsController extends AbstractActionController
             foreach ($event->getDefendants() as $d) {
                 $entity->addDefendant($d);
             }
-            foreach($event->getInterpreterEvents() as $ie) {
+            foreach ($event->getInterpreterEvents() as $ie) {
                 $entity->assignInterpreter($ie->getInterpreter());
             }
             $this->entityManager->persist($entity);
@@ -230,11 +235,15 @@ class EventsController extends AbstractActionController
         $date = $event->getDate();
         $this->flashMessenger()->addSuccessMessage(sprintf(
             'This event has been added to the schedule for <a href="%s">%s</a> and %s other %s',
-            $url . $date->format('/Y/m/d'), $date->format('l d-M-Y'),
-            count($dates), (count($dates) > 1 ? 'dates':'date')
+            $url . $date->format('/Y/m/d'),
+            $date->format('l d-M-Y'),
+            count($dates),
+            (count($dates) > 1 ? 'dates' : 'date')
         ));
 
-        return new JsonModel(['status'=>'success','ids'=> array_map(function($e){return $e->getId();},$entities)]);
+        return new JsonModel(['status' => 'success','ids' => array_map(function ($e) {
+            return $e->getId();
+        }, $entities)]);
     }
 
     /**
@@ -265,7 +274,9 @@ class EventsController extends AbstractActionController
         $modified_before = $entity->getModified()->format('Y-m-d h:i:s');
         $form->bind($entity);
 
-        $events->trigger('pre.populate', $this,
+        $events->trigger(
+            'pre.populate',
+            $this,
             ['entity' => $entity, 'form' => $form]
         );
         if ($this->getRequest()->isGet()) {
@@ -293,7 +304,8 @@ class EventsController extends AbstractActionController
         $this->flashMessenger()->addSuccessMessage(sprintf(
             "This event has been $verbiage on the "
             .'schedule for <a href="%s">%s</a>.',
-            $url . $date->format('/Y/m/d'), $date->format('l d-M-Y')
+            $url . $date->format('/Y/m/d'),
+            $date->format('l d-M-Y')
         ));
 
         return new JsonModel(['status' => 'success', 'id' => $id]);
@@ -334,11 +346,14 @@ class EventsController extends AbstractActionController
         }
 
         $entity->setDeleted(true);
-        $this->getEventManager()->trigger('deleteEvent',$this,
-            ['entity'=>$entity,
-            'email_notification'=> $this->params()->fromPost('email_notification')]);
+        $this->getEventManager()->trigger(
+            'deleteEvent',
+            $this,
+            ['entity' => $entity,
+            'email_notification' => $this->params()->fromPost('email_notification')]
+        );
         $this->entityManager->flush();
-        $x = $this->getEventManager()->trigger('postFlush',$this);
+        $x = $this->getEventManager()->trigger('postFlush', $this);
 
         return new JsonModel(['deleted' => true,'status' => 'success',
             'debug' => 'FYI trigger returns: '.get_class($x),
@@ -384,7 +399,7 @@ class EventsController extends AbstractActionController
         if (! $language_id) {
             $result = ['error' => 'missing language id parameter'];
         } else {
-            $result = $repository->getInterpreterOptionsForLanguage($language_id,['with_banned_data'=>true]);
+            $result = $repository->getInterpreterOptionsForLanguage($language_id, ['with_banned_data' => true]);
         }
         if ($this->params()->fromQuery('csrf')) {
             $csrf = (new \Laminas\Validator\Csrf('csrf'))->getHash();

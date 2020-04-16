@@ -110,7 +110,7 @@ class ScheduleController extends AbstractActionController
     public function viewAction()
     {
         $id = $this->params()->fromRoute('id');
-        $data =  $this->entityManager->getRepository(Entity\Event::class)
+        $data = $this->entityManager->getRepository(Entity\Event::class)
            ->getView($id);
         $event = $data['event'] ?? null;
         $csrf = (new \Laminas\Validator\Csrf('csrf', ['timeout' => 600]))->getHash();

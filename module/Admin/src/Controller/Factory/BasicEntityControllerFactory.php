@@ -9,7 +9,6 @@ use InterpretersOffice\Entity\Listener;
 use Doctrine\ORM\Events;
 use Laminas\Filter\Word\CamelCaseToDash as Filter;
 
-
 /**
  * Factory for instantiating Controllers for managing our relatively
  * simple entities.

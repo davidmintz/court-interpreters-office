@@ -41,7 +41,7 @@ class JudgesController extends AbstractActionController
 
     private function getSession()
     {
-        if (!$this->session) {
+        if (! $this->session) {
             $this->session = new Session("judges_list");
         }
         return $this->session;
@@ -62,12 +62,12 @@ class JudgesController extends AbstractActionController
              $this->getSession()->display = $display;
         }
         if ($this->getRequest()->isXmlHttpRequest()) {
-            return new JsonModel(['status'=>'OK','display'=>$display]) ;
+            return new JsonModel(['status' => 'OK','display' => $display]) ;
         }
         $judges = $this->entityManager
             ->getRepository(Entity\Judge::class)->getList();
 
-        return new ViewModel(['title' => 'judges', 'judges' => $judges, 'display'=>$display]);
+        return new ViewModel(['title' => 'judges', 'judges' => $judges, 'display' => $display]);
     }
     /**
      * view judge details
@@ -80,7 +80,7 @@ class JudgesController extends AbstractActionController
         $repo = $this->entityManager
             ->getRepository(Entity\Judge::class);
 
-        return ['judge'=>$repo->getJudge($id),'id'=>$id];
+        return ['judge' => $repo->getJudge($id),'id' => $id];
     }
 
     /**
@@ -142,7 +142,7 @@ class JudgesController extends AbstractActionController
         );
         $form->bind($entity);
         $has_related_entities = $repo->hasRelatedEntities($id);
-        $viewModel->setVariables(compact('form','has_related_entities'));
+        $viewModel->setVariables(compact('form', 'has_related_entities'));
         if ($has_related_entities) {
             $form->getInputFilter()->get('judge')->remove('flavor');
         }

@@ -443,8 +443,8 @@ class InterpreterFieldset extends PersonFieldset
                  ],
              ];
          }
-        if ($this->has('security_clearance_date')) {
-            $spec['security_clearance_date'] = [
+         if ($this->has('security_clearance_date')) {
+             $spec['security_clearance_date'] = [
              'allow_empty' => true,
              'required'  => false,
              'filters' => [
@@ -479,10 +479,10 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                 ],
-            ];
-        }
-        if ($this->has('contract_expiration_date')) {
-            $spec['contract_expiration_date'] = [
+             ];
+         }
+         if ($this->has('contract_expiration_date')) {
+             $spec['contract_expiration_date'] = [
                 'allow_empty' => true,
                 'required' => false,
                 'filters' => [
@@ -515,10 +515,10 @@ class InterpreterFieldset extends PersonFieldset
                         ],
                     ],
                 ],
-            ];
-        }
-        if ($this->has('oath_date')) {
-            $spec['oath_date'] = [
+             ];
+         }
+         if ($this->has('oath_date')) {
+             $spec['oath_date'] = [
                 'allow_empty' => true,
                 'required'  => false,
                 'filters' => [
@@ -551,12 +551,12 @@ class InterpreterFieldset extends PersonFieldset
                             \Laminas\Validator\Callback::INVALID_VALUE => 'oath date cannot be set in the future',
                         ],
                     ],
+                    ],
                 ],
-            ],
-        ];
-        }
-        if ($this->has('BOP_form_submission_date')) {
-            $spec['BOP_form_submission_date'] = [
+             ];
+         }
+         if ($this->has('BOP_form_submission_date')) {
+             $spec['BOP_form_submission_date'] = [
                 'allow_empty' => true,
                 'required'  => false,
                 'filters' => [
@@ -587,17 +587,17 @@ class InterpreterFieldset extends PersonFieldset
                             \Laminas\Validator\Callback::INVALID_VALUE => 'form submission date cannot be set in the future',
                         ],
                     ],
+                    ],
                 ],
-            ],
-        ];
-        }
+             ];
+         }
         /** @todo tighten this up? */
-        if ($this->has('banned_by_persons')) {
-            $spec['banned_by_persons'] = [
-                'required'=>false,
-                'allow_empty'=>true,
-            ];
-        }
+         if ($this->has('banned_by_persons')) {
+             $spec['banned_by_persons'] = [
+                'required' => false,
+                'allow_empty' => true,
+             ];
+         }
          // encrypted fields
             $spec['dob'] = [
              'allow_empty' => true,

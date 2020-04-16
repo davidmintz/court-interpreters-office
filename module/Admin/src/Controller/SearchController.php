@@ -35,7 +35,7 @@ class SearchController extends AbstractActionController
     public function docketSearchAction()
     {
         $docket = $this->params()->fromRoute('docket');
-        $this->session->search_defaults = ['docket' => $docket,'page'=>1];
+        $this->session->search_defaults = ['docket' => $docket,'page' => 1];
         $this->redirect()->toRoute('search');
     }
 
@@ -48,22 +48,22 @@ class SearchController extends AbstractActionController
     {
         $query = $this->params()->fromQuery();
         $form = new SearchForm($this->em);
-        $page = (int)$this->params()->fromQuery('page',1);
+        $page = (int)$this->params()->fromQuery('page', 1);
         $repository = $this->em->getRepository(Entity\Event::class);
-        if (!$query) {
+        if (! $query) {
             if ($this->session->search_defaults) {
                 $defaults = $this->session->search_defaults;
                 $params = $defaults;
                 $form->setData($params);
-                $results = $repository->search($params,$defaults['page']);
+                $results = $repository->search($params, $defaults['page']);
             } else {
                 $results = null;
             }
-            return new ViewModel(compact('form','results'));
+            return new ViewModel(compact('form', 'results'));
         }
         // else, we have form/query data to validate
         $form->setData($query);
-        if (!$form->isValid()) {
+        if (! $form->isValid()) {
             $response = [
                 'valid' => false,
                 'validation_errors' => $form->getMessages(),
@@ -74,10 +74,10 @@ class SearchController extends AbstractActionController
         $form_values = $form->getData();
         $form_values['page'] = $page;
         $this->session->search_defaults = $form_values;
-        $results = $repository->search($form_values,$page);
+        $results = $repository->search($form_values, $page);
         $view = new ViewModel(compact('results'));
         $is_xhr = $this->getRequest()->isXmlHttpRequest();
-        if (!$is_xhr) {
+        if (! $is_xhr) {
             $view->setVariables(['form' => $form,]);
         } else {
             $view->setTemplate('search/results')
@@ -92,5 +92,4 @@ class SearchController extends AbstractActionController
         $this->session->search_defaults = null;
         return false;
     }
-
 }

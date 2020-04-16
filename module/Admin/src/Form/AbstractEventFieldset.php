@@ -191,7 +191,7 @@ abstract class AbstractEventFieldset extends Fieldset implements
                  'id' => 'date',
                  'class' => 'date form-control',
                  'placeholder' => '(required)',
-             ],
+              ],
               'options' => [
                  'label' => 'date',
                  //'format' => 'm/d/Y',

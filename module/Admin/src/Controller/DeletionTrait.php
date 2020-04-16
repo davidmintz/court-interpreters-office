@@ -55,7 +55,7 @@ trait DeletionTrait
                     'exception' => 'foreign_key_constraint',
                 ];
                 $this->getResponse()->setStatusCode(403);
-            } 
+            }
         } else {
             $result = 'error';
             $error = ['message' => "$what $name (id $id) not found"];

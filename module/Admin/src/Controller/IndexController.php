@@ -24,6 +24,6 @@ class IndexController extends AbstractActionController
         $acl_config = $container->get('config')['acl'];
         // $module_manager = $container->get("ModuleManager");
 
-        return new ViewModel(['acl_config'=>$acl_config, 'acl'=>$container->get("acl")]);
+        return new ViewModel(['acl_config' => $acl_config, 'acl' => $container->get("acl")]);
     }
 }

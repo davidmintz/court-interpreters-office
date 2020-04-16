@@ -21,7 +21,7 @@ class ConfigControllerFactory implements FactoryInterface
         $auth = $container->get('auth');
         $role = $auth->getStorage()->read()->role;
         $write_access = $acl->isAllowed($role, ConfigController::class, 'post');
-        
-        return new ConfigController(['write_access'=>$write_access]);
+
+        return new ConfigController(['write_access' => $write_access]);
     }
 }

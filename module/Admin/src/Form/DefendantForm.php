@@ -45,9 +45,9 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
     {
         parent::__construct($this->formName, $options);
         //$this->setObjectManager($objectManager);
-        /* no more of this for now. trying something different: 
+        /* no more of this for now. trying something different:
          * manage the hydration and transaction demarcation by hand
-         */ 
+         */
 
         //$this->setHydrator(new DoctrineHydrator($objectManager, true));
 
@@ -81,7 +81,7 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
 
         $this->add([
             'type' => 'Laminas\Form\Element\Hidden',
-            'name' => 'id',            
+            'name' => 'id',
         ]);
 
         $this->add([
@@ -101,7 +101,6 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
                 ],
             ]
         ]);
-        
     }
 
     /**
