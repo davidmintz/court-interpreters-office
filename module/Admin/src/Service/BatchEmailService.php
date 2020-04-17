@@ -8,6 +8,10 @@ use Swift_SmtpTransport;
 use Swift_Message;
 use Swift_Mailer;
 use Swift_Transport;
+use Swift_SpoolTransport;
+use Swift_SendmailTransport;
+use Swift_FileSpool;
+
 
 /**
  * service for sending batch email
@@ -32,13 +36,37 @@ class BatchEmailService
 
     /**
      * gets transport
+     * 
+     * the nasty thing here is that the config is designed 
+     * to accomodate Laminas\Mail only
      *
      * @return Swift_Transport
      */
     public function getTransport() : Swift_Transport
     {
+        $config = $this->config['mail'];
+        if (stristr($config['transport'],'sendmail')) {
+            $transport = new Swift_SendmailTransport();
+           
+        } elseif (stristr($config['transport'],'stmp')) {
+            $transport = new Swift_SmtpTransport(
+                $config['host'],$config['port']??25,'ssl'
+            );
+            if (isset($config['connection_config'])) {
+                $transport->setUserName($config['connection_config']['username'])
+                ->setPassword($config['connection_config']['password']);    
+            }
+        } elseif (stristr($config['transport'],'file')) {
+            $path = $config['transport_options']['options']['path'];
+            $transport = new Swift_SpoolTransport(new Swift_FileSpool($path) );
+        } else {
+            throw new \RuntimeException("can't figure out how to configure email transport");
+        }
 
-        $config = $this->config['transport_options']['options'];
+        return $transport;
+    }
+/*
+   $config = $this->config['transport_options']['options'];
         $transport = new Swift_SmtpTransport(
             $config['host'],
             $config['port'],
@@ -47,9 +75,9 @@ class BatchEmailService
         $transport->setUserName($config['connection_config']['username'])
             ->setPassword($config['connection_config']['password']);
 
-        return $transport;
-    }
-
+        return $transport; 
+  
+ */
     /**
      * sends test email
      *
