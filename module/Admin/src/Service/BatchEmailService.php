@@ -44,7 +44,7 @@ class BatchEmailService
      */
     public function getTransport() : Swift_Transport
     {
-        $config = $this->config['mail'];
+        $config = $this->config;
         if (stristr($config['transport'],'sendmail')) {
             $transport = new Swift_SendmailTransport();
            
