@@ -112,7 +112,7 @@ foreach ($users as $user) {
             ':username' => $user['name'],
             ':active' =>  $user['active'],
             ':role_id' =>  ($user['name'] == 'david' ? 3 : 2),
-            ':password'  => password_hash('boink',PASSWORD_DEFAULT),
+            ':password'  => password_hash(bin2hex(random_bytes(6)),PASSWORD_DEFAULT),
          ];
         try {
             $user_insert->execute($params);
