@@ -296,7 +296,10 @@ class AccountManager implements LoggerAwareInterface
                                 'stringLengthTooShort' => 'password length must be a minimum of %min% characters',
                             ]
                         ]
-                    ]
+                    ],
+                    [
+                        'name'=>'InterpretersOffice\Form\Validator\PasswordStrength',
+                    ],
                 ],
             ],
             'password-confirm' => [
@@ -666,7 +669,7 @@ class AccountManager implements LoggerAwareInterface
         least privileged role, which is "submitter" */
         if (self::CONFIRM_EMAIL == $action && 'submitter' !== $data['role']) {
             return [
-                'error' => self::INVALID_ROLE_FOR_SELF_REGISTRATION,
+                'error' => self::ERROR_INVALID_ROLE_FOR_SELF_REGISTRATION,
                 'data' => null];
         }
 
@@ -742,6 +745,8 @@ class AccountManager implements LoggerAwareInterface
      *
      * @param SessionContainer user session
      * @param string $password new user password
+     * 
+     * @return boolean true if successful
      */
     public function resetPassword(SessionContainer $session, $password)
     {

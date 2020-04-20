@@ -274,11 +274,11 @@ class AccountController extends AbstractActionController
             /** @todo if $result == false, deal with it -- even though it should
             * work if they get this far
             */
+            $result = ['status'=>'success','valid'=>true];
+        } else {
+            $result = ['valid'=>false, 'validation_errors'=>$filter->getMessages(),'status'=>'failed'];
         }
-        return new JsonModel([
-            'validation_errors' => $filter->getMessages(),
-            'valid' => $valid,
-        ]);
+        return new JsonModel($result);
     }
     /**
      * edit (user's own) account profile

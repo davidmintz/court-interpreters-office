@@ -125,7 +125,7 @@ class RegistrationForm extends Form
                     'password exceeds maximum length (%max% characters)',
                 ]
                 ]
-            );
+            )->attachByName('InterpretersOffice\Form\Validator\PasswordStrength');
         // make the email required
         $email_input = $this->getInputFilter()->get('user')
                 ->get('person')->get('email');
@@ -176,7 +176,7 @@ class RegistrationForm extends Form
             'callback' => function ($value, $context) use ($objectManager, $form) {
                 /** @var Entity\Repository\UserRepository $repo */
                 $repo = $objectManager->getRepository(Entity\User::class);
-                $user = $repo->findSubmitterByEmail($value);
+                $user = $repo->findSubmitterByEmail($value??'');
                 if ($user) {
                     // maybe: this is experimental, with a view to getting
                     // more information about the status of the duplicate

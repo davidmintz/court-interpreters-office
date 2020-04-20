@@ -13,7 +13,8 @@ $(function(){
             $("#btn-back").hide();
         }
     });
-
+    $("[data-toggle=\"popover\"]").popover();
+    
     $("#btn-back").on("click",function(event){
         event.preventDefault();
         $(".carousel").carousel("prev");
