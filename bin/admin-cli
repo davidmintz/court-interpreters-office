@@ -25,6 +25,7 @@ use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand as CreateSchemaC
 use Laminas\Validator\EmailAddress as EmailValidator;
 
 use InterpretersOffice\Entity;
+use Symfony\Component\Console\Input\InputArgument;
 
 /* ---------------------------------------------------------------------- */
 
@@ -81,6 +82,7 @@ class ClearCacheCommand extends Command
         $this->setName("admin:clear-cache")
             ->setDescription("clears Doctrine filesystem cache (really)")
             ->setHelp("not much to it, just do it");
+
     }
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -93,6 +95,45 @@ class ClearCacheCommand extends Command
         }
         $io->success("Successfully cleared filesystem cache.");
 
+        return 0;
+    }
+}
+
+class SetPasswordCommand extends Command {
+    protected function configure()
+    {
+        $this
+        // the name of the command (the part after "bin/console")
+        ->setName('admin:set-user-password')
+        // the short description shown while running "php bin/console list"
+        ->setDescription('sets a password')
+        // the full command description shown when running the command with
+        // the "--help" option
+        ->setHelp('sets the password for a user');
+
+        $this->addArgument('user', InputArgument::REQUIRED, 'the username of the user');
+        $this->addArgument('password', InputArgument::REQUIRED, 'password to be set for user');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)    
+    {
+        /** @var \Doctrine\ORM\EntityManager $entityClass */
+        $entityManager = require __DIR__.'/../config/doctrine-bootstrap.php';
+        /** Doctrine\DBAL\Connection $dbal */
+        $dbal = $entityManager->getConnection();
+        $user = $input->getArgument('user');
+        $password = \password_hash($input->getArgument('password'),PASSWORD_DEFAULT);
+        $affected = $dbal->executeUpdate('UPDATE users SET password = :password WHERE username = :username',
+            ['password'=>$password,'username'=>$user]
+        );
+        $io = new SymfonyStyle($input,$output);
+        if (! $affected) {
+            $io->warning("no such user found in the database: $user");
+        } else {
+            $io->success("password has been set for user $user");
+        }
+
+        
         return 0;
     }
 }
@@ -288,4 +329,5 @@ $application->add(new LoadInitialDataCommand);
 $application->add($cmd = new CreateSchemaCommand);
 $cmd->setDescription("runs the Doctrine orm:schema-create command directly against your database");
 $application->add(new ClearCacheCommand);
+$application->add(new SetPasswordCommand());
 $application->run();
