@@ -48,7 +48,7 @@ class BatchEmailService
         if (stristr($config['transport'],'sendmail')) {
             $transport = new Swift_SendmailTransport();
            
-        } elseif (stristr($config['transport'],'stmp')) {
+        } elseif (stristr($config['transport'],'smtp')) {
             $transport = new Swift_SmtpTransport(
                 $config['host'],$config['port']??25,'ssl'
             );
