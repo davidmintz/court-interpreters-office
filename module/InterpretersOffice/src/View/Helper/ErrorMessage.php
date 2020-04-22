@@ -10,9 +10,9 @@ use Laminas\View\Helper\AbstractHelper;
  */
 class ErrorMessage extends AbstractHelper
 {
-
     /**
      * html template
+     * 
      * @var string
      */
     protected $template = <<<EOT
@@ -32,8 +32,13 @@ EOT;
      * @param string $header
      * @return string
      */
-    public function __invoke($message = null, $header = 'system error')
+    public function __invoke($message = null, $header = 'error')
     {
+        if (! $message) {
+            if ($this->getView()->flashMessenger()->hasErrorMessages()) {
+                $message = $this->getView()->flashMessenger()->getErrorMessages()[0];
+            }
+        }
         $html = sprintf(
             $this->template,
             $message ? '' : 'display:none',

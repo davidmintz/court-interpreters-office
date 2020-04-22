@@ -49,22 +49,33 @@ class EmailController extends AbstractActionController
 
     /**
      * displays form for batch email
+     * 
      * @return ViewModel
      */
     public function formAction()
     {
+        $sapi = php_sapi_name();
+        if ($sapi !== 'fpm-fcgi') {
+            $this->flashMessenger()->addErrorMessage(
+                "Batch email is not currently supported under your server configuration. 
+                The server API has to be <em>fpm-fcgi</em>; yours is <em>$sapi</em>."
+            );
+            $this->redirect()->toRoute('email');
+        }
         return new ViewModel([
             'recipient_list_options' => $this->emailService::$recipient_list_options,
             'site_config' => $this->emailService->getConfig()['site'] ?? [],
         ]);
     }
 
+    /**
+     * index page for admin email
+     * 
+     * @return ViewModel
+     */
     public function indexAction()
-    {
-        // $config = $this->emailService->getConfig()['mail'];
-        // $service = new BatchEmailService($config);
-        // $result = $service->test();
-        // echo "send test email: $result";
+    {      
+        return new ViewModel(['php_sapi_name'=>php_sapi_name()]);
     }
 
     /**
@@ -75,7 +86,10 @@ class EmailController extends AbstractActionController
      */
     public function batchEmailAction()
     {
-
+        if (!function_exists('fastcgi_finish_request')){
+            throw new \RuntimeException(
+                'batch email is currently not supported under server APIs other than fpm-fcgi');
+        }
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         $file = './data/progress.txt';
         if (! \file_exists($file)) {
@@ -107,13 +121,10 @@ class EmailController extends AbstractActionController
         header("content-type: application/json");
         echo json_encode(['status' => 'started','total' => count($recipients)]);
         // this here is critical ...
-        if (function_exists('fastcgi_finish_request')) {
-            session_write_close();
-            \fastcgi_finish_request();
-            // ...otherwise it will NOT work
-        } else {
-            /* good question. */
-        }
+        session_write_close();
+        \fastcgi_finish_request();
+        // ...otherwise it will NOT work
+        
 
         /** @var Swift_Message $message */
         $message = new Swift_Message();
@@ -137,83 +148,11 @@ class EmailController extends AbstractActionController
             file_put_contents($file, ++$i ." of $total");
         }
         file_put_contents($file, "done");
-
+        $log->info("completed batch email to $total recipients re {$data['subject']}");
         return new JsonModel(['total' => $total,'current' => $i]);
     }
 
-    /**
-     * not in use, desting to be removed
-     * processes batch email
-     */
-    public function __batchEmailAction()
-    {
-        $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
-        $file = './data/progress.txt';
-        if (! \file_exists($file)) {
-            touch($file);
-        } else {
-            $contents = trim(file_get_contents($file));
-            if ($contents && $contents != 'done') {
-                $log->info("aborting batch email job", ['progress_file_contents' => $contents]);
-                $this->getResponse()->setStatusCode(503);
-                return new JsonModel(['status' => 'error',
-                    'message' => $this->emailService::ERROR_JOB_IN_PROGRESS]);
-            }
-            $fp = fopen($file, 'w');
-            \ftruncate($fp, 0);
-            fclose($fp);
-        }
-        $filter = $this->filter($this->getRequest()->getPost());
-        if (! $filter->isValid()) {
-            return new JsonModel(['validation_errors' => $filter->getMessages()]);
-        }
-        $data = $filter->getValues();
-        $service = $this->emailService;
-        $recipients = $service->getRecipientList($data['recipient_list']);
-        $total = count($recipients);
-        header("content-type: application/json");
-        echo json_encode(['status' => 'started','total' => count($recipients)]);
-        // this here is critical ...
-        if (function_exists('fastcgi_finish_request')) {
-            session_write_close();
-            \fastcgi_finish_request();
-            // ...otherwise it will NOT work
-        } else {
-            /* good question. */
-        }
-
-        $transport = $service->getMailTransport();
-        $message = $service->createEmailMessage();
-        $message->setSubject($data['subject']);
-        $config = $service->getConfig()['mail'];
-        $message->setFrom($config['from_address'], $config['from_entity']);
-        $layout = $service->getLayout();
-        $i = 0;
-        foreach ($recipients as $person) {
-            $body = $message->getBody();
-            $text_part = $body->getParts()[0];
-            $name = "{$person['firstname']} {$person['lastname']}";
-            $markup = $service->renderMarkdown($data['body']);
-            if ($data['salutation'] == 'personalized') {
-                $markup = "<p>Dear $name:</p>" . $markup;
-            }
-            $html = $service->render($layout, $markup);
-            $body->setParts([$text_part,$service->createHtmlPart($html),]);
-            $message->setBody($body)->setTo($person['email'], $name);
-            $log->debug("sending mail re {$data['subject']} to {$person['email']}");
-            $transport->send($message);
-            file_put_contents($file, ++$i ." of $total");
-        }
-        file_put_contents($file, "done");
-
-        return new JsonModel(['total' => $total,'current' => $i]);
-    }
-
-    /**
-     * returns progress data for batch-email
-     *
-     * @return JsonModel
-     */
+    
     public function progressAction()
     {
         $text = file_get_contents('./data/progress.txt');

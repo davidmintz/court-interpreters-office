@@ -1,8 +1,23 @@
 <?php $this->headTitle('admin | email') ?>
 <div class="row">
+    <?php // sanity check
+        if ($this->php_sapi_name != 'fpm-fcgi') : 
+            $error = "Batch email is not currently supported under your server configuration. 
+            The server API has to be <em>fpm-fcgi</em>; yours is <em>$this->php_sapi_name</em>.";
+            $header = "batch email not supported";
+        else : $error = null; $header = null;
+        endif;
+    ?>
+    <div class="col-auto"><?php echo $this->errorMessage($error,$header)?></div>
+    <div class="w-100"></div>
     <div class="col offset-md-3">
         <h2 class="mb-3"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
+        <?php if (! $error):?>
         <p><a href="<?=$this->url('email/batch')?>">send broadcast email</a></p>
         <p><a href="<?=$this->url('interpreters/availability_list/list')?>">edit availability-solicitation list</a></p>
+        <?php else: ?>
+        <p><a style="text-decoration:line-through" class="text-muted" href="javascript:void(0)">edit availability-solicitation list</a></p>
+        <p><a style="text-decoration:line-through" class="text-muted" href="javascript:void(0)">send broadcast email</a></p>
+        <?php endif;?>
     </div>
 </div>
