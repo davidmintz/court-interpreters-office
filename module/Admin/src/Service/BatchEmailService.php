@@ -49,12 +49,13 @@ class BatchEmailService
             $transport = new Swift_SendmailTransport();
            
         } elseif (stristr($config['transport'],'smtp')) {
+            $options = $config['transport_options']['options'];
             $transport = new Swift_SmtpTransport(
-                $config['host'],$config['port']??25,'ssl'
+                $options['host'], $options['port']??25,'ssl'
             );
-            if (isset($config['connection_config'])) {
-                $transport->setUserName($config['connection_config']['username'])
-                ->setPassword($config['connection_config']['password']);    
+            if (isset($options['connection_config'])) {
+                $transport->setUserName($options['connection_config']['username'])
+                ->setPassword($options['connection_config']['password']);    
             }
         } elseif (stristr($config['transport'],'file')) {
             $path = $config['transport_options']['options']['path'];
