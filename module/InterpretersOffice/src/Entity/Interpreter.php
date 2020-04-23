@@ -95,7 +95,7 @@ class Interpreter extends Person
     * @ORM\Column(type="date",name="bop_form_submission_date",nullable=true)
     * @var \DateTime
     */
-   protected $BOP_form_submission_date;
+    protected $BOP_form_submission_date;
 
     /**
      * comments
@@ -108,11 +108,18 @@ class Interpreter extends Person
     /**
      * whether to include in availability-solicitation emails
      *
-     * @ORM\Column(type="boolean",nullable=false)
+     * @ORM\Column(type="boolean",nullable=false,options={"default":0})
      * @var boolean
      */
     private $solicit_availability = false;
 
+    /**
+     * whether to publish contact data on public website
+     * 
+     * @ORM\Column(type="boolean",nullable=false,options={"default":1})
+     * @var boolean
+     */
+    private $publish_public = true;
 
 
     /**
@@ -743,8 +750,9 @@ class Interpreter extends Person
     }
 
     /**
-     * sets solicity_availability
-     *
+     * sets solicit_availability
+     * 
+     * @param bool $flag
      * @return Interpreter
      */
     public function setSolicitAvailability(bool $flag) : Interpreter
@@ -752,5 +760,27 @@ class Interpreter extends Person
         $this->solicit_availability = $flag;
 
         return $this;
+    }
+
+    /**
+     * sets publish_public
+     * @param bool $flag
+     * @return Interpreter
+     */
+    public function setPublishPublic(bool $flag) : Interpreter
+    {
+        $this->publish_public = $flag;
+
+        return $this;
+    }
+
+     /**
+     * sets publish_public
+     * @param bool $flag
+     * @return Interpreter
+     */
+    public function getPublishPublic() : bool
+    {
+        return $this->publish_public;
     }
 }

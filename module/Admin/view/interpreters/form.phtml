@@ -27,7 +27,7 @@ $form->add([
    ->setAttribute('action', $formAction)
    ->setAttribute('class', 'form-horizontal');
 ?>
-<div class="mx-auto" style="max-width:700px;"><!-- wrapper -->
+<div class="mx-auto" style="max-width:800px;"><!-- wrapper -->
     <h2 class="mb-3"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
     <?php
     $form->prepare();
@@ -112,8 +112,8 @@ $form->add([
             $hat_element->setAttribute('disabled', 'disabled');
         endif;
         ?>
-        <?php foreach (['hat','active','solicit_availability','banned_by_persons','fingerprint_date','BOP_form_submission_date',
-        'security_clearance_date','contract_expiration_date','oath_date',] as $elementName) :
+        <?php foreach (['hat','active','solicit_availability','publish_public','banned_by_persons','fingerprint_date',
+        'BOP_form_submission_date', 'security_clearance_date','contract_expiration_date','oath_date',] as $elementName) :
                     if (! $fieldset->has($elementName)) : continue; endif;
                     $element = $fieldset->get($elementName);
 
@@ -145,7 +145,10 @@ $form->add([
             if ($element instanceof \Laminas\Form\Element\Checkbox) :
                 $label_class = ' pt-2';
                 if ($elementName == 'solicit_availability'):
-                    $help_text = 'include among contract interpreters whom you email to ask availability';
+                    $help_text = 'check to include among contract interpreters whom you email to ask availability';
+                endif;
+                if ($elementName == 'publish_public'):
+                    $help_text = 'check to publish contact data to your website or otherwise disclose publicly';
                 endif;
             else:
                 $label_class = '';

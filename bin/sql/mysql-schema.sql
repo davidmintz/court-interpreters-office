@@ -426,7 +426,7 @@ CREATE TABLE `interpreters` (
   `fingerprint_date` date DEFAULT NULL,
   `oath_date` date DEFAULT NULL,
   `contract_expiration_date` date DEFAULT NULL,
-  `solicit_availability` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `solicit_availability` tinyint(1) NOT NULL DEFAULT '0',
   `comments` varchar(600) COLLATE utf8_unicode_ci NOT NULL,
   `address1` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
   `address2` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
@@ -435,6 +435,7 @@ CREATE TABLE `interpreters` (
   `zip` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
   `country` varchar(16) COLLATE utf8_unicode_ci NOT NULL,
   `bop_form_submission_date` date DEFAULT NULL,
+  `publish_public` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_ssn` (`ssn`),
   CONSTRAINT `FK_4EBBDB02BF396750` FOREIGN KEY (`id`) REFERENCES `people` (`id`) ON DELETE CASCADE
@@ -893,4 +894,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-27 15:35:11
+-- Dump completed on 2020-04-23 15:33:38

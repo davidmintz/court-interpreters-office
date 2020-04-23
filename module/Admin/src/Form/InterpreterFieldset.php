@@ -227,6 +227,20 @@ class InterpreterFieldset extends PersonFieldset
             'checked_value' => 1,
             'unchecked_value' => 0,],
         ]);
+        $this->add([
+            'name' => 'publish_public',
+            'type' => 'checkbox',
+            'attributes' => [
+                'value' => 1,
+                'id' => 'publish_public',
+                //'class' => 'form-check-input',
+            ],
+            'options' => [
+            'label' => 'publish public',
+            'use_hidden_element' => true,
+            'checked_value' => 1,
+            'unchecked_value' => 0,],
+        ]);
         /*
         $this->add([
             'type' => 'Laminas\Form\Element\Checkbox',
@@ -403,7 +417,16 @@ class InterpreterFieldset extends PersonFieldset
                  'validators' => [],
                  'filters' => [],
 
-         ];
+            ];
+        $spec['publish_public'] =
+            [
+                'required' => false, // for now
+                'allow_empty' => true,
+                'validators' => [],
+                'filters' => [],
+
+           ];
+       
          /** optional fields */
 
          if ($this->has('fingerprint_date')) {

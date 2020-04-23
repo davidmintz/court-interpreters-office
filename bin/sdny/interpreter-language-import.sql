@@ -37,7 +37,7 @@ SET SESSION sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ALLOW_INVALID_DAT
 
 INSERT INTO interpreters (
 id, security_clearance_date, contract_expiration_date,fingerprint_date,
-bop_form_submission_date, oath_date, solicit_availability,
+bop_form_submission_date, oath_date, solicit_availability,publish_public,
 comments, address1, address2, city, state, zip, home_phone, country
 )
 (SELECT interpreters.interp_id,
@@ -47,6 +47,7 @@ comments, address1, address2, city, state, zip, home_phone, country
     IF (bop_forms_submitted = "0000-00-00",NULL,bop_forms_submitted),
     IF (oath = "0000-00-00",NULL,oath),
     IF (availability_invitees.interp_id IS NULL, 0, 1),
+    IF (publish_public = "Y",1,0),
     notes, address1, address2, city, state, zip, home, "United States"
 
 FROM dev_interpreters.interpreters
