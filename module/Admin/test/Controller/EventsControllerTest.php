@@ -208,12 +208,14 @@ class EventControllerTest extends AbstractControllerTest
           ->getSingleScalarResult();
         // sanity check
         $this->assertEquals(2, (integer)$count_after);
-        $id = $count_after; // as it so happens
+        $id = $em->createQuery('SELECT MAX(e.id) FROM InterpretersOffice\Entity\Event e')
+        ->getSingleScalarResult();//$count_after; // as it so happens
         $this->reset(true);
         $this->login('david', 'boink');
         $this->reset(true);
         $url = '/admin/schedule/edit/'.$id;
         $this->dispatch($url);
+        // $this->dumpResponse(); return;
         $this->assertQueryCount('form#event-form', 1);
         $dom = new Dom\Query($this->getResponse()->getBody());
         $element = $dom->execute('#time')->current();
