@@ -16,7 +16,7 @@ class FixtureSetupTest extends AbstractControllerTest
     {
         return $this->getApplicationServiceLocator()->get('entity-manager');
     }
-    public function testSomething()
+    public function testTestDatabaseSanityAndHomePage()
     {
         $container = $this->getApplicationServiceLocator();
         $this->assertTrue($container instanceof \Interop\Container\ContainerInterface);
