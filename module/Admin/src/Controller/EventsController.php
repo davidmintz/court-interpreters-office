@@ -257,7 +257,7 @@ class EventsController extends AbstractActionController
         $entity = $this->entityManager->getRepository(Entity\Event::class)
             ->load($id);
         $entity = $this->form->getObject();
-        if (! $entity) {
+        if (! $entity->getId()) {
             return ['errorMessage' => "No event with id $id was found in the database.",
             'header' => 'event not found'];
         }

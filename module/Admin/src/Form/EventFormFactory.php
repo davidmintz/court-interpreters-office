@@ -41,9 +41,10 @@ class EventFormFactory implements FactoryInterface
             /** @var \InterpretersOffice\Entity\Event $entity  */
             $entity = $em->getRepository(Entity\Event::class)
                 ->load($id);
+            // echo "entity id is $id ...";die(get_class($entity));
             $options += ['object' => $entity, 'action' => 'update',];
             $form = new EventForm($em, $options);
-            $form->setObject($entity);
+            $form->setObject($entity ?? new Entity\Event());
         } else {
             $form = new EventForm($em, $options + ['object' => null, 'action' => 'create',]);
         }
