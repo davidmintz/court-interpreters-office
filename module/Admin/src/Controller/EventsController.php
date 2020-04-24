@@ -253,11 +253,10 @@ class EventsController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
-        /** @var \InterpretersOffice\Entity\Event $entity  */
-        $entity = $this->entityManager->getRepository(Entity\Event::class)
-            ->load($id);
+        /** @var \InterpretersOffice\Entity\Event $entity  */        
         $entity = $this->form->getObject();
-        if (! $entity->getId()) {
+        if (! $entity->getId()) { 
+            // i.e. if it's an empty object the factory injected when it couldn't find it by id...
             return ['errorMessage' => "No event with id $id was found in the database.",
             'header' => 'event not found'];
         }
