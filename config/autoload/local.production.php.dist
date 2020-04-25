@@ -1,0 +1,57 @@
+<?php /** template configuration file */
+
+/**
+ * This is one of two (three?) configuration files that must be copied into config/autoload 
+ * with the .dist extension removed and edited according to your needs. 
+ * 
+ * You also have to set a server environment variable "environment" with the value "production".
+ */
+
+use Zend\Mail\Transport\Smtp;
+use Zend\Mail\Transport\SmtpOptions;
+
+return   [
+    'view_manager' => [
+        'display_exceptions' => false,
+    ],
+    /** configuration for Laminas\Mail https://docs.laminas.dev/laminas-mail/ */
+    'mail' => [
+        'transport' => Smtp::class,
+        'transport_options' => [
+            'class' => SmtpOptions::class,
+            'options' => [
+                'name'     => '',
+                'host'     => '',
+                'port'     => 465,
+                'connection_class'  => 'login',
+
+                'connection_config' => [
+                    'username' => 'user',
+                    'password' => 'password',
+                    'ssl'  => 'ssl',
+                ],
+            ],
+        ],
+        'from_address' => 'default_from_address@example.org',
+        'from_entity' => 'Interpreters Office',
+    ],
+     /** contact information variables for your layout */
+    'site' => [
+        'contact' => [
+            'organization_name' => 'Your Office',
+            'organization_locality' => 'Your City',
+            'telephone' => 'Your phone number',
+            'email' => 'contact@example.org',
+            'website' => 'https://interpreters.example.org',
+        ],        
+    ],
+    /** optional list of IP addresses that can read the interpreters schedule without logging in (experimental) 
+    *  OR pattern that the hosting domain must match
+    */
+    'permissions' => [
+        'schedule' => [
+            'anonymous_ips_allowed' => [],
+            'host_domain_allowed' => '',
+        ],
+    ],
+];
