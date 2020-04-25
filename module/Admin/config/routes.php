@@ -1050,5 +1050,17 @@ return  [
                 ],
             ],
         ],
+        'support' => [
+            'type' => Segment::class,
+            'may_terminate' => true,
+            'options' => [
+                'route' => '/admin/support',
+                'defaults' => [
+                    'module' => __NAMESPACE__,
+                    'controller' => Controller\IndexController::class,
+                    'action' => 'support',
+                ],
+            ],
+        ],
     ],
  ];

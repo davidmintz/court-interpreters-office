@@ -26,4 +26,12 @@ class IndexController extends AbstractActionController
 
         return new ViewModel(['acl_config' => $acl_config, 'acl' => $container->get("acl")]);
     }
+
+    /**
+     * serves the support page (WIP)
+     */
+    public function supportAction()
+    {
+        
+    }
 }

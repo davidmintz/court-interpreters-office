@@ -28,9 +28,9 @@ return [
                     // you should leave this next setting as is. there seems to be a bug and this
                     // works around it as unobtrusively as possible.
                     // https://github.com/doctrine/doctrine2/issues/5622#issuecomment-231727355
-                    'driverOptions' => [
-                        PDO::MYSQL_ATTR_INIT_COMMAND =>
-                            "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))"
+                    'driverOptions' => [                      
+                         PDO::MYSQL_ATTR_INIT_COMMAND =>
+                            "SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY','')),names utf8",
                     ],
                 ]
             ]

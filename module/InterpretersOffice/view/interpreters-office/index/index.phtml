@@ -1,24 +1,18 @@
 <?php
 /** module/InterpretersOffice/view/interpreters-office/index/index.phtml */
 ?>
-<div class="jumbotron text-center">
-    <h2 class="text-monospace border border-primary rounded mx-auto py-2" style="max-width:500px">InterpretersOffice</h2>
+<div class="jumbotron text-center py-4">
+    <h2 class="text-monospace border border-primary rounded mx-auto pt-3 pb-2" style="max-width:500px">InterpretersOffice</h2>
     <p>The court interpreter management system.</p>
     <?php if (! $this->identity()) : ?>
     <div class="mx-auto" style="max-width:500px">
-        <a id="login" href="<?php echo $this->basePath('login')?>"><button class="btn btn-primary btn-lg btn-block">log in</button></a>
-        or
-        <a href="<?php echo $this->basePath('user/register')?>"><button class="btn btn-primary btn-lg border btn-block">create an account</button></a>
+    
+        <!-- <a id="login" href="<?php echo $this->basePath('login')?>"><button class="btn btn-primary btn-lg btn-block">log in</button></a> -->
+        
+        <!-- <a href="<?php echo $this->basePath('user/register')?>"><button class="btn btn-primary btn-lg border btn-block">create an account</button></a> -->
     </div>
     <?php endif; ?>
 </div>
-<?php echo $this->flashMessenger()->render();?>
-
-<p>
-This is a development version of InterpretersOffice. For more information please see
-<a href="https://interpretersoffice.org">the official website</a>. Our source code
-is available at <a href="https://github.com/davidmintz/court-interpreters-office">github</a>.
-</p>
 <?php
 if (file_exists(
     './module/InterpretersOffice/view/interpreters-office/custom/index/index.phtml'

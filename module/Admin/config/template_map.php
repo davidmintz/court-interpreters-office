@@ -58,6 +58,8 @@ return [
     'interpreters-office/admin/docket-annotations/index' => __DIR__ . '/../view/docket-annotations/index.phtml',
     'interpreters-office/admin/docket-annotations/add' => __DIR__ . '/../view/docket-annotations/form.phtml',
     'interpreters-office/admin/docket-annotations/edit' => __DIR__ . '/../view/docket-annotations/form.phtml',
+    'interpreters-office/admin/index/support' => __DIR__ . '/../view/support/index.phtml',
+    'interpreters-office/admin/reports/index' => __DIR__ . '/../view/reports/index.phtml',
 
    
 

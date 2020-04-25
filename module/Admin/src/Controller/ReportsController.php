@@ -44,7 +44,7 @@ class ReportsController extends AbstractActionController
 
     public function indexAction()
     {
-        return false;
+        
     }
 
 }

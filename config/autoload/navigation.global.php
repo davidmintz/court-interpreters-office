@@ -21,6 +21,13 @@ return [
                 'route' => 'admin',
                 'pages' => [
                     [
+                        'label' => 'support',
+                        'route' => 'support',
+                    ],[
+                        'label' => 'reports',
+                        'route' => 'reports',
+                    ],
+                    [
                         'label' => 'docket annotations',
                         'route' => 'admin/docket-annotations',
 
@@ -235,7 +242,9 @@ return [
                             ]
                         ],
                     ],
+                    
                 ],
+                
             ],
         ],
         // main navigation menu
@@ -381,9 +390,8 @@ return [
                     ],
                     [
                         'label' => 'reports',
-                        'uri' => '#',
+                        'uri' => 'reports',                        
                         'order' => 20,
-                        //'order' => 20,
                     ],
                     [
                         'order' => 30,
@@ -394,7 +402,7 @@ return [
                     [
                         'order' => 40,
                         'label' => 'support',
-                        'uri' => '#',
+                        'route' => 'support',
                     ],
                 ]
             ],

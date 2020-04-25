@@ -42,14 +42,16 @@ echo $this->headStyle();?>
                 <div class="dropdown">
                     <a class="btn btn-link dropdown-toggle" role="button" id="btn-user-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="fa fa-user"></span><span class="sr-only">my account</span> <span class="d-none d-xl-inline">
-                         welcome <?php echo $this->escapeHtml($user->username != $user->email ? $user->username : "$user->firstname $user->lastname")?></span></a>
+                         my account</span></a>
                     <div class="dropdown-menu" aria-labelledby="btn-user-menu">
                         <a class="dropdown-item" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
                         <a class="dropdown-item" href="<?php echo $this->url('logout')?>">log out</a>
                     </div>
-                </div>
+                </div>            
            <?php endif; ?>
           </div>
+          <?php if (! $user):?><div class="float-right"><a title="log in" href="<?=$this->basePath('login')?>"><span class="fa fa-user"></span><span class="sr-only">log in</span></div></a>
+            <?php endif ?>
       </nav>
     <?php  echo $this->content; ?>
     </div>
