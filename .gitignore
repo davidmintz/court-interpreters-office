@@ -18,7 +18,7 @@ config/*gpg
 bower.json
 codeception.yml
 bin/scratch/*sh
-
+public/test.php
 node_modules
 */sdny/*json
 **/forms.json
