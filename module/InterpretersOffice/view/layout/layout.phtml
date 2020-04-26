@@ -30,28 +30,30 @@ echo $this->headStyle();?>
         <?php endif;                                    // ----------------------------------------- //?>           
         <nav class="navbar navbar-expand-lg  navbar-light bg-light rounded mb-3 py-1 shadow-sm">
                 <a class="navbar-brand" href="<?php echo $this->url('home')?>">InterpretersOffice</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-          <div class="collapse navbar-collapse" id="navbar-collapse">
-            <?php if ($this->layout()->navigation_menu):
-                echo $this->navigation($this->layout()->navigation_menu)->menu()->setPartial('partials/navbar.phtml');
-                //->setPartial('partials/navbar.phtml');
-                endif;?>
-            <?php $user = $this->layout()->user ?: false; if ($user) :?>
-                <div class="dropdown">
-                    <a class="btn btn-link dropdown-toggle" role="button" id="btn-user-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="fa fa-user"></span><span class="sr-only">my account</span> <span class="d-none d-xl-inline">
-                         my account</span></a>
-                    <div class="dropdown-menu" aria-labelledby="btn-user-menu">
-                        <a class="dropdown-item" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
-                        <a class="dropdown-item" href="<?php echo $this->url('logout')?>">log out</a>
-                    </div>
-                </div>            
-           <?php endif; ?>
-          </div>
-          <?php if (! $user):?><div class="float-right"><a title="log in" href="<?=$this->basePath('login')?>"><span class="fa fa-user"></span><span class="sr-only">log in</span></div></a>
-            <?php endif ?>
+    <?php if ($this->identity()):?>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+        <?php if ($this->layout()->navigation_menu):
+            echo $this->navigation($this->layout()->navigation_menu)->menu()->setPartial('partials/navbar.phtml');
+            //->setPartial('partials/navbar.phtml');
+            endif;?>
+            <div class="dropdown">
+                <a class="btn btn-link dropdown-toggle" role="button" id="btn-user-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="fa fa-user"></span><span class="sr-only">my account</span> <span class="d-none d-xl-inline">
+                     my account</span></a>
+                <div class="dropdown-menu" aria-labelledby="btn-user-menu">
+                    <a class="dropdown-item" href="<?php echo $this->url('account/edit-profile')?>">profile</a>
+                    <a class="dropdown-item" href="<?php echo $this->url('logout')?>">log out</a>
+                </div>
+            </div>            
+        </div>
+    <?php else:?>
+        <div>
+            <div class="float-right"><a title="log in" href="<?=$this->basePath('login')?>"><span class="fa fa-user"></span><span class="sr-only">log in</span></a></div>
+        </div>
+    <?php endif?>
       </nav>
     <?php  echo $this->content; ?>
     </div>
