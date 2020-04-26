@@ -6,7 +6,7 @@
  * @see https://docs.zendframework.com/tutorials/advanced-config/#environment-specific-system-configuration
  * @see https://docs.zendframework.com/tutorials/advanced-config/#environment-specific-application-configuration
  */
-
+ 
  return [
     // Retrieve list of modules used in this application.
     'modules' => require __DIR__.'/modules.config.php',
@@ -32,7 +32,7 @@
         // Whether or not to enable a configuration cache.
         // If enabled, the merged configuration will be cached and used in
         // subsequent requests.
-        'config_cache_enabled' => false,
+        'config_cache_enabled' => getenv('environment') == 'production',
 
         // The key used to create the configuration cache file name.
         'config_cache_key' => 'application.config.cache',
