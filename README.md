@@ -1,9 +1,11 @@
 # InterpretersOffice
 is a web application for managing busy court interpreters offices (in the English-speaking United States judicial system).
 
-As of now this app is not quite production-ready, but we're getting close. The intention is to make it available to any court interpreter offices that are interested in using it. The motivation is that there is to my knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office. In my own workplace we use an application that I wrote (and which sprang into being precisely because of this dearth of alternatives), and it works great, but needs updating and has too many baked-in features that are peculiar only to our Interpreters Office's needs. So this project will be far and away the world's finest federal court interpreter management system (true, the competition is scarce).
+Developed and used by the Interpreters Office for the US District Court, Southern District of New York, InterpretersOffice
+is freely available to any other court interpreter offices that are interested in using it. The motivation for creating it 
+is that there is to our knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office.
 
-InterpretersOffice is designed primarily with the US District Court system in mind, but I'm trying to keep it flexible enough for possible use in state courts as well. We should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is the language of the court.
+InterpretersOffice is designed primarily with the US District Court system in mind, and is currently probably not well suited for adoption by other court systems. We should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is the language of the court.
 
 # features
 
@@ -52,9 +54,9 @@ completely free; the hardware you'll need is inexpensive.
 
 # installation
 
-As of now, normal people are not encouraged to attempt installing InterpretersOffice because setup is a chore. (If you're a technical person and want to give it a shot, by all means feel free -- and contact me if you have questions. We have some [installation notes here](https://github.com/davidmintz/court-interpreters-office/blob/master/doc/INSTALLATION.txt)).
+Currently, installation requires some manual setup. We plan to make this more convenient and better-documented in future releases. If you're a technical person and want to give it a shot, by all means feel free -- and contact me if you have questions. We have some [installation notes here](https://github.com/davidmintz/court-interpreters-office/blob/master/doc/INSTALLATION.txt.
 
-But when the great day arrives, you will need to have installed the industry-standard PHP dependency manager [composer](https://getcomposer.org). Download (or clone) this repository and then run `composer install` from the application root. Next, you'll need to create your mysql database and a mysql user/password for it. Finally, there will be a couple of configuration files to edit. Details will be in README files and comments in the config files themselves.
+Essentially, you need download the source code and then, using the industry-standard PHP dependency manager [composer](https://getcomposer.org), install the the software dependencies, and create your mysql database and a mysql user/password for the application to use. Then, there are a couple of configuration files to edit and directories to create and set to be server-writeable.
 
 # demonstration
 
@@ -70,4 +72,4 @@ My name is [David Mintz](https://davidmintz.org) and I'm a Spanish interpreter o
 
 # acknowledgments
 
-Our server-side code is being developed in PHP 7.3 (and tested against 7.2 - 7.4) and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more. We are boundlessly grateful to the people who make these superb tools available.
+Our server-side code is works with PHP 7.2 - 7.4, and relies heavily on the  [Laminas MVC Framework](https://docs.laminas.dev/) (formerly Zend) and the [Doctrine Object Relational Mapper](http://www.doctrine-project.org/projects/orm.html). The  front end makes use of [Bootstrap front-end framework](http://getbootstrap.com/), the [jQuery Javascript library](http://jquery.com/), and more. We are boundlessly grateful to the people who make these superb tools available.
