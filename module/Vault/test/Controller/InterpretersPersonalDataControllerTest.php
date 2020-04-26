@@ -63,9 +63,8 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest
                 'language-select' => 1,
                 'interpreterLanguages' => [
                     [
-                        'language_id' => $russian->getId(),
-                        'interpreter_id' => '',
-                        'federalCertification' => '-1',
+                        'language' => $russian->getId(),
+                        'languageCredential' => '3',                        
                     ],
                 ],
             ],
@@ -76,9 +75,10 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest
             new Parameters($data)
         );
         $this->dispatch($url);
-        //$this->dumpResponse(); return;
-        $this->assertRedirect();
-        $this->assertRedirectTo('/admin/interpreters');
+        $str = $this->getResponse()->getBody();
+        $res = json_decode($str);
+        $this->assertTrue(is_object($res));
+        $this->assertEquals('success',$res->status);
 
         $id = $em->createQuery('SELECT i.id FROM InterpretersOffice\Entity\Interpreter i ORDER BY i.id DESC')
                 ->setMaxResults(1)
@@ -147,11 +147,10 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest
                 'dob' => '05/22/1971',
                 'ssn' => '123456789',
                 'language-select' => 1,
-                'interpreter-languages' => [
+                'interpreterLanguages' => [
                     [
-                        'language_id' => $russian->getId(),
-                        'interpreter_id' => $entity->getId(),
-                        'federalCertification' => '-1',
+                        'language' => $russian->getId(),
+                        'languageCredential' => 3,                        
                     ],
                 ],
             ],
@@ -161,9 +160,12 @@ class InterpretersPersonalDataControllerTest extends AbstractControllerTest
              new Parameters($data)
          );
         $this->dispatch($url);
-        //$this->dumpResponse();
-        $this->assertRedirect();
-        $this->assertRedirectTo('/admin/interpreters');
+       //$this->dumpResponse();
+        $res = $this->getResponse()->getBody();
+        $data = json_decode($res);
+        $this->assertTrue(is_object($data));
+        $this->assertEquals('success',$data->status);
+        // $this->assertRedirectTo('/admin/interpreters');
         $em->refresh($entity);
         $this->assertEquals('123456789', $vault->decrypt($entity->getSsn()));
     }

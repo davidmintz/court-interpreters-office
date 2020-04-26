@@ -91,7 +91,7 @@ class VaultController extends AbstractActionController
 
         try {
             $this->verifyAuth($params);
-            $key = $this->vaultService->getEncryptionKey();
+            $key = $this->vaultService->getEncryptionKey();            
             $cipher = new BlockCipher(new Openssl());
             $cipher->setKey($key);
             $decrypted = [];
