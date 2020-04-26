@@ -21,7 +21,7 @@ bin/scratch/*sh
 
 node_modules
 */sdny/*json
-*/forms.json
+**/forms.json
 doc/api
 
 test.error.log
