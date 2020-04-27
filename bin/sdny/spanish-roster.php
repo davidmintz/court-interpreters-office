@@ -20,7 +20,8 @@ try {
 	$db = new PDO("mysql:host={$host};dbname=$db",
 		$config['user'], $config['password'],[
 		 PDO::ATTR_ERRMODE =>  PDO::ERRMODE_EXCEPTION,
-		 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8',
     ]);
     $sql = 'SELECT DISTINCT CONCAT(lastname,", ",firstname) AS name, mobile_phone, office_phone, email
     FROM interpreters i JOIN people p ON i.id = p.id
