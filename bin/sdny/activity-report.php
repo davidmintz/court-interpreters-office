@@ -19,7 +19,9 @@ try {
     $host = $config['host']??'localhost';
 	$db = new PDO("mysql:host={$host};dbname=$db",
 		$config['user'], $config['password'],[
-		 PDO::ATTR_ERRMODE =>  PDO::ERRMODE_EXCEPTION
+		 PDO::ATTR_ERRMODE =>  PDO::ERRMODE_EXCEPTION,
+		 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+		 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET names UTF8',
 	]);
 	
 
@@ -31,7 +33,7 @@ try {
 	AND languages.name <> "CART" /* fuck CART, it is NOT a language */
 	GROUP BY language ORDER BY `total` DESC';
     $result = $db->query($sql);
-    $data = $result->fetchAll(PDO::FETCH_ASSOC);
+    $data = $result->fetchAll();
 
 	if (! $result->rowCount()) {
 		throw new \Exception("unexpected zero results size");
