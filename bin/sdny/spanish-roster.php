@@ -31,8 +31,11 @@ try {
     AND state IN  ("NY","NJ","CT","PA") AND (mobile_phone <> "" OR office_phone <> "")  ORDER BY lastname, firstname';
     $result = $db->query($sql);
     $data = $result->fetchAll();
+    if (! $result->rowCount()) {
+		throw new \Exception("unexpected zero results size");
+    }
     $json = json_encode($data);
-    fwrite(STDOUT,$json);   
+    fwrite(STDOUT,$json);
 } catch (\Exception $e) {
     fwrite(STDERR,$e->getMessage());
 }
