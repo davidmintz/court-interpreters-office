@@ -21,7 +21,7 @@ try {
 		$config['user'], $config['password'],[
 		 PDO::ATTR_ERRMODE =>  PDO::ERRMODE_EXCEPTION
 	]);
-	// create HTML table for FAQ about most-often used languages
+	
 
 	$sql = 'select count(interpreters_events.event_id) AS `total`,
 	languages.name AS language FROM interpreters_events JOIN events ON interpreters_events.event_id = events.id
@@ -38,6 +38,7 @@ try {
     }
     /* this will be removed */
     if (false){
+		// create HTML table for FAQ about most-often used languages
 	ob_start();?>
 	<table id="language-usage">
 		<thead>

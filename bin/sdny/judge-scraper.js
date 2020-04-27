@@ -69,8 +69,8 @@ var data = {USMJ: {}, USDJ: {}};
     var page_2 = Array.from(await get_judge_links("district",1));
     usdj_links.push(...page_2);
     for (var i = 0; i < usdj_links.length; i++) {
-        var name = usdj_links[i].textContent.trim().replace(/^Hon. /,"");
-        var url = usdj_links[i].href;
+        let name = usdj_links[i].textContent.trim().replace(/^Hon. /,"");
+        let url = usdj_links[i].href;
         // alas, there is no reliable way of parsing out first, middle and
         // last names any longer. it formerly was '<surnames>, <forenames and/or initials>'
         // but we do know they are sorted alphabetically. that might make it possible to
@@ -79,9 +79,9 @@ var data = {USMJ: {}, USDJ: {}};
         data.USDJ[name] = await parse_judge_info(url);
     }
     var usmj_links = await get_judge_links("magistrate");
-    for (var i = 0; i < usmj_links.length; i++) {
-        var name = usmj_links[i].textContent.trim().replace(/^Hon. /,"");
-        var url = usmj_links[i].href;
+    for ( i = 0; i < usmj_links.length; i++) {
+        let name = usmj_links[i].textContent.trim().replace(/^Hon. /,"");
+        let url = usmj_links[i].href;
         console.error(`fetching ${url} for: ${name}, USMJ`);
         data.USMJ[name] = await parse_judge_info(url);
     }
