@@ -67,7 +67,7 @@ class Module
         if (isset($config['site'])) {
             $viewModel->setVariables($config['site']['contact']);
         }
-        // workaround for phpunit and php7.2 which is less tolerant than earlier
+        // workaround for phpunit and php >= 7.2 which is less tolerant than earlier
         // php versions and throws "ini_set(): Headers already sent. You cannot
         // change the session module's ini settings at this time"
         if ('testing' != getenv('environment')) {
