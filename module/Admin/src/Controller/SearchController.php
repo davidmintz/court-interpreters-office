@@ -45,7 +45,7 @@ class SearchController extends AbstractActionController
     {
         $docket = $this->params()->fromRoute('docket');
         $this->session->search_defaults = ['docket' => $docket,'page' => 1];
-        $this->redirect()->toRoute('search');
+        return $this->redirect()->toRoute('search');
     }
 
     /**
