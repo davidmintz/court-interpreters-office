@@ -1,4 +1,4 @@
-#/bin/bash 
+#!/bin/bash 
 
 # dumps mysql databases, rotating out files older than 
 # 7 days for daily, 6 weeks for weekly. suitable for cron
@@ -10,7 +10,7 @@
 set -e
 USAGE='usage: db-backup.sh --frequency <daily|weekly> <database> [other_database...]'
 BACKUP_DIR="/opt/backup";
-POSITIONAL=()
+POSITIONAL=();
 while [[ $# -gt 0 ]]
 do
     key="$1"
@@ -60,8 +60,8 @@ fi;
 
 path="${BACKUP_DIR}/${FREQUENCY}"
 
-if [ ! -d $PATH ]; then
-    mkdir -p $PATH
+if [ ! -d $path ]; then
+    mkdir -p $path
 fi;
 
 for database in ${POSITIONAL[*]}; do 
