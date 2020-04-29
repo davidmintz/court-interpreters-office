@@ -55,7 +55,6 @@ return   [
         ],
     ],
     'security' => [
-            'max_failed_logins' => 6,
-        ],
+        'max_login_failures' => 6,        
     ],
 ];

@@ -55,8 +55,14 @@ return [
             'organization_locality' => 'New York, NY',
             'email' => 'interpreters@nysd.uscourts.gov',
         ],
-        'security' => [
-            'max_failed_logins' => 6,
+    ],
+    'permissions' => [
+        'schedule' => [
+            'anonymous_ips_allowed' => [],
+            'host_domain_allowed' => '',
         ],
-    ]
+    ],
+    'security' => [
+        'max_login_failures' => 6,        
+    ],
 ];
