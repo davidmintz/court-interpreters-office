@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * SDNY judge screen-scraper for node.js
  *
@@ -75,14 +73,14 @@ var data = {USMJ: {}, USDJ: {}};
         // last names any longer. it formerly was '<surnames>, <forenames and/or initials>'
         // but we do know they are sorted alphabetically. that might make it possible to
         // infer from a name's position which part is the surname.
-        console.error(`fetching ${url} for: ${name}, USDJ`);
+        // console.error(`fetching ${url} for: ${name}, USDJ`);
         data.USDJ[name] = await parse_judge_info(url);
     }
     var usmj_links = await get_judge_links("magistrate");
     for ( i = 0; i < usmj_links.length; i++) {
         let name = usmj_links[i].textContent.trim().replace(/^Hon. /,"");
         let url = usmj_links[i].href;
-        console.error(`fetching ${url} for: ${name}, USMJ`);
+        // console.error(`fetching ${url} for: ${name}, USMJ`);
         data.USMJ[name] = await parse_judge_info(url);
     }
     console.log(JSON.stringify(data));
