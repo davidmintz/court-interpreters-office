@@ -46,7 +46,7 @@ return [
     'interpreters-office/admin/event-types/edit' => __DIR__ . '/../view/event-types/form.phtml',
     'interpreters-office/admin/normalization/index' => __DIR__ . '/../view/normalization/index.phtml',
     'interpreters-office/admin/search/search' => __DIR__ . '/../view/search/search.phtml',
-    'interpreters-office/admin/search/docket-search' => __DIR__ . '/../view/search/docket-search.phtml',
+    'interpreters-office/admin/search/docket-search' => __DIR__ . '/../view/search/search.phtml',
     'interpreters-office/admin/email/index' => __DIR__ . '/../view/email/index.phtml',
     'interpreters-office/admin/email/form' => __DIR__ . '/../view/email/form.phtml',
     // this one's a bit weird...
