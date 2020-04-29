@@ -23,7 +23,7 @@ class AuthControllerFactory
      * @param string             $requestedName
      * @param array              $options
      *
-     * @todo rethink this approach
+     * @todo rethink this approach?
      *
      * @return AuthController
      */
@@ -43,6 +43,10 @@ class AuthControllerFactory
             [$listener, 'onLogout']
         );
         $service = $container->get('auth');
-        return new AuthController($service);
+
+        $config = $container->get('config')['security'] ?? [];
+        $max_login_failures = $config['max_login_failures'] ?? 6;
+
+        return new AuthController($service,$max_login_failures);
     }
 }

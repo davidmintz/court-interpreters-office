@@ -27,9 +27,13 @@ class AuthenticationListenerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        $config = $container->get('config')['security'] ?? [];
+        $max_login_failures = $config['max_login_failures'] ?? 6;
+        
         return new AuthenticationListener(
             $container->get('log'),
-            $container->get('entity-manager')
+            $container->get('entity-manager'),
+            $max_login_failures
         );
     }
 }

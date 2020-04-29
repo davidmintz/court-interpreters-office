@@ -13,7 +13,6 @@ use InterpretersOffice\Form\LoginForm;
 /**
  * controller for managing user authentication.
  *
- * to be continued
  */
 class AuthController extends AbstractActionController
 {
@@ -25,13 +24,24 @@ class AuthController extends AbstractActionController
     protected $auth;
 
     /**
+     * @var int $max_login_failures
+     * 
+     * Maximum number of consecutive login failures allowed before we
+     * disabled the user account.
+     * 
+     */
+    protected $max_login_failures = 6;
+
+    /**
      * constructor.
      *
      * @param AuthenticationServiceInterface $auth
+     * @param int $max_login_failures
      */
-    public function __construct(AuthenticationServiceInterface $auth)
+    public function __construct(AuthenticationServiceInterface $auth, int $max_login_failures)
     {
         $this->auth = $auth;
+        $this->max_login_failures = $max_login_failures;
     }
 
     /**
@@ -41,7 +51,7 @@ class AuthController extends AbstractActionController
      */
     public function indexAction()
     {
-        echo 'shit is working in AuthController indexAction<br>';
+        // echo 'shit is working in AuthController indexAction<br>';
 
         return false;
     }
@@ -61,6 +71,7 @@ class AuthController extends AbstractActionController
         $is_xhr = $request->isXmlHttpRequest();
         if ($request->isPost()) {
             $form->setData($request->getPost());
+            // mere input validation
             if (! $form->isValid()) {
                 return $is_xhr ?
                         new JsonModel([
@@ -71,6 +82,7 @@ class AuthController extends AbstractActionController
                         :
                          new ViewModel(['form' => $form]);
             }
+            // actual authentication
             $data = $form->getData();
             $this->auth->getAdapter()
                  ->setIdentity($data['identity'])
@@ -79,13 +91,23 @@ class AuthController extends AbstractActionController
             $event_params = ['result' => $result, 'identity' => $data['identity']];
             if (! $result->isValid()) {
                 $this->events->trigger(__FUNCTION__, $this, $event_params);
-                
+                $entity = $result->getUserEntity();
+                $warning = null;
+                if ($entity) {
+                    $num_failures = $entity->getFailedLogins();
+                    if (1 == $this->max_login_failures - $num_failures) {
+                        $warning = 'Your account will be disabled after one more failed authentication attempt.';
+                    } elseif ($this->max_login_failures == $num_failures) {
+                        $warning = 'Account has been disabled. Please contact the site administrators for assistance.';
+                    }
+                }
                 return $is_xhr ? new JsonModel([
                             'authenticated' => false,
                             'error' => "authentication failed",
+                            'warning' => $warning,
                         ])
                     : new ViewModel(
-                        ['form' => $form, 'status' => $result->getCode()]
+                        ['form' => $form, 'warning' => $warning,'status' => $result->getCode()]
                     );
             }
             $user = $this->auth->getIdentity();

@@ -5,6 +5,7 @@
 namespace InterpretersOffice\Service\Authentication;
 
 use Laminas\Authentication\Result as AuthResult;
+use InterpretersOffice\Entity\User;
 
 /**
  * extension of Laminas\Authentication\Result just to provide another
@@ -19,13 +20,27 @@ class Result extends AuthResult
      */
     const FAILURE_USER_ACCOUNT_DISABLED = -10;
 
+    /**
+     * @var $entity User
+     */
     protected $entity;
 
+    /**
+     * gets the User entity
+     * 
+     * @return User 
+     */
     public function getUserEntity()
     {
         return $this->entity;
     }
 
+    /**
+     * gets User entity
+     * 
+     * @param User $entity
+     * @return Result
+     */
     public function setUserEntity($entity)
     {
         $this->entity = $entity;

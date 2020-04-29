@@ -15,5 +15,10 @@
         // nope.
         $referrer = $this->form->get('referrer'); $referrer->setValue($this->layout()->referrer);
         echo $this->formElement($referrer); ?>
-        <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>
+        <?php echo $this->formElementErrors($this->form->get('login_csrf')) ?>        
  </form>
+ <?php if ($this->warning): ?>
+  <div class="alert alert-danger border border-warning login-failures rounded mx-auto mt-1" style="max-width:500px">
+    <?=$this->escapeHtml($this->warning)?>
+  </div>
+<?php endif ?>
