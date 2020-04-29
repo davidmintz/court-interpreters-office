@@ -28,7 +28,7 @@ try {
     JOIN interpreters_languages il ON i.id = il.interpreter_id 
     JOIN language_credentials cred ON il.credential_id = cred.id
     JOIN languages l ON l.id = il.language_id 
-    WHERE l.name = "Spanish" AND i.publish_public  AND cred.abbreviation = "AO" AND p.active
+    WHERE l.name = "Spanish" AND i.publish_public AND cred.abbreviation = "AO" AND p.active
     AND state IN  ("NY","NJ","CT","PA") AND (mobile_phone <> "" OR office_phone <> "")  ORDER BY lastname, firstname';
     $result = $db->query($sql);
     $data = $result->fetchAll();
