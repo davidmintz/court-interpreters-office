@@ -55,16 +55,16 @@ class Adapter extends AbstractAdapter
         )
            ->setParameters([':identity' => $this->identity]);
 
-        $identity = $query->getOneOrNullResult();
+        $user = $query->getOneOrNullResult();
 
-        if (! $identity) {
+        if (! $user) {
             $this->authenticationResultInfo['code'] = \Laminas\Authentication\Result::FAILURE_IDENTITY_NOT_FOUND;
             $this->authenticationResultInfo['messages'][] = 'A record with the supplied identity could not be found.';
 
             return $this->createAuthenticationResult();
         }
 
-        return $this->validateIdentity($identity);
+        return $this->validateIdentity($user);
     }
 
     /**
@@ -72,17 +72,18 @@ class Adapter extends AbstractAdapter
      *
      * @param User $identity
      *
-     * @return \InterpretersOffice\Service\Authentication\Result
+     * @return Result
      */
-    protected function validateIdentity(User $identity)
+    protected function validateIdentity(User $user) : Result
     {
-        if (! method_exists($identity, 'getPassword')) {
+        if (! method_exists($user, 'getPassword')) {
             throw new \Exception(
                 'validateIdentity() expects an object that implements '
                     .' a public getPassword() method'
             );
         }
-        $hash = $identity->getPassword();
+        $this->authenticationResultInfo['identity'] = $user;
+        $hash = $user->getPassword();
         $password = $this->credential;
         $valid = password_verify($password, $hash);
 
@@ -93,7 +94,7 @@ class Adapter extends AbstractAdapter
             return $this->createAuthenticationResult();
         }
 
-        if (! $identity->isActive()) {
+        if (! $user->isActive()) {
             $this->authenticationResultInfo['code'] = Result::FAILURE_USER_ACCOUNT_DISABLED;
             $this->authenticationResultInfo['messages'][] = 'User account is disabled (inactive).';
 
@@ -101,7 +102,7 @@ class Adapter extends AbstractAdapter
         }
 
         $this->authenticationResultInfo['code'] = Result::SUCCESS;
-        $this->authenticationResultInfo['identity'] = $identity;
+        // $this->authenticationResultInfo['identity'] = $user;
         $this->authenticationResultInfo['messages'][] = 'Authentication successful.';
 
         return $this->createAuthenticationResult();
@@ -113,7 +114,7 @@ class Adapter extends AbstractAdapter
      *
      * @return InterpretersOffice\Service\Authentication\Result
      */
-    protected function createAuthenticationResult()
+    protected function createAuthenticationResult() : Result
     {
         if (! isset($this->authenticationResultInfo['identity'])) {
             return new Result(
@@ -145,10 +146,13 @@ class Adapter extends AbstractAdapter
         $user->id = $entity->getId();
 
 
-        return new Result(
+        $result = new Result(
             $this->authenticationResultInfo['code'],
             $user,
             $this->authenticationResultInfo['messages']
         );
+        return $result->setUserEntity($entity);
+
+
     }
 }

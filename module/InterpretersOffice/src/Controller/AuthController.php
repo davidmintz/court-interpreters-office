@@ -79,6 +79,7 @@ class AuthController extends AbstractActionController
             $event_params = ['result' => $result, 'identity' => $data['identity']];
             if (! $result->isValid()) {
                 $this->events->trigger(__FUNCTION__, $this, $event_params);
+                
                 return $is_xhr ? new JsonModel([
                             'authenticated' => false,
                             'error' => "authentication failed",

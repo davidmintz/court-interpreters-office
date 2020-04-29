@@ -54,4 +54,8 @@ return   [
             'host_domain_allowed' => '',
         ],
     ],
+    'security' => [
+            'max_failed_logins' => 6,
+        ],
+    ],
 ];

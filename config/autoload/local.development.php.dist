@@ -55,5 +55,8 @@ return [
             'organization_locality' => 'New York, NY',
             'email' => 'interpreters@nysd.uscourts.gov',
         ],
+        'security' => [
+            'max_failed_logins' => 6,
+        ],
     ]
 ];

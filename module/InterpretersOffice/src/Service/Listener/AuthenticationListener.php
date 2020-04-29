@@ -60,21 +60,22 @@ class AuthenticationListener
         $result = $params['result'];
         $ip = \filter_input(\INPUT_SERVER, 'REMOTE_ADDR', \FILTER_VALIDATE_IP)
                 ?: 'N/A';
+
+        $user_entity = $result->getUserEntity(); 
         if ($result->isValid()) {
             $message = sprintf(
                 'user %s authenticated from IP address: %s',
                 $params['identity'],
                 $ip
             );
-            $user = $params['auth']->getStorage()->read();
-            $dql = 'UPDATE InterpretersOffice\Entity\User u '
-                    . 'SET u.lastLogin = :when WHERE u.id = :id';
-            $this->entityManager->createQuery($dql)->setParameters([
-                ':when' => new \DateTime(),
-                ':id'   => $user->id,
-            ])->execute();
+            $user_entity->setLastLogin(new \DateTime())->setFailedLogins(0);               
         } else {
-            $message = sprintf(
+
+            if ($user_entity) {
+                $user_entity->setFailedLogins(1 + $user_entity->getFailedLogins());
+            }          
+
+            $message = sprintf(                
                 'login failed for user %s from IP address %s, reason: %s',
                 $params['identity'],
                 $ip,
@@ -82,7 +83,10 @@ class AuthenticationListener
             );
             $user = null;
         }
-        $this->log->info($message, ['channel'=>self::CHANNEL, 'entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
+        $this->log->info($message, 
+        ['channel'=>self::CHANNEL, 
+        'entity_class' => User::class,'entity_id' => $user_entity ? $user_entity->getId() : null]);
+        $this->entityManager->flush();
     }
 
     /**
