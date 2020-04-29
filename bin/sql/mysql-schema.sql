@@ -808,6 +808,20 @@ CREATE TABLE `tasks` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `tmp_event_map`
+--
+
+DROP TABLE IF EXISTS `tmp_event_map`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tmp_event_map` (
+  `office_id` mediumint(8) unsigned NOT NULL,
+  `dummy_id` mediumint(8) unsigned NOT NULL,
+  UNIQUE KEY `idx` (`office_id`,`dummy_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `users`
 --
 
@@ -822,6 +836,7 @@ CREATE TABLE `users` (
   `username` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
   `last_login` datetime DEFAULT NULL,
+  `failed_login_attempts` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `person_id` (`person_id`,`role_id`),
@@ -894,4 +909,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-23 15:33:38
+-- Dump completed on 2020-04-29 11:36:09

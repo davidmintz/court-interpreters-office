@@ -97,6 +97,19 @@ class User implements ResourceInterface, RoleInterface
     protected $lastLogin;
 
     /**
+     * @ORM\Column(type="integer",name="failed_login_attempts",options={"nullable":false,"default":0,"unsigned":true})
+     * number of consecutive failed logins.
+     * 
+     * This is incremented by one with each login failure until login succeeds,
+     * at which point it should be reset to 0. The account can be locked down after 
+     * a set number of failures.
+     * 
+     * @var int
+     * 
+     */
+    private $failed_logins = 0;
+
+    /**
      * Judge(s) to whom a user of hat Law Clerk or Courtroom Deputy is assigned.
      *
      * Most of these users have one and only one judge, but there can be cases where
@@ -369,6 +382,30 @@ class User implements ResourceInterface, RoleInterface
     public function getLastLogin()
     {
          return $this->lastLogin;
+    }
+
+    /**
+     * gets number of consecutive failed login attempts
+     * 
+     * @return int
+     */
+    public function getFailedLogins() : int
+    {
+        return $this->failed_logins;
+    }
+
+    /**
+     * sets number of failed login attempts
+     * 
+     * @param int $n
+     * @return User
+     * 
+     */
+    public function setFailedLogins(int $n) : User
+    {
+        $this->failed_logins = $n;
+
+        return $this;
     }
 
     /**
