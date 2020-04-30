@@ -1,11 +1,14 @@
+/* global $, fail, displayValidationErrors*/
+
 /** autocompletion options for defendant name search */
+
 
 var formatDocketElement;
 
 const deft_autocomplete_opts = {
     source: "/defendants/autocomplete",
     minLength: 2,
-    select: (event, ui) => {
+    select: (event) => {
         event.preventDefault();
         $("#defendant-search").val("");
     },
@@ -19,7 +22,7 @@ const deft_autocomplete_opts = {
 const interpreter_autocomplete_opts = {
     source: "/admin/interpreters",
     minLength: 2,
-    select: (event, ui) => {
+    select: (event,ui) => {
         event.preventDefault();
         $("#interpreter_id").val(ui.item.id);
         $(event.target).trigger("change");
@@ -47,7 +50,8 @@ $(function(){
         selectOtherMonths : true,
         showOtherMonths : true,
     });
-    $("#defendant-name").autocomplete(deft_autocomplete_opts)
+   
+    $("#defendant-name").autocomplete(deft_autocomplete_opts);
     var btn = $("#btn-submit");
     var form = btn.closest("form");
     form.append($("<input>").attr({type:"hidden",name:"pseudo_judge",id:"pseudo_judge"}));
@@ -62,14 +66,14 @@ $(function(){
     $("#btn-submit").on("click",function(e){
         e.preventDefault();
         $.get(form.attr("action"),form.serialize())
-        .done((res, status, xhr)=>{
-            $(".validation-error").hide();
-            if ( xhr.responseJSON && !res.valid ) {
-                return displayValidationErrors(res.validation_errors);
-            }
-            $("#results").html(res);
-        })
-        .fail(fail);
+            .done((res, status, xhr)=>{
+                $(".validation-error").hide();
+                if ( xhr.responseJSON && !res.valid ) {
+                    return displayValidationErrors(res.validation_errors);
+                }
+                $("#results").html(res);
+            })
+            .fail(fail);
     });
     const content = $("#results");
     content.on("click", ".pagination a",function(e){
@@ -82,29 +86,39 @@ $(function(){
         }
         var path = form.attr("action");
         $.get(`${path}?${form.serialize()}&page=${page}`)
-        .done(function(html){
-            content.html(html);
-        })
-        .fail(fail);
+            .done(function(html){
+                content.html(html);
+            })
+            .fail(fail);
     })
     /**
      * toggles display of additional defendant-names
      */
-    .on("click", "a.expand-deftnames", function(e){
-        e.preventDefault();
-        $(this).hide().siblings().slideDown();
-    })
-    .on("click","a.collapse-deftnames", function(e){
-        e.preventDefault();
-        var self = $(this);
-        self.hide().siblings().not(":first-of-type").slideUp(
-            function(){self.siblings("a.expand-deftnames").show();}
-        );
-    });
-    $('.event-delete').on("click",function(e){
+        .on("click", "a.expand-deftnames", function(e){
+            e.preventDefault();
+            $(this).hide().siblings().slideDown();
+        })
+        .on("click","a.collapse-deftnames", function(e){
+            e.preventDefault();
+            var self = $(this);
+            self.hide().siblings().not(":first-of-type").slideUp(
+                function(){self.siblings("a.expand-deftnames").show();}
+            );
+        });
+    $(".event-delete").on("click",function(e){
         e.preventDefault();
     });
     $("#interpreter").autocomplete(interpreter_autocomplete_opts);
+    $("#interpreter").autocomplete("instance")._renderItem =
+    function(ul, item) {
+        var hat = item.hat.replace(" court","");
+        return $( "<li>" )
+            .attr( "data-hat", item.hat )
+            .attr("title",item.hat)
+            .attr("data-id",item.id)
+            .append( $( "<div>" ).html(`${item.label} <span class="text-muted">${hat}</span>`) )
+            .appendTo( ul );
+    };
     var btn_reset = $("#btn-reset");
     form.on("change",function(e){
         var target = $(e.target);
@@ -112,7 +126,7 @@ $(function(){
         if (["submit","order"].includes(what)) {
             return;
         }
-        var has_defaults, elements = form.find('select, input');
+        var has_defaults, elements = form.find("select, input");
         elements.each(function(){
             var e = $(this);
             if (e.val() && ! ["submit","order"].includes(e.attr("name"))) {
@@ -121,15 +135,16 @@ $(function(){
             }
         });
         if (has_defaults) {
-             btn_reset.removeAttr("hidden")
+            btn_reset.removeAttr("hidden");
         } else {
             btn_reset.attr({hidden:true});
         }
     });
+    
     btn_reset.on("click",function(e){
         e.preventDefault();
         $("#results").empty();
-        form.find('select, input').each(function(i,e){
+        form.find("select, input").each(function(i,e){
             if (!["submit","order"].includes(e.name)) {
                 $(this).val("");
             }

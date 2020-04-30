@@ -237,8 +237,10 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     {
         $params = [':lastname' => "$name[lastname]%"];
         $cache_id = "autocomplete.$name[lastname]";
-        $dql = 'SELECT i.id, i.lastname, i.firstname FROM InterpretersOffice\Entity\Interpreter i '
-                . 'WHERE i.lastname LIKE :lastname ';
+        $dql = 'SELECT i.id, i.lastname, i.firstname, i.active, h.name hat
+            FROM InterpretersOffice\Entity\Interpreter i
+            JOIN i.hat h
+            WHERE i.lastname LIKE :lastname ';
         if ($name['firstname']) {
             $dql .= ' AND i.firstname LIKE :firstname ';
             $params[':firstname'] = "$name[firstname]%";
@@ -299,7 +301,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $result = $this->createQuery($dql, $cache_id, 3600)->setParameters($params)->getResult();
         $data = [];
         foreach ($result as $row) {
-            $data[] = ['id' => $row['id'],'value' => "$row[lastname], $row[firstname]"];
+            $data[] = ['id' => $row['id'],'value' => "$row[lastname], $row[firstname]", 'hat' => $row['hat']];
         }
         return $data;
     }
