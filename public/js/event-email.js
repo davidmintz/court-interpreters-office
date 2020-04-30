@@ -504,9 +504,14 @@ $(function(){
         });
     });
 
-    /* enable tooltips when dialog is shown */
+    /* enable tooltips, make dialog draggable when dialog is shown */
     $("#email-dialog").on("show.bs.modal",function(){
         $(`#${this.id} .btn`).tooltip();
+        $(this).draggable({cursor:"move"});
+        var default_notes = $("div.public-comments").text().trim();
+        if (default_notes) {
+            $("#message-body").text(default_notes);
+        }
     })
     /* remove form row (email recipient) when they click "x" */
         .on("click",".btn-remove-item",function(event){
