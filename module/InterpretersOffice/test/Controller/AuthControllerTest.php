@@ -39,13 +39,7 @@ class AuthControllerTest extends AbstractControllerTest
         $this->assertResponseStatusCode(302);
         $this->assertRedirect();
         $this->assertRedirectTo('/admin');
-
-        // this shit broke, we know not when or how.
-        //$auth = $this->getApplicationServiceLocator()->get('auth');
-        //$this->assertTrue($auth->hasIdentity(),"failed asserting auth has identity");
-
-        //echo $this->getResponseStatusCode()," is the response code \n";
-        //echo $this->dumpResponse();
+        
         $this->assertTrue($auth->hasIdentity(), 'failed asserting that $auth->hasIdentity()');
 
         $auth->clearIdentity();
@@ -214,5 +208,70 @@ class AuthControllerTest extends AbstractControllerTest
         );
         $auth = $this->getApplicationServiceLocator()->get('auth');
         $this->assertFalse($auth->hasIdentity());
+    }
+
+    public function testAdminCanRestoreAnotherUserAccountAfterTooManyAuthenticationFailures()
+    {
+        $entityManager = FixtureManager::getEntityManager();
+        $susie = $entityManager->getRepository('InterpretersOffice\Entity\User')
+                ->findByUsername('susie')[0];
+        $susie->setFailedLogins(6)->setActive(false);
+        $entityManager->flush();
+        // sanity check
+        $this->assertFalse($susie->isActive());
+        $id = $susie->getId();
+        $this->dispatch(
+                '/login',
+                'POST',
+                ['identity' => 'admin',
+                     'password' => 'boink',
+                     'login_csrf' => $this->getCsrfToken('/login', 'login_csrf'),
+                   ]
+            );
+        $this->reset(true);
+        $token = $this->getCsrfToken('/admin/users/edit/'.$id);
+        $this->dispatch(
+            '/admin/users/edit/'.$id,
+            'POST',
+            [
+                'csrf'=> $token,
+                'user' => [
+                    'active' => 1, // the significant thing
+                    'username' => 'susie',
+                    'id' => $id,
+                    'role' => $susie->getRole()->getId(),
+                    'person' => [
+                        'hat' => $susie->getPerson()->getHat()->getId(),
+                        'firstname'=> $susie->getPerson()->getFirstname(),
+                        'lastname'=> $susie->getPerson()->getLastname(),
+                        'middlename'=> $susie->getPerson()->getMiddlename(),
+                        'office_phone' => $susie->getPerson()->getOfficePhone(),
+                        'email' =>$susie->getPerson()->getEmail(),
+                        'mobile_phone' => $susie->getPerson()->getMobilePhone(),
+                        'id' => $susie->getPerson()->getId(),
+                        'active' => 1,
+                    ],
+                ],
+            ]
+        );
+        //$this->dumpResponse();//{"status":"success","validation_errors":null}
+        $this->assertResponseStatusCode(200);
+        $response = $this->getResponse()->getBody();
+        $data = json_decode($response);
+        $this->assertIsObject($data);
+        $this->assertEquals("success",$data->status);
+        $entityManager->refresh($susie);
+        $this->assertTrue($susie->isActive());
+        $this->assertTrue($susie->getFailedLogins() == 0);
+        $this->reset();
+        $this->dispatch('/login', 'POST',
+            [   'identity' => 'susie',
+                'password' => 'boink',
+                'login_csrf' => $this->getCsrfToken('/login', 'login_csrf'),
+            ]
+        );
+        $this->assertRedirect(); // because login suceeded
+        $auth = $this->getApplicationServiceLocator()->get('auth');
+        $this->assertTrue($auth->hasIdentity());
     }
 }
