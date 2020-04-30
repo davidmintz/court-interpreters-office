@@ -96,6 +96,11 @@ EOD;
         }
     }
 
+    public function mailgun($data)
+    {
+        return ['status'=>'so far so good','debug'=>$this->config];
+    }
+
     /**
      * renders $text as Markdown
      *

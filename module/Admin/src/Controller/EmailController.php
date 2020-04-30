@@ -54,6 +54,7 @@ class EmailController extends AbstractActionController
      */
     public function formAction()
     {
+        
         $sapi = php_sapi_name();
         if ($sapi !== 'fpm-fcgi') {
             $this->flashMessenger()->addErrorMessage(
@@ -86,6 +87,7 @@ class EmailController extends AbstractActionController
      */
     public function batchEmailAction()
     {
+        
         if (!function_exists('fastcgi_finish_request')){
             throw new \RuntimeException(
                 'batch email is currently not supported under server APIs other than fpm-fcgi');
@@ -93,7 +95,7 @@ class EmailController extends AbstractActionController
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         $file = './data/progress.txt';
         if (! \file_exists($file)) {
-            touch($file);
+            file_put_contents("done",$file);                
         } else {
             $contents = trim(file_get_contents($file));
             if ($contents && $contents != 'done') {
@@ -111,18 +113,34 @@ class EmailController extends AbstractActionController
             return new JsonModel(['validation_errors' => $filter->getMessages()]);
         }
         $data = $filter->getValues();
-
         $service = $this->emailService;
-        $config = $service->getConfig()['mail'];
-        $transport = (new BatchEmailService($config))->getTransport();
         /** @todo maybe move this to the BatchEmailService class */
         $recipients = $service->getRecipientList($data['recipient_list']);
         $total = count($recipients);
+        $service = $this->emailService;
+        $config = $this->emailService->getConfig();
         header("content-type: application/json");
         echo json_encode(['status' => 'started','total' => count($recipients)]);
         // this here is critical ...
         session_write_close();
         \fastcgi_finish_request();
+        if (isset($config['mailgun'])) {
+            // we will use Mailgun for batch sending                
+            file_put_contents($file, "$total of $total");
+            //return new JsonModel($service->mailgun($data));
+            \session_write_close();
+            \fastcgi_finish_request();
+            file_put_contents($file, "$total of $total");
+            sleep(1);
+            file_put_contents($file, "done");
+            return new JsonModel(['total' => $total,'current' => $i]);
+        } 
+
+        
+        $config = $service->getConfig()['mail'];
+        $transport = (new BatchEmailService($config))->getTransport();
+        
+        
         // ...otherwise it will NOT work
         
 
