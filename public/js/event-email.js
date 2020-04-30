@@ -476,7 +476,7 @@ $(function(){
                  .attr( "data-hat", item.hat )
                  .attr("title",item.hat)
                  .attr("data-id",item.id)
-                 .append( $( "<div>" ).text( item.label ) )
+                 .append( $( "<div>" ).text(`${item.label}, ${item.hat}`) )
                  .appendTo( ul );
          };
         // the button they can click to add a recipient whose email and name
