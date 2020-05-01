@@ -1,2 +1,8 @@
 
-<p style="font-size:120%">shit</p>
+````php
+$thing = new Thing();
+while ($thing->isCool()) {
+  // do something
+}
+
+````
