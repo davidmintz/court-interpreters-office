@@ -30,7 +30,8 @@
         "swiftmailer/swiftmailer": "^6.0",
         "mailgun/mailgun-php": "^3.0",
         "kriswallsmith/buzz": "^1.1",
-        "nyholm/psr7": "^1.2"
+        "nyholm/psr7": "^1.2",
+        "guzzlehttp/guzzle": "~6.0"
     },
     "scripts": {
         "zdt-on": "sed -i -e 's/false/true/' config/autoload/toolbar.enabled.php",
