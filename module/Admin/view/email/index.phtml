@@ -1,9 +1,10 @@
 <?php $this->headTitle('admin | email') ?>
 <div class="row">
     <?php // sanity check
-        if ($this->php_sapi_name != 'fpm-fcgi') : 
+        if ($this->php_sapi_name != 'fpm-fcgi' && !$this->mailgun) : 
             $error = "Batch email is not currently supported under your server configuration. 
-            The server API has to be <em>fpm-fcgi</em>; yours is <em>$this->php_sapi_name</em>.";
+            You need to use the Mailgun service <em>or</em> the server API has to be <em>fpm-fcgi</em>; 
+            yours is <em>$this->php_sapi_name</em>.";
             $header = "batch email not supported";
         else : $error = null; $header = null;
         endif;

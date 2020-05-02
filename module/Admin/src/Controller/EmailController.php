@@ -11,6 +11,7 @@ use Laminas\View\Model\ViewModel;
 
 use InterpretersOffice\Admin\Service\EmailService;
 use InterpretersOffice\Admin\Service\BatchEmailService;
+use RuntimeException;
 use Swift_Message;
 
 /**
@@ -49,46 +50,57 @@ class EmailController extends AbstractActionController
 
     /**
      * displays form for batch email
-     * 
      * @return ViewModel
      */
     public function formAction()
     {
-        $sapi = php_sapi_name();
-        if ($sapi !== 'fpm-fcgi') {
-            $this->flashMessenger()->addErrorMessage(
-                "Batch email is not currently supported under your server configuration. 
-                The server API has to be <em>fpm-fcgi</em>; yours is <em>$sapi</em>."
-            );
-            $this->redirect()->toRoute('email');
-        }
-        return new ViewModel([
+        $config = $this->emailService->getConfig();
+        $mailgun = $config['mailgun'] ?? false;        
+        $viewModel = new ViewModel([
             'recipient_list_options' => $this->emailService::$recipient_list_options,
             'site_config' => $this->emailService->getConfig()['site'] ?? [],
         ]);
+        if ($mailgun) {
+            $viewModel->setTemplate('email/mailgun');
+        }
+
+        return $viewModel;
     }
 
     /**
-     * index page for admin email
-     * 
-     * @return ViewModel
+     * index page
      */
     public function indexAction()
-    {      
-        return new ViewModel(['php_sapi_name'=>php_sapi_name()]);
+    {
+        $config = $this->emailService->getConfig();
+        $mailgun = $config['mailgun'] ?? false;
+        return new ViewModel(
+            ['php_sapi_name'=>php_sapi_name(),'mailgun' => $mailgun ? true : false]
+        );
+    }
+
+    /**
+     * batch sending via mailgun
+     */
+    public function mailgunAction()
+    {
+        return new JsonModel(['status'=>"it's a start"]);
     }
 
     /**
      * batch email
      *
-     * a revision to get us away from Laminas\Mail which is
-     * needlessly clumsy in our humble opinion
+     * Revised to get us away from Laminas\Mail which is
+     * needlessly clumsy in our humble opinion. And even this is
+     * fucked up. Sending more than a handful of emails succesively 
+     * over an SMTP connection is too fraught.
      */
     public function batchEmailAction()
     {
-        if (!function_exists('fastcgi_finish_request')){
-            throw new \RuntimeException(
-                'batch email is currently not supported under server APIs other than fpm-fcgi');
+
+        if (isset($this->emailService->getConfig()['mailgun'])) {
+            // sanity check. use Mailgun if possible.            
+            throw new RuntimeException('The Mailgun service is enabled, according to your configuration. You should use that instead');
         }
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         $file = './data/progress.txt';
@@ -121,10 +133,13 @@ class EmailController extends AbstractActionController
         header("content-type: application/json");
         echo json_encode(['status' => 'started','total' => count($recipients)]);
         // this here is critical ...
-        session_write_close();
-        \fastcgi_finish_request();
-        // ...otherwise it will NOT work
-        
+        if (function_exists('fastcgi_finish_request')) {
+            session_write_close();
+            \fastcgi_finish_request();
+            // ...otherwise it will NOT work
+        } else {
+            /* good question. */
+        }
 
         /** @var Swift_Message $message */
         $message = new Swift_Message();
@@ -148,11 +163,16 @@ class EmailController extends AbstractActionController
             file_put_contents($file, ++$i ." of $total");
         }
         file_put_contents($file, "done");
-        $log->info("completed batch email to $total recipients re {$data['subject']}");
+
         return new JsonModel(['total' => $total,'current' => $i]);
     }
-
     
+
+    /**
+     * returns progress data for batch-email
+     *
+     * @return JsonModel
+     */
     public function progressAction()
     {
         $text = file_get_contents('./data/progress.txt');

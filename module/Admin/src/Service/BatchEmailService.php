@@ -22,9 +22,13 @@ use Swift_FileSpool;
 class BatchEmailService
 {
     /**
+     * configuration
+     * 
      * @var array
      */
     private $config;
+
+
 
     /**
      * constructor
@@ -32,8 +36,9 @@ class BatchEmailService
     public function __construct(array $config)
     {
         $this->config = $config;
+        
     }
-
+    
     /**
      * gets transport
      * 
@@ -97,10 +102,10 @@ class BatchEmailService
             ->setPassword($config['connection_config']['password']);
 
         $message = new Swift_Message("test one two Swift_Mailer");
-        $message->setBody('My <em>amazing</em> body', 'text/html');
+        $message->setBody('My <em>amazing</em> body of a test message sent via Swift_Mailer', 'text/html');
 
         // Add alternative parts with addPart()
-        $message->addPart('My amazing body in plain text', 'text/plain');
+        $message->addPart('My amazing body of a test message sent via Swift_Mailer, in plain text', 'text/plain');
         $message->setFrom($this->config['from_address'])
             ->setTo($address ?? 'david@davidmintz.org');
         $mailer = new Swift_Mailer($transport);
