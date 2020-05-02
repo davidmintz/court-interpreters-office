@@ -1,9 +1,23 @@
 /** public/js/admin/batch-email.js */
 
 /* global  $, fail, moment, displayValidationErrors */
+var submit_form = function(e){
+    console.log("loading the mailgun");
+    e.preventDefault();
+    var form = $("#email-form");
+    var data = form.serialize();
+    $("button[name=\"send\"], button[name=\"revise\"]").attr({disabled : true});
+    // display a wait thing
+    $.post("/admin/email/mailgun",data)
+        .then((res)=>{
+            // dispay a confirmation
+            console.log("got a response");
+            console.log(res);
+        });   
+};
 
 $(function(){
-
+    console.log("shit is real");
     
     /** yes, this section is the same as public/js/admin/batch-email.js */
     var form = $("#email-form");
@@ -51,6 +65,11 @@ $(function(){
     });    
 });
 
+/* eslint no-unused-vars: off */
+var test = function() {      
+    $("#recipient_list").val("test recipients");
+    $("#subject").val("A test of the email broadcasting system");
+    $("#body").text("This is a test of the SDNY interpreters batch email feature. If you were not expecting to receive this, then it's a mistake. Our apologies for the intrusion.\r\n\r\nVery truly yours,\r\n\r\nThe Interpreters");
+    $("button[name=\"preview\"]").trigger("click");
+};
 
-
-});

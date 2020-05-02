@@ -893,6 +893,15 @@ return  [
             ],
             'may_terminate' => true,
             'child_routes' => [
+                'mailgun' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route' => '/mailgun',
+                        'defaults' => [
+                            'action' => 'mailgun',
+                        ],
+                    ],
+                ],
                 'batch' => [
                     'type' => Segment::class,
                     'options' => [

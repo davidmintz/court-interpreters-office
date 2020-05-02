@@ -11,6 +11,7 @@ use Laminas\View\Model\ViewModel;
 
 use InterpretersOffice\Admin\Service\EmailService;
 use InterpretersOffice\Admin\Service\BatchEmailService;
+use RuntimeException;
 use Swift_Message;
 
 /**
@@ -54,31 +55,53 @@ class EmailController extends AbstractActionController
     public function formAction()
     {
         $config = $this->emailService->getConfig();
-        $mailgun = $config['mailgun'] ?? false;
-        var_dump($mailgun);
-        return new ViewModel([
+        $mailgun = $config['mailgun'] ?? false;        
+        $viewModel = new ViewModel([
             'recipient_list_options' => $this->emailService::$recipient_list_options,
             'site_config' => $this->emailService->getConfig()['site'] ?? [],
         ]);
+        if ($mailgun) {
+            $viewModel->setTemplate('email/mailgun');
+        }
+
+        return $viewModel;
     }
 
+    /**
+     * index page
+     */
     public function indexAction()
     {
-        // $config = $this->emailService->getConfig()['mail'];
-        // $service = new BatchEmailService($config);
-        // $result = $service->test();
-        // echo "send test email: $result";
+        $config = $this->emailService->getConfig();
+        $mailgun = $config['mailgun'] ?? false;
+        return new ViewModel(
+            ['php_sapi_name'=>php_sapi_name(),'mailgun' => $mailgun ? true : false]
+        );
+    }
+
+    /**
+     * batch sending via mailgun
+     */
+    public function mailgunAction()
+    {
+        return new JsonModel(['status'=>"it's a start"]);
     }
 
     /**
      * batch email
      *
-     * a revision to get us away from Laminas\Mail which is
-     * needlessly clumsy in our humble opinion
+     * Revised to get us away from Laminas\Mail which is
+     * needlessly clumsy in our humble opinion. And even this is
+     * fucked up. Sending more than a handful of emails succesively 
+     * over an SMTP connection is too fraught.
      */
     public function batchEmailAction()
     {
 
+        if (isset($this->emailService->getConfig()['mailgun'])) {
+            // sanity check. use Mailgun if possible.            
+            throw new RuntimeException('The Mailgun service is enabled, according to your configuration. You should use that instead');
+        }
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         $file = './data/progress.txt';
         if (! \file_exists($file)) {
