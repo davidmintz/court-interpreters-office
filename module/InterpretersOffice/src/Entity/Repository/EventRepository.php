@@ -187,7 +187,7 @@ DQL;
             $event['submitter_extra_data'] =
             json_decode($event['submitter_extra_data'], \JSON_OBJECT_AS_ARRAY);
         }
-        /* NOTE TO SELF: ugly! let's fix this at the source of the problem.*/
+        /* NOTE TO SELF: ugly! fix this at the source of the problem.*/
         $event['judge'] = str_replace('  ', ' ', $event['judge']);
         $deft_dql = 'SELECT d.surnames, d.given_names
             FROM InterpretersOffice\Entity\Event e
