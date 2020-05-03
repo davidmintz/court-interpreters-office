@@ -5,11 +5,6 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use Laminas\Authentication\AuthenticationServiceInterface;
-use Laminas\Validator\Csrf;
-use Doctrine\ORM\EntityManagerInterface;
-use InterpretersOffice\Entity;
-
 use InterpretersOffice\Admin\Service\DocketAnnotationService;
 
 /**
@@ -24,11 +19,6 @@ class RestfulDocketAnnotationsController extends AbstractRestfulController
      * @var DocketAnnotationService
      */
     private $service;
-
-    public function testAction()
-    {
-        return new JsonModel(['status' => 'test is working']);
-    }
 
     /**
      * constructor

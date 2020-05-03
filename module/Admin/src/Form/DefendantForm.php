@@ -4,13 +4,8 @@
 namespace InterpretersOffice\Admin\Form;
 
 use Laminas\Form\Form as LaminasForm;
-use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
-
 use Laminas\InputFilter\InputFilterProviderInterface;
-
-use DoctrineModule\Persistence\ObjectManagerAwareInterface;
-use DoctrineModule\Stdlib\Hydrator\DoctrineObject as DoctrineHydrator;
 use InterpretersOffice\Service\ObjectManagerAwareTrait;
 
 /**
@@ -38,7 +33,6 @@ class DefendantForm extends LaminasForm implements InputFilterProviderInterface
      /**
      * constructor.
      *
-     * @param ObjectManager $objectManager
      * @param array         $options
      */
     public function __construct($options = null)

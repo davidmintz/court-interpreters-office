@@ -340,21 +340,22 @@ class UsersController extends AbstractActionController implements Authentication
         $form->bind($user);
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $was_disabled = !$user->isActive();
+            $was_disabled = ! $user->isActive();
             $form->setData($request->getPost());
             if (! $form->isValid()) {
                 return new JsonModel(['status' => 'error',
                 'validation_errors' => $form->getMessages()]);
             }
             // if they re-enabled the account
-            if ($was_disabled && $user->isActive()) {                
+            if ($was_disabled && $user->isActive()) {
                 $user->setFailedLogins(0);
             }
             $this->entityManager->flush();
             $this->flashMessenger()
                 ->addSuccessMessage(sprintf(
                     'The user account for <strong>%s %s</strong> has been updated.',
-                    $person->getFirstname(), $person->getLastname()
+                    $person->getFirstname(),
+                    $person->getLastname()
                 ));
             return new JsonModel(['status' => 'success','validation_errors' => null]);
         }

@@ -24,7 +24,7 @@ class DefendantNameService
 
     /**
      * entity manager
-     * 
+     *
      * @var EntityManagerInterface $em
      */
     private $em;
@@ -37,6 +37,11 @@ class DefendantNameService
     const USE_EXISTING_DUPLICATE = 'use_existing';
     const UPDATE_EXISTING_DUPLICATE = 'update_existing';
 
+    /**
+     * constructor
+     *
+     * @param EntityManagerInterface $em
+     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -388,9 +393,9 @@ class DefendantNameService
     }
 
     /**
-     * 
+     *
      * tests for equality of Defendant name entities
-     * 
+     *
      * @param Entity\Defendant $a
      * @param Entity\Defendant $b
      * @return bool true if match is exact (binary, literal)

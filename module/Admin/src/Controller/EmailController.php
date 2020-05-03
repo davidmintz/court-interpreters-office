@@ -55,7 +55,7 @@ class EmailController extends AbstractActionController
     public function formAction()
     {
         $config = $this->emailService->getConfig();
-        $mailgun = $config['mailgun'] ?? false;        
+        $mailgun = $config['mailgun'] ?? false;
         $viewModel = new ViewModel([
             'recipient_list_options' => $this->emailService::$recipient_list_options,
             'site_config' => $this->emailService->getConfig()['site'] ?? [],
@@ -75,7 +75,7 @@ class EmailController extends AbstractActionController
         $config = $this->emailService->getConfig();
         $mailgun = $config['mailgun'] ?? false;
         return new ViewModel(
-            ['php_sapi_name'=>php_sapi_name(),'mailgun' => $mailgun ? true : false]
+            ['php_sapi_name' => php_sapi_name(),'mailgun' => $mailgun ? true : false]
         );
     }
 
@@ -84,7 +84,7 @@ class EmailController extends AbstractActionController
      */
     public function mailgunAction()
     {
-        return new JsonModel(['status'=>"it's a start"]);
+        return new JsonModel(['status' => "it's a start"]);
     }
 
     /**
@@ -92,14 +92,14 @@ class EmailController extends AbstractActionController
      *
      * Revised to get us away from Laminas\Mail which is
      * needlessly clumsy in our humble opinion. And even this is
-     * fucked up. Sending more than a handful of emails succesively 
+     * fucked up. Sending more than a handful of emails succesively
      * over an SMTP connection is too fraught.
      */
     public function batchEmailAction()
     {
 
         if (isset($this->emailService->getConfig()['mailgun'])) {
-            // sanity check. use Mailgun if possible.            
+            // sanity check. use Mailgun if possible.
             throw new RuntimeException('The Mailgun service is enabled, according to your configuration. You should use that instead');
         }
         $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
@@ -166,7 +166,7 @@ class EmailController extends AbstractActionController
 
         return new JsonModel(['total' => $total,'current' => $i]);
     }
-    
+
 
     /**
      * returns progress data for batch-email

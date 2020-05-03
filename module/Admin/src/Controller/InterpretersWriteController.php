@@ -50,7 +50,12 @@ class InterpretersWriteController extends AbstractActionController
      */
     protected $viewModel;
 
-    /** @var Form\InterpreterForm */
+    /**
+     *
+     * interpreter form
+     *
+     * @var Form\InterpreterForm
+     */
     private $form;
 
 
@@ -58,7 +63,7 @@ class InterpretersWriteController extends AbstractActionController
      * constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param boolean $vault_enabled
+     * @param Form\InterpreterForm $form
      */
     public function __construct(EntityManagerInterface $entityManager, Form\InterpreterForm $form)
     {

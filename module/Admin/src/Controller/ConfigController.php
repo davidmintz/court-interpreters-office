@@ -3,35 +3,57 @@
 namespace InterpretersOffice\Admin\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
-use Doctrine\ORM\EntityManagerInterface;
-
 use Laminas\InputFilter;
-use Laminas\Validator;
-use Laminas\Filter;
 
 /**
- * configuration controller
+ * Configuration controller
+ *
+ * Controller for admin UI to optional form configuration.
  */
 class ConfigController extends AbstractActionController
 {
 
+    /**
+     * path to configuration file
+     *
+     * @var string
+     */
     private $form_config_path = 'module/Admin/config/forms.json';
+
+    /**
+     * permissions
+     *
+     * @var array
+     */
     private $permissions;
 
+    /**
+     * constructor
+     *
+     * @param array $permissions to be injected into view
+     */
     public function __construct(Array $permissions)
     {
         $this->permissions = $permissions;
     }
 
-    public function indexAction()
+    /**
+     * index page
+     *
+     * @return array
+     */
+    public function indexAction() : array
     {
         return [];
     }
 
-
-    public function formsAction()
+    /**
+     * form configuration page
+     *
+     * @return array
+     */
+    public function formsAction() : array
     {
         $error = false;
         if (! file_exists($this->form_config_path)) {
@@ -51,6 +73,11 @@ class ConfigController extends AbstractActionController
         return ['config' => $config ] + $this->permissions;
     }
 
+    /**
+     * gets input filter
+     *
+     * @return InputFilter\InputFilter
+     */
     public function getInputFilter()
     {
         $interpreterFormFilter = new InputFilter\InputFilter();
@@ -135,6 +162,11 @@ class ConfigController extends AbstractActionController
         return $inputFilter;
     }
 
+    /**
+     * handles POST data
+     *
+     * @return JsonModel
+     */
     public function postAction()
     {
 

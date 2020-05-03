@@ -147,7 +147,7 @@ class InterpretersController extends AbstractActionController
         return $viewModel;
     }
 
-    /**'
+    /**
      * finds interpreters
      *
      * gets interpreters based on search criteria. if we are given an id
@@ -167,7 +167,7 @@ class InterpretersController extends AbstractActionController
 
 
     /**
-     * gets list of contract interpreters and solicit-availability setting
+     * gets list of contract interpreters and "solicit-availability" setting
      */
     public function availabilityListAction()
     {

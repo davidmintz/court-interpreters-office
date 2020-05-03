@@ -1,5 +1,5 @@
 <?php
-/** reports-controller factory */
+/** reports-controller factory module/Admin/src/Controller/Factory/ReportsControllerFactory.php */
 namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
@@ -10,6 +10,8 @@ use InterpretersOffice\Admin\Controller\ReportsController;
 class ReportsControllerFactory implements FactoryInterface
 {
     /**
+     * __invoke
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

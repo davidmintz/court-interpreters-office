@@ -10,6 +10,8 @@ use InterpretersOffice\Admin\Controller\SearchController;
 class SearchControllerFactory implements FactoryInterface
 {
     /**
+     * __invoke
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

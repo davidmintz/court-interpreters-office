@@ -1,5 +1,4 @@
-<?php
-/** module/InterpretersOffice/src/Service/EmailService.php */
+<?php /** module/InterpretersOffice/src/Service/EmailService.php */
 
 declare(strict_types=1);
 
@@ -98,7 +97,7 @@ EOD;
 
     public function mailgun($data)
     {
-        return ['status'=>'so far so good','debug'=>$this->config];
+        return ['status' => 'so far so good','debug' => $this->config];
     }
 
     /**
@@ -128,17 +127,17 @@ EOD;
             ->select('p.id, p.lastname, p.firstname, p.email');
 
         switch ($list) {
-            case self::ACTIVE_INTERPRETERS;
+            case self::ACTIVE_INTERPRETERS:
                 $qb->from(Entity\Interpreter::class, 'p')
                     ->where('p.active = true');
-            break;
-            case self::ACTIVE_SPANISH_INTERPRETERS;
+                break;
+            case self::ACTIVE_SPANISH_INTERPRETERS:
                 $qb->from(Entity\Interpreter::class, 'p')
                     ->join('p.interpreterLanguages', 'il')->join('il.language', 'l')
                     ->where('l.name = :spanish')
                     ->andWhere('p.active = true')
                     ->setParameters([':spanish' => 'Spanish']);
-            break;
+                break;
             case self::AVAILABILITY_SOLICITATION_LIST:
                 $qb->from(Entity\Interpreter::class, 'p')
                 ->where('p.active = true')->andWhere('p.solicit_availability = true');
@@ -321,7 +320,7 @@ EOD;
      */
     public function emailEvent(Array $data) : Array
     {
-        
+
         $validation = $this->validate($data);
         if (! $validation['valid']) {
             return $validation;

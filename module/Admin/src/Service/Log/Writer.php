@@ -36,6 +36,8 @@ class Writer extends AbstractWriter
              :priority, :priorityName, :extra)';
 
     /**
+     * PDO statement
+     *
      * @var \PDOStatement
      */
     private $statement;

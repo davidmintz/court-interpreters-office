@@ -25,7 +25,7 @@ class SearchController extends AbstractActionController
 
     /**
      * @var SessionContainer
-     * 
+     *
      * session
      */
     private $session;
@@ -41,10 +41,16 @@ class SearchController extends AbstractActionController
         $this->session = new SessionContainer("event_search");
     }
 
+    /**
+     * search-by-docket action
+     *
+     * sets the session state and redirects
+     */
     public function docketSearchAction()
     {
         $docket = $this->params()->fromRoute('docket');
         $this->session->search_defaults = ['docket' => $docket,'page' => 1];
+
         return $this->redirect()->toRoute('search');
     }
 
@@ -96,9 +102,15 @@ class SearchController extends AbstractActionController
         return $view;
     }
 
+    /**
+     * resets form defaults in the session
+     *
+     * @return bool
+     */
     public function clearAction()
     {
         $this->session->search_defaults = null;
+
         return false;
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php /** module/Admin/src/Controller/Factory/NormalizationControllerFactory.php */
 
 namespace InterpretersOffice\Admin\Controller\Factory;
 
@@ -6,9 +6,14 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Controller\NormalizationController;
 
+/**
+ * factory for NormalizationController
+ */
 class NormalizationControllerFactory implements FactoryInterface
 {
     /**
+     * __invoke
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

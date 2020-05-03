@@ -69,7 +69,11 @@ class EventsController extends AbstractActionController
      */
     protected $updateManager;
 
-    /** @var Form\EventForm */
+    /**
+     *  event form
+     *
+     *  @var Form\EventForm
+     */
     protected $eventForm;
 
     /**
@@ -77,6 +81,7 @@ class EventsController extends AbstractActionController
      *
      * @param EntityManagerInterface $em
      * @param AuthenticationServiceInterface $auth
+     * @param ScheduleUpdateManager $updateManager
      */
     public function __construct(
         EntityManagerInterface $em,
@@ -89,7 +94,7 @@ class EventsController extends AbstractActionController
     }
 
     /**
-     * sets form. work in progress.
+     * sets form
      *
      * @param FormEventForm $form
      * @return EventsController
@@ -253,9 +258,9 @@ class EventsController extends AbstractActionController
     public function editAction()
     {
         $id = $this->params()->fromRoute('id');
-        /** @var \InterpretersOffice\Entity\Event $entity  */        
+        /** @var \InterpretersOffice\Entity\Event $entity  */
         $entity = $this->form->getObject();
-        if (! $entity->getId()) { 
+        if (! $entity->getId()) {
             // i.e. if it's an empty object the factory injected when it couldn't find it by id...
             return ['errorMessage' => "No event with id $id was found in the database.",
             'header' => 'event not found'];

@@ -3,19 +3,20 @@
 namespace InterpretersOffice\Admin\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
-use Laminas\View\Model\ViewModel;
-use Laminas\View\Model\JsonModel;
+// use Laminas\View\Model\ViewModel;
+// use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
-use InterpretersOffice\Admin\Form\SearchForm;
-use InterpretersOffice\Entity;
+
+// use InterpretersOffice\Entity;
 
 /**
  * reports controller
+ *
+ * a work in progress
  */
 class ReportsController extends AbstractActionController
 {
-     
-    
+
      /**
      * entity manager
      *
@@ -25,12 +26,12 @@ class ReportsController extends AbstractActionController
 
     /**
      * @var SessionContainer
-     * 
+     *
      * session
      */
     private $session;
 
-    
+
     /**
      * constructor
      *
@@ -42,9 +43,10 @@ class ReportsController extends AbstractActionController
         $this->session = new \Laminas\Session\Container("reports");
     }
 
+    /**
+     * index page
+     */
     public function indexAction()
     {
-        
     }
-
 }

@@ -12,7 +12,6 @@ use Swift_SpoolTransport;
 use Swift_SendmailTransport;
 use Swift_FileSpool;
 
-
 /**
  * service for sending batch email
  *
@@ -23,7 +22,7 @@ class BatchEmailService
 {
     /**
      * configuration
-     * 
+     *
      * @var array
      */
     private $config;
@@ -32,17 +31,18 @@ class BatchEmailService
 
     /**
      * constructor
+     *
+     * @param array $config
      */
     public function __construct(array $config)
     {
         $this->config = $config;
-        
     }
-    
+
     /**
      * gets transport
-     * 
-     * the nasty thing here is that the config is designed 
+     *
+     * the nasty thing here is that the config is designed
      * to accomodate Laminas\Mail only
      *
      * @return Swift_Transport
@@ -50,21 +50,22 @@ class BatchEmailService
     public function getTransport() : Swift_Transport
     {
         $config = $this->config;
-        if (stristr($config['transport'],'sendmail')) {
+        if (stristr($config['transport'], 'sendmail')) {
             $transport = new Swift_SendmailTransport();
-           
-        } elseif (stristr($config['transport'],'smtp')) {
+        } elseif (stristr($config['transport'], 'smtp')) {
             $options = $config['transport_options']['options'];
             $transport = new Swift_SmtpTransport(
-                $options['host'], $options['port']??25,'ssl'
+                $options['host'],
+                $options['port'] ?? 25,
+                'ssl'
             );
             if (isset($options['connection_config'])) {
                 $transport->setUserName($options['connection_config']['username'])
-                ->setPassword($options['connection_config']['password']);    
+                ->setPassword($options['connection_config']['password']);
             }
-        } elseif (stristr($config['transport'],'file')) {
+        } elseif (stristr($config['transport'], 'file')) {
             $path = $config['transport_options']['options']['path'];
-            $transport = new Swift_SpoolTransport(new Swift_FileSpool($path) );
+            $transport = new Swift_SpoolTransport(new Swift_FileSpool($path));
         } else {
             throw new \RuntimeException("can't figure out how to configure email transport");
         }
@@ -81,8 +82,8 @@ class BatchEmailService
         $transport->setUserName($config['connection_config']['username'])
             ->setPassword($config['connection_config']['password']);
 
-        return $transport; 
-  
+        return $transport;
+
  */
     /**
      * sends test email

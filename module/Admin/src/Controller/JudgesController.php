@@ -26,7 +26,14 @@ class JudgesController extends AbstractActionController
      */
     protected $entityManager;
 
-    /** @var Laminas\Session\Container */
+    /**
+     * session
+     *
+     * For persisting the state of the judges index
+     * page
+     *
+     * @var Laminas\Session\Container
+     */
     private $session;
 
     /**
@@ -39,6 +46,11 @@ class JudgesController extends AbstractActionController
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * gets session
+     *
+     * @return Session
+     */
     private function getSession()
     {
         if (! $this->session) {

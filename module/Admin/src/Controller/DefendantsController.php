@@ -97,6 +97,9 @@ class DefendantsController extends AbstractActionController
 
     /**
      * processes POST data for an insert
+     *
+     * @param DefendantForm $form
+     * @return JsonModel
      */
     protected function postInsert(DefendantForm $form)
     {
@@ -112,6 +115,10 @@ class DefendantsController extends AbstractActionController
 
     /**
      * processes POST data for an update
+     *
+     * @param DefendantForm $form
+     * @param Entity\Defendant $entity
+     * @return JsonModel
      */
     protected function postUpdate(DefendantForm $form, Entity\Defendant $entity)
     {
@@ -134,6 +141,8 @@ class DefendantsController extends AbstractActionController
 
     /**
      * edits defendant name
+     *
+     * @return ViewModel
      */
     public function editAction()
     {

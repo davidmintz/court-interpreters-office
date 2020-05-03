@@ -19,6 +19,7 @@ class NormalizationController extends AbstractActionController
      * @var EntityManagerInterface
      */
     private $em;
+
     /**
      * constructor
      *
@@ -29,6 +30,9 @@ class NormalizationController extends AbstractActionController
         $this->em = $em;
     }
 
+    /**
+     * index action
+     */
     public function indexAction()
     {
     }

@@ -45,6 +45,14 @@ class InterpreterFieldset extends PersonFieldset
      */
     protected $original_encrypted_values;
 
+    /**
+     * Optional form elements
+     *
+     * Form elements that can be enabled or disabled through
+     * admin configuration UI.
+     *
+     * @var array
+     */
     private $optional_elements = [
 
         'fingerprint_date' => [
@@ -418,7 +426,7 @@ class InterpreterFieldset extends PersonFieldset
                  'filters' => [],
 
             ];
-        $spec['publish_public'] =
+         $spec['publish_public'] =
             [
                 'required' => false, // for now
                 'allow_empty' => true,
@@ -426,7 +434,7 @@ class InterpreterFieldset extends PersonFieldset
                 'filters' => [],
 
            ];
-       
+
          /** optional fields */
 
          if ($this->has('fingerprint_date')) {

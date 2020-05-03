@@ -4,7 +4,6 @@ namespace InterpretersOffice\Admin\Form;
 
 use InterpretersOffice\Form\AbstractSearchForm;
 use InterpretersOffice\Entity;
-use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * search form for admin users
@@ -56,6 +55,11 @@ class SearchForm extends AbstractSearchForm
         return $this;
     }
 
+    /**
+     * gets inputfilter specification
+     *
+     * @return array
+     */
     public function getInputFilterSpecification()
     {
 

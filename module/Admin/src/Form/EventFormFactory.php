@@ -1,4 +1,4 @@
-<?php
+<?php /** module/Admin/src/Form/EventFormFactory.php */
 
 namespace InterpretersOffice\Admin\Form;
 
@@ -10,9 +10,14 @@ use function file_get_contents;
 use function json_decode;
 use function is_readable;
 
+/**
+ * factory for Event form
+ */
 class EventFormFactory implements FactoryInterface
 {
     /**
+     * __invoke
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

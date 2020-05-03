@@ -285,6 +285,11 @@ class Module
         return $acl->isAllowed($role, $resource, $privilege);
     }
 
+    /**
+     * error logging
+     *
+     * @param MvcEvent $event
+     */
     public function logError(MvcEvent $event)
     {
         $container = $event->getApplication()->getServiceManager();

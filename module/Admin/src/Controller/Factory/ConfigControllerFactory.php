@@ -1,14 +1,19 @@
-<?php
-/** module/Admin/src/Controller/Factory/ConfigControllerFactory.php */
+<?php /** module/Admin/src/Controller/Factory/ConfigControllerFactory.php */
+
 namespace InterpretersOffice\Admin\Controller\Factory;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Controller\ConfigController;
 
+/**
+ * factory for ConfigController
+ */
 class ConfigControllerFactory implements FactoryInterface
 {
     /**
+     * __invoke
+     *
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param null|array $options

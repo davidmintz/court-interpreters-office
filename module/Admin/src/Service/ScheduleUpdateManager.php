@@ -9,14 +9,8 @@ use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Filter\Word\DashToCamelCase;
 use Laminas\View\Renderer\RendererInterface as Renderer;
 use Laminas\View\Model\ViewModel;
-
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\EntityManagerInterface;
-
 use InterpretersOffice\Entity;
 use InterpretersOffice\Requests\Entity\Request;
-use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
 use InterpretersOffice\Service\EmailTrait;
 
 /**
@@ -710,13 +704,12 @@ class ScheduleUpdateManager
      * note: as of now there is no guarantee which will be invoked first:
      * this method or removeInterpreters()
      *
-     * @param  Request $request
+     * @param  Entity\Interpretable $entity
      * @param  Array  $updates
      * @return ScheduleUpdateManager
      */
     public function notifyAssignedInterpreters(Entity\Interpretable $entity, Array $updates = [])
     {
-
         $interpreters = $this->interpreters ?: $entity->getInterpreters();
         $count = count($interpreters);
         if (! $count) {
