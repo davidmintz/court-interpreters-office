@@ -91,7 +91,7 @@ const get_event_details = function()
     var data = {};
     var fields = [
         "date","time","language","judge","event_type","location",
-        "docket","defendants","interpreters"
+        "docket","defendants","interpreters","submitter"
     ];
     for (var i = 0; i < fields.length; i++) {
         var obj = $(`.${fields[i]}`);
@@ -101,7 +101,9 @@ const get_event_details = function()
             //var html = obj.html().trim();
             data[fields[i]] = obj.html().trim();
         }
-    }
+    }    
+    data = Object.assign(data,$(".submitter").data(),$(".event_type").data());
+    
     return data;
 };
 /*

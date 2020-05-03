@@ -3,6 +3,7 @@
  * @todo refactor InterpretersOffice\View\Helper\Diff because there is
  * not supposed to be any before/after involved here unless it's already
  * rendered as HTML, in which case it's already taken care of.
+ * 
  */
 use InterpretersOffice\View\Helper\Diff;
 $fields = [
@@ -15,6 +16,7 @@ $fields = [
     'judge',
     'defendants',
     'interpreters',
+    'submitter',
     'comments',
 ];
 $debug = '';
@@ -45,6 +47,20 @@ endif;
 
         if (! isset($entity[$field])) : //$debug .= "no $field key in entity array\n";
             continue;
+        else :
+            if (is_string($entity[$field])):  
+                $entity[$field] = strip_tags($entity[$field],'<ins><del>'); 
+            endif;
+        endif;
+        if ($field == 'submitter') :
+            if ($entity['category'] == "in") : 
+                continue; // not relevant
+            elseif(!$entity['submitter_id']) : // anonymous submitter
+                continue;
+            endif;
+            if (isset($entity['submitter_hat'])) :
+                $label = $entity['submitter_hat'];
+            endif;
         endif;
     ?>
     <tr>
@@ -60,7 +76,7 @@ endif;
                 if ('defendants' == $field):
                     echo $helper->renderDefendants($data);
                 elseif ('interpreters' == $field) :
-                    echo $helper->renderInterpreters($data);
+                    echo strip_tags($helper->renderInterpreters($data),'<ins><del>'); 
                 elseif ($data instanceof \DateTime) :
                     echo $helper->renderDateTime($field, $data);
                 else :

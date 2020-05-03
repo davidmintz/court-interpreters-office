@@ -179,7 +179,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
             ->setPost(new Parameters(['csrf'=>$csrf]));
         $this->dispatch('/requests/cancel/'.$request->getId());
         $data = $this->getResponse()->getBody();
-        //$this->dumpResponse();//return;
+        // $this->dumpResponse();//return;
         $response = json_decode($data);
         $this->assertEquals("success",$response->status);
 
@@ -256,7 +256,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
 
     }
 
-    public function testInterpretersAreNotififiedOnChangeTimeWithinAmPmBoundary()
+    public function testInterpretersAreNotifiedOnChangeTimeWithinAmPmBoundary()
     {
         $result = $this->em->createQuery("SELECT r FROM InterpretersOffice\Requests\Entity\Request r
         JOIN r.submitter p
