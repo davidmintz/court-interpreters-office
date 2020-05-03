@@ -321,6 +321,7 @@ EOD;
      */
     public function emailEvent(Array $data) : Array
     {
+        
         $validation = $this->validate($data);
         if (! $validation['valid']) {
             return $validation;
