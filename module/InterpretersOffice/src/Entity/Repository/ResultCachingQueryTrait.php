@@ -3,7 +3,9 @@
 /** module/InterpretersOffice/src/Entity/Repository/ResultCachingQueryTrait.php */
 declare(strict_types=1);
 namespace InterpretersOffice\Entity\Repository;
+
 use Doctrine\Orm\Query;
+
 /**
  * trait for easing creating of queries that use result caching.
  */

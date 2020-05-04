@@ -65,11 +65,11 @@ class WriteController extends AbstractActionController implements ResourceInterf
      */
     protected $session;
 
-    /** 
+    /**
      * User entity
-     * 
+     *
      * @var InterpretersOffice\Entity\User
-     * 
+     *
      */
     private $user_entity;
 
@@ -103,7 +103,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
 
     /**
      * gets User entity
-     * 
+     *
      * @return User
      */
     public function getUserEntity()
@@ -113,7 +113,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
 
     /**
      * sets User
-     * 
+     *
      * @return WriteController
      */
     public function setUserEntity(User $user)
@@ -210,18 +210,18 @@ class WriteController extends AbstractActionController implements ResourceInterf
      * @param  Parameters      $params
      * @return JsonModel
      */
-    public function batchCreate(Form\RequestForm $form,Parameters $params)
+    public function batchCreate(Form\RequestForm $form, Parameters $params)
     {
         $request = $params->get('request');
         $dates = $request['dates'];
         sort($dates);
         $entities = [];
-        foreach($dates as $i => $date) {
+        foreach ($dates as $i => $date) {
             $request['date'] = $date;
-            $params->set('request',$request);
+            $params->set('request', $request);
             $form->setData($params);
             $entity = $form->getObject();
-            if (!$form->isValid()) {
+            if (! $form->isValid()) {
                 return new JsonModel(['validation_errors' =>
                         $form->getMessages()]);
             } // else...
@@ -255,7 +255,9 @@ class WriteController extends AbstractActionController implements ResourceInterf
 
         return  new JsonModel([
             'status' => 'success',
-            'ids' => array_map(function($e){ return $e->getId();},$entities)
+            'ids' => array_map(function ($e) {
+                return $e->getId();
+            }, $entities)
         ]);
     }
 
@@ -290,8 +292,7 @@ class WriteController extends AbstractActionController implements ResourceInterf
             $r = $params->get('request'); // array
             if (empty($r['date']) && ! empty($r['dates'])) {
                 // it's a multi-date Request
-                return $this->batchCreate($form,$params);
-
+                return $this->batchCreate($form, $params);
             }
             $form->setData($params);
             if (! $form->isValid()) {
@@ -408,7 +409,9 @@ class WriteController extends AbstractActionController implements ResourceInterf
         }
         if ($entity) {
             $this->getEventManager()->trigger(
-                'loadRequest', $this,[ 'entity' => $entity,]
+                'loadRequest',
+                $this,
+                [ 'entity' => $entity,]
             );
             $entity->setCancelled(true);
             $description = $this->params()->fromPost('description');

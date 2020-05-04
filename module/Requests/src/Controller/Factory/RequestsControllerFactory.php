@@ -55,7 +55,7 @@ class RequestsControllerFactory implements FactoryInterface
         $container->get('log')->debug("attached our RequestEntityListener in RequestsControllerFactory");
         $controller = new $requestedName($entityManager, $auth, $acl);
         // crude, but...
-        if (method_exists($controller,'setUserEntity')) {
+        if (method_exists($controller, 'setUserEntity')) {
             //... both the IndexController and WriteController in the
             //  InterpretersOffice\Requests\Controller namespace need to
             //  be able to check ACL
@@ -73,7 +73,6 @@ class RequestsControllerFactory implements FactoryInterface
             return $controller;
         }
         if ($requestedName == Controller\WriteController::class) {
-
             //$sql_logger = new \InterpretersOffice\Service\SqlLogger($container->get('log'));
             //$entityManager->getConfiguration()->setSQLLogger($sql_logger);
 

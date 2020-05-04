@@ -71,18 +71,18 @@ class UserRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('u, p, h, r, j, jh, jf')
             ->from(Entity\User::class, 'u')
-            ->join('u.person','p')
+            ->join('u.person', 'p')
             ->join('p.hat', 'h')
-            ->join('u.role','r')
+            ->join('u.role', 'r')
             ->leftJoin('u.judges', 'j')
             ->leftJoin('j.hat', 'jh')
             ->leftJoin('j.flavor', 'jf');
-            if ('person' == $entity) {
-                $qb->where('p.id = :id');
-            } else {
-                $qb->where('u.id = :id');
-            }
-            $qb->setParameters(['id'=>$id]);
+        if ('person' == $entity) {
+            $qb->where('p.id = :id');
+        } else {
+            $qb->where('u.id = :id');
+        }
+            $qb->setParameters(['id' => $id]);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -130,10 +130,10 @@ class UserRepository extends EntityRepository
         ) events
         FROM InterpretersOffice\Requests\Entity\Request r JOIN r.submitter p
         JOIN r.modified_by m WHERE p.id = :person_id OR (m.person = p and p.id = :person_id)';
-        $params = [':person_id'=>$person_id];
+        $params = [':person_id' => $person_id];
         $result = $this->createQuery($dql)
             ->useResultCache(false)
-            ->setParameters([':person_id'=>$person_id])
+            ->setParameters([':person_id' => $person_id])
             ->getResult();
 
         return $result;
@@ -155,7 +155,7 @@ class UserRepository extends EntityRepository
         . ' u WITH u.person = p WHERE p.email = :email AND p.id <> :id';
         $person = $user->getPerson();
         $query = $this->createQuery($dql)->useResultCache(false)
-        ->setParameters(['email'=> $email,'id'   => $person->getId(),]);
+        ->setParameters(['email' => $email,'id'   => $person->getId(),]);
 
         return (int)$query->getSingleScalarResult();
     }
@@ -171,9 +171,9 @@ class UserRepository extends EntityRepository
     public function autocomplete(string $name_or_email, Array $options) : array
     {
         $parameters = $this->parseOptions($name_or_email, $options);
-        $qb = $this->createQueryBuilder('u')->join('u.person','p');
+        $qb = $this->createQueryBuilder('u')->join('u.person', 'p');
 
-        if (!empty($parameters['email'])) {
+        if (! empty($parameters['email'])) {
             $qb->select([
                 'p.email AS label',
                 'u.id AS value',
@@ -182,23 +182,25 @@ class UserRepository extends EntityRepository
         } else { // search by name
             $qb->select([
                 $qb->expr()->concat(
-                    'p.lastname',$qb->expr()->literal(', '), 'p.firstname'
+                    'p.lastname',
+                    $qb->expr()->literal(', '),
+                    'p.firstname'
                 ). 'AS label',
                 'u.id AS value',
             ]);
             $qb->where('p.lastname LIKE :lastname');
-            if (!empty($parameters['firstname'])) {
+            if (! empty($parameters['firstname'])) {
                 $qb->andWhere('p.firstname LIKE :firstname');
             }
         }
-        $qb->orderBy('label','ASC')
+        $qb->orderBy('label', 'ASC')
         ->setParameters($parameters)
         ->setMaxResults(20);
 
         return $data = $qb->getQuery()->getResult();
     }
 
-    private function parseOptions(string $term,array $options) : array
+    private function parseOptions(string $term, array $options) : array
     {
         if ('name' == $options['search_by']) {
             $name = $this->parseName($term);
@@ -215,7 +217,7 @@ class UserRepository extends EntityRepository
                 '"search_by" option must be one of "name", "email", or "judge", got option: (%s) %s',
                 gettype($options['search_by']),
                 is_object($options['search_by']) ? 'instance of '.get_class($options['search_by']) :
-                    print_r($options['search_by'],true)
+                    print_r($options['search_by'], true)
             ));
         }
 
@@ -228,17 +230,16 @@ class UserRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('u, p, h, r, j, jhat, jflav')
             ->from(Entity\User::class, 'u')
-            ->join('u.person','p') //, 'WITH','p.id = :id'
+            ->join('u.person', 'p') //, 'WITH','p.id = :id'
             ->join('p.hat', 'h')
-            ->join('u.role','r')
+            ->join('u.role', 'r')
             ->leftJoin('u.judges', 'j')
             ->leftJoin('j.hat', 'jhat')
             ->leftJoin('j.flavor', 'jflav')
             ->where('p.id = :id')
-            ->setParameters(['id'=>$id]);
+            ->setParameters(['id' => $id]);
 
         return $qb->getQuery()->getOneOrNullResult();
-
     }
 
     /**
@@ -250,25 +251,24 @@ class UserRepository extends EntityRepository
      */
     public function paginate(string $name_or_email, Array $options) :LaminasPaginator
     {
-        $page = isset($options['page']) ? $options['page']: 1;
-        $parameters = $this->parseOptions($name_or_email,$options);
+        $page = isset($options['page']) ? $options['page'] : 1;
+        $parameters = $this->parseOptions($name_or_email, $options);
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('u, p, h, r, j, jh, jf')
             ->from(Entity\User::class, 'u')
-            ->join('u.person','p')->join('p.hat', 'h')
-            ->join('u.role','r')
-            ->leftJoin('u.judges','j')
-            ->leftJoin('j.flavor','jf')
-            ->leftJoin('j.hat','jh');
+            ->join('u.person', 'p')->join('p.hat', 'h')
+            ->join('u.role', 'r')
+            ->leftJoin('u.judges', 'j')
+            ->leftJoin('j.flavor', 'jf')
+            ->leftJoin('j.hat', 'jh');
 
         if (! empty($parameters['judge'])) {
             $qb->where('j.id = :judge');
-        }
-         elseif (!empty($parameters['email'])) {
+        } elseif (! empty($parameters['email'])) {
             $qb->where('p.email LIKE :email');
         } else { // search by name
             $qb->where('p.lastname LIKE :lastname');
-            if (!empty($parameters['firstname'])) {
+            if (! empty($parameters['firstname'])) {
                 $qb->andWhere('p.firstname LIKE :firstname');
             }
         }

@@ -35,7 +35,7 @@ EOT;
     {
         $html = sprintf(
             $this->template,
-            $message ? '' : 'display:none',            
+            $message ? '' : 'display:none',
             $message ?: ''
         );
 

@@ -46,11 +46,11 @@ class IndexController extends AbstractActionController implements ResourceInterf
     protected $auth;
 
 
-    /** 
+    /**
      * User entity
-     * 
-     * @var InterpretersOffice\Entity\User 
-     * 
+     *
+     * @var InterpretersOffice\Entity\User
+     *
      */
     private $user_entity;
 
@@ -78,13 +78,12 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function __construct(
         ObjectManager $objectManager,
         AuthenticationServiceInterface $auth,
-        Acl $acl)
-    {
+        Acl $acl
+    ) {
         $this->objectManager = $objectManager;
         $this->auth = $auth;
         $this->acl = $acl;
         $this->session = new \Laminas\Session\Container("requests");
-
     }
 
     /**
@@ -152,7 +151,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
         return [
             'data' => $this->entity,
             'deadline' => $this->getTwoBusinessDaysAfterDate(new \DateTime),
-            'csrf' => $csrf,'write_access'=>$write_access
+            'csrf' => $csrf,'write_access' => $write_access
         ];
     }
 
@@ -162,10 +161,10 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function docketSearchAction()
     {
         $docket = $this->params()->fromRoute("docket");
-        $this->session->search_defaults = ['docket' => $docket,'page'=>1];
+        $this->session->search_defaults = ['docket' => $docket,'page' => 1];
         $this->redirect()->toRoute('requests/search');
     }
-    
+
     /**
      * search action
      *
@@ -175,25 +174,25 @@ class IndexController extends AbstractActionController implements ResourceInterf
     public function searchAction()
     {
         $query = $this->params()->fromQuery();
-        $form = new SearchForm($this->objectManager,['user'=>$this->getIdentity()]);
-        $page = (int)$this->params()->fromQuery('page',1);
+        $form = new SearchForm($this->objectManager, ['user' => $this->getIdentity()]);
+        $page = (int)$this->params()->fromQuery('page', 1);
         $repository = $this->objectManager->getRepository(Entity\Request::class);
         $deadline = $this->getTwoBusinessDaysAfterDate(new \DateTime);
         $csrf = (new \Laminas\Validator\Csrf('csrf'))->getHash();
-        if (!$query) {
+        if (! $query) {
             if ($this->session->search_defaults) {
                 $defaults = $this->session->search_defaults;
                 $params = $defaults;
                 $form->setData($params);
-                $results = $repository->search($params,$defaults['page']);
+                $results = $repository->search($params, $defaults['page']);
             } else {
                 $results = null;
             }
-            return new ViewModel(compact('form','results','deadline','csrf'));
+            return new ViewModel(compact('form', 'results', 'deadline', 'csrf'));
         }
         // else, we have form/query data to validate
         $form->setData($query);
-        if (!$form->isValid()) {
+        if (! $form->isValid()) {
             $response = [
                 'valid' => false,
                 'validation_errors' => $form->getMessages(),
@@ -204,10 +203,10 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $form_values = $form->getData();
         $form_values['page'] = $page;
         $this->session->search_defaults = $form_values;
-        $results = $repository->search($form_values,$page);
-        $view = new ViewModel(compact('results','deadline','csrf'));
+        $results = $repository->search($form_values, $page);
+        $view = new ViewModel(compact('results', 'deadline', 'csrf'));
         $is_xhr = $this->getRequest()->isXmlHttpRequest();
-        if (!$is_xhr) {
+        if (! $is_xhr) {
             $view->setVariables(['form' => $form,]);
         } else {
             $view->setTemplate('index/results')
@@ -226,7 +225,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
     {
         $repo = $this->objectManager->getRepository(Entity\Request::class);
         $user = $this->objectManager->getRepository(User::class)->getUser($this->getIdentity()->id);
-        return new ViewModel(['count'=> $repo->count(['submitter'=>$user->getPerson()])]);
+        return new ViewModel(['count' => $repo->count(['submitter' => $user->getPerson()])]);
     }
 
     /**

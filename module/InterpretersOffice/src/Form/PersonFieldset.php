@@ -159,7 +159,7 @@ class PersonFieldset extends Fieldset implements
 
     /**
      * white-list of email domains users can have
-     * 
+     *
      * @var string[] domains permitted
      */
     private $allow_email_domains;
@@ -223,16 +223,18 @@ class PersonFieldset extends Fieldset implements
 
         $use_as_base_fieldset = isset($options['use_as_base_fieldset']) ?
             $options['use_as_base_fieldset'] : true;
-        
+
         $constrain_email = $options['constrain_email'] ?? true;
         if ($constrain_email) {
             $form_config_file = 'module/Admin/config/forms.json';
-            if (!is_readable($form_config_file)) {
-                throw new \RuntimeException('form configuration file not found or not readable');                
+            if (! is_readable($form_config_file)) {
+                throw new \RuntimeException('form configuration file not found or not readable');
             }
-            $form_config = json_decode(file_get_contents($form_config_file),\JSON_OBJECT_AS_ARRAY)['users'] ?? null;
-            if (!$form_config) { throw new \RuntimeException('no key "user" found in form configuration data');}
-            
+            $form_config = json_decode(file_get_contents($form_config_file), \JSON_OBJECT_AS_ARRAY)['users'] ?? null;
+            if (! $form_config) {
+                throw new \RuntimeException('no key "user" found in form configuration data');
+            }
+
             $this->allow_email_domains = $form_config['allow_email_domains'];
         }
 
@@ -524,23 +526,24 @@ class PersonFieldset extends Fieldset implements
             ];
         }
         if ($this->allow_email_domains) {
-            $spec['email']['validators'][] = 
+            $spec['email']['validators'][] =
             [
                 'name' => 'Callback',
                 'options' => [
                     'callback' => function ($value) {
-                       $domain = strtolower(explode('@',$value)[1]);
+                        $domain = strtolower(explode('@', $value)[1]);
                        // just in case
-                       $allowed = array_map(function($s){return strtolower($s);},$this->allow_email_domains);
-                       return in_array($domain, $allowed);
+                        $allowed = array_map(function ($s) {
+                            return strtolower($s);
+                        }, $this->allow_email_domains);
+                        return in_array($domain, $allowed);
                     },
                     'messages' => [
                         \Laminas\Validator\Callback::INVALID_VALUE
-                        => 'invalid domain; an official court email address is required' , 
+                        => 'invalid domain; an official court email address is required' ,
                     ],
                 ],
             ];
-            
         }
         return $spec;
     }

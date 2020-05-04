@@ -224,7 +224,7 @@ DQL;
         // changing the data structure we're returning with a view towards
         // adding more stuff...
 
-        return ['event'=>$event];
+        return ['event' => $event];
     }
 
     /**
@@ -444,12 +444,12 @@ DQL;
         //printf("<pre>%s</pre>",print_r($query)); exit();
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('e, l, t, tc, j, jf, aj, cr, loc, ploc,
-         jh, s, sh, defts,ie, i' )
+         jh, s, sh, defts,ie, i')
             ->from(Entity\Event::class, 'e')
             ->join('e.event_type', 't')
             ->leftJoin('e.interpreterEvents', 'ie')
             ->leftJoin('ie.interpreter', 'i')
-            ->leftJoin('e.defendants','defts')
+            ->leftJoin('e.defendants', 'defts')
             ->join('t.category', 'tc')
             ->leftJoin('e.judge', 'j')
             ->leftJoin('e.submitter', 's')
@@ -465,19 +465,19 @@ DQL;
         // first thing is filter out soft-deleted (issue #70)
         // maybe later we decide to make this an option
         $qb->where('e.deleted = false');
-        if (!empty($query['language'])) {
+        if (! empty($query['language'])) {
             $qb->where('l.id = :language_id');
             $params['language_id'] = $query['language'];
         }
-        if (!empty($query['docket'])) {
+        if (! empty($query['docket'])) {
             $qb->andWhere('e.docket = :docket');
             $params['docket'] = $query['docket'];
         }
-        if (!empty($query['date-from'])) {
+        if (! empty($query['date-from'])) {
             $qb->andWhere('e.date >= :min_date');
             $params['min_date'] = new \DateTime($query['date-from']);
         }
-        if (!empty($query['date-to'])) {
+        if (! empty($query['date-to'])) {
             $qb->andWhere('e.date <= :max_date');
             $params['max_date'] = new \DateTime($query['date-to']);
         }
@@ -489,13 +489,15 @@ DQL;
         if (! empty($query['defendant-name'])) {
             $name = $this->parseName($query['defendant-name']);
             $qb2 = $this->getEntityManager()->createQueryBuilder();
-            $qb2->select('e2.id')->from(Entity\Event::class,'e2')->join('e2.defendants', 'd')
-                ->where($qb2->expr()->like('d.surnames',$qb->expr()->literal("{$name['last']}%")));
+            $qb2->select('e2.id')->from(Entity\Event::class, 'e2')->join('e2.defendants', 'd')
+                ->where($qb2->expr()->like('d.surnames', $qb->expr()->literal("{$name['last']}%")));
             if ($name['first']) {
                 $qb2->andWhere($qb->expr()->like(
-                    'd.given_names',$qb->expr()->literal("{$name['first']}%")));
+                    'd.given_names',
+                    $qb->expr()->literal("{$name['first']}%")
+                ));
             }
-            $qb->andWhere($qb->expr()->in('e.id',$qb2->getDQL()));
+            $qb->andWhere($qb->expr()->in('e.id', $qb2->getDQL()));
         }
         if (! empty($query['pseudo_judge'])) {
             $qb->andWhere('aj.id = :judge_id');
@@ -509,21 +511,21 @@ DQL;
             $params[':event_type_id'] = $query['event_type'];
         }
         // same as above, with the related defendant names
-        if (!empty($query['interpreter_id'])) {
+        if (! empty($query['interpreter_id'])) {
             $qb2 = $this->getEntityManager()->createQueryBuilder();
-            $qb2->select('e3.id')->from(Entity\Event::class,'e3')
+            $qb2->select('e3.id')->from(Entity\Event::class, 'e3')
                 ->join('e3.interpreterEvents', 'ie2')
                 ->join('ie2.interpreter', 'i2')
                 ->where('i2.id = :interpreter_id');
 
-            $qb->andWhere($qb->expr()->in('e.id',$qb2->getDQL()));
+            $qb->andWhere($qb->expr()->in('e.id', $qb2->getDQL()));
             $params[':interpreter_id'] = $query['interpreter_id'];
         }
         if (empty($query['order'])) {
             // default
             $qb->orderBy('e.date', 'DESC')->addOrderBy('e.time', 'ASC');
         } else {
-            $qb->orderBy('e.date',$query['order'])->addOrderBy('e.time', 'ASC');            
+            $qb->orderBy('e.date', $query['order'])->addOrderBy('e.time', 'ASC');
         }
 
         $qb->setParameters($params);

@@ -313,14 +313,14 @@ class Person
     /**
      * sets the office phone number.
      *
-     * 
+     *
      * @param string $office_phone
      *
      * @return Person
      */
     public function setOfficePhone($office_phone)
     {
-        $this->office_phone = preg_replace('/\D/','',$office_phone);
+        $this->office_phone = preg_replace('/\D/', '', $office_phone);
 
         return $this;
     }
@@ -344,7 +344,7 @@ class Person
      */
     public function setMobilePhone($mobile_phone)
     {
-        $this->mobile_phone = preg_replace('/\D/','',$mobile_phone);
+        $this->mobile_phone = preg_replace('/\D/', '', $mobile_phone);
 
         return $this;
     }

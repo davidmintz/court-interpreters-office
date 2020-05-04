@@ -31,7 +31,7 @@ class AccountControllerFactory implements FactoryInterface
     {
         $auth = $container->get('auth');
         $em = $container->get('entity-manager');
-        if ($auth->hasIdentity()) {            
+        if ($auth->hasIdentity()) {
             $container->get(Listener\UpdateListener::class)->setAuth($auth);
         }
         $accountManager = $container->get(AccountManager::class);
@@ -43,25 +43,29 @@ class AccountControllerFactory implements FactoryInterface
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
         $sharedEvents->attach(
-            $requestedName, AccountManager::EVENT_REGISTRATION_SUBMITTED,
+            $requestedName,
+            AccountManager::EVENT_REGISTRATION_SUBMITTED,
             [$accountManager,'onSubmitRegistration']
         );
 
-        $sharedEvents->attach($requestedName,AccountManager::EVENT_EMAIL_VERIFIED,
-        function($e) use ($log)
-        {
-            $user = $e->getParam('user');
-            $email = $user->getPerson()->getEmail();
-            $log->info("successful email verification by user $email",[
-                'entity_class'=> get_class($user),
-                'entity_id'   => $user->getId(),
-                'channel'     => 'security',
-            ]);
-        });
+        $sharedEvents->attach(
+            $requestedName,
+            AccountManager::EVENT_EMAIL_VERIFIED,
+            function ($e) use ($log) {
+                $user = $e->getParam('user');
+                $email = $user->getPerson()->getEmail();
+                $log->info("successful email verification by user $email", [
+                    'entity_class' => get_class($user),
+                    'entity_id'   => $user->getId(),
+                    'channel'     => 'security',
+                ]);
+            }
+        );
 
         $sharedEvents->attach(
-            $requestedName, AccountManager::USER_ACCOUNT_MODIFIED,
-            [$accountManager,'onModifyAccount']            
+            $requestedName,
+            AccountManager::USER_ACCOUNT_MODIFIED,
+            [$accountManager,'onModifyAccount']
         );
 
         // figure out what form to inject

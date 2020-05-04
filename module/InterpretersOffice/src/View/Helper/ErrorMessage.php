@@ -12,7 +12,7 @@ class ErrorMessage extends AbstractHelper
 {
     /**
      * html template
-     * 
+     *
      * @var string
      */
     protected $template = <<<EOT

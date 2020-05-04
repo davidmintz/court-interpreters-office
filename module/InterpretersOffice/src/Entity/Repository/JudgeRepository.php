@@ -363,7 +363,7 @@ class JudgeRepository extends EntityRepository implements CacheDeletionInterface
         WHERE j.id = :id';
 
         return $this->getEntityManager()->createQuery($dql)
-            ->setParameters(['id'=>$id])
+            ->setParameters(['id' => $id])
             ->getOneOrNullResult();
     }
 }

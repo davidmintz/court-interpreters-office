@@ -118,7 +118,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             }
 
             // are they filtering for security clearance?
-            switch ($params['security_clearance_expiration']??-1) {
+            switch ($params['security_clearance_expiration'] ?? -1) {
                 case -1: // any status whatsoever
                     $security_expiration_clause = '';
                     break;
@@ -151,12 +151,12 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $adapter = new DoctrineAdapter(new ORMPaginator($query));
 
         $paginator = new LaminasPaginator($adapter);
-        
+
         $found = $paginator->getTotalItemCount();
         if (! $found) {
             return null;
         }
-        
+
         $paginator
             ->setCurrentPageNumber($page)
             ->setItemCountPerPage(40);
@@ -165,20 +165,20 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
 
     /**
      * gets names, ids, availability-solicitation setting for interpreters of $language
-     * 
+     *
      * @param string $language
      * @return array
      */
     public function getAvailabilityList(string $language) : array
     {
         $qb = $this->createQueryBuilder('i');
-        $qb->select('i.lastname','i.firstname','i.id','i.solicit_availability')
+        $qb->select('i.lastname', 'i.firstname', 'i.id', 'i.solicit_availability')
             ->join('i.interpreterLanguages', 'il')->join('il.language', 'l')
             ->join('i.hat', 'h')
             ->where('i.active = true')
             ->andWhere("h.name LIKE '%contract%'")
             ->andWhere('l.name = :language')
-            ->setParameters([':language'=>$language]);
+            ->setParameters([':language' => $language]);
         $qb->orderBy('i.lastname, i.firstname');
         $query = $qb->getQuery();//->useResultCache(true, null, 'interpreter-search-query');
         return $query->getResult();
@@ -186,7 +186,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
 
     /**
      * updates availability-solicitation settings
-     * 
+     *
      * @param array $data
      * @return array
      */
@@ -194,22 +194,22 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     {
         $remove = $data['remove'] ?? [];
         $add = $data['add'] ?? [];
-        if (! is_array($remove) or !is_array($add)) {
-            return ['validation_errors'=> [
-                'data' => 'data submitted was not in the expected format'],'status'=>'validation failed'
+        if (! is_array($remove) or ! is_array($add)) {
+            return ['validation_errors' => [
+                'data' => 'data submitted was not in the expected format'],'status' => 'validation failed'
             ];
         }
         $result = [];
         $dql = 'UPDATE InterpretersOffice\Entity\Interpreter i SET i.solicit_availability = ';
         if (count($add)) {
             $q = $dql . " true WHERE i.id IN (:ids)";
-            $result['added'] = $this->getEntityManager()->createQuery($q)->setParameters(['ids'=>$add])->getResult();
+            $result['added'] = $this->getEntityManager()->createQuery($q)->setParameters(['ids' => $add])->getResult();
         } else {
             $result['added'] = 0;
         }
         if (count($remove)) {
             $q = $dql . " false WHERE i.id IN (:ids)";
-            $result['removed'] = $this->getEntityManager()->createQuery($q)->setParameters(['ids'=>$remove])->getResult();
+            $result['removed'] = $this->getEntityManager()->createQuery($q)->setParameters(['ids' => $remove])->getResult();
         } else {
             $result['removed'] = 0;
         }
@@ -337,7 +337,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
     public function getInterpreterOptionsForLanguage($id, array $options = []) : Array
     {
         $with_banned_data = $options['with_banned_data'] ?? false;
-        $qb = $this->createQueryBuilder('i','i.id   ')
+        $qb = $this->createQueryBuilder('i', 'i.id   ')
             ->select("i.id AS value, CONCAT(i.lastname, ', ',i.firstname) AS label")
                 // maybe more columns later, and data attributes
             ->join('i.interpreterLanguages', 'il')
@@ -347,7 +347,9 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             ->orderBy('i.lastname, i.firstname')
             ->setParameters(['id' => $id]);
             $query = $qb->getQuery()->useResultCache(
-                true,  null, "interp-options-language-$id"
+                true,
+                null,
+                "interp-options-language-$id"
             );
             $result = $query->getResult();
         if (! $with_banned_data) { // though I doubt it
@@ -358,17 +360,17 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
         $ids = array_column($result, 'value');
         $query = $this->createQuery('SELECT i.id interpreter, p.id person
             FROM InterpretersOffice\Entity\Interpreter i JOIN i.banned_by_persons p
-            WHERE i.id IN (:ids)')->setParameters([':ids'=>$ids]);
+            WHERE i.id IN (:ids)')->setParameters([':ids' => $ids]);
         $banned = $query->getResult();
         if (! $banned) {
             return array_values($result);
         }
         // and get them into an array of interpreter_id => [ array of person ids]
         $tmp = [];
-        foreach($banned as $record) {
+        foreach ($banned as $record) {
             $banned_id = $record['interpreter'];
             if (isset($result[$banned_id])) {
-                if (!isset($tmp[$banned_id])) {
+                if (! isset($tmp[$banned_id])) {
                     $tmp[$banned_id] = [$record['person']];
                 } else {
                     $tmp[$banned_id][] = $record['person'];
@@ -376,15 +378,14 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
             }
         }
         // then get the banned_by ids into each $record
-        $final_answer =  array_map(function($record) use ($tmp){
+        $final_answer = array_map(function ($record) use ($tmp) {
             $interpreter_id = $record['value'];
             if (isset($tmp[$interpreter_id])) {
-                $record['attributes'] = ['data-banned_by' => implode(',',$tmp[$interpreter_id])];
+                $record['attributes'] = ['data-banned_by' => implode(',', $tmp[$interpreter_id])];
             }
             return $record;
-        },$result);
+        }, $result);
         // and use array_values() to help JsonModel return a js array, not object
         return array_values($final_answer);
-
     }
 }

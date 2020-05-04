@@ -26,7 +26,7 @@ class Defendants extends AbstractHelper
      */
     protected function getDefendants()
     {
-        
+
         $data = $this->getView()->data;
         if (! (is_array($data) && isset($data['defendants']))) {
             // try something else

@@ -150,7 +150,8 @@ class UpdateListener implements
         }
 
         $this->logger->info(
-            $message, compact('entity_id', 'entity_class','channel')
+            $message,
+            compact('entity_id', 'entity_class', 'channel')
         );
         $this->clearCache($args);
     }
@@ -175,9 +176,9 @@ class UpdateListener implements
         }
         $channel = $channel ?: "{$basename}s";
         $what = $basename;
-        if (method_exists($entity,'__toString')) {
+        if (method_exists($entity, '__toString')) {
             $what .= " $entity";
-        } elseif (method_exists($entity,'getFullName')) {
+        } elseif (method_exists($entity, 'getFullName')) {
             $what .= " {$entity->getFullName()}";
         }
         $this->logger->info(
@@ -188,7 +189,7 @@ class UpdateListener implements
             ),
             ['entity_class' => $entity_class, 'entity_id' =>
                 method_exists($entity, 'getId') ? $entity->getId() : null,
-                'channel'=>$channel,
+                'channel' => $channel,
             ]
         );
         $this->clearCache($args);

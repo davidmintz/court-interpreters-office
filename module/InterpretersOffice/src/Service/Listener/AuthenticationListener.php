@@ -35,10 +35,10 @@ class AuthenticationListener
 
      /**
      * @var int $max_login_failures
-     * 
+     *
      * Maximum number of consecutive login failures allowed before we
      * disable the user account.
-     * 
+     *
      */
     protected $max_login_failures = 6;
 
@@ -60,7 +60,7 @@ class AuthenticationListener
      * Event listener for user login success or failure.
      *
      * Records outcome of the authentication attempt in the log. On success,
-     * updates the last_login field of the user entity. After $this->max_login_failures 
+     * updates the last_login field of the user entity. After $this->max_login_failures
      * without a successful login, the account is disabled.
      *
      * @param Event
@@ -73,7 +73,7 @@ class AuthenticationListener
         $ip = \filter_input(\INPUT_SERVER, 'REMOTE_ADDR', \FILTER_VALIDATE_IP)
                 ?: 'N/A';
 
-        $user_entity = $result->getUserEntity(); 
+        $user_entity = $result->getUserEntity();
         $security_warning = null;
         if ($result->isValid()) {
             $message = sprintf(
@@ -82,7 +82,6 @@ class AuthenticationListener
                 $ip
             );
             $user_entity->setLastLogin(new \DateTime())->setFailedLogins(0);
-
         } else {   // authentication failure
             if ($user_entity) { // they got half it right
                 $user_entity->setFailedLogins(1 + $user_entity->getFailedLogins());
@@ -95,16 +94,22 @@ class AuthenticationListener
                         $security_warning = "Attempt to use disabled user account user {$user_entity->getUsername()}";
                     }
                 }
-            }          
-            $message = sprintf('login failed for user %s from IP address %s, reason: %s',
-                $params['identity'],$ip, json_encode($result->getMessages())
-            );                        
+            }
+            $message = sprintf(
+                'login failed for user %s from IP address %s, reason: %s',
+                $params['identity'],
+                $ip,
+                json_encode($result->getMessages())
+            );
         }
-        $this->log->info($message, 
-        ['channel'=>self::CHANNEL, 
-        'entity_class' => User::class,'entity_id' => $user_entity ? $user_entity->getId() : null]);
+        $this->log->info(
+            $message,
+            ['channel' => self::CHANNEL,
+            'entity_class' => User::class,
+            'entity_id' => $user_entity ? $user_entity->getId() : null]
+        );
         if ($security_warning) {
-            $this->log->warn($security_warning, ['channel'=>self::CHANNEL, 
+            $this->log->warn($security_warning, ['channel' => self::CHANNEL,
             'entity_class' => User::class,
             'entity_id' => $user_entity ? $user_entity->getId() : null,
             'ip' => $ip,
@@ -122,6 +127,6 @@ class AuthenticationListener
     {
         $user = $e->getParam('user');
         $message = sprintf('user %s logged out', $user->email);
-        $this->log->info($message, ['channel'=>self::CHANNEL,'entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
+        $this->log->info($message, ['channel' => self::CHANNEL,'entity_class' => User::class,'entity_id' => $user ? $user->id : null]);
     }
 }

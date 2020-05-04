@@ -42,7 +42,7 @@ class IndexController extends AbstractActionController
 
     /**
      * session
-     * 
+     *
      * @var Laminas\Session\Container
      */
     private $session;
@@ -65,7 +65,8 @@ class IndexController extends AbstractActionController
      */
     public function getScheduledAction()
     {
-        echo "hi there"; return false;
+        echo "hi there";
+        return false;
     }
 
     /**
@@ -99,7 +100,7 @@ class IndexController extends AbstractActionController
         } else {
             // YES xhr, and they asked for index, therefore they are asking for pending requests
             $active = 'pending-requests';
-            $page   = $this->params()->fromQuery('page',1);
+            $page   = $this->params()->fromQuery('page', 1);
             $this->session->tabs = [
                 'active' => $active,
                 'page' => $page,
@@ -111,7 +112,7 @@ class IndexController extends AbstractActionController
         } else {
             $defendants = [];
         }
-        $data = compact('paginator', 'defendants','page','active');
+        $data = compact('paginator', 'defendants', 'page', 'active');
         $data['csrf'] = (new \Laminas\Validator\Csrf('csrf'))->getHash();
         if ($xhr) {
             return (new ViewModel($data))
@@ -212,19 +213,19 @@ class IndexController extends AbstractActionController
 
     /**
      * displays Request entities that are on the schedule
-     * 
+     *
      * @return ViewModel
      */
     public function getScheduledRequestsAction()
     {
         $repo = $this->objectManager->getRepository(Request::class);
-        $page = $this->params()->fromQuery('page',1);
+        $page = $this->params()->fromQuery('page', 1);
         $active = 'scheduled-requests';
         /** @var \Laminas\Paginator\Paginator $paginator */
         $paginator = $repo->getScheduledRequests($page);
         $defendants = $repo->getDefendantNamesForCurrentPage($paginator);
 
-        $data = compact('paginator','defendants','page','active');
+        $data = compact('paginator', 'defendants', 'page', 'active');
         $view = new ViewModel($data);
         if ($this->getRequest()->isXmlHttpRequest()) {
             $view

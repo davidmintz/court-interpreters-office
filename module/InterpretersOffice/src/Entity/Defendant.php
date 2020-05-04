@@ -9,10 +9,10 @@ use Doctrine\Common\Collections\Collection;
 
 /**
  * Entity modeling a defendant for whom an interpreter is required.
- * 
- * The Defendant entity models a proper name, as opposed to a person. This is because we 
- * expect names to recur in the context of more than one docket number, and we recycle them. 
- * We generally don't know or care about the actual identity of the defendant, so 
+ *
+ * The Defendant entity models a proper name, as opposed to a person. This is because we
+ * expect names to recur in the context of more than one docket number, and we recycle them.
+ * We generally don't know or care about the actual identity of the defendant, so
  * don't attempt to associate directly a name with a docket number.
  *
  * @ORM\Entity  @ORM\Table(name="defendant_names",uniqueConstraints={@ORM\UniqueConstraint(name="unique_deftname",columns={"given_names", "surnames"})})
@@ -275,9 +275,9 @@ class Defendant implements \ArrayAccess
     public function toArray() : array
     {
         return [
-            'id'=> $this->id,
-            'given_names'=> $this->given_names,
-            'surnames'=> $this->surnames,
+            'id' => $this->id,
+            'given_names' => $this->given_names,
+            'surnames' => $this->surnames,
         ];
     }
 }

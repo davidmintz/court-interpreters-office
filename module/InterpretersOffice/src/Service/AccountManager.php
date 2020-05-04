@@ -298,7 +298,7 @@ class AccountManager implements LoggerAwareInterface
                         ]
                     ],
                     [
-                        'name'=>'InterpretersOffice\Form\Validator\PasswordStrength',
+                        'name' => 'InterpretersOffice\Form\Validator\PasswordStrength',
                     ],
                 ],
             ],
@@ -402,29 +402,30 @@ class AccountManager implements LoggerAwareInterface
 
     /**
      * event listener for user registration
-     * 
+     *
      * @param EventInterface $event
      */
-    public function onSubmitRegistration(EventInterface $event)    
+    public function onSubmitRegistration(EventInterface $event)
     {
         $log = $this->getLogger();
         $user = $event->getParam('user');
         $person = $user->getPerson();
         $log->info(
-        sprintf("new user registration submitted by %s %s, %s",
-            $person->getFirstname(),
-            $person->getLastname(),
-            $person->getEmail()
+            sprintf(
+                "new user registration submitted by %s %s, %s",
+                $person->getFirstname(),
+                $person->getLastname(),
+                $person->getEmail()
             ),
             ['channel' => 'security',
             'entity_class' => User::class,
             'entity_id'    => $user->getId(),]
         );
     }
-    
+
     /**
      * event listener for user account update
-     * 
+     *
      * @param EventInterface $event
      */
     public function onModifyAccount(EventInterface $event)
@@ -434,8 +435,8 @@ class AccountManager implements LoggerAwareInterface
         $before = $event->getParam('before');
         $after = $event->getParam('after');
         $entity = $event->getParam('user');
-        if (array_diff($before->judge_ids,$after->judge_ids)
-            or array_diff($after->judge_ids,$before->judge_ids)) {
+        if (array_diff($before->judge_ids, $after->judge_ids)
+            or array_diff($after->judge_ids, $before->judge_ids)) {
             $judges_updated = true;
         }
         foreach (array_keys(get_object_vars($after)) as $prop) {
@@ -451,8 +452,8 @@ class AccountManager implements LoggerAwareInterface
         if (! $account_updated) {
             $person_before = $event->getParam('person_before');
             $person_after = [
-                'mobile'=>$entity->getPerson()->getMobilePhone(),
-                'office'=>$entity->getPerson()->getOfficePhone()
+                'mobile' => $entity->getPerson()->getMobilePhone(),
+                'office' => $entity->getPerson()->getOfficePhone()
             ];
             if ($person_before != $person_after) {
                 $account_updated = true;
@@ -469,7 +470,7 @@ class AccountManager implements LoggerAwareInterface
         }
         if ($account_updated && ! $judges_updated) {
             $did_what = 'updated her/his account profile';
-        } elseif($judges_updated && !$account_updated) {
+        } elseif ($judges_updated && ! $account_updated) {
             $did_what = 'updated her/his judges';
         } else {
             $did_what = 'updated her/his account profile, including judges';
@@ -477,13 +478,12 @@ class AccountManager implements LoggerAwareInterface
         $log->info(
             "user $username $did_what",
             [   'entity_class' => get_class($entity),
-                'entity_id'=>$entity->getId(),
+                'entity_id' => $entity->getId(),
                 'account_updated' => $account_updated,
                 'judges_updated' => $judges_updated,
                 'channel' => 'security',
             ]
         );
-
     }
 
     /**
@@ -752,7 +752,7 @@ class AccountManager implements LoggerAwareInterface
      *
      * @param SessionContainer user session
      * @param string $password new user password
-     * 
+     *
      * @return boolean true if successful
      */
     public function resetPassword(SessionContainer $session, $password)
@@ -772,7 +772,8 @@ class AccountManager implements LoggerAwareInterface
         $user->setPassword($password);
         $this->objectManager->flush();
         $session->getManager()->getStorage()->clear();
-        $log->info(sprintf('reset password for user %s',
+        $log->info(sprintf(
+            'reset password for user %s',
             $user->getPerson()->getEmail(),
             ['channel' => 'security',
             'entity_class' => Entity\User::class,

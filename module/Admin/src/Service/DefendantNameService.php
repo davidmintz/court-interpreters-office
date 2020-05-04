@@ -166,7 +166,7 @@ class DefendantNameService
                     }
                     break;
 
-                case self::INEXACT_DUPLICATE;
+                case self::INEXACT_DUPLICATE:
                     $id = (int)$duplicate['entity']->getId();
                     if ($update_type == self::UPDATE_GLOBAL) {
                         $debug[] = "INEXACT duplicate, global update; duplicate resolution: " .$data['duplicate_resolution'];

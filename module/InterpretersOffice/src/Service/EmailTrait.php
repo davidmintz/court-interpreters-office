@@ -50,7 +50,7 @@ trait EmailTrait
 
     /**
      * creates HTML part
-     * 
+     *
      * @param string $markup
      * @return MimePart
      */
@@ -90,7 +90,8 @@ trait EmailTrait
         $contentTypeHeader = $message->getHeaders()->get('Content-Type');
         $contentTypeHeader->setType('multipart/alternative');
         $message->getHeaders()->addHeaderLine(
-            'X-Sent-By','InterpretersOffice https://interpretersoffice.org'
+            'X-Sent-By',
+            'InterpretersOffice https://interpretersoffice.org'
         );
 
         return $message;
@@ -105,9 +106,9 @@ trait EmailTrait
      */
     public function setMessageHeaders(Message $message, Entity\Person $person, Array $contact)
     {
-        $message->setFrom($contact['email'],$contact['organization_name'])
-            ->setTo($person->getEmail(),$person->getFullname())
-            ->addCc($contact['email'],$contact['organization_name']);
+        $message->setFrom($contact['email'], $contact['organization_name'])
+            ->setTo($person->getEmail(), $person->getFullname())
+            ->addCc($contact['email'], $contact['organization_name']);
 
         return $message;
     }
@@ -119,7 +120,7 @@ trait EmailTrait
      * @param  string $template
      * @return ViewModel
      */
-    public function getEmailLayout($template = 'interpreters-office/email/layout' )
+    public function getEmailLayout($template = 'interpreters-office/email/layout')
     {
         if (! $this->layout) {
             $this->layout = (new ViewModel())->setTemplate($template);

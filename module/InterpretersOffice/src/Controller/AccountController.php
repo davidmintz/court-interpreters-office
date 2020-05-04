@@ -110,7 +110,7 @@ class AccountController extends AbstractActionController
         // it's a 3-step form. the first two are handled as partial validation
         $form_step = $this->params()->fromQuery('step');
         $form = new RegistrationForm($this->objectManager, [
-            'action' => 'create', 'auth_user_role' => 'anonymous','constrain_email'=>true,
+            'action' => 'create', 'auth_user_role' => 'anonymous','constrain_email' => true,
             ]);
         $validation_group = [
             'csrf',
@@ -144,10 +144,10 @@ class AccountController extends AbstractActionController
     {
         /** @var InterpretersOffice\Form\User\RegistrationForm $form  */
         $form = new RegistrationForm($this->objectManager, [
-            'action' => 'create','auth_user_role' => 'anonymous','constrain_email'=>true,
+            'action' => 'create','auth_user_role' => 'anonymous','constrain_email' => true,
             ]);
         /** @var Laminas\Http\PhpEnvironment\Request $request */
-        $request = $this->getRequest();        
+        $request = $this->getRequest();
         if (! $this->getRequest()->isPost()) {
             return new ViewModel(['form' => $form]);
         }
@@ -274,9 +274,9 @@ class AccountController extends AbstractActionController
             /** @todo if $result == false, deal with it -- even though it should
             * work if they get this far
             */
-            $result = ['status'=>'success','valid'=>true];
+            $result = ['status' => 'success','valid' => true];
         } else {
-            $result = ['valid'=>false, 'validation_errors'=>$filter->getMessages(),'status'=>'failed'];
+            $result = ['valid' => false, 'validation_errors' => $filter->getMessages(),'status' => 'failed'];
         }
         return new JsonModel($result);
     }
@@ -291,7 +291,7 @@ class AccountController extends AbstractActionController
             $this->redirect()->toRoute('login');
             return;
         }
-        $auth =  $this->auth->getIdentity();
+        $auth = $this->auth->getIdentity();
         $em = $this->objectManager;
         /** @todo we WILL move this to a repo method */
         $dql = 'SELECT u, p, r, h, j
@@ -299,7 +299,7 @@ class AccountController extends AbstractActionController
             JOIN u.person p JOIN u.role r JOIN p.hat h
             LEFT JOIN u.judges j
             WHERE u.id = :id';
-        $user = $em->createQuery($dql)->setParameters(['id'=>$auth->id])
+        $user = $em->createQuery($dql)->setParameters(['id' => $auth->id])
             ->getOneOrNullResult();
         /* ------------------------- */
         /** @var $person \InterpretersOffice\Entity\Person */
@@ -307,7 +307,7 @@ class AccountController extends AbstractActionController
         $form = new UserForm($em, [
             'action' => 'update',
             'auth_user_role' => $auth->role,
-            'user' =>  $user,'constrain_email'=>true,
+            'user' => $user,'constrain_email' => true,
             ]);
         $form->addCurrentPasswordElement()->addUniqueEmailValidator();
         /** @todo move this initialization somewhere else */
@@ -315,7 +315,7 @@ class AccountController extends AbstractActionController
         $user_fieldset = $form->get('user');
         $user_fieldset->get('person')->setObject($person);
         $form->bind($user);
-        $viewModel = (new ViewModel(['form'=>$form]));
+        $viewModel = (new ViewModel(['form' => $form]));
         // they don't get to manipulate their own role, once set
         $form->getInputFilter()->get('user')->remove('role')->remove('id');
         if ($auth->role == 'submitter') {
@@ -328,7 +328,7 @@ class AccountController extends AbstractActionController
         $user_fieldset->addPasswordElements();
         $viewModel->related_entities = $related_entities;
         if ($this->getRequest()->isPost()) {
-            return $this->postProfileUpdate($user,$form);
+            return $this->postProfileUpdate($user, $form);
         } else {
             return $viewModel;
         }
@@ -345,17 +345,17 @@ class AccountController extends AbstractActionController
     {
         $data = $this->getRequest()->getPost();
         $person = $user->getPerson();
-        $person_before = ['mobile'=>$person->getMobilePhone(),'office'=>$person->getOfficePhone() ];
+        $person_before = ['mobile' => $person->getMobilePhone(),'office' => $person->getOfficePhone() ];
         $user_params = $data->get('user');
         $user_params['person']['hat'] = $person->getHat()->getId();
         $user_params['person']['id'] = $person->getId();
         if ($user_params['password'] or $user_params['password-confirm']) {
             $form->addPasswordValidators();
         }
-        $data->set('user',$user_params);
+        $data->set('user', $user_params);
         $form->setData($data);
-        if (!$form->isValid()) {
-            return new JsonModel(['validation_errors'=>$form->getMessages()]);
+        if (! $form->isValid()) {
+            return new JsonModel(['validation_errors' => $form->getMessages()]);
         }
 
         $this->objectManager->flush();
@@ -369,15 +369,15 @@ class AccountController extends AbstractActionController
             'id' => $user->getId(),
             'person_id' => $person->getId(),
             'role' => (string)$user->getRole(),
-            'judge_ids' => isset($user_params['judges']) ? $user_params['judges']:[]
+            'judge_ids' => isset($user_params['judges']) ? $user_params['judges'] : []
         ];
         $this->auth->getStorage()->write($after);
         $this->getEventManager()->trigger(
             AccountManager::USER_ACCOUNT_MODIFIED,
             $this,
-            compact('user','before','after','person_before')
+            compact('user', 'before', 'after', 'person_before')
         );
 
-        return new JsonModel(['status'=>'success',]);
+        return new JsonModel(['status' => 'success',]);
     }
 }

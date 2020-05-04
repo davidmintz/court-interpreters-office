@@ -13,21 +13,21 @@ class SqlLogger implements SqlLoggerInterface
 
     /**
      * logger
-     * 
+     *
      * @var LoggerInterface
      */
     private $log;
 
     /**
      * constructor
-     * 
+     *
      * @param LoggerInterface $log
      */
     public function __construct(LoggerInterface $log)
     {
         $this->log = $log;
     }
-    
+
     /**
      * {@inheritdoc}
      */

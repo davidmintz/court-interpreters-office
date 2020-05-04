@@ -11,19 +11,19 @@ class Parsedown extends AbstractHelper
 {
     /**
      * parser
-     * 
+     *
      * @var Parser
      */
     private $parsedown;
 
     /**
      * gets parser
-     * 
+     *
      * @return Parses
      */
     private function getParser()
     {
-        if (!$this->parsedown) {
+        if (! $this->parsedown) {
             $this->parsedown = new Parser();
         }
 
@@ -32,7 +32,7 @@ class Parsedown extends AbstractHelper
 
     /**
      * __invoke
-     * 
+     *
      * @param string $string
      * @return string
      */

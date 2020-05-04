@@ -27,8 +27,8 @@ class Result extends AuthResult
 
     /**
      * gets the User entity
-     * 
-     * @return User 
+     *
+     * @return User
      */
     public function getUserEntity()
     {
@@ -37,7 +37,7 @@ class Result extends AuthResult
 
     /**
      * gets User entity
-     * 
+     *
      * @param User $entity
      * @return Result
      */

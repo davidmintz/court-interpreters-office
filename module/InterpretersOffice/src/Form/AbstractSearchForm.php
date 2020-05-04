@@ -21,7 +21,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
 
     /**
      * constructor
-     * 
+     *
      * @param ObjectManager $objectManager
      * @param array $options
      */
@@ -29,7 +29,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
     {
 
         $this->setObjectManager($objectManager);
-        parent::__construct('search-form',$options);
+        parent::__construct('search-form', $options);
         $this->add([
             'name' => 'submit',
             'type' => 'Laminas\Form\Element\Hidden',
@@ -38,8 +38,8 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
             ],
         ]);
         $this->getInputFilter()->get('submit')->getValidatorChain()
-        ->attachByName('Callback',[
-            'callback'=>function($value, $context) {
+        ->attachByName('Callback', [
+            'callback' => function ($value, $context) {
                 unset($context['submit']);
                 if (isset($context['order'])) {
                     unset($context['order']);
@@ -112,7 +112,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         ]);
         /** @var $repository \InterpretersOffice\Entity\Repository\JudgeRepository */
         $repository = $this->getObjectManager()->getRepository(Entity\Judge::class);
-        $opts = ['include_pseudo_judges' => true, 'include_inactive'=> true,];
+        $opts = ['include_pseudo_judges' => true, 'include_inactive' => true,];
         $value_options = $repository->getJudgeOptions($opts);
         array_unshift(
             $value_options,
@@ -148,7 +148,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
             'name' => 'order',
             'options' => [
                 'label' => 'sort by',
-                'value_options' =>[
+                'value_options' => [
                     'desc' => 'latest first',
                     'asc' => 'oldest first',
                 ]
@@ -162,7 +162,7 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
 
     /**
      * gets inputfilter specification
-     * 
+     *
      * @return array
      */
     public function getInputFilterSpecification()

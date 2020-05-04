@@ -11,7 +11,8 @@ use Laminas\Form\Form as LaminasForm;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Form\CsrfElementCreationTrait;
 use InterpretersOffice\Form\DateTimeElementFilterTrait;
-use  Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
+
 /**
  * form for Request entity
  *
@@ -90,7 +91,7 @@ class RequestForm extends LaminasForm
             }
         }
         if ($this->options['action'] == 'create') {
-            $user =  $controller->getUserEntity();
+            $user = $controller->getUserEntity();
             $entity->setSubmitter($user->getPerson())
                 ->setModifiedBy($user);
         }

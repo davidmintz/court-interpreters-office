@@ -152,7 +152,5 @@ class Adapter extends AbstractAdapter
             $this->authenticationResultInfo['messages']
         );
         return $result->setUserEntity($entity);
-
-
     }
 }

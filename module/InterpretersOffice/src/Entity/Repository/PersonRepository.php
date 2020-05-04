@@ -94,8 +94,9 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
     {
         $options = array_merge(
             // defaults
-            ['value_column'=>'id','hat' => null,'active' => null, 'limit' => 20,'banned_list'=>null ],
-            $options);
+            ['value_column' => 'id','hat' => null,'active' => null, 'limit' => 20,'banned_list' => null ],
+            $options
+        );
         $name = $this->parseName($term);
         if ($options['banned_list']) { // special case
             return $this->autocomplete_banned_list($name);
@@ -146,15 +147,15 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
             $qb->expr()->concat('p.firstname', $qb->expr()->concat($qb->expr()->literal(' '), 'p.lastname'))
             . " AS label"
         )->addSelect('p.id AS value')->addSelect('h.name AS hat')
-        ->join('p.hat','h')
-        ->leftJoin('InterpretersOffice\Entity\User', 'u','WITH','u.person = p')
-        ->leftJoin('u.role','r')
+        ->join('p.hat', 'h')
+        ->leftJoin('InterpretersOffice\Entity\User', 'u', 'WITH', 'u.person = p')
+        ->leftJoin('u.role', 'r')
         ->where("(r.name = 'submitter' AND u.active = true) OR (p.active = true AND h.name = 'Judge')")
         ->andWhere('p.lastname LIKE :lastname');
-        $params = [':lastname'=>"$name[last]%"];
+        $params = [':lastname' => "$name[last]%"];
         if ($name['first']) {
             $qb->andWhere('p.firstname LIKE :firstname');
-            $params[':firstname'] =  "$name[first]%";
+            $params[':firstname'] = "$name[first]%";
         }
         $qb->setParameters($params)->orderBy('p.lastname')->addOrderBy('p.firstname');
         return $qb->getQuery()->setMaxResults(20)->getResult();
@@ -168,7 +169,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
      */
     public function paginate(Array $terms)
     {
-        if (!empty((int)$terms['page'])) {
+        if (! empty((int)$terms['page'])) {
             $page = $terms['page'];
         } else {
             $page = 1;
@@ -177,7 +178,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('p, h, r')
             ->from(Person::class, 'p')
-            ->join('p.hat', 'h')->leftJoin('h.role','r');
+            ->join('p.hat', 'h')->leftJoin('h.role', 'r');
         if (isset($terms['id'])) {
             $qb->where('p.id = :id');
             $params = ['id' => $terms['id']];
@@ -315,7 +316,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
 
     /**
      * look for person by email and return as array
-     * 
+     *
      * @param  string $email
      * @return array
      */
@@ -331,7 +332,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
 
     /**
      * gets view with Hat already fetched
-     * 
+     *
      * @param int $id of Person
      */
     public function view(int $id) :? Person
@@ -339,7 +340,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
         $dql = 'SELECT p, h FROM InterpretersOffice\Entity\Person p
         JOIN p.hat h WHERE p.id = :id';
         return $this->getEntityManager()->createQuery($dql)
-            ->setParameters(['id'=>$id])
+            ->setParameters(['id' => $id])
             ->getOneOrNullResult();
     }
 }

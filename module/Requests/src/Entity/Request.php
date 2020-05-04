@@ -236,16 +236,17 @@ class Request implements Interpretable, ResourceInterface
     public function prePersist()
     {
         $now = null;
-        if (!$this->created) {
+        if (! $this->created) {
             $now = new \DateTime();
             $this->setCreated($now);
         }
         if (! $this->modified) {
-            $this->setModified($now ?:new \DateTime());
+            $this->setModified($now ?: new \DateTime());
         }
-        if (!$this->getSubmitter()) {
+        if (! $this->getSubmitter()) {
             throw new \RuntimeException(
-                'Request submitter property can\'t be null');
+                'Request submitter property can\'t be null'
+            );
         }
     }
     /**

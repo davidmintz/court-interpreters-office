@@ -29,15 +29,15 @@ class DocketAnnotationRepository extends EntityRepository implements
      */
     public function __construct(EntityManagerInterface $em, ClassMetadata $class)
     {
-       parent::__construct($em, $class);
-       $config = $em->getConfiguration();
-       $this->cache = $config->getResultCacheImpl();
-       $this->cache->setNamespace($this->cache_namespace);
+        parent::__construct($em, $class);
+        $config = $em->getConfiguration();
+        $this->cache = $config->getResultCacheImpl();
+        $this->cache->setNamespace($this->cache_namespace);
     }
 
     /**
      * gets annotations for $docket
-     * 
+     *
      * @param  string $docket
      * @return array
      */
@@ -49,7 +49,7 @@ class DocketAnnotationRepository extends EntityRepository implements
         WHERE a.docket = :docket ORDER BY a.created DESC';
 
         return $this->getEntityManager()->createQuery($dql)
-            ->setParameters(['docket'=>$docket])
+            ->setParameters(['docket' => $docket])
             ->useResultCache(true)->getResult();
     }
 
@@ -59,24 +59,24 @@ class DocketAnnotationRepository extends EntityRepository implements
      * @param string $cache_namespace
      * @return boolean
      */
-   public function deleteCache($cache_namespace = null) : bool
-   {
-       $this->cache->setNamespace($this->cache_namespace);
-       return $this->cache->deleteAll();
-   }
+    public function deleteCache($cache_namespace = null) : bool
+    {
+        $this->cache->setNamespace($this->cache_namespace);
+        return $this->cache->deleteAll();
+    }
 
    /**
     * counts events having docket number $docket
     * @param string $docket
-    * 
+    *
     * @return int
     */
-   public function countEvents(string $docket) : int
-   {
-       $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
+    public function countEvents(string $docket) : int
+    {
+        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
        WHERE e.docket = :docket AND e.deleted = false';
-       return $this->getEntityManager()->createQuery($dql)
-        ->setParameters([':docket'=>$docket])
+        return $this->getEntityManager()->createQuery($dql)
+        ->setParameters([':docket' => $docket])
         ->useResultCache(false)->getSingleScalarResult();
-   }
+    }
 }

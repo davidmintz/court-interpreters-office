@@ -138,19 +138,26 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         if ($interpreterEvents != $this->previous_interpreters) {
             $fields_updated[] = 'interpreters';
             $this->logger->debug("interpreters were modified, fool!");
-            $removed = array_diff($this->previous_interpreters,$interpreterEvents);
+            $removed = array_diff($this->previous_interpreters, $interpreterEvents);
             if (count($removed)) {
-                $who = implode(", ",array_map(function($ie){return $ie->getInterpreter()->getFullName();},$removed));
+                $who = implode(", ", array_map(function ($ie) {
+                    return $ie->getInterpreter()->getFullName();
+                }, $removed));
                 $what = $entity->describe();
                 $user = $this->getAuthenticatedUser($args);
                 // the authenticated user might not be doing it directly...
                 $user_role = (string)$user->getRole();
                 if ($user_role != 'submitter') {
-                    $message = sprintf("user %s removed %s from event #%d (%s)",
-                    $user->getUsername(),$who, $entity->getId(),$what);
-                    $this->logger->info($message,[
+                    $message = sprintf(
+                        "user %s removed %s from event #%d (%s)",
+                        $user->getUsername(),
+                        $who,
+                        $entity->getId(),
+                        $what
+                    );
+                    $this->logger->info($message, [
                         'entity_class' => get_class($entity),
-                        'entity_id' =>$entity->getId(),
+                        'entity_id' => $entity->getId(),
                         'channel'  => 'scheduling',
                     ]);
                 }
@@ -197,7 +204,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                 );
                 $this->logger->info(
                     $message,
-                    ['entity_class' => Entity\Event::class,'entity_id' => $id,'channel'=>'scheduling', ]
+                    ['entity_class' => Entity\Event::class,'entity_id' => $id,'channel' => 'scheduling', ]
                 );
             }
         }

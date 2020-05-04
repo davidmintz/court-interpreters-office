@@ -7,7 +7,7 @@ use Laminas\Validator\AbstractValidator;
 
 /**
  * enforces password strength policy
- * 
+ *
  * frankly, I would prefer https://pypi.org/project/password-strength/ but this
  * will have to do for the time being
  */
@@ -27,18 +27,18 @@ class PasswordStrength extends AbstractValidator
         self::TOO_WEAK => 'password is too weak',
 
     ];
-    
+
     /**
      * validation
-     * 
+     *
      * @param string $value
      * @param array $context
      */
     public function isValid($value, $context = null) : bool
     {
-        $upper =  preg_match('/[A-Z]/',$value);
-        $lower =   preg_match('/[a-z]/',$value);
-        $digit = preg_match('/[0-9]/',$value);
+        $upper = preg_match('/[A-Z]/', $value);
+        $lower = preg_match('/[a-z]/', $value);
+        $digit = preg_match('/[0-9]/', $value);
         if (! ($upper && $lower && $digit)) {
             $this->error(self::TOO_WEAK);
             return false;

@@ -114,7 +114,7 @@ class Interpreter extends Person
 
     /**
      * whether to publish contact data on public website
-     * 
+     *
      * @ORM\Column(type="boolean",nullable=false,options={"default":1})
      * @var boolean
      */
@@ -234,8 +234,7 @@ class Interpreter extends Person
      */
     public function addBannedByPersons(Collection $people) : Interpreter
     {
-        foreach($people as $person)
-        {
+        foreach ($people as $person) {
             $this->banned_by_persons->add($person);
         }
 
@@ -249,8 +248,7 @@ class Interpreter extends Person
      */
     public function removeBannedByPersons(Collection $people) : Interpreter
     {
-        foreach($people as $person)
-        {
+        foreach ($people as $person) {
             $this->banned_by_persons->removeElement($person);
         }
 
@@ -259,7 +257,7 @@ class Interpreter extends Person
 
     /**
      * gets Persons by whom Interpreter is banned
-     * 
+     *
      * @return Collection
      */
     public function getBannedByPersons() : Collection
@@ -755,7 +753,7 @@ class Interpreter extends Person
 
     /**
      * sets solicit_availability
-     * 
+     *
      * @param bool $flag
      * @return Interpreter
      */

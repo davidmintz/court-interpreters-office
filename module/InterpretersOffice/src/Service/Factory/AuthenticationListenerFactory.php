@@ -29,7 +29,7 @@ class AuthenticationListenerFactory implements FactoryInterface
     {
         $config = $container->get('config')['security'] ?? [];
         $max_login_failures = $config['max_login_failures'] ?? 6;
-        
+
         return new AuthenticationListener(
             $container->get('log'),
             $container->get('entity-manager'),

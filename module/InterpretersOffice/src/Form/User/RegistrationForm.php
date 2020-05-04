@@ -176,7 +176,7 @@ class RegistrationForm extends Form
             'callback' => function ($value, $context) use ($objectManager, $form) {
                 /** @var Entity\Repository\UserRepository $repo */
                 $repo = $objectManager->getRepository(Entity\User::class);
-                $user = $repo->findSubmitterByEmail($value??'');
+                $user = $repo->findSubmitterByEmail($value ?? '');
                 if ($user) {
                     // maybe: this is experimental, with a view to getting
                     // more information about the status of the duplicate
@@ -199,7 +199,7 @@ class RegistrationForm extends Form
 
     /**
      * returns flattened error messages.
-     * 
+     *
      * @todo get rid of this. it's a foolish idea.
      *
      * @return Array

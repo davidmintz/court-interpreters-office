@@ -49,7 +49,7 @@ class RequestFieldset extends AbstractEventFieldset
         parent::__construct($objectManager, $options);
         // sanity check
         if (! key_exists('auth', $options) or ! $options['auth']
-        instanceof \Laminas\Authentication\AuthenticationServiceInterface ) {
+        instanceof \Laminas\Authentication\AuthenticationServiceInterface) {
             throw new \Exception(
                 "constructor options to RequestFieldset must include 'auth'"
             );

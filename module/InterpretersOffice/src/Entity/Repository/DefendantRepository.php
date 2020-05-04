@@ -175,7 +175,7 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
      */
     public function hasRelatedEntities($id)
     {
-        
+
         $pdo = $this->getEntityManager()->getConnection();
         $sql = 'SELECT (SELECT COUNT(e.id) FROM events e 
         JOIN defendants_events de ON e.id = de.event_id 
@@ -183,9 +183,9 @@ class DefendantRepository extends EntityRepository implements CacheDeletionInter
         FROM requests r  JOIN defendants_requests dr 
         ON r.id = dr.request_id WHERE dr.defendant_id = :id) AS total';
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([':id'=>$id]);
+        $stmt->execute([':id' => $id]);
         $count = $stmt->fetch(\PDO::FETCH_COLUMN);
-        
+
         return $count ? true : false;
     }
 }

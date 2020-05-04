@@ -10,7 +10,7 @@ use DateTime;
 /**
 * Docket annotation entity.
 *
-* For allowing users to record noteworthy information on a per-docket rather than 
+* For allowing users to record noteworthy information on a per-docket rather than
 * per-event basis.
 *
 * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\DocketAnnotationRepository")

@@ -25,10 +25,10 @@ class AuthController extends AbstractActionController
 
     /**
      * @var int $max_login_failures
-     * 
+     *
      * Maximum number of consecutive login failures allowed before we
      * disabled the user account.
-     * 
+     *
      */
     protected $max_login_failures = 6;
 

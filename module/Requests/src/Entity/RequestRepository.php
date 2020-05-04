@@ -242,7 +242,7 @@ class RequestRepository extends EntityRepository
             ->leftJoin('r.judge', 'j')
             ->leftJoin('r.anonymous_judge', 'aj')
             ->join('r.language', 'lang')
-            ->leftJoin('r.defendants','defts')
+            ->leftJoin('r.defendants', 'defts')
             ->leftJoin('r.location', 'loc')
             ->orderBy('r.date', 'DESC')
             ->addOrderBy('r.time', 'ASC');
@@ -262,36 +262,37 @@ class RequestRepository extends EntityRepository
 
         $qb = $this->getBaseQuery();
         // get these columns for computing permissions. so intuitive, right?
-        $qb->addSelect('s.id submitter_id')->join('r.submitter','s')
-            ->addSelect('c.category category')->join('t.category','c');
+        $qb->addSelect('s.id submitter_id')->join('r.submitter', 's')
+            ->addSelect('c.category category')->join('t.category', 'c');
         $params = [];
-        if (!empty($criteria['language'])) {
+        if (! empty($criteria['language'])) {
             $qb->where('lang.id = :language_id');
             $params['language_id'] = $criteria['language'];
         }
-        if (!empty($criteria['docket'])) {
+        if (! empty($criteria['docket'])) {
             $qb->andWhere('r.docket = :docket');
             $params['docket'] = $criteria['docket'];
         }
-        if (!empty($criteria['date-from'])) {
+        if (! empty($criteria['date-from'])) {
             $qb->andWhere('r.date >= :min_date');
             $params['min_date'] = new \DateTime($criteria['date-from']);
         }
-        if (!empty($criteria['date-to'])) {
+        if (! empty($criteria['date-to'])) {
             $qb->andWhere('r.date <= :max_date');
             $params['max_date'] = new \DateTime($criteria['date-to']);
         }
         if (! empty($criteria['defendant-name'])) {
             $name = $this->parseName($criteria['defendant-name']);
             $qb2 = $this->getEntityManager()->createQueryBuilder();
-            $qb2->select('r2.id')->from(Request::class,'r2')->join('r2.defendants', 'd2')
-                ->where($qb2->expr()->like('d2.surnames',$qb->expr()->literal("{$name['last']}%")));
+            $qb2->select('r2.id')->from(Request::class, 'r2')->join('r2.defendants', 'd2')
+                ->where($qb2->expr()->like('d2.surnames', $qb->expr()->literal("{$name['last']}%")));
             if ($name['first']) {
                 $qb2->andWhere($qb->expr()->like(
-                    'd2.given_names',$qb->expr()->literal("{$name['first']}%")));
+                    'd2.given_names',
+                    $qb->expr()->literal("{$name['first']}%")
+                ));
             }
-            $qb->andWhere($qb->expr()->in('r.id',$qb2->getDQL()));
-
+            $qb->andWhere($qb->expr()->in('r.id', $qb2->getDQL()));
         }
         if (! empty($criteria['judge'])) {
             $qb->andWhere('j.id = :judge_id');

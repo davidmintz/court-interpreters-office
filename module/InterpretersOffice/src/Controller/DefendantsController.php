@@ -88,7 +88,7 @@ class DefendantsController extends AbstractActionController
     public function searchAction()
     {
         $search = $this->params()->fromQuery('term');
-        $page = $this->params()->fromQuery('page',1);
+        $page = $this->params()->fromQuery('page', 1);
         $repo = $this->entityManager->getRepository(Entity\Defendant::class);
         $paginator = $repo->paginate($search, $page);
         $viewModel = new ViewModel(['paginator' => $paginator,'search' => $search]);
@@ -97,8 +97,8 @@ class DefendantsController extends AbstractActionController
             $viewModel->setTerminal(true);
         }
         $referrer = $request->getServer()->get('HTTP_REFERER');
-        // remember state for next time...        
-        if (strstr($referrer,'admin/defendants')) {
+        // remember state for next time...
+        if (strstr($referrer, 'admin/defendants')) {
             $session = new Session('admin_defendants');
             $session->search_term = $search;
             $session->page = $page;
