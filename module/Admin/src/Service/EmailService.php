@@ -145,12 +145,13 @@ $response = $client->request('POST', "", [
         }
         $mail = $this->config['mail'];
         $sender = "{$mail['from_entity']} <{$mail['from_address']}>";
-        $view = $this->getLayout();
-        $view->content =  $this->renderMarkdown($data['body']);
-        $html = $this->viewRenderer->render($view);
         if ($data['salutation'] == 'personalized') {
             $data['body'] = "Dear %recipient.firstname% %recipient.lastname%:\r\n\r\n" . $data['body'];
         }
+        $view = $this->getLayout();
+        $view->content =  $this->renderMarkdown($data['body']);
+        
+        $html = $this->viewRenderer->render($view);
         $params = [
             'to' => $to,
             'from' => $sender,
@@ -167,7 +168,7 @@ $response = $client->request('POST', "", [
         return ['status'=>'so far so good, shit is valid',
         'total' => $total,
         'status_code' => $response->getStatusCode(),
-        'mailgun_response'=>json_decode($response->getBody())];
+        'mailgun_response'=>json_decode((string)$response->getBody())];
     }
 
     /**
