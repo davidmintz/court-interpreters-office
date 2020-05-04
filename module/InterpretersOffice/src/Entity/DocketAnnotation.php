@@ -1,4 +1,4 @@
-<?php /** module/InterpretersOffice/src/Entity/DocketAnnotation.php */
+<?php /** module/InterpretersOffice/src/Entity/DocketAnnotation.php. */
 
 declare(strict_types=1);
 

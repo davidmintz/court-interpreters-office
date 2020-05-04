@@ -1,30 +1,23 @@
 <?php /** module/Notes/src/Controller/NotesController.php */
+
 namespace InterpretersOffice\Admin\Notes\Controller;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
-//use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Admin\Notes\Service\NotesService;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use InterpretersOffice\Entity\User;
-use InterpretersOffice\Admin\Notes\Entity\MOTD;
-use InterpretersOffice\Admin\Notes\Entity\MOTW;
-use Parsedown;
 use DateTime;
 
+/**
+ * controller for Notes (MOT[DW]) entities
+ */
 class NotesController extends AbstractRestfulController
 {
-
-    /*
-     * entity manager
-     *
-     * @var EntityManagerInterface
-     private $em;
-     */
-
+  
     /**
      *
      * @var stdClass $user
+     * 
      * private $user;
      */
 
@@ -38,7 +31,7 @@ class NotesController extends AbstractRestfulController
     /**
      * constructor
      *
-     * @param EntityManagerInterface $em
+     * @param NotesService $notesService
      */
     public function __construct(NotesService $notesService)
     {
@@ -78,9 +71,9 @@ class NotesController extends AbstractRestfulController
     }
 
     /**
-     *
+     * edits multiple Notes at once
+     * 
      * @param  Array  $data
-     * @param  int $id
      * @return JsonModel
      */
     protected function batchEdit(Array $data): JsonModel
@@ -119,7 +112,8 @@ class NotesController extends AbstractRestfulController
 
     /**
      * gets the MOTD and/or MOTD for a date
-     *
+     * 
+     * @param string $date
      * @return JsonModel
      */
     public function get($date)
@@ -228,6 +222,10 @@ class NotesController extends AbstractRestfulController
         }
     }
 
+    /**
+     * note creation
+     * 
+     */
     public function createAction()
     {
         $type = $this->params()->fromRoute('type');

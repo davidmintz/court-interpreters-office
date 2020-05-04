@@ -113,7 +113,8 @@ class WriteController extends AbstractActionController implements ResourceInterf
 
     /**
      * sets User
-     *
+     * 
+     * @param User $user
      * @return WriteController
      */
     public function setUserEntity(User $user)

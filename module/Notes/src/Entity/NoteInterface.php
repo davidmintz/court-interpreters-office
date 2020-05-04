@@ -1,5 +1,5 @@
-<?php
-/** module/Notes/src/Entity/NoteInterface.php */
+<?php /** module/Notes/src/Entity/NoteInterface.php */
+
 namespace InterpretersOffice\Admin\Notes\Entity;
 use DateTime;
 
@@ -8,9 +8,18 @@ use DateTime;
  */
 interface NoteInterface
 {
-
+    /**
+     * gets content
+     * 
+     * @return string
+     */
     public function getContent(): string;
 
+    /**
+     * gets date
+     * 
+     * @return DateTIme
+     */
     public function getDate(): DateTime;
 
 }

@@ -1,5 +1,4 @@
-<?php
-/** MOTD.php */
+<?php /** module/Notes/src/Entity/MOTW.php */
 
 declare(strict_types=1);
 
