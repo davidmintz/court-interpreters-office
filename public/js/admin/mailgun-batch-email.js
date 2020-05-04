@@ -2,9 +2,12 @@
 
 /* global  $, fail, moment, displayValidationErrors */
 
+/**
+ * submits batch-email form and displayed results.
+ */
 var submit_form = function(e)
 {
-    console.log("loading the mailgun, folks");
+    
     e.preventDefault();
     var form = $("#email-form");
     var data = form.serialize();
@@ -14,10 +17,10 @@ var submit_form = function(e)
     btn.text("sending... ").append(spinner.clone().removeAttr("hidden"));
     $.post("/admin/email/mailgun",data)
         .then((res)=>{
-            // if (res.status === "success") {
-                $(".alert-success p").text("bravo!").parent().removeAttr("hidden");
-            // }
-            console.log("got a response");
+            if (res.status === "success") {
+                $(".alert-success p").html(`This message has been succesfully dispatched to ${res.total_recipients} recipients.`)               
+                    .parent().removeAttr("hidden");
+            }            
             console.log(res);
             btn.html("send"); // restore
         }).fail(fail);   
@@ -25,7 +28,7 @@ var submit_form = function(e)
 
 $(function(){
 
-    /** yes, this section is no different from public/js/admin/batch-email.js */
+    /** yes, this section is no different from public/js/admin/batch-email.js -- bad dog! */
     var form = $("#email-form");
     form.carousel();
     $("button[name=\"preview\"]").on("click",(e)=>{

@@ -81,22 +81,32 @@ class EmailController extends AbstractActionController
 
     /**
      * batch sending via mailgun
+     * 
+     * @return JsonModel
      */
     public function mailgunAction()
     {
-        sleep(1);
-        $service = $this->emailService;
+       
         $data = $this->params()->fromPost();
-        return new JsonModel($service->mailgun($data));
+        $response = $this->emailService->mailgun($data);
+        $status_code = $response['status_code'];
+        if ($status_code == 200) {
+            $response['status'] = 'success';
+        } else {
+            $response['status'] = 'error';
+            $this->getResponse()->setStatusCode($status_code);
+        }
+
+        return new JsonModel($response);
     }
 
     /**
      * batch email
      *
      * Revised to get us away from Laminas\Mail which is
-     * needlessly clumsy in our humble opinion. And even this is
-     * fucked up. Sending more than a handful of emails succesively 
-     * over an SMTP connection is too fraught.
+     * needlessly clumsy in our humble opinion. And this is not 
+     * recommended if the transport is SMTP.
+     * 
      */
     public function batchEmailAction()
     {

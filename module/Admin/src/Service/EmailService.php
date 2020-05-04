@@ -95,25 +95,6 @@ EOD;
             unset(self::$recipient_list_options[self::TEST_GROUP]);
         }
     }
-    /*$to = [];
-$recipient_variables = [];
-foreach ($data as $record) {
-    $to[] = "{$record['firstname']} {$record['lastname']}  <{$record['email']}>";
-    $recipient_variables[$record['email']] = ['firstname' => $record['firstname'],'lastname'=>$record['lastname']];
-}
-
-$response = $client->request('POST', "", [
-    'auth' => ['api', $config['key']],
-    // 'o:testmode' => "yes",
-    'form_params' => [
-        'recipient-variables' => json_encode($recipient_variables),
-        'from'    => 'David <david@davidmintz.org>',
-        // 'to'      => 'David <david@davidmintz.org>',
-        'to'      => $to,
-        'subject' => 'batch test from the gun to %recipient.firstname%',
-        'text'    => "Dear %recipient.firstname% %recipient.lastname%\nYet another mailgun test. This is one I should receive."
-    ]
-]); */
 
     /**
      * sends batch email via Mailgun
@@ -139,12 +120,18 @@ $response = $client->request('POST', "", [
         $to = [];
         $recipients = $this->getRecipientList($data['recipient_list']);
         $total = count($recipients);        
+        $mail = $this->config['mail'];
+        $sender = "{$mail['from_entity']} <{$mail['from_address']}>";
         foreach ($recipients as $record) {
             $to[] = "{$record['firstname']} {$record['lastname']}  <{$record['email']}>";
             $recipient_variables[$record['email']] = ['firstname' => $record['firstname'],'lastname'=>$record['lastname']];
         }
-        $mail = $this->config['mail'];
-        $sender = "{$mail['from_entity']} <{$mail['from_address']}>";
+        // one more for the sender
+        $to[] = $sender;
+        $recipient_variables[$mail['from_address']] = [
+            // how ironic...
+            'firstname' => '{first name}','lastname' => '{last name}',
+        ];
         if ($data['salutation'] == 'personalized') {
             $data['body'] = "Dear %recipient.firstname% %recipient.lastname%:\r\n\r\n" . $data['body'];
         }
@@ -160,15 +147,19 @@ $response = $client->request('POST', "", [
             'text'  => $data['body'],
             'html'  => $html,
         ];               
-        $response = $client->request('POST', "", [
+        $response = $client->request('POST', '', [
             'auth' => ['api', $config['key']],
             // 'o:testmode' => "yes",
             'form_params' => $params,
         ]);
-        return ['status'=>'so far so good, shit is valid',
-        'total' => $total,
-        'status_code' => $response->getStatusCode(),
-        'mailgun_response'=>json_decode((string)$response->getBody())];
+        $status_code = $response->getStatusCode();
+
+        return [
+            'total_recipients' => $total,
+            'status_code' => $status_code,
+            'response' => json_decode((string)$response->getBody()),
+        ];
+        
     }
 
     /**
