@@ -70,7 +70,7 @@ class RequestForm extends LaminasForm
 
     /**
      * moves data around following successful validation
-     *
+     * @param AbstractActionController $controller
      * @return RequestForm
      */
     public function postValidate(AbstractActionController $controller)

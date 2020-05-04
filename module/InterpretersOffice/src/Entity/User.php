@@ -97,13 +97,15 @@ class User implements ResourceInterface, RoleInterface
     protected $lastLogin;
 
     /**
-     * @ORM\Column(type="integer",name="failed_login_attempts",options={"nullable":false,"default":0,"unsigned":true})
-     * number of consecutive failed logins.
+     * Number of consecutive authentication failures.
      * 
      * This is incremented by one with each login failure until login succeeds,
      * at which point it should be reset to 0. The account can be locked down after 
      * a set number of failures.
      * 
+     * @ORM\Column(type="integer",name="failed_login_attempts",options={"nullable":false,"default":0,"unsigned":true})
+     * number of consecutive failed logins.
+     *
      * @var int
      * 
      */

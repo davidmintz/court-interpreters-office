@@ -401,7 +401,9 @@ class AccountManager implements LoggerAwareInterface
     }
 
     /**
+     * event listener for user registration
      * 
+     * @param EventInterface $event
      */
     public function onSubmitRegistration(EventInterface $event)    
     {
@@ -420,6 +422,11 @@ class AccountManager implements LoggerAwareInterface
         );
     }
     
+    /**
+     * event listener for user account update
+     * 
+     * @param EventInterface $event
+     */
     public function onModifyAccount(EventInterface $event)
     {
 

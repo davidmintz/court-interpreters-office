@@ -1,4 +1,5 @@
-<?php
+<?php /** module/InterpretersOffice/src/Entity/Repository/DocketAnnotationRepository.php */
+
 declare(strict_types=1);
 namespace InterpretersOffice\Entity\Repository;
 
@@ -7,10 +8,17 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * repository class for docket annotations
+ */
 class DocketAnnotationRepository extends EntityRepository implements
     CacheDeletionInterface
 {
 
+    /**
+     * cache namespace
+     * @var string
+     */
     private $cache_namespace = 'annotations';
 
     /**
@@ -29,6 +37,7 @@ class DocketAnnotationRepository extends EntityRepository implements
 
     /**
      * gets annotations for $docket
+     * 
      * @param  string $docket
      * @return array
      */
@@ -50,13 +59,19 @@ class DocketAnnotationRepository extends EntityRepository implements
      * @param string $cache_namespace
      * @return boolean
      */
-   public function deleteCache($cache_id = null) : bool
+   public function deleteCache($cache_namespace = null) : bool
    {
        $this->cache->setNamespace($this->cache_namespace);
        return $this->cache->deleteAll();
    }
 
-   public function countEvents(string $docket) : string
+   /**
+    * counts events having docket number $docket
+    * @param string $docket
+    * 
+    * @return int
+    */
+   public function countEvents(string $docket) : int
    {
        $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
        WHERE e.docket = :docket AND e.deleted = false';

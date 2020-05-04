@@ -1,5 +1,4 @@
-<?php
-/** module/InterpretersOffice/src/Entity/Interpreter.php */
+<?php /** module/InterpretersOffice/src/Entity/Interpreter.php */
 
 namespace InterpretersOffice\Entity;
 
@@ -258,13 +257,18 @@ class Interpreter extends Person
         return $this;
     }
 
+    /**
+     * gets Persons by whom Interpreter is banned
+     * 
+     * @return Collection
+     */
     public function getBannedByPersons() : Collection
     {
         return $this->banned_by_persons;
     }
 
     /**
-     * Set home phone.
+     * Sets home phone.
      *
      * @param string $phone
      *

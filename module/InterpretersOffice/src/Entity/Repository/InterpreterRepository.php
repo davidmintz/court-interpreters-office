@@ -186,13 +186,18 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
 
     /**
      * updates availability-solicitation settings
+     * 
+     * @param array $data
+     * @return array
      */
     public function updateAvailabilityList(array $data) : array
     {
         $remove = $data['remove'] ?? [];
         $add = $data['add'] ?? [];
         if (! is_array($remove) or !is_array($add)) {
-            return ['validation_errors'=> ['data' => 'data submitted was not in the expected format'],'status'=>'validation failed'];
+            return ['validation_errors'=> [
+                'data' => 'data submitted was not in the expected format'],'status'=>'validation failed'
+            ];
         }
         $result = [];
         $dql = 'UPDATE InterpretersOffice\Entity\Interpreter i SET i.solicit_availability = ';
@@ -326,6 +331,7 @@ class InterpreterRepository extends EntityRepository implements CacheDeletionInt
      * gets active interpreters of language id $id
      *
      * @param int $id
+     * @param array $options
      * @return Array
      */
     public function getInterpreterOptionsForLanguage($id, array $options = []) : Array

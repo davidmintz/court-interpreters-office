@@ -3,20 +3,34 @@
 namespace InterpretersOffice\Service;
 
 use Doctrine\DBAL\Logging\SQLLogger as SqlLoggerInterface;
+use Laminas\Log\LoggerInterface;
 
 /**
- * SqlLogger
+ * SqlLogger for debugging
  */
 class SqlLogger implements SqlLoggerInterface
 {
 
+    /**
+     * logger
+     * 
+     * @var LoggerInterface
+     */
     private $log;
 
-    public function __construct($log)
+    /**
+     * constructor
+     * 
+     * @param LoggerInterface $log
+     */
+    public function __construct(LoggerInterface $log)
     {
         $this->log = $log;
     }
-
+    
+    /**
+     * {@inheritdoc}
+     */
     public function startQuery($sql, array $params = null, array $types = null)
     {
         $entry = $sql . PHP_EOL;

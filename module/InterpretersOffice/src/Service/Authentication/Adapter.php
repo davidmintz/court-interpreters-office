@@ -70,7 +70,7 @@ class Adapter extends AbstractAdapter
     /**
      * validates the identity.
      *
-     * @param User $identity
+     * @param User $user
      *
      * @return Result
      */

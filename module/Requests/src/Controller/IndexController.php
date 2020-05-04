@@ -12,15 +12,10 @@ use Laminas\Authentication\AuthenticationServiceInterface;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
-use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\User;
-use InterpretersOffice\Entity\Repository\CourtClosingRepository;
 use InterpretersOffice\Requests\Form\SearchForm;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Service\DateCalculatorTrait;
-
-use Laminas\Mvc\MvcEvent;
-use Laminas\Http\Request;
 
 /**
  *  IndexController for Requests module
@@ -51,7 +46,12 @@ class IndexController extends AbstractActionController implements ResourceInterf
     protected $auth;
 
 
-    /** @var InterpretersOffice\Entity\User */
+    /** 
+     * User entity
+     * 
+     * @var InterpretersOffice\Entity\User 
+     * 
+     */
     private $user_entity;
 
     /**

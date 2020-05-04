@@ -11,7 +11,6 @@ use InterpretersOffice\Entity\Person;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
-use Doctrine\ORM\Query;
 
 /**
  * Person repository.
@@ -316,6 +315,7 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
 
     /**
      * look for person by email and return as array
+     * 
      * @param  string $email
      * @return array
      */
@@ -329,7 +329,12 @@ class PersonRepository extends EntityRepository implements CacheDeletionInterfac
                 ->getResult();
     }
 
-    public function view(int $id)
+    /**
+     * gets view with Hat already fetched
+     * 
+     * @param int $id of Person
+     */
+    public function view(int $id) :? Person
     {
         $dql = 'SELECT p, h FROM InterpretersOffice\Entity\Person p
         JOIN p.hat h WHERE p.id = :id';

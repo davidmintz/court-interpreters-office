@@ -1,20 +1,20 @@
-<?php
-/** module/InterpretersOffice/src/Entity/DocketAnnotation.php */
+<?php /** module/InterpretersOffice/src/Entity/DocketAnnotation.php */
+
 declare(strict_types=1);
 
 namespace InterpretersOffice\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
-use InterpretersOffice\Entity\DocketAnnotation;
 
 /**
-* Docket annotation.
+* Docket annotation entity.
+*
+* For allowing users to record noteworthy information on a per-docket rather than 
+* per-event basis.
 *
 * @ORM\Entity(repositoryClass="InterpretersOffice\Entity\Repository\DocketAnnotationRepository")
 * @ORM\Table(name="docket_annotations",indexes={@ORM\Index(name="docket_idx", columns={"docket"})})
-*
-* //ORM\EntityListeners({"InterpretersOffice\Entity\Listener\..."})
 */
 class DocketAnnotation
 {

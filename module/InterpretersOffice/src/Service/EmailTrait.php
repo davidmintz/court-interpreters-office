@@ -48,6 +48,12 @@ trait EmailTrait
         return $this->transport;
     }
 
+    /**
+     * creates HTML part
+     * 
+     * @param string $markup
+     * @return MimePart
+     */
     public function createHtmlPart(string $markup)
     {
         $html = new MimePart($markup);

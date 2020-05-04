@@ -40,6 +40,11 @@ class IndexController extends AbstractActionController
      */
     protected $config_dir = 'module/Requests/config';
 
+    /**
+     * session
+     * 
+     * @var Laminas\Session\Container
+     */
     private $session;
 
     /**
@@ -205,6 +210,11 @@ class IndexController extends AbstractActionController
         return ['request' => $entity,'csrf' => $token];
     }
 
+    /**
+     * displays Request entities that are on the schedule
+     * 
+     * @return ViewModel
+     */
     public function getScheduledRequestsAction()
     {
         $repo = $this->objectManager->getRepository(Request::class);

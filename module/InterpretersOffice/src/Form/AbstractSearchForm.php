@@ -12,10 +12,19 @@ use InterpretersOffice\Entity;
 use Doctrine\Common\Persistence\ObjectManager;
 use Laminas\Validator\Callback;
 
+/**
+ * abstract search form
+ */
 class AbstractSearchForm extends Form implements InputFilterProviderInterface, ObjectManagerAwareInterface
 {
     use ObjectManagerAwareTrait;
 
+    /**
+     * constructor
+     * 
+     * @param ObjectManager $objectManager
+     * @param array $options
+     */
     public function __construct(ObjectManager $objectManager, array $options = [])
     {
 
@@ -151,6 +160,11 @@ class AbstractSearchForm extends Form implements InputFilterProviderInterface, O
         $this->init();
     }
 
+    /**
+     * gets inputfilter specification
+     * 
+     * @return array
+     */
     public function getInputFilterSpecification()
     {
         return [

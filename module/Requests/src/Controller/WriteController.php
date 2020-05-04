@@ -10,19 +10,14 @@ use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Authentication\AuthenticationServiceInterface;
-use Laminas\Http\Request;
 use Zend\StdLib\Parameters;
 use Laminas\Permissions\Acl\Resource\ResourceInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Requests\Entity;
-use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\User;
 use InterpretersOffice\Admin\Service\Acl;
 use InterpretersOffice\Service\DateCalculatorTrait;
 use InterpretersOffice\Requests\Form;
-
-
-
 
 /**
  *  update|create|cancel Requests
@@ -70,7 +65,12 @@ class WriteController extends AbstractActionController implements ResourceInterf
      */
     protected $session;
 
-    /** @var InterpretersOffice\Entity\User */
+    /** 
+     * User entity
+     * 
+     * @var InterpretersOffice\Entity\User
+     * 
+     */
     private $user_entity;
 
     /**
@@ -101,12 +101,21 @@ class WriteController extends AbstractActionController implements ResourceInterf
          return self::class;
     }
 
-
+    /**
+     * gets User entity
+     * 
+     * @return User
+     */
     public function getUserEntity()
     {
         return $this->user_entity;
     }
 
+    /**
+     * sets User
+     * 
+     * @return WriteController
+     */
     public function setUserEntity(User $user)
     {
         $this->user_entity = $user;
