@@ -20,11 +20,11 @@ use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\Log\LoggerAwareTrait;
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\InputFilter;
-
 use Parsedown;
+use GuzzleHttp\Client;
 
 /**
- * sends email from the admin/schedule interface
+ * sends email from the admin/schedule/view/<id> and admin/email pages
  */
 class EmailService implements EventManagerAwareInterface, LoggerAwareInterface
 {
@@ -95,10 +95,79 @@ EOD;
             unset(self::$recipient_list_options[self::TEST_GROUP]);
         }
     }
+    /*$to = [];
+$recipient_variables = [];
+foreach ($data as $record) {
+    $to[] = "{$record['firstname']} {$record['lastname']}  <{$record['email']}>";
+    $recipient_variables[$record['email']] = ['firstname' => $record['firstname'],'lastname'=>$record['lastname']];
+}
 
-    public function mailgun($data)
+$response = $client->request('POST', "", [
+    'auth' => ['api', $config['key']],
+    // 'o:testmode' => "yes",
+    'form_params' => [
+        'recipient-variables' => json_encode($recipient_variables),
+        'from'    => 'David <david@davidmintz.org>',
+        // 'to'      => 'David <david@davidmintz.org>',
+        'to'      => $to,
+        'subject' => 'batch test from the gun to %recipient.firstname%',
+        'text'    => "Dear %recipient.firstname% %recipient.lastname%\nYet another mailgun test. This is one I should receive."
+    ]
+]); */
+
+    /**
+     * sends batch email via Mailgun
+     * 
+     * @param array $data
+     * @return array 
+     */
+    public function mailgun(Array $data)
     {
-        return ['status'=>'so far so good','debug'=>$this->config];
+        $config = $this->config['mailgun']['api'] ?? null;
+        if (! $config) {
+            throw new \RuntimeException("mailgun API configuration not found");
+        }
+        $filter = $this->getBatchEmailInputFilter();
+        $filter->setData($data);
+        if (! $filter->isValid()) {
+            throw new \RuntimeException("data has be valid before passing to ".__METHOD__);
+        }
+        /** @var Client $client */
+        $client = new Client(
+            ['base_uri' => "{$config['base_url']}/{$config['domain']}/messages"]
+        );
+        $to = [];
+        $recipients = $this->getRecipientList($data['recipient_list']);
+        $total = count($recipients);        
+        foreach ($recipients as $record) {
+            $to[] = "{$record['firstname']} {$record['lastname']}  <{$record['email']}>";
+            $recipient_variables[$record['email']] = ['firstname' => $record['firstname'],'lastname'=>$record['lastname']];
+        }
+        $mail = $this->config['mail'];
+        $sender = "{$mail['from_entity']} <{$mail['from_address']}>";
+        $view = $this->getLayout();
+        $view->content =  $this->renderMarkdown($data['body']);
+        $html = $this->viewRenderer->render($view);
+        if ($data['salutation'] == 'personalized') {
+            $data['body'] = "Dear %recipient.firstname% %recipient.lastname%:\r\n\r\n" . $data['body'];
+        }
+        $params = [
+            'to' => $to,
+            'from' => $sender,
+            'recipient-variables' => json_encode($recipient_variables),
+            'subject' => $data['subject'],
+            'text'  => $data['body'],
+            'html'  => $html,
+        ];               
+        $response = $client->request('POST', "", [
+            'auth' => ['api', $config['key']],
+            // 'o:testmode' => "yes",
+            'form_params' => $params,
+        ]);
+        return ['status'=>'so far so good, shit is valid',
+        'total' => $total,
+        'status_code' => $response->getStatusCode(),
+        'mailgun_response'=>json_decode($response->getBody())];
     }
 
     /**
@@ -158,8 +227,9 @@ EOD;
                 break;
             case self::TEST_GROUP:
                 $data = [
-                    ['id' => 123,'lastname' => 'Mintz','firstname' => 'David','email' => 'mintz@vernontbludgeon.com'],
-                    ['id' => 124,'lastname' => 'Mintz','firstname' => 'David','email' => 'david_mintz@nysd.uscourts.gov'],
+                    ['id' => 123,'lastname' => 'Trotsky','firstname' => 'Leon','email' => 'mintz@vernontbludgeon.com'],
+                    ['id' => 124,'lastname' => 'Mintz','firstname' => 'Bad Dog','email' => 'david_mintz@nysd.uscourts.gov'],
+                    ['id' => 125,'lastname' => 'Mintz','firstname' => 'David','email' => 'david@davidmintz.org'],
                 ];
                 return $data;
             default:

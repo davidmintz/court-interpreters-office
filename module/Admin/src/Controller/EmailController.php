@@ -84,7 +84,10 @@ class EmailController extends AbstractActionController
      */
     public function mailgunAction()
     {
-        return new JsonModel(['status'=>"it's a start"]);
+        sleep(1);
+        $service = $this->emailService;
+        $data = $this->params()->fromPost();
+        return new JsonModel($service->mailgun($data));
     }
 
     /**

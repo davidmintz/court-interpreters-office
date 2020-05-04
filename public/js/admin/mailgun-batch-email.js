@@ -1,25 +1,31 @@
 /** public/js/admin/batch-email.js */
 
 /* global  $, fail, moment, displayValidationErrors */
-var submit_form = function(e){
-    console.log("loading the mailgun");
+
+var submit_form = function(e)
+{
+    console.log("loading the mailgun, folks");
     e.preventDefault();
     var form = $("#email-form");
     var data = form.serialize();
+    var btn = $("#btn-send");
     $("button[name=\"send\"], button[name=\"revise\"]").attr({disabled : true});
-    // display a wait thing
+    var spinner = $(".fa-spin").first();
+    btn.text("sending... ").append(spinner.clone().removeAttr("hidden"));
     $.post("/admin/email/mailgun",data)
         .then((res)=>{
-            // dispay a confirmation
+            // if (res.status === "success") {
+                $(".alert-success p").text("bravo!").parent().removeAttr("hidden");
+            // }
             console.log("got a response");
             console.log(res);
-        });   
+            btn.html("send"); // restore
+        }).fail(fail);   
 };
 
 $(function(){
-    console.log("shit is real");
-    
-    /** yes, this section is the same as public/js/admin/batch-email.js */
+
+    /** yes, this section is no different from public/js/admin/batch-email.js */
     var form = $("#email-form");
     form.carousel();
     $("button[name=\"preview\"]").on("click",(e)=>{
