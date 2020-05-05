@@ -297,7 +297,7 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
                 'defendants' => [
                      $request->getDefendants()[0]->getId()
                 ],
-                'comments' => 'just updated comments in '.__FUNCTION__,
+                'comments' => $request->getComments(),
                 'id' => $request->getId(),
             ],
         ];
@@ -311,12 +311,64 @@ class ScheduleUpdateManagerTest extends AbstractControllerTest
         $this->assertTrue(file_exists($this->update_notice));
 
     }
-    /**
-     *
-     *
-     */
-    function __testInterpretersGetEmail()
+
+    public function testScheduleChangesAutomaticallyOnChangeOfRequestEventType()
     {
 
+        $result = $this->em->createQuery("SELECT r FROM InterpretersOffice\Requests\Entity\Request r
+        JOIN r.submitter p
+        JOIN r.language l
+        JOIN InterpretersOffice\Entity\User u
+        WITH u.person = p WHERE u.username = :username AND l.name = :language")
+        ->setParameters(['username'=>'john','language'=>"Russian"])->getResult();
+
+        $this->assertTrue(is_object($result[0]));
+        $request = $result[0];
+        // check our data setup
+        $event = $request->getEvent();
+        $former_type = (string)$event->getEventType();
+        $new_type = $this->em->getRepository('InterpretersOffice\Entity\EventType')->findOneBy(['name'=>'plea']);
+        $this->assertEquals((string)$new_type,'plea');
+        $this->assertTrue(false != strstr($former_type,'conference'));
+        // john logs in...
+        $this->login('john','gack!');
+        $this->reset(true);
+        $id = $request->getId();
+        $url = '/requests/update/'.$id;
+        $csrf = $this->getCsrfToken($url);
+        $post = [
+            'csrf' => $csrf,
+            'request' => [
+                'date' => $request->getDate()->format('m/d/Y'),
+                'time' => $request->getTIme()->format('g:i a'),
+                'judge' => $request->getJudge()->getId(),
+                'language' => $request->getLanguage()->getId(),
+                'docket' => $request->getDocket(),
+                // this is different from before
+                'event_type' => $new_type->getId(),
+                'defendants' => [
+                     $request->getDefendants()[0]->getId()
+                ],
+                'comments' => $request->getComments(),
+                'id' => $request->getId(),
+            ],
+        ];
+        $this->reset(true);
+        $this->getRequest()->setMethod('POST')
+            ->setPost(new Parameters($post));
+        $this->dispatch($url);
+        // shit should not blow up on us
+        $this->assertResponseStatusCode(200);
+        $this->assertResponseHeaderRegex('content-type','|application/json|');
+        $event_id = $request->getEvent()->getId();
+        // suppose staff logs in now and looks...        
+        $this->reset(false);
+        $this->login('david','boink');
+        $this->reset(true);
+        $this->dispatch('/admin/schedule/view/'.$event_id);
+        $this->assertQuery('div.event_type');
+        $this->assertNotQueryContentRegex('div.event_type',"/$former_type/");
+        $this->assertQueryContentRegex('div.event_type','/plea/');
     }
+    
 }
