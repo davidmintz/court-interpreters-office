@@ -689,7 +689,7 @@ CREATE TABLE `requests` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   `modified_by_id` smallint(5) unsigned NOT NULL,
-  `comments` varchar(500) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `comments` varchar(1000) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `event_id` mediumint(8) unsigned DEFAULT NULL,
   `pending` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `cancelled` tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -909,4 +909,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-29 11:36:09
+-- Dump completed on 2020-05-05 13:46:29

@@ -258,7 +258,7 @@ class RequestFieldset extends AbstractEventFieldset
                         'name' => 'StringLength',
                         'options' => [
                             'min' => 5,
-                            'max' => 600,
+                            'max' => 1000,
                             'messages' => [
                             \Laminas\Validator\StringLength::TOO_LONG =>
                                 'maximum length allowed is %max% characters',

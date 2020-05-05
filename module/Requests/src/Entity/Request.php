@@ -155,7 +155,7 @@ class Request implements Interpretable, ResourceInterface
     /**
      * comments.
      *
-     * @ORM\Column(type="string",length=600,nullable=false,options={"default":""})
+     * @ORM\Column(type="string",length=1000,nullable=false,options={"default":""})
      *
      * @var string
      */
