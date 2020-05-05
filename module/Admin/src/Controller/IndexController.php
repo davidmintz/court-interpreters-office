@@ -18,7 +18,7 @@ class IndexController extends AbstractActionController
      * @return ViewModel
      */
     public function indexAction()
-    {
+    {        
         // debug
         $container = $this->getEvent()->getApplication()->getServiceManager();
         $acl_config = $container->get('config')['acl'];

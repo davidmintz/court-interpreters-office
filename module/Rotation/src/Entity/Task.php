@@ -9,9 +9,7 @@ namespace InterpretersOffice\Admin\Rotation\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use InterpretersOffice\Entity\User;
-use DateTime;
-use JsonSerializable;
+
 
 /**
  * Entity class representing a rotating Task

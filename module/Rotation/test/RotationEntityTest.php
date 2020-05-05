@@ -226,13 +226,15 @@ class RotationEntityTest extends TestCase
         }
         // { date: "2020-12-15", task: 2, person: "198", duration: "DAY" }
         $csrf = (new \Laminas\Validator\Csrf)->getHash();
-        $post = [ 'date' => $date->format('Y-m-d'),'task' => 2, //'person' => $per,
+        $post = [ 'date' => $date->format('Y-m-d'),'task' => 2,
             'substitution' => $person,'person' => $default,
             'rotation_id' => $assignment['rotation_id'],
             'duration' => 'DAY', 'csrf'=> $csrf];
         // to do: CSRF!
         $result = $service->createSubstitution($post);
-
         print_r($result);
+        $revised = $service->getAssignment($date->format('Y-m-d'),$id);
+        print_r($revised);
+        
     }
 }

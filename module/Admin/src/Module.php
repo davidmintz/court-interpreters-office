@@ -292,7 +292,8 @@ class Module
      */
     public function logError(MvcEvent $event)
     {
-        $container = $event->getApplication()->getServiceManager();
+        $app = $event->getApplication();
+        $container = $app->getServiceManager();
         $log = $container->get('log');
         if ($event->getParam('exception')) {
             $exception = $event->getParam('exception');
@@ -322,6 +323,7 @@ class Module
             if ($previous) {
                 $context['previous'] = $previous;
             }
+            $context['url'] = $app->getRequest()->getServer('REQUEST_URI') ?? '[unknown]';
             $log->err($message, $context);
         }
     }

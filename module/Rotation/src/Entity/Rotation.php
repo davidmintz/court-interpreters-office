@@ -7,9 +7,7 @@ namespace InterpretersOffice\Admin\Rotation\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
-use InterpretersOffice\Entity\User;
 use DateTime;
-use JsonSerializable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -18,9 +16,8 @@ use Doctrine\Common\Collections\Collection;
  *
  * @ORM\Entity(repositoryClass="InterpretersOffice\Admin\Rotation\Entity\RotationRepository")
  * @ORM\Table(name="rotations",uniqueConstraints={@ORM\UniqueConstraint(name="uniq_rotation",columns={"task_id","start_date"})})
- * //ORM\HasLifecycleCallbacks
+ * 
  */
-//uniqueConstraints={@ORM\UniqueConstraint(name="uniq_person_role", columns={"person_id", "role_id"})})
 class Rotation
 {
     /**
