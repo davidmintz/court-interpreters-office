@@ -561,11 +561,16 @@ class ScheduleUpdateManager
         $shit = print_r(array_keys($updates), true);
         $this->logger->debug("what changed:\n$shit");
         if ($updatable) {
+            $filter = new DashToCamelCase();
             foreach ($updatable as $prop) {
                 $this->logger->debug(__METHOD__.": setting $prop on event entity");
                 // PHP methods and functions may be case-insensitive, but
                 // the gods will appreciate our workmanship and attention to
                 // aesthetic detail
+                if (strstr($prop, '_')) {
+                    $prop = $filter->filter($prop);
+                }
+                $prop = str_replace('_','',$prop);
                 $setter = 'set'.ucfirst($prop);
                 $getter = 'get'.ucfirst($prop);
                 $event->$setter($request->$getter());
