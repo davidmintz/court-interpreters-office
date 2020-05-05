@@ -1,0 +1,14 @@
+{
+	"version": 3,
+	"file": "styles.css",
+	"sources": [
+		"styles.scss",
+		"_sass/main.scss"
+	],
+	"sourcesContent": [
+		"@import \"main\";",
+		".current {\n    text-decoration: underline;\n}\nbody {\n  background-color: #abc5f4;\n}\nmain {\n  background-color: white;\n  border : 1px solid #90b3f4;\n  border-radius: 10px;\n}\n.jumbotron {\n  /* margin-bottom: 0 !important; */\n}\n#content {\n  margin-top : 0;\n  max-width: 800px;\n}\nmain h1 {\n  font-family: \"Times New Roman\", Georgia, serif;\n}\n#content  p {\n    max-width : 600px;\n    font-family: \"Times New Roman\", Georgia, serif;\n}\n@media screen and (min-width: 900px) {\n  main {\n    padding: 1rem 5rem;\n    min-height : 500px;\n  }\n  main div {\n    padding: 4rem 4rem;\n  }\n}\n@media screen and (max-width: 392px) {\n    .jumbotron {\n        font-size: 2.5rem;\n    }\n}"
+	],
+	"names": [],
+	"mappings": "ACAA,AAAA,QAAQ,CAAC,EACL,eAAe,EAAE,SAAS,GAC7B;;AACD,AAAA,IAAI,CAAC,EACH,gBAAgB,EAAE,OAAO,GAC1B;;AACD,AAAA,IAAI,CAAC,EACH,gBAAgB,EAAE,KAAK,EACvB,MAAM,EAAG,iBAAiB,EAC1B,aAAa,EAAE,IAAI,GACpB;;AACD,AAAA,UAAU,CAAC,EACT,kCAAkC,EACnC;;AACD,AAAA,QAAQ,CAAC,EACP,UAAU,EAAG,CAAC,EACd,SAAS,EAAE,KAAK,GACjB;;AACD,AAAA,IAAI,CAAC,EAAE,CAAC,EACN,WAAW,EAAE,iCAAiC,GAC/C;;AACD,AAAA,QAAQ,CAAE,CAAC,CAAC,EACR,SAAS,EAAG,KAAK,EACjB,WAAW,EAAE,iCAAiC,GACjD;;AACD,MAAM,8BACJ,GAAA,AAAA,IAAI,CAAC,EACH,OAAO,EAAE,SAAS,EAClB,UAAU,EAAG,KAAK,GACnB,CACD,AAAA,IAAI,CAAC,GAAG,CAAC,EACP,OAAO,EAAE,SAAS,GACnB,EAHA;;AAKH,MAAM,8BACF,GAAA,AAAA,UAAU,CAAC,EACP,SAAS,EAAE,MAAM,GACpB,EAAA"
+}
