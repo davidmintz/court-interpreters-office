@@ -60,7 +60,7 @@ if ($r->isCancelled()) :
         else :
             // is it scheduled for the same time and time as the request?
             $scheduled_when = $event->getDate()->format('D d-M-Y'); if ($event->getTime()): $scheduled_when .= " {$event->getTime()->format('g:i a')}"; endif;
-            $request_when = "date $time";
+            $request_when = "$date $time";
             ?>scheduled <?php if ($request_when != $scheduled_when):?> for <span style="text-decoration:underline"><?=$scheduled_when?></span><?php endif?><?php
         endif;
     endif;
