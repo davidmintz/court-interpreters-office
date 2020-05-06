@@ -44,7 +44,8 @@ if ($r->isCancelled()) :
     ?><strong>cancelled</strong> <?php echo "by {$mod_by_person->getFullName()}";
     elseif ($r->getPending()):
         ?>pending<?php
-    elseif ($r->getEvent() && $r->getEvent()->getDeleted()):
+        // to do : account for anomaly where it is pending but the date is in the past
+    elseif (( ! $r->getEvent() && ! $r->getCancelled())  or   ($r->getEvent() && $r->getEvent()->getDeleted())): 
         ?><strong>deleted</strong> from Interpreters schedule<?php
     elseif ($r->getEvent()) :
         $event = $r->getEvent();
@@ -56,12 +57,14 @@ if ($r->isCancelled()) :
             endif;
         elseif ($event->getDate() < new \DateTime()):
             // it's in the past
-            ?>completed<?php
+            ?>completed <span class="fa fa-check text-success"></span><?php
         else :
             // is it scheduled for the same time and time as the request?
             $scheduled_when = $event->getDate()->format('D d-M-Y'); if ($event->getTime()): $scheduled_when .= " {$event->getTime()->format('g:i a')}"; endif;
             $request_when = "$date $time";
-            ?>scheduled <?php if ($request_when != $scheduled_when):?> for <span style="text-decoration:underline"><?=$scheduled_when?></span><?php endif?><?php
+            ?>scheduled <?php if ($request_when != $scheduled_when):?> for <span style="text-decoration:underline"><?=$scheduled_when?></span><?php else : 
+                ?> <span class="fa fa-check text-success"></span>
+                <?php endif?><?php
         endif;
     endif;
 ?></div>
