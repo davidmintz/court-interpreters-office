@@ -176,7 +176,7 @@ class Module
 
 
     /**
-     * callback to check authentication on mvc route event.
+     * callback to check authentication AND authorization on mvc route event.
      *
      * If the routeMatch's "module" parameter is InterpretersOffice\Admin,
      * we test for authentication and redirect to login if the user is not
