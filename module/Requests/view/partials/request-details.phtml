@@ -1,7 +1,10 @@
-<?php $r = $this->request;?>
+<?php $r = $this->request; 
+$date = $r->getDate()->format('D d-M-Y');
+$time = $r->getTime()->format('g:i a');
+?>
 <div id="request-details" data-id="<?php echo $r->getId() ?>" class="row mx-auto border p-3 shadow-sm" <?php if ($this->deadline) : ?>data-deadline="<?php echo $this->deadline->format('Y-m-d H:i:s')?>"<?php endif ?> style="max-width:825px">
-<div class="col-md-2 text-muted text-md-right pr-1">date</div><div id="date" class="col-md-4 date"><?php echo $r->getDate()->format('D d-M-Y') ?></div>
-<div class="col-md-2 text-muted text-md-right pr-1">time</div><div id="time" class="col-md-4 time"><?php echo $r->getTime()->format('g:i a') ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">date</div><div id="date" class="col-md-4 date"><?php echo $date ?></div>
+<div class="col-md-2 text-muted text-md-right pr-1">time</div><div id="time" class="col-md-4 time"><?php echo $time ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">judge</div><div class="col-md-4 judge"><?php if ($r->getJudge()):
     echo "{$r->getJudge()->getFullName()}, {$r->getJudge()->getFlavor()}"; endif; ?></div>
 <div class="col-md-2 text-muted text-md-right pr-1">place</div><div class="col-md-4 location"><?php
@@ -55,7 +58,10 @@ if ($r->isCancelled()) :
             // it's in the past
             ?>completed<?php
         else :
-            ?>scheduled<?php
+            // is it scheduled for the same time and time as the request?
+            $scheduled_when = $event->getDate()->format('D d-M-Y'); if ($event->getTime()): $scheduled_when .= " {$event->getTime()->format('g:i a')}"; endif;
+            $request_when = "date $time";
+            ?>scheduled <?php if ($request_when != $scheduled_when):?> for <span style="text-decoration:underline"><?=$scheduled_when?></span><?php endif?><?php
         endif;
     endif;
 ?></div>
