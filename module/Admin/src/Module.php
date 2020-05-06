@@ -195,7 +195,7 @@ class Module
         }
         $module = $match->getParam('module');
         if ('InterpretersOffice' == $module) {
-             // doesn't expose anything, so anyone is allowed access
+             // doesn't expose anything; anyone is allowed access
              return;
         }
         $allowed = true;
@@ -239,8 +239,7 @@ class Module
                 $allowed = false;
             }
         }
-        if (! $allowed) {
-             $container->get("log")->debug("WTF? redirecting...");
+        if (! $allowed) {             
              return $this->getRedirectionResponse($event);
         }
         /** try to prevent us from timing out */
@@ -268,14 +267,10 @@ class Module
         if (! $match) {
             return;
         }
-
         $resource  = $match->getParam('controller');
         $privilege = $match->getParam('action', \strtolower($event->getRequest()->getMethod()));
-        $log = $event->getApplication()->getServiceManager()->get('log');
-        // $log->warn("WTF? action is '$privilege'");
-        $log->debug(
-            sprintf(
-                __METHOD__." checking role %s access to resource %s, privilege %s",
+        $log = $event->getApplication()->getServiceManager()->get('log');        
+        $log->debug(sprintf(__METHOD__." checking role %s access to resource %s, privilege %s",
                 $role,
                 is_object($resource) ? get_class($resource) : $resource,
                 $privilege
@@ -323,6 +318,13 @@ class Module
             if ($previous) {
                 $context['previous'] = $previous;
             }
+            $auth = $container->get('auth');
+            if ($auth->hasIdentity()) {
+                $user = $auth->getIdentity()->username;
+                $context['user'] = $user;
+            } else {
+                $context['user'] = 'anonymous';
+            }
             $context['url'] = $app->getRequest()->getServer('REQUEST_URI') ?? '[unknown]';
             $log->err($message, $context);
         }
@@ -337,9 +339,7 @@ class Module
      * @return Laminas\Http\PhpEnvironment\Response
      */
     public function getRedirectionResponse(MvcEvent $event)
-    {
-        $container = $event->getApplication()->getServiceManager();
-        $log = $container->get('log')->debug("this is ".__METHOD__);
+    {                
         $response = $event->getResponse();
         $baseUrl = $event->getRequest()->getBaseurl();
         $response->getHeaders()
