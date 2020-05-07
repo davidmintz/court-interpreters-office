@@ -136,6 +136,7 @@ $(function(){
         }
         var id = $("input[name=\"id\"]").val();
         var url, method;
+        var data = form.serialize();
         if (id) {
             // update
             console.log("doing an update?");
@@ -145,9 +146,15 @@ $(function(){
             // create
             console.log("doing a create?");
             url = `/admin/notes/create/${type}`;
+            if (type === "motw") {
+                // add week_of parameter
+                var dp = $(`#calendar-${type}`);
+                data += "&week_of="+moment(dp.datepicker("getDate")).format("YYYY-MM-DD")
+            }
+            
             method = "POST";
         }
-        $.ajax({url, method, data : form.serialize()
+        $.ajax({url, method, data 
         }).then((res)=>{
             if (res.validation_errors) {
                 return displayValidationErrors(res.validation_errors);

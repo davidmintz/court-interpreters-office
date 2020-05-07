@@ -4,6 +4,7 @@ namespace InterpretersOffice\Admin\Notes\Controller;
 
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use InterpretersOffice\Admin\Notes\Service\NotesService;
+use InterpretersOffice\Admin\Notes\Entity;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
@@ -235,7 +236,20 @@ class NotesController extends AbstractRestfulController
         if ($existing) {
             return $this->redirect()->toRoute('notes/edit',['type'=>$type,'id'=>$existing->getId(),  'date'=>$date_string]);
         }
-        $view = new ViewModel(['date'=>new \DateTime($date_string),'type'=>$type,
+
+        $class = 'InterpretersOffice\\Admin\\Notes\\Entity\\'.strtoupper($type);
+        $note = new $class;
+        $date = new \DateTime($date_string);
+        if ($type == 'motw') { 
+            // normalize
+            $dow = (int)$date->format('N');
+            if ($dow != 1) {
+                $interval = sprintf('P%sD',$dow - 1);
+                $date->sub(new \DateInterval($interval));
+            }
+        }
+        $note->setDate($date);
+        $view = new ViewModel(['date'=>new \DateTime($date_string),'type'=>$type,'note'=>$note,
         'csrf' => (new \Laminas\Validator\Csrf('csrf'))->getHash()]);
         if ($this->getRequest()->isGet()) {
             if ($this->getRequest()->isXMLHttpRequest()) {

@@ -37,7 +37,7 @@ class MOTW implements \JsonSerializable, NoteInterface
      *
      * @var @ORM\Column(type="string",nullable=false,length=2000)
      */
-    private $content;
+    private $content = '';
 
     /**
     * timestamp of motw creation.
@@ -104,7 +104,7 @@ class MOTW implements \JsonSerializable, NoteInterface
       *
       * @return \DateTime
       */
-     public function getWeekOf() : DateTime
+     public function getWeekOf() : ?DateTime
      {
          return $this->week_of;
      }
@@ -134,7 +134,7 @@ class MOTW implements \JsonSerializable, NoteInterface
       *
       * @return DateTime
       */
-     public function getDate() : DateTime
+     public function getDate() : ?DateTime
      {
          return $this->getWeekOf();
      }
