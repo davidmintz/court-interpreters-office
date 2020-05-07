@@ -44,6 +44,8 @@ class Rotation
     private $start_date;
 
     /**
+     * members of the rotation
+     * 
      * @ORM\OneToMany(targetEntity="RotationMember",mappedBy="rotation",cascade={"persist","remove"},orphanRemoval=true)
      * @ORM\OrderBy({"order"="ASC"})
      *
@@ -51,6 +53,9 @@ class Rotation
      */
     private $members;
 
+    /**
+     * constructor
+     */
     public function __construct()
     {
         $this->members = new ArrayCollection();
@@ -153,6 +158,11 @@ class Rotation
         return $this->members;
     }
 
+    /**
+     * adds members
+     * 
+     * @param Collection $members
+     */
     public function addMembers(Collection $members)
     {
         foreach ($members as $m) {
@@ -161,6 +171,11 @@ class Rotation
         }
     }
 
+    /**
+     * removes members
+     * 
+     * @param Collection $members
+     */
     public function removeMembers(Collection $members)
     {
         foreach ($members as $m) {

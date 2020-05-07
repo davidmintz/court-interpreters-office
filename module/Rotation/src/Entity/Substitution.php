@@ -8,6 +8,7 @@ namespace InterpretersOffice\Admin\Rotation\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use InterpretersOffice\Entity\Person;
 use DateTime;
+use DateTimeInterface;
 
 /**
  * Entity class representing a Person substitution for a Task
@@ -173,7 +174,7 @@ class Substitution
      *
      * @return \DateTime
      */
-    public function getDate() : DateTime
+    public function getDate() : DateTimeInterface
     {
         return $this->date;
     }
