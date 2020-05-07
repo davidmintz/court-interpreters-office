@@ -1,4 +1,5 @@
 <?php /** module/Notes/src/Service/NotesService.php */
+
 declare(strict_types=1);
 
 namespace InterpretersOffice\Admin\Notes\Service;
@@ -9,17 +10,14 @@ use InterpretersOffice\Admin\Notes\Entity\NoteInterface;
 use InterpretersOffice\Admin\Notes\Entity\MOTD;
 use InterpretersOffice\Admin\Notes\Entity\MOTW;
 use InterpretersOffice\Admin\Notes\Entity\MOTDRepository;
-use InterpretersOffice\Admin\Rotation\Entity\RotationRepository;
 use DateTime;
 use Laminas\Session\Container as SessionContainer;
-
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Laminas\Filter;
 use InterpretersOffice\Entity;
-use Parsedown;
 use InterpretersOffice\Admin\Service\MarkdownTrait;
-use Laminas\Http\Header\HeaderInterface;
+
 /**
  * manages MOTW|MOTDs
  */
