@@ -20,6 +20,6 @@ interface NoteInterface
      * 
      * @return DateTIme
      */
-    public function getDate(): DateTime;
+    public function getDate(): ?DateTime;
 
 }

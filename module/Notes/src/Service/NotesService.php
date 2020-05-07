@@ -631,16 +631,22 @@ class NotesService
         return $result;
     }
 
+    /**
+     * creates new MOT[DW]
+     * 
+     * @param array $data
+     * @return array
+     */
     public function create(Array $data) : Array
     {
-
+        
         $class = 'InterpretersOffice\\Admin\\Notes\\Entity\\'.strtoupper($data['type']);
         $entity = new $class;
         $user = $this->em->getRepository(Entity\User::class)->find($this->user->id);
         $now = new DateTime();
         $entity->setContent($this->escape($data['content']))
             ->setCreated($now)
-            ->setDate(new DateTime($data['date']))
+            ->setDate(new DateTime($data['date'] ?? $data['week_of']))
             ->setCreatedBy($user)
             ->setModifiedBy($user)
             ->setModified($now);
