@@ -1,4 +1,5 @@
 <?php
+use InterpretersOffice\Admin\Notes\Entity;
 $action = $this->layout()->action;
 $is_index = !in_array($action,['edit','create']);
 $this->headTitle($is_index?"MOTD|MOTW":"$action $this->type");
@@ -7,7 +8,8 @@ $this->headScript()
     ->appendFile($this->basePath('js/admin/notes-form.js'));?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
 <?php $settings = $this->layout()->note_settings;
-$date_obj = new \DateTimeImmutable($settings['date']);
+
+$date_obj = $this->note ? new \DateTimeImmutable($this->note->getDate()->format('Y-m-d')) : new \DateTimeImmutable($settings['date']);
 $dow = (int)$date_obj->format('N');
 if ($dow != 1) {
     $interval = sprintf('P%sD',$dow - 1);
@@ -17,15 +19,18 @@ if ($dow != 1) {
 }
 ?>
 <?php if (false):?>
-<pre hidden>
+<pre >
     type:  <?php var_dump($this->type) ?>
     module? <?php var_dump($this->layout()->module)?>
     action: <?php var_dump($action) ?>
     monday: <?php print_r($this->monday) ?>
     notes_display (layout): <?php var_dump($this->layout()->display_notes) ?>
     notes_display: <?php var_dump($this->display_notes) ?>
-    date setting is <?php echo $settings['date'] ?> -->
-    $this->notes['motd'] is a : <?php echo gettype($this->notes['motd']) ?>
+    date setting is <?php echo $settings['date'] ;?> 
+    $this->note is a <?php echo get_class($this->note),"\n" ?>;
+    $this->notes is a : <?php echo gettype($this->notes),"\n" ;
+
+    print_r(array_keys($this->notes));?>
 </pre>
 <?php endif ?>
 <ul class="nav nav-tabs" id="tabs-notes" role="tablist">
@@ -83,8 +88,8 @@ if ($dow != 1) {
             <div class="col-md-7">
                 <h5 class="mb-3 border-bottom px-2 py-2">week of <?php echo $this->monday->format('l d-M-Y')?></h5>
                 <div id="motw-content"><?php
-                if (!empty($this->notes['motw'])):
-                    $motw = $this->notes['motw'];
+                if (!empty($this->note) && $this->note instanceof Entity\MOTW):
+                    $motw = $this->note;
                     $button_url = $this->url('notes/edit', [
                         'type'=>'motw', 'date'=>$motw->getDate()->format('Y-m-d'),
                         'id'=>$motw->getId()
@@ -100,15 +105,15 @@ if ($dow != 1) {
                     $hide_button = true;
                     echo $this->partial('notes/partials/form.phtml',
                     [
-                        'date'=>$this->date,'type'=>$this->type,
+                        'date'=>$this->note->getDate(),'type'=>$this->type,
                         //'note'=> $this->{$this->type},
-                        'note'=> $this->{$this->type},
+                        'note'=> $this->note,
                         'csrf'=>$this->csrf,'action' =>$action,
                     ]);
                 else:
                     if (!empty($this->notes['motw'])):
-                        //echo nl2br($motw->getContent());
-                        echo $motw->getContent();
+                        echo $this->notes['motw']->getContent();
+                        // echo $motw->getContent();
                     else:
                     ?><p class="font-italic no-note">no MOTW for this week</p>
                 <?php
