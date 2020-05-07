@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdoc>
   <parser>
-    <target>doc/parser</target>
+    <target>docs/parser</target>
   </parser>
   <transformer>
-    <target>doc/api</target>
+    <target>docs/api</target>
   </transformer>
   <files>
     <directory>module</directory>
     <ignore>module/*test/*</ignore>
+    <ignore>module/*config/*</ignore>
     <ignore>module/*/view/*</ignore>
     <ignore>module/Sandbox/*</ignore>
   </files>
