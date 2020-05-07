@@ -104,7 +104,6 @@ if ($dow != 1) {
                 if (!$is_index && $this->type == 'motw'):
                     //if (!)
                     $hide_button = true;
-                    echo "SHIT? at ".__LINE__;
                     echo $this->partial('notes/partials/form.phtml',
                     [
                         'date'=>$this->note->getDate(),'type'=>$this->type,
