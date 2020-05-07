@@ -104,7 +104,7 @@ class SetPasswordCommand extends Command {
     {
         $this
         // the name of the command (the part after "bin/console")
-        ->setName('admin:set-user-password')
+        ->setName('admin:user-password')
         // the short description shown while running "php bin/console list"
         ->setDescription('sets a password')
         // the full command description shown when running the command with
