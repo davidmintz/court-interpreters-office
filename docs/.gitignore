@@ -1,2 +1,3 @@
-api
-parser
+api/
+_site/
+parser/

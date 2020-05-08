@@ -2,3 +2,9 @@
   link: /
 - name: about
   link: /about.html
+- name: documentation
+  link: /documentation/
+- name: contact
+  link: /contact.html  
+- name: github
+  link: https://github.com/davidmintz/court-interpreters-office
