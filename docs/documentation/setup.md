@@ -3,9 +3,12 @@ layout : default
 name : setup
 ---
 
-# setting up the application server
+# setting up the server
 
-These are the requirements for running InterpretersOffice.
+These are the requirements for running InterpretersOffice. Some of these instructions may change in the future and I will do my utmost 
+to keep this document up to date. But there may be some minor discrepancies. The intention is make installation easier than what is described below, 
+with less manual setup involved. And of course, if you already have your web and database servers installed, there is less to do. These instructions 
+assume a server with a Linux OS and little else.
 
 ### <span id="web-server">web server: *Apache or Nginx*</span>
 
@@ -32,13 +35,13 @@ A non-root user needing to set up and maintain InterpretersOffice will need
 
 ### <span id="php-support">php support</span>
 
-1. Install <code>php7.4-fpm</code>
+1. Install <code>php7.4-fpm</code>.
 2. Install php extensions: <code>php7.4&#8209;mysql</code>, <code>php7.4&#8209;curl</code>, <code>php7.4&#8209;mbstring</code>, <code>php7.4&#8209;json</code>, <code>php7.4&#8209;dom</code>, <code>php7.4&#8209;intl</code>
 3. Install php [composer](https://getcomposer.org)
 
 ###  <span id="database">database server: *mariadb or mysql*</span>
 <ol>
-    <li>Install the database server<br>
+    <li>Install the database server.<br>
         You can use either mysql or mariadb but for master-server replication it is best to pick one or the other exclusively. I have been happy with 
 both but currently my preference is mariadb. 
     </li>
@@ -58,7 +61,10 @@ both but currently my preference is mariadb.
     </ul>
 </div>
 
-### <span id="installation">install the application</span>
+# <span id="installation">installing the application</span>
+
+### get the code and its dependencies
+
 Install <code>git</code> if you haven't already. Then
 ```
 cd /path/to/application/
@@ -66,6 +72,58 @@ git clone https://github.com/davidmintz/court-interpreters-office
 cd court-interpreters-office
 composer install
 ```
+You can safely ignore any warning about *package container-interop/container-interop* having been abandoned. Moving on:
+
+### set up the data directory
+```
+mkdir -p data/log
+mkdir data/session
+mkdir data/cache
+```
+Make these writeable by the web server, e.g.,
+```
+setfacl -Rm u:www-data:rwx data
+```
+
+### set up the database
+Create and edit the database configuration file:
+
+```
+cd config/autoload
+cp doctrine.local.php.dist doctrine.local.php
+```
+
+Open <code>doctrine.local.php</code> in a text editor, set the values for *user*, *password*, and *host* appropriately, and save.
+
+You should now be able to load the index page in a browser without incident, but there is still more to do, starting 
+with database initialization.
+
+**If you are migrating from an existing installation**, simply <code>mysqldump</code> the old database into the new one, and your database is good to go. (After first 
+shutting off access the old installation, to avoid losing data in the transition.) 
+
+**If you are starting from scratch** with an empty database, you need to seed the database by running SQL scripts found in <code>bin/sql</code>. From 
+your application root,
+
+```
+cat bin/sql/mysql-schema.sql bin/sql/initial-data.sql | mysql -p  -h your_host office
+```
+
+Next, you need to set up an initial administrative user, using the provided interactive CLI script. From the application root,
+```
+bin/admin-cli setup:create-admin-user
+```
+Supply the answers as prompted, and you'll have an admin user who can log in and carry on using the web interface. 
+*(Please note: at this point it is technically possible to move forward with the database as is, but there are several data 
+tables that would have to be populated by the admin users, row by row, and it would be tedious. It's worth considering writing 
+some one-off scripts to import data from existing sources. Feel free to contact david@davidmintz.org to discuss.)*
+
+### final configuration
+
+In the code>config/autoload</code> folder,
+
+```
+cp [to be continued]
+
 
 
 
