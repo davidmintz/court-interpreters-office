@@ -265,30 +265,6 @@ CREATE TABLE `event_categories` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `event_emails`
---
-
-DROP TABLE IF EXISTS `event_emails`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `event_emails` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `event_id` mediumint(8) unsigned DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  `user_id` smallint(5) unsigned NOT NULL,
-  `recipient_id` smallint(5) unsigned DEFAULT NULL,
-  `email` varchar(60) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `subject` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `comments` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `event_id` (`event_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `event_emails_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `event_emails_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `event_types`
 --
 
@@ -360,20 +336,6 @@ CREATE TABLE `events` (
   CONSTRAINT `FK_5387574AB7D66194` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`),
   CONSTRAINT `FK_5387574AFF915C63` FOREIGN KEY (`anonymous_judge_id`) REFERENCES `anonymous_judges` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `foo`
---
-
-DROP TABLE IF EXISTS `foo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `foo` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -808,20 +770,6 @@ CREATE TABLE `tasks` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `tmp_event_map`
---
-
-DROP TABLE IF EXISTS `tmp_event_map`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tmp_event_map` (
-  `office_id` mediumint(8) unsigned NOT NULL,
-  `dummy_id` mediumint(8) unsigned NOT NULL,
-  UNIQUE KEY `idx` (`office_id`,`dummy_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `users`
 --
 
@@ -909,4 +857,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-05 13:46:29
+-- Dump completed on 2020-05-08 17:34:57
