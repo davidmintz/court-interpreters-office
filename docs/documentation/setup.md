@@ -121,7 +121,7 @@ some one-off scripts to import data from existing sources. Feel free to contact 
 
 [To be continued...]
 
-### Hashicorp vault for sensitive data
+### Hashicorp Vault for sensitive data
 
 <span class="text-monospace">InterpretersOffice</span> includes an optional module called Vault. If you intend to handle sensitive 
 contract interpreter data (dates of birth and social security numbers), the Vault module must be configured and enabled. A prerequisite 
@@ -134,7 +134,9 @@ interpreters' sensitive data at rest is symmetrically encryted, and the cipher f
 In other words the encryption/decryption key is never stored anywhere on the server in plain text.
 
 <div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3">
-    A non-root user needing to set up and maintain <span class="text-monospace">InterpretersOffice</span> will need
+    If you plan to run Vault on the same machine as <span class="text-monospace">InterpretersOffice</span> (although <a href="https://learn.hashicorp.com/vault/operations/production-hardening">Vault recommends single-tenancy</a>), 
+    a non-root user 
+    needing to set up and maintain <span class="text-monospace">InterpretersOffice</span> will need
     <ul>
         <li>full permissions to manage the Hashicorp Vault service, including its <code>init</code>, <code>seal</code> and <code>unseal</code> commands</li>        
     </ul>
