@@ -1,14 +1,13 @@
 ---
 layout : default
-name : setup
+name : setup | InterpretersOffice.org
 ---
 
 # setting up the server
 
-These are the requirements for running InterpretersOffice. Some of these instructions may change in the future and I will do my utmost 
-to keep this document up to date. But there may be some minor discrepancies. The intention is make installation easier than what is described below, 
-with less manual setup involved. And of course, if you already have your web and database servers installed, there is less to do. These instructions 
-assume a server with a Linux OS and little else.
+These are the requirements for running InterpretersOffice. My intention is make installation easier than what is described below, 
+with less manual setup involved, but for now <em>illud est quod est</em>. And of course, if you already have your web and database servers 
+installed, there is less to do. These instructions assume a server with a Linux OS and little else.
 
 ### <span id="web-server">web server: *Apache or Nginx*</span>
 
@@ -35,7 +34,7 @@ A non-root user needing to set up and maintain InterpretersOffice will need
 
 ### <span id="php-support">php support</span>
 
-1. Install <code>php7.4-fpm</code>.
+1. Install <code>php7.4-fpm</code>. (The minimum supported version is 7.2)
 2. Install php extensions: <code>php7.4&#8209;mysql</code>, <code>php7.4&#8209;curl</code>, <code>php7.4&#8209;mbstring</code>, <code>php7.4&#8209;json</code>, <code>php7.4&#8209;dom</code>, <code>php7.4&#8209;intl</code>
 3. Install php [composer](https://getcomposer.org)
 
@@ -54,10 +53,11 @@ both but currently my preference is mariadb.
     </li>
 </ol>
  <div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3">
-    A non-root user needing to set up and maintain InterpretersOffice <em>may</em> need
+    A non-root user needing to set up and maintain InterpretersOffice will need
     <ul>
-        <li>sufficient permissions to stop, start, reload the database server</li>
-        <li>sufficient permissions to edit the database server configuration files</li>        
+        <li>a mysql user account with permissions to create the database</li>
+        <li>permissions to edit the database server configuration files</li>        
+        <li>permissions to stop, start, reload the database server</li>
     </ul>
 </div>
 
@@ -117,12 +117,16 @@ Supply the answers as prompted, and you'll have an admin user who can log in and
 tables that would have to be populated by the admin users, row by row, and it would be tedious. It's worth considering writing 
 some one-off scripts to import data from existing sources. Feel free to contact david@davidmintz.org to discuss.)*
 
+### email
+
+To be continued...
+
 ### final configuration
 
-In the code>config/autoload</code> folder,
+In the <code>config/autoload</code> folder,
 
-```
-cp [to be continued]
+
+Likewise to be continued.
 
 
 

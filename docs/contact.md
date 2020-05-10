@@ -1,8 +1,10 @@
 ---
 layout: default
-title: contact
+title: 'contact the developer | InterpretersOffice.org'
 ---
 
-## contact
+# contact
 
-yadda yadda, blah blah and so forth.
+<p class="py-5">
+    My email address is david@davidmintz.org.
+</p>

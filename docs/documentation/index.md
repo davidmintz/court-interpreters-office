@@ -1,14 +1,14 @@
 ---
 layout: default
-title: documentation
+title: documentation | InterpretersOffice.org
 ---
 
-## documentation
+# documentation
 
-#### user guide
+### user guide
 
 [work in progress]
 
-#### developer guide
+### developer guide
 
 <a href="./setup.html">setup requirements</a>
