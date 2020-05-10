@@ -11,7 +11,8 @@ title: about | InterpretersOffice.org
 
 <strong>What's so great about it?</strong>
 
-<p class="ml-4">It has been developed over a number of years by a full-time staff court interpreter who is also a web developer, with input from his colleagues. With a solid basis in years of experience, it has been rigorously designed to make the administration of a high-volume court interpreters unit as pleasant and efficient as possible. We know of no other product, commercial or otherwise, that is comparable.</p>
+<p class="ml-4">It has been developed over a number of years by a full-time staff court interpreter who is also a web developer, with input from his colleagues. 
+    With a solid basis in years of experience, <span class="text-monospace">InterpretersOffice</span> has been rigorously designed to make the administration of a high-volume court interpreters unit as pleasant and efficient as possible. We know of no other product, commercial or otherwise, that is comparable.</p>
 
 <p class="ml-4">It has a lot of interesting features. Court personnel can post requests for interpreters, which interpreters office staff can add 
     to their schedule with a single click. <span class="text-monospace">InterpretersOffice</span>  can be configured to do things automatically in 
