@@ -1,0 +1,25 @@
+<?php $this->headTitle('Notes (MOT[DW]');
+$this->headScript()
+    ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+    ->appendFile($this->basePath('js/admin/notes-form.js'));
+?>
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<pre class="border p-1">
+date in session settings is <?=$this->layout()->note_settings['date'] ?>
+
+$this->notes:
+<?php foreach ($this->notes as $k => $v) {
+    printf ("key is $k, value type is %s",gettype($v));
+    if ($v) {
+        printf("... with date: %s",$v->getDate()->format("D Y-m-d"));
+    }
+    echo "\n";
+}
+printf("our action is <strong>%s</strong> for type <strong>%s</strong>",
+    ($this->action ?: $this->layout()->action),
+    $this->type ?: 'N/A'
+);
+
+?>
+</pre>
+
