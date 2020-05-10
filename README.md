@@ -54,7 +54,7 @@ completely free; the hardware you'll need is inexpensive.
 
 # installation
 
-Currently, installation requires some manual setup. We plan to make this more convenient and better-documented in future releases. If you're a technical person and want to give it a shot, by all means feel free -- and contact me if you have questions. We have some [installation notes here](https://github.com/davidmintz/court-interpreters-office/blob/master/doc/INSTALLATION.txt).
+Currently, installation requires some manual setup. We plan to make this more convenient in future releases. If you're a technical person and want to give it a shot, by all means feel free -- and contact me if you have questions. We have some [installation notes here](https://github.com/davidmintz/court-interpreters-office/blob/master/docs/documentation/setup.md).
 
 Essentially, you need clone the repository (https://github.com/davidmintz/court-interpreters-office.git) or [download the source code](https://github.com/davidmintz/court-interpreters-office/releases/latest); using the industry-standard PHP dependency manager [composer](https://getcomposer.org), install the the software dependencies; create your mysql database and a mysql user/password for the application to use; initialize the database with a supplied SQL script; and finally, there are a couple of configuration files to edit and directories to be created and made server-writeable.
 
