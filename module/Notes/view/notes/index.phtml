@@ -32,34 +32,39 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
 <div class="row">
     <div class="col">data MOTD:<br>
         <?php if ($this->notes['motd']): ?>
-            yes?
             <?php $note = $this->notes['motd'];
-                echo $note->getContent();
-                if ($this->action != 'index' && $this->type == 'motd') {
-                    ?><br>display the form to <?=$this->layout()->action?>
+                if ($this->action != 'index' && $this->type == 'motd') :
+                    ?><br>display form to <?=$this->layout()->action?>
                      <?php echo $this->type ?> id <?php echo $note->getId()?>
-                    <?php
-                }
-            ?>
-
-        <?php 
-        else: ?>no MOTD for <?php echo $this->date->format('D d-M-Y');
-        endif;
+                     <?php echo $this->partial('notes/partials/form.phtml',[
+                    'date'=>$this->date,'type'=>$this->type,'note'=> $this->notes['motd'],
+                    'csrf'=>$this->csrf,'action' =>$this->action,
+                    ]);                    
+                elseif ($note->getId()):
+                    echo $note->getContent();
+                else :
+                    ?>no MOTD for <?php echo $this->date->format('D d-M-Y');
+                endif;
+         endif;        
         ?>
     </div>
     <div class="col">cal</div>
     <div class="col">data MOTW:<br>
-    <?php if ($this->notes['motw']):  ?>yes?<br> 
+    <?php if ($this->notes['motw']):  ?>
             <?php $note = $this->notes['motw'];
-            echo $note->getContent();
             if ($this->action != 'index' && $this->type == 'motw') :
                 ?><br>display the form to <?=$this->layout()->action ?> a <?=$this->type ?>
                 for <?= $note->getDate()->format('D d-M-Y');?>
-            
-            <?php endif;
+                <?php echo $this->partial('notes/partials/form.phtml',[
+                    'date'=>$this->monday,'type'=>$this->type,'note'=> $note,
+                    'csrf'=>$this->csrf,'action' =>$this->action,
+                    ]);
+        elseif ($note->getId()):            
+            echo $note->getContent();
         else:
-            ?>no MOTW for <?php echo $this->monday->format("D Y-m-d");
+            ?> ? no MOTW for <?php echo $this->monday->format("D Y-m-d");
         endif;
+    endif;
         ?>
 
     </div>

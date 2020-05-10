@@ -202,7 +202,12 @@ class NotesController extends AbstractRestfulController
     public function editAction()
     {
         $type = $this->params()->fromRoute('type');
+        $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
+        if ('motw' == $type) {
+            $date_string = $this->notesService->getSession()['settings']['date'];
+        }
+        
         $id = $this->params()->fromRoute('id');
         if ($this->getRequest()->isGet()) {
             $method = 'get'.\strtoupper($type);
