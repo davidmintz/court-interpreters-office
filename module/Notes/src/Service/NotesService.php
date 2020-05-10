@@ -11,6 +11,7 @@ use InterpretersOffice\Admin\Notes\Entity\MOTD;
 use InterpretersOffice\Admin\Notes\Entity\MOTW;
 use InterpretersOffice\Admin\Notes\Entity\MOTDRepository;
 use DateTime;
+use DateTimeImmutable;
 use Laminas\Session\Container as SessionContainer;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
@@ -128,6 +129,31 @@ class NotesService
     public function getOptions() : Array
     {
         return $this->options;
+    }
+
+    /**
+     * returns Monday preceding $date
+     * 
+     * for figuring out/correcting the date (week_of) of a MOTW
+     * 
+     * @param DateTime
+     * @return DateTime a new DateTime object
+     */
+    function normalize(DateTime $theirs) : \DateTimeImmutable
+    {
+        
+        // exit("\$theirs is ".$theirs->format('D d-M-Y'));
+        $dow = (int)$theirs->format('N');
+        if (1 == $dow) {
+            return new \DateTimeImmutable($theirs->format('Y-m-d'));            
+        } else {
+            $date = new DateTime($theirs->format('Y-m-d'));
+            $interval = sprintf('P%sD',$dow - 1);
+            $date->sub(new \DateInterval($interval));
+            $return = \DateTimeImmutable::createFromMutable($date);
+            // exit(get_class($return));
+            return $return;
+        }
     }
 
     public function getInputFilter() : InputFilter

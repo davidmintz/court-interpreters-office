@@ -122,7 +122,7 @@ class NotesController extends AbstractRestfulController
         $view_class = $this->getRequest()->isXMLHttpRequest() ? JsonModel::class : ViewModel::class;
         $type =  strtoupper($this->params()->fromRoute('type','all'));
         /** @var $service InterpretersOffice\Admin\Notes\Service\NotesService */
-        $service = $this->notesService;
+        $service = $this->notesService;        
         try {
             $date_obj = new DateTime($date);
         } catch (\Exception $e) {
@@ -180,12 +180,19 @@ class NotesController extends AbstractRestfulController
      */
     public function getList()
     {
+        // print_r($_SESSION['notes']);
         // $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         // $route = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        $date = $this->notesService->getSession()->settings['date'] ?? date('Y-m-d');
-        $notes = $this->notesService->getAllForDate(new \DateTime($date));
-
-        return ['notes' => $notes,'action'=>'index'];
+        // $session = new \Laminas\Session\Container('notes');        
+        $session = new \Laminas\Session\Container('notes');                      
+        $date_string = $session->settings['date'];
+        $date = new DateTime($date_string);
+        $view = new ViewModel();
+        $view->date = new DateTime($date_string);
+        $monday = $this->notesService->normalize($date);
+        $notes = $this->notesService->getAllForDate($date);
+        
+        return $view->setVariables(['notes' => $notes,'action'=>'index','monday'=>$monday,]);
     }
 
     /**
@@ -204,7 +211,10 @@ class NotesController extends AbstractRestfulController
             if (! $note && $date_string) {
                 return $this->redirect()->toRoute('notes/create',['type'=>$type,'date'=>$date_string]);
             }
-            $data = ['date'=> $note->getDate(), 'action'=>'edit','type'=>$type,
+            $date = $note->getDate();
+            $data = ['date'=> $date, 
+                'monday' =>  $this->notesService->normalize($date),
+                'action'=>'edit','type'=>$type,
                 'csrf' => (new \Laminas\Validator\Csrf('csrf'))->getHash()
             ];
             $view = new ViewModel($data);
@@ -231,7 +241,9 @@ class NotesController extends AbstractRestfulController
     {
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
-        
+        if ('motw' == $type) {
+            $date_string = $this->notesService->getSession()['settings']['date'];
+        }
         $notes = $this->notesService->getAllForDate(new \DateTime($date_string));
         // make sure someone didn't already create one
         $existing = $notes[$type]; //$this->notesService->getNoteByDate(new \DateTime($date_string),$type);
@@ -242,18 +254,17 @@ class NotesController extends AbstractRestfulController
         $class = 'InterpretersOffice\\Admin\\Notes\\Entity\\'.strtoupper($type);
         $note = new $class;
         $date = new \DateTime($date_string);
+        $monday =  $this->notesService->normalize($date);
         if ($type == 'motw') { 
-            // normalize
-            $dow = (int)$date->format('N');
-            if ($dow != 1) {
-                $interval = sprintf('P%sD',$dow - 1);
-                $date->sub(new \DateInterval($interval));
-            }
-        }
-        $note->setDate($date);
+            $note->setDate(new \DateTime($monday->format('Y-m-d')));            
+        } else {
+            $note->setDate($date);
+        }        
         $notes[$type] = $note;
-        $view = new ViewModel(['date'=>new \DateTime($date_string),'type'=>$type,
+        $view = new ViewModel(
+            ['date'=>$date,'type'=>$type,
             'notes'=>$notes, // note the plural
+            'monday'=>$monday ,
             // 'note'=>$note, // do away with this?
         'csrf' => (new \Laminas\Validator\Csrf('csrf'))->getHash()]);
         if ($this->getRequest()->isGet()) {
