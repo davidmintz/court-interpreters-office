@@ -5,7 +5,7 @@ name : setup | InterpretersOffice.org
 
 # setting up the server
 
-These are the requirements for running InterpretersOffice. My intention is make installation easier than what is described below, 
+These are the requirements for running <span class="text-monospace">InterpretersOffice</span>. My intention is make installation easier than what is described below, 
 with less manual setup involved, but for now <em>illud est quod est</em>. And of course, if you already have your web and database servers 
 installed, there is less to do. These instructions assume a server with a Linux OS and little else.
 
@@ -21,10 +21,10 @@ reload the server should you need to change this configuration.
 * Set as web document root the full path to <code>public</code> subdirectory under the application root.
 * Set an environment variable called _environment_ to: **production**.
 3. Enable <code>mod_rewrite</code> (or equivalent)  
-This is necessary because InterpretersOffice uses [an MVC framework](https://docs.laminas.dev/laminas-mvc/) that depends on URL rewriting to route requests to the proper controller/action.
+This is necessary because <span class="text-monospace">InterpretersOffice</span> uses [an MVC framework](https://docs.laminas.dev/laminas-mvc/) that depends on URL rewriting to route requests to the proper controller/action.
 
 <div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3">
-A non-root user needing to set up and maintain InterpretersOffice will need
+A non-root user needing to set up and maintain <span class="text-monospace">InterpretersOffice</span> will need
 <ul>
     <li>sufficient permissions to stop, start, reload the web server</li>
     <li>sufficient permissions to edit the web server configuration files</li>
@@ -53,7 +53,7 @@ both but currently my preference is mariadb.
     </li>
 </ol>
  <div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3">
-    A non-root user needing to set up and maintain InterpretersOffice will need
+    A non-root user needing to set up and maintain <span class="text-monospace">InterpretersOffice</span> will need
     <ul>
         <li>a mysql user account with permissions to create the database</li>
         <li>permissions to edit the database server configuration files</li>        
@@ -119,14 +119,36 @@ some one-off scripts to import data from existing sources. Feel free to contact 
 
 ### email
 
-To be continued...
+[To be continued...]
+
+### Hashicorp vault for sensitive data
+
+<span class="text-monospace">InterpretersOffice</span> includes an optional module called Vault. If you intend to handle sensitive 
+contract interpreter data (dates of birth and social security numbers), the Vault module must be configured and enabled. A prerequisite 
+is an installation [Hashicorp Vault](https://www.vaultproject.io/) itself. Initial setup of the <span class="text-monospace">InterpretersOffice</span> Vault module 
+is a chore, though the increased security is more than worth the effort. We have [some notes here](https://gist.github.com/davidmintz/d1e71331751e6477082c920e01668121) 
+but they need updating, as Vault development keeps moving forward.
+
+There is [a blog post about our Vault integration](https://blog.vernontbludgeon.com/integrating-zend-framework-3-with-hashicorp-vault/) with <span class="text-monospace">InterpretersOffice</span> that explains how it works. Briefly, the 
+interpreters' sensitive data at rest is symmetrically encryted, and the cipher for encryption/decryption is secured in Vault rather than lying around in plain text. 
+In other words the encryption/decryption key is never stored anywhere on the server in plain text.
+
+<div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3">
+    A non-root user needing to set up and maintain <span class="text-monospace">InterpretersOffice</span> will need
+    <ul>
+        <li>full permissions to manage the Hashicorp Vault service, including its <code>init</code>, <code>seal</code> and <code>unseal</code> commands</li>        
+    </ul>
+</div>
+
+[To be continued...]
+
 
 ### final configuration
 
 In the <code>config/autoload</code> folder,
 
 
-Likewise to be continued.
+[Likewise to be continued... ]
 
 
 
