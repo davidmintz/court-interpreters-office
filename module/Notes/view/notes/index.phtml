@@ -4,7 +4,7 @@ $this->headScript()
     ->appendFile($this->basePath('js/admin/notes-form.js'));
 ?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<pre class="border p-1" hidden>
+<pre class="border p-1">
 layout->action is <?php echo $this->layout()->action ?>
 
 $this->date is <?php echo $this->date->format("D d-M-Y");?>
@@ -26,12 +26,13 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
     ($this->action ?: $this->layout()->action),
     $this->type ?: 'N/A', $this->monday ? $this->monday->format('l Y-m-d') : "null"
 );
+// return;
 ?>
 </pre>
 
 <div class="row border-bottom mb-2 pb-2">
     <div id="motd-content" class="note-content col">
-        <?php $motd_date = $this->notes['motd'] ? $this->notes['motd']->getDate() : $this->monday  ?>
+        <?php $motd_date = $this->notes['motd'] ? $this->notes['motd']->getDate() : $this->date  ?>
         <h4>MOTD for <?=$motd_date->format('l d-M-Y')?></h4>
         <?php if ($this->notes['motd']): ?>
             <?php $note = $this->notes['motd'];

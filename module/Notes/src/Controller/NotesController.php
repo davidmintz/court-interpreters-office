@@ -119,7 +119,9 @@ class NotesController extends AbstractRestfulController
      */
     public function get($date)
     {
-        $view_class = $this->getRequest()->isXMLHttpRequest() ? JsonModel::class : ViewModel::class;
+        $xhr = $this->getRequest()->isXMLHttpRequest();
+        if (! $xhr) { return $this->getList();}
+        $view = new JsonModel();
         $type =  strtoupper($this->params()->fromRoute('type','all'));
         /** @var $service InterpretersOffice\Admin\Notes\Service\NotesService */
         $service = $this->notesService;        
@@ -130,29 +132,29 @@ class NotesController extends AbstractRestfulController
         }
         if ('ALL' != $type) {
             $message = $service->getNoteByDate($date_obj, $type);
-            $view = new $view_class([$type => $message]);
+            $view->setVariables([$type => $message]);
         } else {
             $messages = $service->getAllForDate($date_obj);
-            $view = new $view_class($messages);
+            $view->setVariables($messages);
         }
-        if ($view_class == JsonModel::class) {
+        // if ($view_class == JsonModel::class) {
             // trigger event so that, e.g., TaskRotationService can
             // inject relevant data into view
             //---------------------------------
-            $events = $this->getEventManager();
-            /** @todo addIdentifiers() just once e.g., in an onBootstrap */
-            $events->addIdentifiers(['Notes']);
-            $this->getEvent()->getApplication()->getServiceManager()
-                ->get('log')->debug('triggering NOTES_RENDER in NotesController');
-            $note_types = $type == 'ALL' ? ['motd','motw'] : [strtolower($type)];
-            $events->trigger('NOTES_RENDER','Notes',[
-                'date' => new \DateTime($date),
-                'event' => $this->getEvent(),
-                'settings' => $service->getSession()->settings,
-                'note_types' => $note_types,
-                'view' => $view,
-            ]);           
-        }
+        $events = $this->getEventManager();
+        /** @todo addIdentifiers() just once e.g., in an onBootstrap */
+        $events->addIdentifiers(['Notes']);
+        $this->getEvent()->getApplication()->getServiceManager()
+            ->get('log')->debug('triggering NOTES_RENDER in NotesController');
+        $note_types = $type == 'ALL' ? ['motd','motw'] : [strtolower($type)];
+        $events->trigger('NOTES_RENDER','Notes',[
+            'date' => new \DateTime($date),
+            'event' => $this->getEvent(),
+            'settings' => $service->getSession()->settings,
+            'note_types' => $note_types,
+            'view' => $view,
+        ]);           
+        // }
 
         return $view;
     }
@@ -183,9 +185,14 @@ class NotesController extends AbstractRestfulController
         // print_r($_SESSION['notes']);
         // $log = $this->getEvent()->getApplication()->getServiceManager()->get('log');
         // $route = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
-        // $session = new \Laminas\Session\Container('notes');        
-        $session = new \Laminas\Session\Container('notes');                      
-        $date_string = $session->settings['date'];
+        // $session = new \Laminas\Session\Container('notes')
+        $params =$this->params()->fromRoute();
+        if (isset($params['id']) && preg_match('/\d{4}-\d{2}-\d{2}/',$params['id'])) {
+            $date_string = $params['id'];
+        } else {
+            $session = new \Laminas\Session\Container('notes');
+            $date_string = $this->params()->fromRoute('date',$session->settings['date']) ?? date('Y-m-d');
+        }
         $date = new DateTime($date_string);
         $view = new ViewModel();
         $view->date = new DateTime($date_string);

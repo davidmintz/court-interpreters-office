@@ -162,7 +162,7 @@ class MOTD implements JsonSerializable, NoteInterface
       *
       * @return MOTD
       */
-     public function setCreated(\DateTime $created)
+     public function setCreated(\DateTime $created) : MOTD
      {
          $this->created = $created;
 
@@ -210,7 +210,7 @@ class MOTD implements JsonSerializable, NoteInterface
       *
       * @return MOTD
       */
-     public function setCreatedBy(\InterpretersOffice\Entity\User $created_by)
+     public function setCreatedBy(\InterpretersOffice\Entity\User $created_by) : MOTD
      {
          $this->created_by = $created_by;
 
