@@ -42,7 +42,7 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                 elseif ($note->getId()):
                     echo $note->getContent();
                     ?>
-                    
+                    <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/edit/motd/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
                     <?php
          
                 else :
@@ -68,8 +68,9 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                     'csrf'=>$this->csrf,'action' =>$this->action,
                     ]);
         elseif ($note->getId()):?>
-            <?php echo $note->getContent();
-        else:?>          
+            <?php echo $note->getContent();?>
+               <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/edit/motd/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
+        <?php  else:?>          
         <?php
             ?>no MOTW for <?php echo $this->monday->format("D Y-m-d");
         endif;

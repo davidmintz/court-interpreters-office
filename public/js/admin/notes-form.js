@@ -46,50 +46,54 @@ const delete_note = function(){
         }
     ).fail(fail);
 };
+
+const get_note_edit_button = function(note, type, dateText){
+    return `<a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/edit/${type}/${note.id}/date/${dateText}"><span class="sr-only">edit</span></a>`;
+};
 var dp_defaults = {
     dateFormat:"yy-mm-dd",
     showOtherMonths : true,
     selectOtherMonths : true,
     changeMonth : true,
-    changeYear : true
+    changeYear : true,
+    onSelect : function(dateText, instance){
+        var type = instance.id.substring(9);
+        // are we in batch-edit mode?
+        var multidate_mode = $("#notes-form").data("multiDate");
+        if (multidate_mode) {                   
+            return append_motd_date(dateText);
+        }
+        var key = type.toUpperCase();
+        // url to fetch note
+        var url = `/admin/notes/date/${dateText}/${type}`;
+        // div to put it in
+        var content_div = $(`#${type}-content`);
+        $.getJSON(url).then((res)=>{
+            if (res[key]) {
+                var note = res[key];
+                content_div.html([`<h4>${key} for ${note.date || note.week_of}</h4>`, note.content, get_note_edit_button(note,type,dateText)]);                        
+            } else {
+                var date = moment(dateText,"YYYY-MM-DD");                        
+                content_div.html([`<h4>${key} for ${date.format("dddd DD-MMM-YYYY")}</h4>`,
+                    `<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`]); 
+            }
+        });    
+    }
 };
 
 $(function(){
     console.warn("Here's Johnny");
     $("#calendar-motd").datepicker(
         Object.assign(dp_defaults,{
-            defaultDate : $("#calendar-motd").data("date"),
-            onSelect : function(dateText,instance){
-                
-                var type = instance.id.substring(9);
-                // are we in batch-edit mode?
-                var multidate_mode = $("#notes-form").data("multiDate");
-                if (multidate_mode) {                   
-                    return append_motd_date(dateText);
-                }
-                var key = type.toUpperCase();
-                // url to fetch note
-                var url = `/admin/notes/date/${dateText}/${type}`;
-                // div to put it in
-                var content_div = $(`#${type}-content`);
-                $.getJSON(url).then((res)=>{
-                    if (res[key]) {
-                        var note = res[key];
-                        content_div.html([`<h4>${key} for ${note.date}</h4>`, note.content]);                        
-                    } else {
-                        var date = moment(dateText,"YYYY-MM-DD");                        
-                        content_div.html([`<h4>${key} for ${date.format("dddd DD-MMM-YYYY")}</h4>`,
-                            `<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`]); 
-                    }
-                });
-            }
-        
+            defaultDate : $("#calendar-motd").data("date"),              
+        })
+    );
+    $("#calendar-motw").datepicker(
+        Object.assign(dp_defaults,{
+            defaultDate : $("#calendar-motw").data("date"),              
         })
     );
     
-    $("#calendar-motw").datepicker(
-        Object.assign(dp_defaults,{defaultDate : $("#calendar-motw").data("date")})
-    );
     // toggle MOTD batch-editing
     $("#motd-content").on("click","#btn-multi-date", function(e){
         e.preventDefault();
