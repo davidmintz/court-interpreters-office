@@ -34,10 +34,10 @@
             <input type="hidden" name="modified" value="<?php echo $this->note->getId() ? $this->note->getModified()->format('Y-m-d H:i:s'):''?>">
             <input type="hidden" name="type" value="<?php echo $this->type ?>">
             <input type="hidden" name="date" value="<?php echo $this->date->format('Y-m-d')?>">
-            <input type="hidden" name="id" value="<?php echo $this->note ? $this->note->getId():''?>">
+            <input type="hidden" name="id" value="<?php echo $this->note->getId()?:''?>">
             <input id="csrf" type="hidden" name="csrf" value="<?php echo $this->csrf ?>">
             <button type="button" class="btn btn-success">save</button>
-            <button id="btn-delete" type="button" class="btn btn-warning" <?php if(!$this->note):?>hidden<?php endif ?>>delete</button>
+            <button id="btn-delete" type="button" class="btn btn-warning" <?php if(!$this->note->getId()):?>hidden<?php endif ?>>delete</button>
             <button id="btn-cancel-edit" type="button" class="btn btn-outline-secondary">cancel</button>
         </div>
     </div>

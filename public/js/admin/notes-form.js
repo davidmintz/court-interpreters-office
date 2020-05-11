@@ -46,7 +46,16 @@ var delete_note = function(){
         }
     ).fail(fail);
 };
-
+var dp_defaults = {
+    dateFormat:"yy-mm-dd",
+    showOtherMonths : true,
+    selectOtherMonths : true,
+    changeMonth : true,
+    changeYear : true
+}
 $(function(){
     console.warn("Here's Johnny");
+
+    $("#calendar-motd, #calendar-motw").datepicker(dp_defaults);
+
 });
