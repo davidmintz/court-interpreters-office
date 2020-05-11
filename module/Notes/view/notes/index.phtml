@@ -41,11 +41,15 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                     ]);                    
                 elseif ($note->getId()):
                     echo $note->getContent();
+                    ?>
+                    
+                    <?php
+         
                 else :
                     ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
                 endif;
             else:
-                ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
+                ?>FUCK YOU? no MOTD for <?php echo $this->date->format('l d-M-Y');
             endif;        
         ?>
     </div>

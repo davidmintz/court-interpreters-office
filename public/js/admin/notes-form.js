@@ -13,7 +13,7 @@ Called when the datepicker is selected. The function receives the selected date
 as text and the datepicker instance as parameters.'this' refers to the associated
 input field.
 */
-var append_motd_date = function(dateText) {
+const append_motd_date = function(dateText) {
     var dateObj = moment(dateText,"YYYY-MM-DD");
     var dateString = dateObj.format("ddd DD-MMM-YYYY");
     if ($(`#dates input[value="${dateText}"]`).length) {
@@ -27,7 +27,7 @@ var append_motd_date = function(dateText) {
     $("#dates").append(shit);
 };
 
-var delete_note = function(){
+const delete_note = function(){
     var form = $("#notes-form");
     var id = $("input[name=\"id\"]").val();
     var type = $("input[name='type']").val();
@@ -64,9 +64,8 @@ $(function(){
                 var type = instance.id.substring(9);
                 // are we in batch-edit mode?
                 var multidate_mode = $("#notes-form").data("multiDate");
-                if (multidate_mode) {
-                    // do something
-                    return;
+                if (multidate_mode) {                   
+                    return append_motd_date(dateText);
                 }
                 var key = type.toUpperCase();
                 // url to fetch note
@@ -91,7 +90,7 @@ $(function(){
     $("#calendar-motw").datepicker(
         Object.assign(dp_defaults,{defaultDate : $("#calendar-motw").data("date")})
     );
-
+    // toggle MOTD batch-editing
     $("#motd-content").on("click","#btn-multi-date", function(e){
         e.preventDefault();
         var form = $("#notes-form");
@@ -109,5 +108,9 @@ $(function(){
             $("#notes-form textarea").attr({disabled:false}).show();
             div.attr({hidden:true});
         }
+        // remove date thingies
+    }).on("click",".btn-remove-item",function(e){
+        e.preventDefault();
+        $(this).closest("div").remove();
     });
 });
