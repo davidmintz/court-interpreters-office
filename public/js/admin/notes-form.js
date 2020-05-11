@@ -64,6 +64,9 @@ var dp_defaults = {
     selectOtherMonths : true,
     changeMonth : true,
     changeYear : true,
+    /**
+     * loads the MOTD/MOTW, if any, for the date selected
+     */
     onSelect : function(dateText, instance){
         var type = instance.id.substring(9);
         // are we in batch-edit mode?
@@ -86,6 +89,7 @@ var dp_defaults = {
             } else {
                 var date = moment(dateText,"YYYY-MM-DD");
                 if (key === "MOTW") {
+                    // for MOTW we only deal with Mondays 
                     var dow = parseInt(date.format("E"));
                     if (dow !== 1) {
                         date.subtract(dow - 1, "days");
@@ -94,13 +98,14 @@ var dp_defaults = {
                 header.text(`${key} for ${date.format("dddd DD-MMM-YYYY")}`);
                 content_div.html([`<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,]);
                 content_div.append(get_note_edit_button({},type,dateText));
-            }
-            console.log("fuck you?");
+            }            
         });    
     }
 };
 
 $(function(){
+
+    // intialize the two datepickers 
     console.warn("Here's Johnny");
     $("#calendar-motd").datepicker(
         Object.assign(dp_defaults,{
@@ -140,7 +145,82 @@ $(function(){
     $(".note-content").on("click","#btn-editor-motd, .note-content #btn-editor-motw",
         function(e){
             e.preventDefault();
-            console.log("loading the form via "+this.href);
-            $(this).parent().load(this.href);
+            var path = this.href.split("/").slice(3).join("/");
+            // console.log("loading the form via "+path);
+            var div = $(this).parent();
+            $.get(`/${path}`).then((html)=>div.html(html));
+        }
+    ).on("click","button.btn-success",function(e){
+        e.preventDefault();
+        console.log("time to rock and roll: save");
+        var form = $(this).closest("form");
+        var type = $("input[name='type']").val();        
+        var is_multidate = type === "motd" && form.data("multiDate");
+        if (is_multidate) {
+            $("#dates input[type=\"hidden\"]").removeAttr("disabled");
+        } else {
+            $("#dates input[type=\"hidden\"]").attr({disabled:true});
+        }
+        var id = $("input[name=\"id\"]").val();
+        var url, method;
+        var data = form.serialize();
+        if (id) {
+            // update
+            console.log("doing an update?");
+            url = `/admin/notes/update/${type}/${id}`;
+            method = "PUT";
+        } else {
+            // create
+            console.log("doing a create?");
+            url = `/admin/notes/create/${type}`;
+            if (type === "motw") {
+                // add week_of parameter
+                var dp = $(`#calendar-${type}`);
+                data += "&week_of="+moment(dp.datepicker("getDate")).format("YYYY-MM-DD");
+            }
+            
+            method = "POST";
+        } 
+        console.log(`gonna ${method} to ${url}...`);
+        $.ajax({url, method, data 
+        }).then((res)=>{
+            if (res.validation_errors) {
+                return displayValidationErrors(res.validation_errors);
+            }
+            if (res.status === "success") {
+                if (! is_multidate) {
+                    // the datepicker could be inconsistent with the form
+                    var dp = $(`#calendar-${type}`);
+                    var dp_date = moment(dp.datepicker("getDate")).format("YYYY-MM-DD");
+                    var form_date = $("input[name=date]").val();
+                    if (dp_date !== form_date) {
+                        dp.datepicker("setDate",form_date);
+                    }
+                    $(`#calendar-${type} a.ui-state-active`).trigger("click");
+                } else { // this is multi-date edit mode, toggle back
+                    $("#btn-multi-date").trigger("click");
+                    var count = $(".motd-date").length;
+                    $("form .alert-success").prepend(`<p>Successfully created/updated MOTDs for ${count} dates.</p>`).removeAttr("hidden");
+                }
+            }
+
+            if (res.status === "error") {
+                var error_div = $("<div>").addClass("alert alert-warning validation-error");
+                // a modification timestamp mismatch?
+                var ours = $("input[name=\"modified\"]").val();
+                var theirs = res.modified || null;
+                if (theirs && theirs !== ours) {
+                    error_div.text(`${res.message} Please try again.`);
+                    $("input[name=\"modified\"]").val(theirs);
+                    $("textarea#content").text(res[type].content);
+                } else {
+                    error_div.text(res.message);
+                }
+                form.prepend(error_div);
+            }
+        }).fail((res)=>{
+            console.log(res);
         });
+    });
+
 });
