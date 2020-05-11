@@ -24,32 +24,28 @@ $this->notes:
 }
 printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday is initially %s",
     ($this->action ?: $this->layout()->action),
-    $this->type ?: 'N/A', $this->monday ? $this->monday->format('D Y-m-d') : "null"
+    $this->type ?: 'N/A', $this->monday ? $this->monday->format('l Y-m-d') : "null"
 );
 ?>
 </pre>
 
 <div class="row border-bottom mb-2 pb-2">
-    <div id="motd-content" class="col">
-        <h4>MOTD for <?=$this->date->format('D d-M-Y')?></h4>
+    <div id="motd-content" class="note-content col">
+        <h4>MOTD for <?=$this->date->format('l d-M-Y')?></h4>
         <?php if ($this->notes['motd']): ?>
             <?php $note = $this->notes['motd'];
                 if ($this->action != 'index' && $this->type == 'motd') :
-                ?>
-                <!-- <h4>
-                    <?php //$this->layout()->action ?> <?=$this->type ?> for <?= $note->getDate()->format('D d-M-Y');?>
-                </h4> -->
-                     <?php echo $this->partial('notes/partials/form.phtml',[
+                    echo $this->partial('notes/partials/form.phtml',[
                     'date'=>$this->date,'type'=>$this->type,'note'=> $this->notes['motd'],
                     'csrf'=>$this->csrf,'action' =>$this->action,
                     ]);                    
                 elseif ($note->getId()):
                     echo $note->getContent();
                 else :
-                    ?>no MOTD for <?php echo $this->date->format('D d-M-Y');
+                    ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
                 endif;
             else:
-                ?>no MOTD for <?php echo $this->date->format('D d-M-Y');
+                ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
             endif;        
         ?>
     </div>
@@ -58,31 +54,22 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
     </div>
 </div>
 <div class="row pt-3">
-    <div id="motw-content" class="col">
-    <h4>MOTW for <?=$this->monday->format('D d-M-Y')?></h4>
+    <div id="motw-content" class="note-content col">
+    <h4>MOTW for <?=$this->monday->format('l d-M-Y')?></h4>
     <?php if ($this->notes['motw']):  ?>
             <?php $note = $this->notes['motw'];
             if ($this->action != 'index' && $this->type == 'motw') :
-                ?>
-                <!-- <h4>
-                    <?php //$this->layout()->action ?> <?=$this->type ?> for <?= $note->getDate()->format('D d-M-Y');?>
-                </h4> -->
-                <?php echo $this->partial('notes/partials/form.phtml',[
+                echo $this->partial('notes/partials/form.phtml',[
                     'date'=>$this->monday,'type'=>$this->type,'note'=> $note,
                     'csrf'=>$this->csrf,'action' =>$this->action,
                     ]);
         elseif ($note->getId()):?>
-                <!-- <h4>
-                    <?php //=$this->type ?> for <?= $note->getDate()->format('D d-M-Y');?>
-                </h4>            -->
             <?php echo $note->getContent();
-        else:?> 
-          
+        else:?>          
         <?php
             ?>no MOTW for <?php echo $this->monday->format("D Y-m-d");
         endif;
-    else:?>
-        
+    else:?>        
         no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?>
     <?php endif  ?>
 

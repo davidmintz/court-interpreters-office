@@ -23,7 +23,7 @@ var append_motd_date = function(dateText) {
     var shit = `<div class="d-inline border border-info rounded mr-1 pl-2 text-monospace motd-date" style="font-size:90%">
     <input type="hidden" name="dates[]" value="${dateText}">
     ${dateString} <button class="btn btn-outline-secondary btn-sm btn-remove-item my-1 border-0" title="remove">
-    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove this defendant</span></button></div>`;
+    <span class="fas fa-times" aria-hidden="true"></span><span class="sr-only">remove</span></button></div>`;
     $("#dates").append(shit);
 };
 
@@ -57,10 +57,57 @@ var dp_defaults = {
 $(function(){
     console.warn("Here's Johnny");
     $("#calendar-motd").datepicker(
-        Object.assign(dp_defaults,{defaultDate : $("#calendar-motd").data("date")})
+        Object.assign(dp_defaults,{
+            defaultDate : $("#calendar-motd").data("date"),
+            onSelect : function(dateText,instance){
+                
+                var type = instance.id.substring(9);
+                // are we in batch-edit mode?
+                var multidate_mode = $("#notes-form").data("multiDate");
+                if (multidate_mode) {
+                    // do something
+                    return;
+                }
+                var key = type.toUpperCase();
+                // url to fetch note
+                var url = `/admin/notes/date/${dateText}/${type}`;
+                // div to put it in
+                var content_div = $(`#${type}-content`);
+                $.getJSON(url).then((res)=>{
+                    if (res[key]) {
+                        var note = res[key];
+                        content_div.html([`<h4>${key} for ${note.date}</h4>`, note.content]);                        
+                    } else {
+                        var date = moment(dateText,"YYYY-MM-DD");                        
+                        content_div.html([`<h4>${key} for ${date.format("dddd DD-MMM-YYYY")}</h4>`,
+                            `<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`]); 
+                    }
+                });
+            }
+        
+        })
     );
+    
     $("#calendar-motw").datepicker(
         Object.assign(dp_defaults,{defaultDate : $("#calendar-motw").data("date")})
     );
 
+    $("#motd-content").on("click","#btn-multi-date", function(e){
+        e.preventDefault();
+        var form = $("#notes-form");
+        var div = $("div.multi-date");
+        form.data({multiDate: !form.data("multiDate")});
+        // state to which we have just changed
+        var enabled = form.data("multiDate");
+        if (enabled) {
+            div.removeAttr("hidden");
+            console.log("display/enable multi-date shit");
+            $("#notes-form textarea[name=content]").attr({disabled:true}).hide();
+
+        } else {
+            console.log("disable/hide multi-date shit");
+            $("#notes-form textarea").attr({disabled:false}).show();
+            div.attr({hidden:true});
+        }
+    });
 });
