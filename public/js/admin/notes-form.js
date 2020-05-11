@@ -52,10 +52,15 @@ var dp_defaults = {
     selectOtherMonths : true,
     changeMonth : true,
     changeYear : true
-}
+};
+
 $(function(){
     console.warn("Here's Johnny");
-
-    $("#calendar-motd, #calendar-motw").datepicker(dp_defaults);
+    $("#calendar-motd").datepicker(
+        Object.assign(dp_defaults,{defaultDate : $("#calendar-motd").data("date")})
+    );
+    $("#calendar-motw").datepicker(
+        Object.assign(dp_defaults,{defaultDate : $("#calendar-motw").data("date")})
+    );
 
 });
