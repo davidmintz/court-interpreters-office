@@ -31,7 +31,8 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
 
 <div class="row border-bottom mb-2 pb-2">
     <div id="motd-content" class="note-content col">
-        <h4>MOTD for <?=$this->date->format('l d-M-Y')?></h4>
+        <?php $motd_date = $this->notes['motd'] ? $this->notes['motd']->getDate() : $this->monday  ?>
+        <h4>MOTD for <?=$motd_date->format('l d-M-Y')?></h4>
         <?php if ($this->notes['motd']): ?>
             <?php $note = $this->notes['motd'];
                 if ($this->action != 'index' && $this->type == 'motd') :
@@ -43,13 +44,12 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                     echo $note->getContent();
                     ?>
                     <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/edit/motd/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
-                    <?php
-         
+                    <?php         
                 else :
                     ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
                 endif;
             else:
-                ?>FUCK YOU? no MOTD for <?php echo $this->date->format('l d-M-Y');
+                ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
             endif;        
         ?>
     </div>
@@ -69,7 +69,7 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                     ]);
         elseif ($note->getId()):?>
             <?php echo $note->getContent();?>
-               <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/edit/motd/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
+               <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/edit/motw/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
         <?php  else:?>          
         <?php
             ?>no MOTW for <?php echo $this->monday->format("D Y-m-d");

@@ -201,13 +201,17 @@ class NotesController extends AbstractRestfulController
      */
     public function editAction()
     {
-        $type = $this->params()->fromRoute('type');
-        $type = $this->params()->fromRoute('type');
+        $type = $this->params()->fromRoute('type');        
         $date_string = $this->params()->fromRoute('date');
         if ('motw' == $type) {
-            $date_string = $this->notesService->getSession()['settings']['date'];
+            //$date_string = $this->notesService->getSession()['settings']['date'];
+            $schedule = new \Laminas\Session\Container('schedule');
+            $motd_date = new \DateTime($schedule->date ?: $date_string);
+            $monday = new \DateTime($date_string);
+        } else {
+            $motd_date = new \DateTime($date_string);            
+            $monday = $this->notesService->normalize($motd_date);            
         }
-        
         $id = $this->params()->fromRoute('id');
         if ($this->getRequest()->isGet()) {
             $method = 'get'.\strtoupper($type);
@@ -215,10 +219,10 @@ class NotesController extends AbstractRestfulController
             // find the entity to populate the form
             if (! $note && $date_string) {
                 return $this->redirect()->toRoute('notes/create',['type'=>$type,'date'=>$date_string]);
-            }
-            $date = $note->getDate();
-            $data = ['date'=> $date, 
-                'monday' =>  $this->notesService->normalize($date),
+            }            
+            $data = [
+                //'date'=> $date, 
+                'monday' =>  $monday,'date'=>$motd_date,
                 'action'=>'edit','type'=>$type,
                 'csrf' => (new \Laminas\Validator\Csrf('csrf'))->getHash()
             ];
@@ -227,9 +231,17 @@ class NotesController extends AbstractRestfulController
                 $view->setTerminal(true)->setTemplate('notes/partials/form');
             } else {
                 // inject the other note into the view
-                $other_type = $type == 'motd' ? 'motw':'motd';
-                $other_note = $this->notesService->getNoteByDate(new \DateTime($date_string),$other_type,true);
-                $view->notes = [$type => $note, $other_type => $other_note,];
+                if ($type == 'motd') {
+                    // the other is motw
+                    $other_type = 'motw';
+                    $string = $monday->format('Y-m-d');
+                } else {
+                    $other_type = 'motd';
+                    $string = $motd_date->format('Y-m-d');
+                }                
+                // echo "fetching $other_type for $string ???";
+                $other_note = $this->notesService->getNoteByDate(new \DateTime($string),$other_type,true);
+                $view->notes = [$type => $note, $other_type => $other_note, ];
             }
             return $view;
         } else {
