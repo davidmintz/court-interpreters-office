@@ -31,9 +31,10 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
 </pre>
 
 <div class="row border-bottom mb-2 pb-2">
-    <div id="motd-content" class="note-content col">
+    <div class="note-content col">
         <?php $motd_date = $this->notes['motd'] ? $this->notes['motd']->getDate() : $this->date  ?>
         <h4>MOTD for <?=$motd_date->format('l d-M-Y')?></h4>
+        <div id="motd-content" >
         <?php if ($this->notes['motd']): ?>
             <?php $note = $this->notes['motd'];
                 if ($this->action != 'index' && $this->type == 'motd') :
@@ -53,14 +54,16 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                 ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
             endif;        
         ?>
+        </div>
     </div>
     <div class="col">
         <div data-date="<?=$this->date->format('Y-m-d')?>" id="calendar-motd"></div>
     </div>
 </div>
 <div class="row pt-3">
-    <div id="motw-content" class="note-content col">
+    <div class="note-content col">
     <h4>MOTW for <?=$this->monday->format('l d-M-Y')?></h4>
+    <div id="motw-content">
     <?php if ($this->notes['motw']):  ?>
             <?php $note = $this->notes['motw'];
             if ($this->action != 'index' && $this->type == 'motw') :
@@ -78,7 +81,7 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
     else:?>        
         no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?>
     <?php endif  ?>
-
+        </div>
     </div>
     <div class="col"><div data-date="<?=$this->monday->format('Y-m-d')?>" id="calendar-motw"></div></div>
 </div>

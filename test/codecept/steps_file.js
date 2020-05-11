@@ -1,4 +1,5 @@
 // in this file you can append custom step methods to 'I' object
+/* global actor */
 
 module.exports = function() {
   return actor({
@@ -10,7 +11,7 @@ module.exports = function() {
       this.fillField("#identity","david");
       this.fillField("#password","testing123");
       this.click({css: "button[type=submit]"});
-      console.log("this is the 'actor' login method")
+      // console.log("this is the 'actor' login method")
     }
 
   });

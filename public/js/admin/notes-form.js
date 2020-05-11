@@ -48,7 +48,15 @@ const delete_note = function(){
 };
 
 const get_note_edit_button = function(note, type, dateText){
-    return `<a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/edit/${type}/${note.id}/date/${dateText}"><span class="sr-only">edit</span></a>`;
+    var path,action;
+    if (note.id) { 
+        action ="edit";
+        path = `edit/${type}/${note.id}/date/${dateText}`;
+    } else {
+        action = "create";
+        path = `create/${type}/${dateText}`;
+    }
+    return `<a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/${path}"><span class="sr-only">${action}</span></a>`;
 };
 var dp_defaults = {
     dateFormat:"yy-mm-dd",
@@ -68,15 +76,26 @@ var dp_defaults = {
         var url = `/admin/notes/date/${dateText}/${type}`;
         // div to put it in
         var content_div = $(`#${type}-content`);
+        var header = content_div.prev("h4");
         $.getJSON(url).then((res)=>{
             if (res[key]) {
                 var note = res[key];
-                content_div.html([`<h4>${key} for ${note.date || note.week_of}</h4>`, note.content, get_note_edit_button(note,type,dateText)]);                        
+                header.text(`${key} for ${note.date || note.week_of}`);
+                content_div.html(note.content);                        
+                content_div.append(get_note_edit_button(note,type,dateText));
             } else {
-                var date = moment(dateText,"YYYY-MM-DD");                        
-                content_div.html([`<h4>${key} for ${date.format("dddd DD-MMM-YYYY")}</h4>`,
-                    `<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`]); 
+                var date = moment(dateText,"YYYY-MM-DD");
+                if (key === "MOTW") {
+                    var dow = parseInt(date.format("E"));
+                    if (dow !== 1) {
+                        date.subtract(dow - 1, "days");
+                    }
+                }
+                header.text(`${key} for ${date.format("dddd DD-MMM-YYYY")}`);
+                content_div.html([`<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,]);
+                content_div.append(get_note_edit_button({},type,dateText));
             }
+            console.log("fuck you?");
         });    
     }
 };
@@ -117,4 +136,11 @@ $(function(){
         e.preventDefault();
         $(this).closest("div").remove();
     });
+
+    $(".note-content").on("click","#btn-editor-motd, .note-content #btn-editor-motw",
+        function(e){
+            e.preventDefault();
+            console.log("loading the form via "+this.href);
+            $(this).parent().load(this.href);
+        });
 });

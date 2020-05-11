@@ -1,5 +1,5 @@
-<?php $method = $this->action == 'create'?'POST':'PUT'?>
-<form data-multi-date="0" data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $action?>" method="<?php echo $method?>">
+<?php $method = $this->layout()->action == 'create'?'POST':'PUT'?>
+<form data-multi-date="0" data-type="<?php echo $this->type?>" class="ml-auto mr-auto mt-3" id="notes-form" action="/admin/notes/<?php echo $this->layout()->action?>" method="<?php echo $method?>">
     <div class="alert alert-success alert-dismissible fade show" role="alert" hidden>
         <button type="button" class="close" data-dismiss="alert" aria-label="close"><span aria-hidden="true">&times;</span></button>
     </div>
@@ -31,13 +31,14 @@
     </div>
     <div class="form-row">
         <div class="col pt-2"><!-- offset-sm-2 -->
-            <input type="hidden" name="modified" value="<?php echo $this->note->getId() ? $this->note->getModified()->format('Y-m-d H:i:s'):''?>">
+            <?php $id = ($this->note && $this->note->getId()) ? $this->note->getId():'' ;?>
+            <input type="hidden" name="modified" value="<?php echo $id ? $this->note->getModified()->format('Y-m-d H:i:s'):''?>">
             <input type="hidden" name="type" value="<?php echo $this->type ?>">
             <input type="hidden" name="date" value="<?php echo $this->date->format('Y-m-d')?>">
-            <input type="hidden" name="id" value="<?php echo $this->note->getId()?:''?>">
+            <input type="hidden" name="id" value="<?php echo $id?>">
             <input id="csrf" type="hidden" name="csrf" value="<?php echo $this->csrf ?>">
             <button type="button" class="btn btn-success">save</button>
-            <button id="btn-delete" type="button" class="btn btn-warning" <?php if(!$this->note->getId()):?>hidden<?php endif ?>>delete</button>
+            <button id="btn-delete" type="button" class="btn btn-warning" <?php if(!$id):?>hidden<?php endif ?>>delete</button>
             <button id="btn-cancel-edit" type="button" class="btn btn-outline-secondary">cancel</button>
         </div>
     </div>

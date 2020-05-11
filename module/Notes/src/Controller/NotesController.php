@@ -230,7 +230,7 @@ class NotesController extends AbstractRestfulController
             $data = [
                 //'date'=> $date, 
                 'monday' =>  $monday,'date'=>$motd_date,
-                'action'=>'edit','type'=>$type,
+                'action'=>'edit','type'=>$type,'note'=>$note,
                 'csrf' => (new \Laminas\Validator\Csrf('csrf'))->getHash()
             ];
             $view = new ViewModel($data);
