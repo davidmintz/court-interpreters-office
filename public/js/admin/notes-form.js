@@ -27,11 +27,11 @@ const append_motd_date = function(dateText) {
     $("#dates").append(shit);
 };
 
-const delete_note = function(){
-    var form = $("#notes-form");
-    var id = $("input[name=\"id\"]").val();
-    var type = $("input[name='type']").val();
-    var token = $("input[name=csrf]").val();
+const delete_note = function(button){
+    
+    var id = button.siblings("input[name='id']").val();
+    var type = button.siblings("input[name='type']").val();
+    var token = button.siblings("input[name=csrf]").val();
     $.ajax({
         method : "DELETE",
         url : `${window.basePath}/admin/notes/delete/${type}/${id}`,
@@ -41,8 +41,8 @@ const delete_note = function(){
             if (res.validation_errors) {
                 return displayValidationErrors(res.validation_errors);
             }
-            var html = `<div class="alert alert-success">This ${type.toUpperCase()} has been deleted.</div>`;
-            form.replaceWith(html);
+            var html = `<div class="alert alert-success border-success shadow-sm text-success"><span class="fa fa-check"></span> This ${type.toUpperCase()} has been deleted.</div>`;
+            button.closest("form").replaceWith(html);
         }
     ).fail(fail);
 };
@@ -240,6 +240,7 @@ $(function(){
         }).fail((res)=>{
             console.log(res);
         });
+        // cancel editing and reload the note
     }).on("click","#btn-cancel-edit",function(e){
         e.preventDefault();
         console.log("cancel edit");        
@@ -252,12 +253,19 @@ $(function(){
             var form = $(this).closest("form");
             var type = form.data("type");
             var date = $(this).siblings("input[name='date']").val();
-            console.warn("date is FUCKING WHAT? "+date);
+            // console.warn("date is FUCKING WHAT? "+date);
             var url = `/admin/notes/date/${date}/${type}`;
-            console.warn("fetching: "+url);
+            // console.warn("fetching: "+url);
             $.getJSON(url).then( response=>display_note(response,date,type) );
-
         }
+    }).on("click","#btn-delete",function(e){
+        e.preventDefault();
+        var form = $(this).closest("form");
+        var type = form.data("type");
+        if (!window.confirm(`Are you sure you want to delete this ${type}?`)) {
+            return;
+        }
+        delete_note($(this));
     });
 
 });
