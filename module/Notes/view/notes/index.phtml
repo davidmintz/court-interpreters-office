@@ -56,7 +56,7 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                 //else : no MOTD for <?php echo $this->date->format('l d-M-Y');<?php
                 endif;
             else:
-                ?><p class="font-italic mx-2">no MOTD for <?php echo $this->date->format('l d-M-Y');?> bitch</p>
+                ?><p class="font-italic mx-2">no MOTD for <?php echo $this->date->format('l d-M-Y');?></p>
                 <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
         
                 <?php
