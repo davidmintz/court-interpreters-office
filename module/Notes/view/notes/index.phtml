@@ -53,11 +53,13 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                     ?>
                     <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/edit/motd/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
                     <?php         
-                else :
-                    ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
+                //else : no MOTD for <?php echo $this->date->format('l d-M-Y');<?php
                 endif;
             else:
-                ?>no MOTD for <?php echo $this->date->format('l d-M-Y');
+                ?><p class="font-italic mx-2">no MOTD for <?php echo $this->date->format('l d-M-Y');?> bitch</p>
+                <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
+        
+                <?php
             endif;        
         ?>
         </div>
@@ -86,14 +88,13 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
         elseif ($note->getId()):?>
             <?php echo $note->getContent();?>
                <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/edit/motw/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
-        <?php  else:?>          
-        <?php
-            ?><p>no MOTW for <?php echo $this->monday->format("D Y-m-d");?></p>
-        <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
+        <?php // else:?>          
+        <?php //class="font-italic mx-2">no MOTW for <?php echo $this->monday->format("D Y-m-d");?>
+           <!-- <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/create/motw/<?php //=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a> -->
         <?php endif;
-    else:?>        
-        <p>no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?></p>
-        <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
+        else:?>        
+        <p class="font-italic mx-2">no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?> bitch</p>
+        <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
     <?php endif  ?>
         </div>
     </div>

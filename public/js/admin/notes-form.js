@@ -82,22 +82,20 @@ var dp_defaults = {
         var header = content_div.siblings("h4");      
         $.getJSON(url).then((res)=>{
             var date = moment(dateText,"YYYY-MM-DD");
+            if (type === "motw") {
+                var dow = parseInt(date.format("E"));
+                if (dow !== 1) {
+                    date.subtract(dow - 1, "days");
+                }
+            }
             header.text(`${key} for ${date.format("dddd DD-MMM-YYYY")}`);
             if (res[key]) {
                 var note = res[key];
                 // header.text(`${key} for ${note.date || note.week_of}`);
                 content_div.html(note.content);                        
                 content_div.append(get_note_edit_button(note,type,dateText));
-            } else {
-                
-                if (key === "MOTW") {
-                    // for MOTW we only deal with Mondays 
-                    var dow = parseInt(date.format("E"));
-                    if (dow !== 1) {
-                        date.subtract(dow - 1, "days");
-                    }
-                }
-                content_div.html([`<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,
+            } else {                                
+                content_div.html([`<p class="font-italic mx-2">no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,
                     get_note_edit_button({},type,dateText)]);
                 
             }            
