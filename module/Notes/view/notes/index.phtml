@@ -93,7 +93,7 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
            <!-- <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/create/motw/<?php //=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a> -->
         <?php endif;
         else:?>        
-        <p class="font-italic mx-2">no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?> bitch</p>
+        <p class="font-italic mx-2">no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?></p>
         <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
     <?php endif  ?>
         </div>

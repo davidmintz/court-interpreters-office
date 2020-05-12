@@ -25,10 +25,10 @@ class NotesControllerTest extends AbstractControllerTest
                 new DataFixture\LanguageLoader(),
                 new DataFixture\InterpreterLoader(),
                 new DataFixture\UserLoader(),
-                new DataFixture\NoteLoader(),
+                // new DataFixture\NoteLoader(),
             ]
         );
-        echo "leaving ". __METHOD__ . "\n";
+        // echo "leaving ". __METHOD__ . "\n";
     }
 
     public function tearDown()
@@ -65,15 +65,16 @@ class NotesControllerTest extends AbstractControllerTest
         $em = FixtureManager::getEntityManager();
         $count = $em->getRepository(MOTD::class)->count([]);
         // echo "\nthe FUCKING count = $count\n";
-        $sample = $em->createQuery('SELECT m FROM InterpretersOffice\Admin\Notes\Entity\MOTD m ORDER BY m.date')->getResult()[0];
+        // $sample = $em->createQuery('SELECT m FROM InterpretersOffice\Admin\Notes\Entity\MOTD m ORDER BY m.date')->getResult()[0];
         // print_r($sample->JsonSerialize());
         $this->login('david','boink');
         $this->reset(true);
-        $date = $sample->getDate()->format('Y-m-d');
+        $date = date('Y-m-d');
+        // $date = $sample->getDate()->format('Y-m-d');
         // echo "\nCHECKING: $date at /admin/notes/date/$date/motd\n";
-        $this->assertTrue(strlen($sample->getContent()) > 0);
+        // $this->assertTrue(strlen($sample->getContent()) > 0);
         $this->dispatch("/admin/notes/date/$date/motd");
-        $this->dumpResponse();
+        // $this->dumpResponse();
         $this->assertResponseStatusCode(200);
     }
 
