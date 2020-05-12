@@ -79,10 +79,7 @@ var dp_defaults = {
         var url = `/admin/notes/date/${dateText}/${type}`;
         // div to put it in
         var content_div = $(`#${type}-content`);
-        var header = content_div.siblings("h4");
-        // console.warn("Are you fucking kidding?");
-        // console.warn(content_div.text());
-        // console.warn(header.text());
+        var header = content_div.siblings("h4");      
         $.getJSON(url).then((res)=>{
             var date = moment(dateText,"YYYY-MM-DD");
             header.text(`${key} for ${date.format("dddd DD-MMM-YYYY")}`);
@@ -100,8 +97,9 @@ var dp_defaults = {
                         date.subtract(dow - 1, "days");
                     }
                 }
-                content_div.html([`<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,]);
-                content_div.append(get_note_edit_button({},type,dateText));
+                content_div.html([`<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,
+                    get_note_edit_button({},type,dateText)]);
+                
             }            
         });    
     }
