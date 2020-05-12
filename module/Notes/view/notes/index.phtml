@@ -4,7 +4,7 @@ $this->headScript()
     ->appendFile($this->basePath('js/admin/notes-form.js'));
 ?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<pre class="border p-1">
+<pre class="border p-1" hidden>
 layout->action is <?php echo $this->layout()->action ?>
 
 $this->date is <?php echo $this->date->format("D d-M-Y");?>
@@ -33,7 +33,13 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
 <div class="row border-bottom mb-2 pb-2">
     <div class="note-content col">
         <?php $motd_date = $this->notes['motd'] ? $this->notes['motd']->getDate() : $this->date  ?>
-        <h4>MOTD for <?=$motd_date->format('l d-M-Y')?></h4>
+        <h4 class="border-bottom pb-2">MOTD for <?=$motd_date->format('l d-M-Y')?></h4>
+            <div class="status d-none p-2 alert alert-success alert-dismissible rounded border border-success shadow-sm mb-2" >
+            <div class="p-2"><span style="font-size:1.2em" class="fa fa-check text-success"></span></div>
+            <div class="p-2 message"></div>
+            <button type="button" class="close" data-hide="alert" aria-label="close"> 
+            <span aria-hidden="true">&times;</span></button>
+        </div>
         <div id="motd-content" >
         <?php if ($this->notes['motd']): ?>
             <?php $note = $this->notes['motd'];
@@ -62,7 +68,13 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
 </div>
 <div class="row pt-3">
     <div class="note-content col">
-    <h4>MOTW for <?=$this->monday->format('l d-M-Y')?></h4>
+    <h4 class="border-bottom pb-2">MOTW for <?=$this->monday->format('l d-M-Y')?></h4>
+    <div class="status d-none p-2 alert alert-success alert-dismissible rounded border border-success shadow-sm mb-2" >
+        <div class="p-2"><span style="font-size:1.2em" class="fa fa-check text-success"></span></div>
+        <div class="p-2 message"></div>
+        <button type="button" class="close" data-hide="alert" aria-label="close"> 
+        <span aria-hidden="true">&times;</span></button>
+    </div> 
     <div id="motw-content">
     <?php if ($this->notes['motw']):  ?>
             <?php $note = $this->notes['motw'];
@@ -76,10 +88,12 @@ printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday i
                <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/edit/motw/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
         <?php  else:?>          
         <?php
-            ?>no MOTW for <?php echo $this->monday->format("D Y-m-d");
-        endif;
+            ?><p>no MOTW for <?php echo $this->monday->format("D Y-m-d");?></p>
+        <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
+        <?php endif;
     else:?>        
-        no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?>
+        <p>no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?></p>
+        <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
     <?php endif  ?>
         </div>
     </div>

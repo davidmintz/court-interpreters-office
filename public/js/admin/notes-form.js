@@ -70,7 +70,7 @@ var dp_defaults = {
     onSelect : function(dateText, instance){
         var type = instance.id.substring(9);
         // are we in batch-edit mode?
-        var multidate_mode = $("#notes-form").data("multiDate");
+        var multidate_mode = $("#motd-content form").data("multiDate");
         if (multidate_mode) {                   
             return append_motd_date(dateText);
         }
@@ -79,15 +79,20 @@ var dp_defaults = {
         var url = `/admin/notes/date/${dateText}/${type}`;
         // div to put it in
         var content_div = $(`#${type}-content`);
-        var header = content_div.prev("h4");
+        var header = content_div.siblings("h4");
+        // console.warn("Are you fucking kidding?");
+        // console.warn(content_div.text());
+        // console.warn(header.text());
         $.getJSON(url).then((res)=>{
+            var date = moment(dateText,"YYYY-MM-DD");
+            header.text(`${key} for ${date.format("dddd DD-MMM-YYYY")}`);
             if (res[key]) {
                 var note = res[key];
-                header.text(`${key} for ${note.date || note.week_of}`);
+                // header.text(`${key} for ${note.date || note.week_of}`);
                 content_div.html(note.content);                        
                 content_div.append(get_note_edit_button(note,type,dateText));
             } else {
-                var date = moment(dateText,"YYYY-MM-DD");
+                
                 if (key === "MOTW") {
                     // for MOTW we only deal with Mondays 
                     var dow = parseInt(date.format("E"));
@@ -95,7 +100,6 @@ var dp_defaults = {
                         date.subtract(dow - 1, "days");
                     }
                 }
-                header.text(`${key} for ${date.format("dddd DD-MMM-YYYY")}`);
                 content_div.html([`<p>no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,]);
                 content_div.append(get_note_edit_button({},type,dateText));
             }            
@@ -121,19 +125,20 @@ $(function(){
     // toggle MOTD batch-editing
     $("#motd-content").on("click","#btn-multi-date", function(e){
         e.preventDefault();
-        var form = $("#notes-form");
+        var form = $(this).closest("form");
         var div = $("div.multi-date");
         form.data({multiDate: !form.data("multiDate")});
         // state to which we have just changed
         var enabled = form.data("multiDate");
+        console.warn(`shit is now: ${enabled ? "enabled":"disabled"}`)
         if (enabled) {
             div.removeAttr("hidden");
             console.log("display/enable multi-date shit");
-            $("#notes-form textarea[name=content]").attr({disabled:true}).hide();
+            $("#motd-content textarea[name=content]").attr({disabled:true}).hide();
 
         } else {
             console.log("disable/hide multi-date shit");
-            $("#notes-form textarea").attr({disabled:false}).show();
+            $("#motd-content textarea").attr({disabled:false}).show();
             div.attr({hidden:true});
         }
         // remove date thingies
@@ -196,12 +201,30 @@ $(function(){
                     if (dp_date !== form_date) {
                         dp.datepicker("setDate",form_date);
                     }
-                    $(`#calendar-${type} a.ui-state-active`).trigger("click");
+                    var url = `/admin/notes/date/${dp_date}/${type}`;
+                    $.getJSON(url).then(res=>{
+                        var content = res[type.toUpperCase()].content;
+                        form.before(`<div class="alert alert-success rounded border-success shadow-sm px-1"><span class="fa fa-check text-success ml-2"></span> ${type.toUpperCase()} saved.</div>`);
+                        form.after(get_note_edit_button({id:id},type,dp_date));
+                        form.replaceWith(content);
+                    });
+                    
                 } else { // this is multi-date edit mode, toggle back
                     $("#btn-multi-date").trigger("click");
                     var count = $(".motd-date").length;
-                    $("form .alert-success").prepend(`<p>Successfully created/updated MOTDs for ${count} dates.</p>`).removeAttr("hidden");
+                    form.before(
+                        `<div class="alert alert-success rounded border-success shadow-sm px-1"><span class="fa fa-check text-success ml-2"></span> Updated ${count} MOTDs.</div>`);
+                    $.getJSON(url).then(res=>{
+                        var content = res[type.toUpperCase()].content;
+                        //form.before(`<div class="alert alert-success rounded border-success shadow-sm px-1"><span class="fa fa-check text-success ml-2"></span> ${type.toUpperCase()} saved.</div>`);
+                        form.after(get_note_edit_button({id:id},type,dp_date));
+                        form.replaceWith(content);
+                    });
                 }
+                var success_message = form.prev("div.status");
+                success_message.children(".message").text(`${type} has been saved.`);
+                success_message.removeClass("d-none").addClass("d-flex align-items-start");
+                //$("form .alert-success").prepend(`<p>Successfully created/updated MOTDs for ${count} dates.</p>`).removeAttr("hidden");
             }
 
             if (res.status === "error") {
