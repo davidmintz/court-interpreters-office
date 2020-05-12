@@ -266,7 +266,7 @@ class NotesController extends AbstractRestfulController
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
         if ('motw' == $type) {
-            $date_string = $this->notesService->getSession()['settings']['date'];
+            //$date_string = $this->notesService->getSession()['settings']['date'];
         }
         $notes = $this->notesService->getAllForDate(new \DateTime($date_string));
         // make sure someone didn't already create one

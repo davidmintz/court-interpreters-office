@@ -34,7 +34,8 @@
             <?php $id = ($this->note && $this->note->getId()) ? $this->note->getId():'' ;?>
             <input type="hidden" name="modified" value="<?php echo $id ? $this->note->getModified()->format('Y-m-d H:i:s'):''?>">
             <input type="hidden" name="type" value="<?php echo $this->type ?>">
-            <input type="hidden" name="date" value="<?php echo $this->date->format('Y-m-d')?>">
+            <?php //if ($this->type == 'motw'): $date = $this->monday; else : $date = $this->date; endif ?>
+            <input type="hidden" name="date" value="<?php echo $this->date->format('Y-m-d')   // was $this->date->format('Y-m-d')?>">
             <input type="hidden" name="id" value="<?php echo $id?>">
             <input id="csrf" type="hidden" name="csrf" value="<?php echo $this->csrf ?>">
             <button type="button" class="btn btn-success">save</button>

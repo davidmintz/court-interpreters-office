@@ -58,6 +58,29 @@ const get_note_edit_button = function(note, type, dateText){
     }
     return `<a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/${path}"><span class="sr-only">${action}</span></a>`;
 };
+
+const display_note = function(response,dateText,type){
+    var date = moment(dateText,"YYYY-MM-DD");
+    var content_div = $(`#${type}-content`);
+    var header = content_div.siblings("h4");
+    if (type === "motw") {
+        var dow = parseInt(date.format("E"));
+        if (dow !== 1) {
+            date.subtract(dow - 1, "days");
+        }
+    }
+    var key = type.toUpperCase();
+    header.text(`${key} for ${date.format("dddd DD-MMM-YYYY")}`);
+    if (response[key]) {
+        var note = response[key];        
+        content_div.html(note.content);                        
+        content_div.append(get_note_edit_button(note,type,dateText));
+    } else {                                
+        content_div.html([`<p class="font-italic mx-2">no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,
+            get_note_edit_button({},type,dateText)]);                
+    } 
+};
+
 var dp_defaults = {
     dateFormat:"yy-mm-dd",
     showOtherMonths : true,
@@ -73,35 +96,13 @@ var dp_defaults = {
         var multidate_mode = $("#motd-content form").data("multiDate");
         if (multidate_mode) {                   
             return append_motd_date(dateText);
-        }
-        var key = type.toUpperCase();
+        }        
         // url to fetch note
-        var url = `/admin/notes/date/${dateText}/${type}`;
-        // div to put it in
-        var content_div = $(`#${type}-content`);
-        var header = content_div.siblings("h4");      
-        $.getJSON(url).then((res)=>{
-            var date = moment(dateText,"YYYY-MM-DD");
-            if (type === "motw") {
-                var dow = parseInt(date.format("E"));
-                if (dow !== 1) {
-                    date.subtract(dow - 1, "days");
-                }
-            }
-            header.text(`${key} for ${date.format("dddd DD-MMM-YYYY")}`);
-            if (res[key]) {
-                var note = res[key];
-                // header.text(`${key} for ${note.date || note.week_of}`);
-                content_div.html(note.content);                        
-                content_div.append(get_note_edit_button(note,type,dateText));
-            } else {                                
-                content_div.html([`<p class="font-italic mx-2">no ${key} for ${date.format("ddd DD-MMM-YYYY")}</p>`,
-                    get_note_edit_button({},type,dateText)]);
-                
-            }            
-        });    
+        var url = `/admin/notes/date/${dateText}/${type}`;         
+        $.getJSON(url).then((res)=>{display_note(res,dateText,type);});    
     }
 };
+
 
 $(function(){
 
@@ -142,15 +143,15 @@ $(function(){
         e.preventDefault();
         $(this).closest("div").remove();
     });
-
+    // load the editing form
     $(".note-content").on("click","#btn-editor-motd, .note-content #btn-editor-motw",
         function(e){
             e.preventDefault();
-            var path = this.href.split("/").slice(3).join("/");
-            // console.log("loading the form via "+path);
+            var path = this.href.split("/").slice(3).join("/");            
             var div = $(this).parent();
             $.get(`/${path}`).then((html)=>div.html(html));
         }
+    // submit the editing form
     ).on("click","button.btn-success",function(e){
         e.preventDefault();
         console.log("time to rock and roll: save");
@@ -178,8 +179,7 @@ $(function(){
                 // add week_of parameter
                 var dp = $(`#calendar-${type}`);
                 data += "&week_of="+moment(dp.datepicker("getDate")).format("YYYY-MM-DD");
-            }
-            
+            }            
             method = "POST";
         } 
         console.log(`gonna ${method} to ${url}...`);
@@ -240,6 +240,24 @@ $(function(){
         }).fail((res)=>{
             console.log(res);
         });
+    }).on("click","#btn-cancel-edit",function(e){
+        e.preventDefault();
+        console.log("cancel edit");        
+        // var type = $("input[name='type']").val();
+        var multidate = $(this).closest("form").data("multiDate");
+        if (multidate) { // toggle it off
+            $("#btn-multi-date").trigger("click");
+        } else {
+            // reload
+            var form = $(this).closest("form");
+            var type = form.data("type");
+            var date = $(this).siblings("input[name='date']").val();
+            console.warn("date is FUCKING WHAT? "+date);
+            var url = `/admin/notes/date/${date}/${type}`;
+            console.warn("fetching: "+url);
+            $.getJSON(url).then( response=>display_note(response,date,type) );
+
+        }
     });
 
 });
