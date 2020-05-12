@@ -144,11 +144,12 @@ $(function(){
         $(this).closest("div").remove();
     });
     // load the editing form
-    $(".note-content").on("click","#btn-editor-motd, .note-content #btn-editor-motw",
+    $(".note-content").on("click","#btn-editor-motd, #btn-editor-motw",
         function(e){
             e.preventDefault();
             var path = this.href.split("/").slice(3).join("/");            
             var div = $(this).parent();
+            console.log(`we are getting: ${path}`);
             $.get(`/${path}`).then((html)=>div.html(html));
         }
     // submit the editing form
