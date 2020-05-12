@@ -49,6 +49,7 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
 
     /**
      * gets MOTD and MOTW for $date
+     * 
      * @param  DateTime $date
      * @return Array
      */

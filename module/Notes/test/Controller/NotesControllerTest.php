@@ -25,19 +25,23 @@ class NotesControllerTest extends AbstractControllerTest
                 new DataFixture\LanguageLoader(),
                 new DataFixture\InterpreterLoader(),
                 new DataFixture\UserLoader(),
+                new DataFixture\NoteLoader(),
             ]
         );
+        echo "leaving ". __METHOD__ . "\n";
     }
 
     public function tearDown()
     {
         $em = FixtureManager::getEntityManager();
-        $motd = $em->createQuery("SELECT n FROM InterpretersOffice\Admin\Notes\Entity\MOTD n ORDER BY n.date DESC" )
-           ->getOneOrNullResult();
-        if ($motd) {
-            $em->remove($motd);
-            $em->flush();
-        }
+        $em->createQuery('DELETE InterpretersOffice\Admin\Notes\Entity\MOTD m')->getResult();
+        $em->createQuery('DELETE InterpretersOffice\Admin\Notes\Entity\MOTW m')->getResult();
+        // $motd = $em->createQuery("SELECT n FROM InterpretersOffice\Admin\Notes\Entity\MOTD n ORDER BY n.date DESC" )
+        //    ->getOneOrNullResult();
+        // if ($motd) {
+        //     $em->remove($motd);
+        $em->flush();
+        // }
     }
 
     public function testGetMethodWorksIfUserIsLoggedIn()
@@ -46,19 +50,30 @@ class NotesControllerTest extends AbstractControllerTest
         $this->reset(true);
         $this->dispatch('/admin/notes/date/'.date('Y-m-d').'/motd');
         $this->assertResponseStatusCode(200);
+        // echo "leaving ". __METHOD__ . "\n";
     }
 
     public function testGetMethodFailsIfUserIsNotLoggedIn()
     {
         $this->dispatch('/admin/notes/date/'.date('Y-m-d').'/motd');
         $this->assertNotResponseStatusCode(200);
+        // echo "leaving ". __METHOD__ . "\n";
     }
 
     public function testGetByDateMethodWorks()
     {
+        $em = FixtureManager::getEntityManager();
+        $count = $em->getRepository(MOTD::class)->count([]);
+        // echo "\nthe FUCKING count = $count\n";
+        $sample = $em->createQuery('SELECT m FROM InterpretersOffice\Admin\Notes\Entity\MOTD m ORDER BY m.date')->getResult()[0];
+        // print_r($sample->JsonSerialize());
         $this->login('david','boink');
         $this->reset(true);
-        $this->dispatch('/admin/notes/date/2019-09-12/motd');
+        $date = $sample->getDate()->format('Y-m-d');
+        // echo "\nCHECKING: $date at /admin/notes/date/$date/motd\n";
+        $this->assertTrue(strlen($sample->getContent()) > 0);
+        $this->dispatch("/admin/notes/date/$date/motd");
+        $this->dumpResponse();
         $this->assertResponseStatusCode(200);
     }
 
@@ -78,7 +93,7 @@ class NotesControllerTest extends AbstractControllerTest
     {
         $em = FixtureManager::getEntityManager();
         $count_before = $em->getRepository(MOTD::class)->count([]);
-        $when = new \DateTime('next Tuesday');
+        $when = new \DateTime();
         $date_str = $when->format('Y-m-d');
 
         $url = "/admin/notes/create/motd/$date_str";
@@ -111,7 +126,7 @@ class NotesControllerTest extends AbstractControllerTest
         $this->assertEquals($content,$data->motd->content);
         $count_after = $em->getRepository(MOTD::class)->count([]);
         $this->assertEquals($count_after, $count_before + 1);
-
+        // print_r($data);
         return $data->motd; // for a possible future @depends etc
     }
 

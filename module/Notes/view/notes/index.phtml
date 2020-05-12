@@ -1,131 +1,102 @@
-<?php
-use InterpretersOffice\Admin\Notes\Entity;
-$action = $this->layout()->action;
-$is_index = !in_array($action,['edit','create']);
-$this->headTitle($is_index?"MOTD|MOTW":"$action $this->type");
+<?php $this->headTitle('Notes (MOT[DW]');
 $this->headScript()
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-    ->appendFile($this->basePath('js/admin/notes-form.js'));?>
-<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<?php $settings = $this->layout()->note_settings;
-$date_obj = $this->note ? new \DateTimeImmutable($this->note->getDate()->format('Y-m-d')) 
-    : new \DateTimeImmutable($settings['date']);
-$dow = (int)$date_obj->format('N');
-if ($dow != 1) {
-    $interval = sprintf('P%sD',$dow - 1);
-    $this->monday = $date_obj->sub(new \DateInterval($interval));
-} else {
-    $this->monday = $date_obj;
-}
+    ->appendFile($this->basePath('js/admin/notes-form.js'));
 ?>
-<?php if (false):?>
-<pre >
-    type:  <?php var_dump($this->type) ?>
-    module? <?php var_dump($this->layout()->module)?>
-    action: <?php var_dump($this->layout()->action) ?>
-    monday: <?=$this->monday->format("D d-M-Y\n") ?>
-    notes_display (layout): <?php var_dump($this->layout()->display_notes) ?>
-    notes_display: <?php var_dump($this->display_notes) ?>
-    date setting is <?php echo $settings['date'] ;?> 
-    $this->note is a <?php echo is_object($this->note)?get_class($this->note):gettype($this->note),"\n" ?>;
-    $this->notes is a : <?php echo gettype($this->notes),"\n" ;
+<h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<pre class="border p-1" hidden>
+layout->action is <?php echo $this->layout()->action ?>
 
-    print_r(array_keys($this->notes));?>
+$this->date is <?php echo $this->date->format("D d-M-Y");?>
+
+$this->notes:
+<?php if ($this->notes) 
+{
+    foreach ($this->notes as $k => $v) {
+        printf ("key is $k, value type is %s",gettype($v));
+        if ($v) {
+            printf("... with date: %s",$v->getDate()->format("D Y-m-d"));
+        }
+        echo "\n";
+    }
+} else {
+    echo gettype($this->notes),"\n";
+}
+printf("our action is <strong>%s</strong> for type <strong>%s</strong>; monday is initially %s",
+    ($this->action ?: $this->layout()->action),
+    $this->type ?: 'N/A', $this->monday ? $this->monday->format('l Y-m-d') : "null"
+);
+// return;
+?>
 </pre>
-<?php endif ?>
-<ul class="nav nav-tabs" id="tabs-notes" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link<?php if (!$this->type or 'motd' == $this->type):?> active<?php endif ?>" id="day-tab" data-toggle="_tab" href="#day" role="tab" aria-controls="day" aria-selected="true">MOTD</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link<?php if ('motw' == $this->type): ?> active<?php endif ?>" id="week-tab" data-toggle="_tab" href="#week" role="tab" aria-controls="week" aria-selected="false">MOTW</a>
-  </li>
-</ul>
-<div class="tab-content" id="tab-content-notes">
-    <div class="tab-pane pt-2<?php if (!$this->type or 'motd' == $this->type):?> show active<?php endif?>" id="day" role="tabpanel" aria-labelledby="day-tab">
-        <div class="row">
-            <div class="col-md-7">
-                <h5 class="mb-3 border-bottom px-2 py-2"><?php echo $date_obj->format('l d-M-Y')?></h5>
-                <div id="motd-content">
-            <?php
-                if (!empty($this->notes['motd'])):
-                    $motd = $this->notes['motd'];
-                    $button_url = $this->url('notes/edit', [
-                        'type'=>'motd', 'date'=>$motd->getDate()->format('Y-m-d'),
-                        'id'=>$motd->getId()
-                    ]);
-                    $button_text = 'edit';
-                else:
-                    $button_url = $this->url('notes/create', [
-                        'type'=>'motd', 'date'=>$settings['date'],
-                    ]);
-                    $button_text = 'create';
-                endif;
-                if (!$is_index && $this->type == 'motd'):// render edit form
-                  $hide_button = true;
-                  echo $this->partial('notes/partials/form.phtml',[
-                      'date'=>$this->date,'type'=>$this->type,'note'=> $this->note,
-                       'csrf'=>$this->csrf,'action' =>$action,
-                  ]);
-                else: // render note content, if it exists
-                    if (!empty($this->notes['motd'])):
-                        echo $motd->getContent();
-                    else:
-                      ?><p class="font-italic no-note">no MOTD for this date</p><?php
-                    endif;
-                    $hide_button = false;
-                endif;?>
-                </div>
-                <a <?php if ($hide_button):?>style="display:none" <?php endif; ?>class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="<?= $button_url ?>"><span class="sr-only"><?= $button_text ?></span></a>
-            </div>
-            <div class="col notes-calendar" data-date="<?php echo $settings['date']?>" id="calendar-motd">
-            </div>
+
+<div class="row border-bottom mb-2 pb-2">
+    <div class="note-content col">
+        <?php $motd_date = $this->notes['motd'] ? $this->notes['motd']->getDate() : $this->date  ?>
+        <h4 class="border-bottom pb-2">MOTD for <?=$motd_date->format('l d-M-Y')?></h4>
+            <div class="status d-none p-2 alert alert-success alert-dismissible rounded border border-success shadow-sm mb-2" >
+            <div class="p-2"><span style="font-size:1.2em" class="fa fa-check text-success"></span></div>
+            <div class="p-2 message"></div>
+            <button type="button" class="close" data-hide="alert" aria-label="close"> 
+            <span aria-hidden="true">&times;</span></button>
         </div>
-    </div>
-<!--  ===============================================================-->
-    <div class="tab-pane pt-2<?php if ('motw' == $this->type):?> show active<?php endif?>" id="week" role="tabpanel" aria-labelledby="week-tab">
-        <div class="row">
-            <div class="col-md-7">
-                <h5 class="mb-3 border-bottom px-2 py-2">week of <?php echo $this->monday->format('l d-M-Y')?></h5>
-                <div id="motw-content"><?php
-                if (!empty($this->note) && $this->note instanceof Entity\MOTW && $this->note->getId()):
-                    $motw = $this->note;
-                    $button_url = $this->url('notes/edit', [
-                        'type'=>'motw', 'date'=>$motw->getDate()->format('Y-m-d'),
-                        'id'=>$motw->getId()
-                    ]);
-                    $button_text = 'edit';
-                else:
-                    $button_url = $this->url('notes/create', [
-                        'type'=>'motw', 'date'=>$settings['date'],
-                    ]);
-                    $button_text = 'create';
+        <div id="motd-content" >
+        <?php if ($this->notes['motd']): ?>
+            <?php $note = $this->notes['motd'];
+                if ($this->action != 'index' && $this->type == 'motd') :
+                    echo $this->partial('notes/partials/form.phtml',[
+                    'date'=>$this->date,'type'=>$this->type,'note'=> $this->notes['motd'],
+                    'csrf'=>$this->csrf,'action' =>$this->action,
+                    ]);                    
+                elseif ($note->getId()):
+                    echo $note->getContent();
+                    ?>
+                    <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/edit/motd/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
+                    <?php         
+                //else : no MOTD for <?php echo $this->date->format('l d-M-Y');<?php
                 endif;
-                if (!$is_index && $this->type == 'motw'):
-                    //if (!)
-                    $hide_button = true;
-                    echo $this->partial('notes/partials/form.phtml',
-                    [
-                        'date'=>$this->note->getDate(),'type'=>$this->type,
-                        //'note'=> $this->{$this->type},
-                        'note'=> $this->note,
-                        'csrf'=>$this->csrf,'action' =>$action,
-                    ]);
-                else:
-                    if (!empty($this->notes['motw'])):
-                        echo $this->notes['motw']->getContent();
-                        // echo $motw->getContent();
-                    else:
-                    ?><p class="font-italic no-note">no MOTW for this week</p>
+            else:
+                ?><p class="font-italic mx-2">no MOTD for <?php echo $this->date->format('l d-M-Y');?> bitch</p>
+                <a class="btn btn-primary fas fa-edit" id="btn-editor-motd" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
+        
                 <?php
-                    endif;
-                    $hide_button = false;
-                endif;?>
-                </div>
-                <a <?php if ($hide_button):?>style="display:none" <?php endif;?>class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="<?= $button_url ?>"><span class="sr-only"><?= $button_text ?></span></a>
-            </div>
-            <div class="col notes-calendar" data-date="<?php if ($this->notes && isset($this->notes['motw'])): echo $this->notes['motw']->getDate()->format('Y-m-d');
-            else : echo $this->monday->format('Y-m-d'); endif?>" id="calendar-motw"></div>
+            endif;        
+        ?>
         </div>
     </div>
+    <div class="col">
+        <div data-date="<?=$this->date->format('Y-m-d')?>" id="calendar-motd"></div>
+    </div>
+</div>
+<div class="row pt-3">
+    <div class="note-content col">
+    <h4 class="border-bottom pb-2">MOTW for <?=$this->monday->format('l d-M-Y')?></h4>
+    <div class="status d-none p-2 alert alert-success alert-dismissible rounded border border-success shadow-sm mb-2" >
+        <div class="p-2"><span style="font-size:1.2em" class="fa fa-check text-success"></span></div>
+        <div class="p-2 message"></div>
+        <button type="button" class="close" data-hide="alert" aria-label="close"> 
+        <span aria-hidden="true">&times;</span></button>
+    </div> 
+    <div id="motw-content">
+    <?php if ($this->notes['motw']):  ?>
+            <?php $note = $this->notes['motw'];
+            if ($this->action != 'index' && $this->type == 'motw') :
+                echo $this->partial('notes/partials/form.phtml',[
+                    'date'=>$this->monday,'type'=>$this->type,'note'=> $note,
+                    'csrf'=>$this->csrf,'action' =>$this->action,
+                    ]);
+        elseif ($note->getId()):?>
+            <?php echo $note->getContent();?>
+               <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/edit/motw/<?=$note->getId()?>/date/<?=$note->getDate()->format('Y-m-d')?>"><span class="sr-only">edit</span></a>
+        <?php // else:?>          
+        <?php //class="font-italic mx-2">no MOTW for <?php echo $this->monday->format("D Y-m-d");?>
+           <!-- <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/create/motw/<?php //=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a> -->
+        <?php endif;
+        else:?>        
+        <p class="font-italic mx-2">no MOTW for <?php echo $this->monday->format('D d-M-Y'); ?> bitch</p>
+        <a class="btn btn-primary fas fa-edit" id="btn-editor-motw" role="button" href="/admin/notes/create/motw/<?=$this->monday->format('Y-m-d')?>"><span class="sr-only">create</span></a>
+    <?php endif  ?>
+        </div>
+    </div>
+    <div class="col"><div data-date="<?=$this->monday->format('Y-m-d')?>" id="calendar-motw"></div></div>
 </div>

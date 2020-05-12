@@ -138,14 +138,16 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($event) use ($viewModel) {
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH, function ($event) use ($viewModel) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
                 $viewModel->setVariables($routeMatch->getParams());
+                //var_dump($routeMatch->getParams());
                 // really? not sure why we need this...
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
             }
         });
+
         $sharedEvents = $container->get('SharedEventManager');
         $log = $container->get('log');
         /** @todo move this to the ScheduleUpdateManagerFactory */
