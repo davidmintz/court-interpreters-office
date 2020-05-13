@@ -79,7 +79,7 @@ class InterpretersController extends AbstractActionController
         $isQuery = ( 'interpreters' != $routeName );
         $form = new InterpreterRosterForm(['objectManager' => $this->entityManager]);
         $viewModel = new ViewModel([
-            'title' => 'interpreters',
+            'title' => 'interpreters','vault_enabled' => $this->vault_enabled,
             ] + compact('form', 'params', 'isQuery', 'routeName'));
         if ('interpreters/find_by_id' == $routeName) {
             /** @todo optimize */

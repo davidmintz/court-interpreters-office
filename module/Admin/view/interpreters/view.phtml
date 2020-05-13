@@ -102,13 +102,14 @@ $i = $this->interpreter;
                     ?><span class="text-muted">&mdash;</span><?php
                 endif;?>
             </div>
+            <?php if ($this->vault_enabled):?>
             <div class="col-2 text-md-right">date of birth
             </div>
             <div class="col-3" id="dob">
-                <?php
+             <?php   
             /**/
                 $encrypted_dob = $i->getDob();
-                if (! $encrypted_dob) :
+            if (! $encrypted_dob) :
                     ?><span class="text-muted">&mdash;</span><?php
                 else :
                     echo $this->formHidden((new \Laminas\Form\Element\Hidden('encrypted_dob'))
@@ -139,6 +140,7 @@ $i = $this->interpreter;
                 endif;
                 ?>
             </div>
+            <?php endif; ?>
             <div class="w-100"></div>
             <div class="col-3 text-md-right mt-2 pt-2">comments</div>
             <div class="col-8 border mt-2 px-2 py-2" style="line-height: 120%"><?php echo $this->escapeHtml($i->getComments()) ?>
