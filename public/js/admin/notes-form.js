@@ -127,7 +127,7 @@ $(function(){
         form.data({multiDate: !form.data("multiDate")});
         // state to which we have just changed
         var enabled = form.data("multiDate");
-        console.warn(`shit is now: ${enabled ? "enabled":"disabled"}`)
+        console.warn(`shit is now: ${enabled ? "enabled":"disabled"}`);
         if (enabled) {
             div.removeAttr("hidden");
             console.log("display/enable multi-date shit");
