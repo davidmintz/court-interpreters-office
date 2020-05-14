@@ -55,3 +55,14 @@ on the server side. The front end uses <a href="https://getbootstrap.com/">Boots
 <p class="mx-auto text-center">
     <img src="/assets/images/lin-chi.jpg" alt="lin-chi is a magnificent cat" class="img-fluid">
   </p>
+  
+  
+  
+```php
+// just want to test syntax highlighting on GH
+
+$thing = new Thing($boink);
+$thing->foo();
+
+
+```
