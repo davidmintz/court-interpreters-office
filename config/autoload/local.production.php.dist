@@ -7,8 +7,8 @@
  * You also have to set a server environment variable "environment" with the value "production".
  */
 
-use Zend\Mail\Transport\Smtp;
-use Zend\Mail\Transport\SmtpOptions;
+use Laminas\Mail\Transport\Smtp;
+use Laminas\Mail\Transport\SmtpOptions;
 
 return   [
     'view_manager' => [
@@ -21,13 +21,13 @@ return   [
             'class' => SmtpOptions::class,
             'options' => [
                 'name'     => '',
-                'host'     => '',
+                'host'     => 'your.stmp.server.com',
                 'port'     => 465,
                 'connection_class'  => 'login',
 
                 'connection_config' => [
-                    'username' => 'user',
-                    'password' => 'password',
+                    'username' => 'your_username',
+                    'password' => 'your_password',
                     'ssl'  => 'ssl',
                 ],
             ],
