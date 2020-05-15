@@ -54,4 +54,6 @@ on the server side. The front end uses <a href="https://getbootstrap.com/">Boots
 <p class="pl-4">Of course.</p>
 <p class="mx-auto text-center">
     <img src="/assets/images/lin-chi.jpg" alt="lin-chi is a magnificent cat" class="img-fluid">
-  </p>
+</p>
+  
+
