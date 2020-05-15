@@ -9,7 +9,6 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
-use InterpretersOffice\Entity\Event;
 use Laminas\Session\Container as Session;
 
 /**
@@ -32,14 +31,23 @@ class ScheduleController extends AbstractActionController
     protected $session;
 
     /**
+     * configuration 
+     * 
+     * @var array
+     */
+    protected $config;
+
+    /**
      * constructor
      *
      * @param EntityManagerInterface $e
      */
-    public function __construct(EntityManagerInterface $e)
+    public function __construct(EntityManagerInterface $e, array $config)
     {
         $this->entityManager = $e;
         $this->session = new Session('schedule');
+        $this->config = $config;
+    
     }
 
     /**
@@ -54,7 +62,8 @@ class ScheduleController extends AbstractActionController
         $date = new \DateTime($filters['date']);
         $repo = $this->entityManager->getRepository(Entity\Event::class);
         $data = $repo->getSchedule($filters);
-        $viewModel = new ViewModel(compact('data', 'date'));
+        $end_time_enabled = $this->config['end_time_enabled'];
+        $viewModel = new ViewModel(compact('data', 'date','end_time_enabled'));
         $this->setPreviousAndNext($viewModel, $date)
             ->setVariable('language', $filters['language']);
         if ($this->getRequest()->isXmlHttpRequest()) {
@@ -113,15 +122,15 @@ class ScheduleController extends AbstractActionController
         $data = $this->entityManager->getRepository(Entity\Event::class)
            ->getView($id);
         $event = $data['event'] ?? null;
-        $csrf = (new \Laminas\Validator\Csrf('csrf', ['timeout' => 600]))->getHash();
+        $csrf = (new \Laminas\Validator\Csrf('csrf', ['timeout' => 1200]))->getHash();
         $session = new \Laminas\Session\Container('event_updates');
         $before = null;
         if ($session->{$event['id']}) {
             $before = $session->{$event['id']};
             unset($session->{$event['id']});
         }
-
-        return compact('event', 'id', 'csrf', 'before');
+        $end_time_enabled = $this->config['end_time_enabled'];
+        return compact('event', 'id', 'csrf', 'before','end_time_enabled');
     }
 
     /**

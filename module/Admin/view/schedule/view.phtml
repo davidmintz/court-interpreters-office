@@ -4,7 +4,7 @@ $this->headScript()
 ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
 ->appendFile($this->basePath('js/event-email.js'))
 ->appendFile($this->basePath('js/event-delete.js'));
-//$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+
 $this->headStyle()->captureStart();?>
 .ui-autocomplete {
   z-index: 99999 !important;
@@ -39,6 +39,7 @@ $this->headTitle('event details');
 ?>
 <h2 class="navigation pt-1 mx-auto my-4 text-center"><a href="<?php echo $this->url('admin') ?>">admin</a> | <a href="<?php echo $this->url('events') ?>">schedule</a> <small class="text-muted text-md-right">event details</small></h2>
 <?php
+
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-primary',], false);
@@ -69,6 +70,9 @@ if (!$this->before):?>
     </div>
     <div class="col-sm-3 pl-0 time">
         <?php echo $this->event['time'] ?$this->event['time']->format('g:i a'): '<em>?</em>' ?>
+        <?php if ($this->end_time_enabled) : ?> - <?php
+            if ($this->event['end_time']) : ?><?=$this->event['end_time']->format('g:i a') ?><?php else: ?><em>?</em><?php endif ?>
+        <?php endif?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
         type

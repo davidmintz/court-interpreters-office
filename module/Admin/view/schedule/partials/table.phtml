@@ -1,4 +1,3 @@
-
 <table id="schedule-table" class="table table-hover table-bordered table-sm rounded mt-2">
     <thead>
         <tr>
@@ -14,6 +13,7 @@
     </thead>
     <tbody>
         <?php if ($this->data) :
+            $now = new \DateTime();
             foreach ($this->data['events'] as $e) :
                 if (stristr($e['judge'], 'magistrate') !== false && ! $e['location']) :
                     $magistrate_default = $e['aj_default_location'];
@@ -23,7 +23,16 @@
         if ($e['cancellation']) :
             echo " event-cancelled" ;
         endif;?>">
-            <td class="text-right text-nowrap"><?php echo $this->escapeHtml($e['time'] ? $e['time']->format('g:i a') : '') ?></td>
+            <td class="text-right text-nowrap"><?php echo $this->escapeHtml($e['time'] ? $e['time']->format('g:i a') : ''); 
+                // if it looks like it should have an end time but does not, display a thingy flagging it to their attention
+                if ($this->end_time_enabled):
+                    $str = $e['date']->format('Y-m-d');
+                    if ($e['time']) : $str .= $e['time']->format(' H:i'); endif;
+                    $event_datetime = new DateTime($str);
+                    if (!$e['cancellation'] && ! $e['end_time'] && $event_datetime <= $now) : ?> <span class="fa fa-hourglass-start text-danger"></span><?php endif;                
+                endif;
+
+            ?></td>
             <td class="border-right-0">
                 <a data-toggle="tooltip" data-container="#schedule-table" title="view event details" href="<?php echo $this->url('events/view', ['id' => $e['id']]);?>"><?php
                     echo $e['type']; ?><?php

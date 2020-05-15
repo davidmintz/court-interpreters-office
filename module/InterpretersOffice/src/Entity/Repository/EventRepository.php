@@ -272,7 +272,7 @@ DQL;
         } else {
             $date = $options['date'];
         }
-        $dql = 'SELECT e.id, e.date, e.time,
+        $dql = 'SELECT e.id, e.date, e.time,e.end_time,
          COALESCE(j.lastname, aj.name) AS judge,
          j.id AS judge_id,
          COALESCE(aj_parent_location.name, aj_location.name) AS aj_default_location,

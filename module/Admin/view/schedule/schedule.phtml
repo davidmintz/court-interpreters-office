@@ -12,6 +12,7 @@ if ($messenger->hasSuccessMessages()) :
 endif;
 echo $this->errorMessage($this->errorMessage);  ?><?php
 if ($this->errorMessage) :   return;  endif;
+
 ?>
 <div class="interpreter-editor-wrapper d-none">
     <div style="min-width:250px" class="py-2">
@@ -61,7 +62,7 @@ if ($this->errorMessage) :   return;  endif;
             <a title="add a new event to the schedule" class="ml-2 btn btn-sm btn-primary" href="<?php echo $this->url('events/add')?>" role="button"><span class="fas fa-plus"></span> add event</a>
         </div>
     </div>
-<?php echo $this->partial('interpreters-office/admin/schedule/partials/table', ['data' => $data,]);
+<?php echo $this->partial('interpreters-office/admin/schedule/partials/table', ['data' => $data,'end_time_enabled'=>$this->end_time_enabled]);
 ?>
 
 <pre>
