@@ -424,7 +424,8 @@ EOD;
             $view->setVariables(['entity' => $data['event_details'],'escaped' => true]);
         }
         if (! empty($data['body'])) {
-            $view->notes = $data['body'];
+            $parsedown = new Parsedown();
+            $view->notes = $parsedown->text($data['body']);
         }
         $transport = $this->getMailTransport();
         foreach ($data['to'] as $i => $address) {
