@@ -1,9 +1,12 @@
 ---
 layout : default
-name : setup | InterpretersOffice.org
+name : documentation | setup | InterpretersOffice.org
+
 ---
 
 # setting up the server
+
+{{ page.project }} is the name.
 
 These are the requirements for running <span class="text-monospace">InterpretersOffice</span>. My intention is make installation easier than what is described below, 
 with less manual setup involved, but for now <em>illud est quod est</em>. And of course, if you already have your web and database servers 
@@ -65,7 +68,9 @@ both but currently my preference is mariadb.
 
 ### get the code and its dependencies
 
-Install <code>git</code> if you haven't already. Then
+Install <code>git</code> if you haven't already. This step also requires the
+the php dependency manager [composer](https://getcomposer.org). 
+
 ```
 cd /path/to/application/
 git clone https://github.com/davidmintz/court-interpreters-office
@@ -119,7 +124,161 @@ some one-off scripts to import data from existing sources. Feel free to contact 
 
 ### email
 
-[To be continued...]
+<span class="text-monospace">InterpretersOffice</span> relies heavily on outbound email. Copy the file 
+`config/autoload/local.production.php.dist` to `config/autoload/local.production.php`, and then edit the `mail` section:
+
+
+```php
+<?php
+
+use Laminas\Mail\Transport\Smtp;
+use Laminas\Mail\Transport\SmtpOptions;
+
+return [
+    // stuff omitted...
+    'mail' => [
+        'transport' => Smtp::class,
+        'transport_options' => [
+            'class' => SmtpOptions::class,
+            'options' => [
+                'name'     => 'your.stmp.server',
+                'host'     => 'host_ip_address',
+                'port'     => 465,
+                'connection_class'  => 'login',
+
+                'connection_config' => [
+                    'username' => 'your_username',
+                    'password' => 'your_password',
+                    'ssl'  => 'ssl',
+                ],
+            ],
+        ],
+        'from_address' => 'default_from_address@example.org',
+        'from_entity' => 'Interpreters Office',
+    ],
+];
+```
+replacing all the values appropriately. This array has to contain configuration that a [Laminas\Mail](https://docs.laminas.dev/laminas-mail/) transport class 
+constructor can consume. It does not necessarily have to be the SMTP transport *per se*. If, for example, your system has postfix configured to relay to an 
+SMTP server, you can use `Laminas\Mail\Transport\Sendmail` instead:
+
+```php
+'mail' => [
+        'transport' => 'Laminas\Mail\Transport\Sendmail',
+        'transport_options' => [        
+            // optional
+        ],
+]
+       
+```
+
+Set the values of `from_address` and `from_entity` appropriately; these are the defaults used to populate the `From:` header of outgoing messages.
+
+**If you want to use [Mailgun](https://www.mailgun.com/),** put in the `config/autoload` directory a configuration file called
+ `mailgun.local.php` with contents like
+
+```php
+return [
+    'mailgun' => [
+      'smtp' => [
+          'user' => 'you@your_email_domain.org',
+          'password' => 'your_password',
+          'host' => 'smtp.mailgun.org',
+      ],
+      'api' => [
+        'key' => 'your_api_key',        
+        'base_url' => 'https://api.mailgun.net/v3',
+        'domain'=>  'your_email_domain.org',
+      ],      
+    ],
+];
+```
+
+and then Mailgun's SMTP services will be used for sending most emails, but the Mailgun API will be used for the batch email 
+feature (which allows administrative users to send email *en masse* to particular groups, such as all active contract interpreters).
+
+### other configuration
+
+There is some more configuration data to be set manually because <span class="text-monospace">InterpretersOffice</span> does 
+not yet provide a GUI for all the application configuration.
+
+In `config/autoload/local.production.php` there a couple more sections to be edited.
+
+```php
+
+/** contact information variables for your layout */
+'site' => [
+    'contact' => [
+        'organization_name' => 'Your Office',
+        'organization_locality' => 'Your City',
+        'telephone' => 'Your phone number',
+        'email' => 'contact@example.org',
+        'website' => 'https://interpreters.example.org',
+    ],        
+],
+/** 
+*   optional list of IP addresses from which users can read the interpreters schedule 
+*   without logging in (experimental)  OR pattern that the hosting domain must match
+*/
+'permissions' => [
+    'schedule' => [
+        'anonymous_ips_allowed' => [],
+        'host_domain_allowed' => '',
+    ],
+],
+'security' => [
+    'max_login_failures' => 6,        
+],
+
+```
+
+The `contact` array is injected into the main layout and into some email templates. The `permissions` section is currently not 
+in use and can be left as is. The `max_login_failures` variable refers to how many consecutive failed logins are permitted 
+before a user account is disabled. You can set this value pretty high if you like, but currently you cannot set it to 
+zero to mean unlimited. The default (six) seems sensible.
+
+
+There are a couple more configuration files that have to be present and writeable by the server: `module/Admin/config/forms.json`
+`and module/Rotation/config/config.json`. The former looks like
+
+
+```json
+{
+    "interpreters": {
+        "optional_elements": {
+            "banned_by_persons": "1",
+            "BOP_form_submission_date": "1",
+            "fingerprint_date": "1",
+            "contract_expiration_date": "1",
+            "oath_date": "1",
+            "security_clearance_date": "1"
+        }
+    },
+    "events": {
+        "optional_elements": {
+            "end_time": "1"
+        }
+    },
+    "users" : {
+        "allow_email_domains" : [
+            "nysd.uscourts.gov",
+            "nysp.uscourts.gov",
+            "nyspt.uscourts.gov",
+            "ca2.uscourts.gov"    
+        ]
+    }
+}
+
+```
+
+The first two sections are for enabling/disabling optional fields for interpreter entities and event entities.
+
+The `users` section controls what email domains users of the system are permitted to have, preventing users from registering accounts
+from arbitrary email addresses. It also imposes validation rules for the user profile and administrative user editing forms. If you 
+want to disable this, leave the `allow_email_domains` section as an empty array.
+
+Additionally, the subdirectory `module/Requests/config` has to be server-writeable.
+
 
 ### Hashicorp Vault for sensitive data
 
@@ -142,15 +301,7 @@ In other words the encryption/decryption key is never stored anywhere on the ser
     </ul>
 </div>
 
-[To be continued...]
 
-
-### final configuration
-
-In the <code>config/autoload</code> folder,
-
-
-[Likewise to be continued... ]
 
 
 
