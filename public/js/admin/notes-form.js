@@ -154,17 +154,17 @@ $(function(){
         }
     // submit the editing form
     ).on("click","button.btn-success",function(e){
-        e.preventDefault();
-        console.log("time to rock and roll: save");
+        e.preventDefault(); //return  console.warn("FUCK ME???") ;
+        // console.log("time to rock and roll: save");
         var form = $(this).closest("form");
-        var type = $("input[name='type']").val();        
+        var type = form.data("type");          
         var is_multidate = type === "motd" && form.data("multiDate");
         if (is_multidate) {
             $("#dates input[type=\"hidden\"]").removeAttr("disabled");
         } else {
             $("#dates input[type=\"hidden\"]").attr({disabled:true});
         }
-        var id = $("input[name=\"id\"]").val();
+        var id = form.find("input[name=\"id\"]").val();
         var url, method;
         var data = form.serialize();
         if (id) {
@@ -172,6 +172,7 @@ $(function(){
             console.log("doing an update?");
             url = `/admin/notes/update/${type}/${id}`;
             method = "PUT";
+            // debug;            
         } else {
             // create
             console.log("doing a create?");
