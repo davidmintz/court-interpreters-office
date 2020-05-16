@@ -66,7 +66,7 @@ fi;
 
 for database in ${POSITIONAL[*]}; do 
     FILE="${database}.$(date +%FT%H%M).sql.gz"
-    echo -n "dumping to $FILE... "
+    echo -n "doing a ${FREQUENCY} dump to $FILE... "
     mysqldump --defaults-file=$HOME/.my.cnf --single-transaction ${database} | gzip - > $path/$FILE
     echo done.
 done;
@@ -80,13 +80,14 @@ fi;
 cd $path;
 TO_DELETE=$(find .  -maxdepth 1 -mtime +${DAYS});
 
+# dude, this is giving an error under certain circumstances.
 if [ -z $TO_DELETE ]; then 
-    echo no backups older than ${DAYS} to rotate out; 
+    echo "found no backups older than ${DAYS} to rotate out"; 
 else 
     for file in $TO_DELETE; do
-        echo removing $file;
+        echo "rotating out ${FREQUENCY} backup: $file";
         rm $file;
     done;
 fi;
-
+echo "done"
 exit 0
