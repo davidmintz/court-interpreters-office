@@ -236,7 +236,7 @@ class EmailController extends AbstractActionController
             return new JsonModel(['status' => 'error','message' => 'method not allowed']);
         }
         $csrf = $this->params()->fromPost('csrf', '');
-        if (! (new \Laminas\Validator\Csrf('csrf', ['timeout' => 600]))->isValid($csrf)) {
+        if (! (new \Laminas\Validator\Csrf('csrf', ['timeout' => 1200]))->isValid($csrf)) {
             return new JsonModel(['status' => 'error','validation_errors' =>
                 ['csrf' => 'security token is missing or expired']
             ]);

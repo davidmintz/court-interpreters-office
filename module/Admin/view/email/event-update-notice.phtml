@@ -5,6 +5,12 @@
  * view script for
  * (1) email sent automatically when a request is updated or
  * (2) email sent manually through schedule/admin interface
+ * 
+ * If the input is coming from the latter, it is POSTed via xhr and 
+ * the event entity data comes in as array data through  EmailController::emailEventAction.
+ * 
+ * In the former case, it is a Doctrine entity and needs to be converted to an array 
+ * that can be inject into the viewscript.
  *
  */
 
@@ -14,6 +20,7 @@ if (is_object($this->entity)) {
         'time' =>  $this->entity->getTime(),
         'language' => (string)$this->entity->getLanguage(),
         'event_type' =>  (string)$this->entity->getEventType(),
+        'category'   => (string)$this->entity->getEventType()->getCategory(),
         'location' =>  (string)$this->entity->getLocation(),
         'docket'  => $this->entity->getDocket(),
         //'comments' => $this->entity->getComments(),
@@ -23,7 +30,6 @@ if (is_object($this->entity)) {
         'defendants' => $this->entity->getDefendants()->toArray(),
     ];
     $this->entity = $data;
-
 }
 if (is_object($this->interpreter) && $this->interpreter instanceof \InterpretersOffice\Entity\Interpreter) :
     $salutation = "Dear {$this->interpreter->getFullname()}:";
@@ -39,23 +45,22 @@ endif;
 ?>
 <p><?=$salutation?></p>
 <?php if (!$this->entity):?>
-<p><?php echo $this->escapeHtml($this->notes) ?></p>
+<?php echo $this->notes ?></p>
 <?php else: ?>
 <p>This is to advise you that the following event to which you
-    are assigned as interpreter has been modified, as indicated below.
+    are assigned as interpreter has been modified, as shown below.
 </p>
-<?php
+<?php if ($this->notes):?>
+<p>Please note:</p>
+<div style="border:1px solid orange;padding:1em"><?php echo $this->notes ?></div>
+<?php endif;
 if ($this->before):
     echo $this->partial('interpreters-office/email/partials/event-diff.phtml',
     ['entity'=>$this->entity, 'before' => $this->before, 'with_comments'=>false]);
 else:
     echo $this->partial('interpreters-office/email/partials/event-details.phtml',
     ['entity'=>$this->entity,  'with_comments'=>false,'escaped' => $this->escaped ]);
-endif;    ?>
-    <?php if ($this->notes):?>
-    <p>Additional notes:</p>
-    <p style="margin-left:2em"><?php echo $this->notes ?></p>
-    <?php endif ?>
+endif;    ?>   
 <?php endif ?>
 <p>
 If you have any questions, please contact the Interpreters promptly.

@@ -9,9 +9,12 @@ endif;
 ?>
 <p><?php echo $salutation ?></p>
 <p>
-    We are writing to see if you are available to accept the following
-    interpreting assignment:
+    We are writing to see if you are available to accept the interpreting assignment shown below.
 </p>
+<?php if ($this->notes):?>
+<p>Please note:</p>
+<div style="border:1px solid orange;padding:1em"><?php echo $this->notes ?></div>
+<?php endif ?>
 <?php
 echo $this->partial('interpreters-office/email/partials/event-details.phtml',
     ['entity'=>$this->entity, 'escaped'=> $this->escaped]);
@@ -19,10 +22,6 @@ echo $this->partial('interpreters-office/email/partials/event-details.phtml',
 <p>
     If so, please contact us at your earliest convenience.
 </p>
-<?php if ($this->notes):?>
-<p>Additional notes:</p>
-<p style="margin-left:2em"><?php echo $this->escapeHtml($this->notes) ?></p>
-<?php endif ?>
 <p>Very truly yours,</p>
 
 <p>The Interpreters Office</p>

@@ -66,7 +66,7 @@ const get_event_description = function(){
     e.category = $("div.event-details").data("event_category");
     var text = e.date;
     if (e.time) {
-        text += ` ${e.time}`.replace(/ (a|p)m/,"$1");
+        text += ` ${e.time}`.replace(/ (a|p)m.*/,"$1");
     }
     text += `, ${e.language} ${e.event_type}`;
     if (e.category !== "in" && location) {
@@ -76,7 +76,7 @@ const get_event_description = function(){
         e.docket = e.docket.replace(/^(\d{2})(\d{2})(.+)/,"$2$3");
         text += ` (${e.docket})`;
     }
-
+    console.warn("DEBUG: "+text);
     return text;
 
 };
@@ -101,8 +101,9 @@ const get_event_details = function()
             //var html = obj.html().trim();
             data[fields[i]] = obj.html().trim();
         }
-    }    
-    data = Object.assign(data,$(".submitter").data(),$(".event_type").data());
+    }
+
+    data = Object.assign(data,$(".submitter").data(),{category:$(".event-details").data("event_category")});
     
     return data;
 };
@@ -645,6 +646,6 @@ $(function(){
     // prepopulate the search thingy with the docket number
     var docket = $("div.docket").text().trim();
     if (docket) {
-        $(`li.nav-item input[name="docket"]`).val(docket).trigger("change");
+        $("li.nav-item input[name='docket']").val(docket).trigger("change");
     }
 });

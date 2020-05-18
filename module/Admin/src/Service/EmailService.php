@@ -425,7 +425,7 @@ EOD;
         }
         if (! empty($data['body'])) {
             $parsedown = new Parsedown();
-            $view->notes = $parsedown->text($data['body']);
+            $view->notes = $parsedown->text(strip_tags($data['body']));
         }
         $transport = $this->getMailTransport();
         foreach ($data['to'] as $i => $address) {

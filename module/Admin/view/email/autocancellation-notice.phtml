@@ -64,6 +64,7 @@ $this->entity = [
     'time' =>  $this->request->getTime(),
     'language' => (string)$this->request->getLanguage(),
     'event_type' =>  (string)$this->request->getEventType(),
+    'category'   => (string)$this->request->getEventType()->getCategory(),
     'location' =>  (string)$this->request->getLocation(),
     'docket'  => $this->request->getDocket(),
     'comments' => $this->request->getComments(),
