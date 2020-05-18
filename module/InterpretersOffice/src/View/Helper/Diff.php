@@ -74,10 +74,10 @@ class Diff extends AbstractHelper
     public function __invoke($field)
     {
         $before = $this->getPrevious();
-        $data = $this->getData()[$field];
+        $data = $this->getData()[$field] ?? null;
         // if there's no update, render as per normal, getting it done
         // as soon as possible
-        if ($before[$field] == $data) {
+        if (isset($before[$field]) && $before[$field] == $data) {
             if (is_string($data)) {
                 return $this->getView()->escapeHtml($data);
             } elseif (is_array($data)) {
@@ -97,7 +97,7 @@ class Diff extends AbstractHelper
                 return $data;
             }
         }
-        if (is_string($data) || is_string($before[$field])) {
+        if (is_string($data) || ( isset($before[$field]) && is_string($before[$field]))) {
             if (! $data or ! $before[$field]) {
                 $sep = '';
             } else {
