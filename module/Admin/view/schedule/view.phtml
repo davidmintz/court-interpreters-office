@@ -134,7 +134,7 @@ if (!$this->before):?>
     <div class="col-sm-3  text-muted text-md-right">
         <?php if ($event['request_id']):?>* <?php endif ?>request by
     </div>
-    <div class="col-sm-3 pl-0 submitter" data-submitter_hat="<?=$this->escapeHtml($this->event['submitter_hat'])?>" data-submitter_id="<?php echo $event['submitter_id']?>"><span class="avoidwrap">
+    <div class="col-sm-3 pl-0 submitter" data-submitter_hat="<?=$this->escapeHtml($this->event['submitter_hat'])?>" data-submitter_id="<?php echo $event['submitter_id'] ?? '' ?>"><span class="avoidwrap">
         <?php echo $this->escapeHtml($event['submitter']) ;
         ?><?php
     if ($event['submitter_hat']) :
@@ -268,7 +268,7 @@ if (!$this->before):?>
         <div class="col-sm-3  text-muted text-md-right">
         <?php if ($event['request_id']):?>* <?php endif ?>request by
     </div>
-    <div class="col-sm-3 pl-0 submitter" data-id="<?php echo $event['submitter_id']?>"><span class="avoidwrap">
+    <div class="col-sm-3 pl-0 submitter" data-id="<?php echo $event['submitter_id'] ?? '' ?>"><span class="avoidwrap">
         <?php echo $event['submitter'] ;
         ?><?php
 if ($event['submitter_hat']) :
