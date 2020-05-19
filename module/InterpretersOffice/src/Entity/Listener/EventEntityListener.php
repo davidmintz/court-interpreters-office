@@ -211,6 +211,19 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         if ($fields_updated) {
             $entity->setModified($this->now);
             $entity->setModifiedBy($user);
+            if (count($entity->getInterpreters)) {
+                $changeset = $args->getEntityChangeSet();
+                $this->logger->debug("what is being changed? ",[array_keys($changeset)]);
+                if (in_array('cancellation_reason',array_keys($changeset))) {
+                    // if it's going from null to not null or vice-versa, that's significant
+
+                }
+                foreach (['date','time','cancellation_reason'] as $something_important) {
+
+
+                }
+            }
+            
         }
         /* 
             now the interesting part: guess the criteria for resetting the 
