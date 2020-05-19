@@ -465,7 +465,38 @@ EOD;
         if (! empty($data['cc'])) {
             $result['cc_to'] = $data['cc']; // for confirmation
         }
+        if ($data['template_hint'] == 'confirmation') {
+           /* 
+           SELECT DISTINCT ie FROM InterpretersOffice\Entity\InterpreterEvent ie 
+           JOIN ie.interpreter i JOIN ie.event e WHERE e.id = 122847 AND (i.id = 117 OR i.email 
+           IN ('mintz@vernontbludgeon.com'))"  $this->getLogger()->debug('DEBUG: confirmation?!');
+           */
+           $this->setInterpreterEventConfirmation($data);
+        }
+        
         return array_merge($result, ['status' => 'success','info' => "template: $template",]);
+    }
+
+    /**
+     * sets "confirmed" flag on InterpreterEvent entities
+     */
+    private function setInterpreterEventConfirmation($data)
+    {
+        $em = $this->getObjectManager();
+        $dql = 'SELECT DISTINCT ie FROM InterpretersOffice\Entity\InterpreterEvent ie 
+        JOIN ie.interpreter i JOIN ie.event e WHERE e.id = :event_id 
+            AND (i.id IN (:recipient_ids) OR i.email  IN (:emails))';
+        $params['event_id'] = $data['event_id'];
+        $params['emails'] = array_column($data['to'],'email');
+        $params['recipient_ids'] = array_column($data['to'],'id');
+        $result = $em->createQuery($dql)->setParameters($params)->getResult();
+        $this->getLogger()->debug(count($result).  " interpreter_events to mark confirmed");
+        if (count($result)) {
+            foreach ($result as $ie) {
+                $ie->setSentConfirmationEmail(true);
+            }
+            $em->flush();
+        }
     }
 
     public function render($layout, $markup = null)
