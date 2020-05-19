@@ -57,7 +57,7 @@ endif;
         if ($field == 'submitter') :
             if ($entity['category'] == "in") : 
                 continue; // not relevant
-            elseif(!$entity['submitter_id']) : // anonymous submitter
+            elseif(empty($entity['submitter_id'])) : // anonymous submitter
                 continue;
             endif;
             if (isset($entity['submitter_hat'])) :
