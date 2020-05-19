@@ -70,7 +70,9 @@ class Defendants extends AbstractHelper
         $count = count($this->defendants[$id]);
         if ($count <= 3) {
             foreach ($this->defendants[$id] as $n) {
-                $return .= '<div class="defendant-name">' . $this->getView()->escapeHtml($n['surnames']).'</div>';
+                $return .= '<div class="defendant-name">' . $this->getView()->escapeHtml($n['surnames']);
+                $return .= sprintf('<span class="d-none d-md-inline">, %s</span>', $this->getView()->escapeHtml($n['given_names']));
+                $return .='</div>';
             }
              return $return;
         }
