@@ -211,7 +211,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         if ($fields_updated) {
             $entity->setModified($this->now);
             $entity->setModifiedBy($user);
-            if (count($entity->getInterpreters)) {
+            if (count($entity->getInterpreters())) {
                 $changeset = $args->getEntityChangeSet();
                 $this->logger->debug("what is being changed? ",[array_keys($changeset)]);
                 if (in_array('cancellation_reason',array_keys($changeset))) {
