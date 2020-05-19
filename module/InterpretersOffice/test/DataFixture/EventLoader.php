@@ -9,6 +9,9 @@ use InterpretersOffice\Entity;
 
 class EventLoader implements FixtureInterface
 {
+    
+    const DUMMY_DOCKET = '2016-CR-0123';
+
     public function load(ObjectManager $objectManager)
     {
         $date = new \DateTime('next monday');
@@ -38,6 +41,8 @@ class EventLoader implements FixtureInterface
 
         $defendant = $objectManager->getRepository('InterpretersOffice\Entity\Defendant')
                 ->findOneBy(['surnames' => 'Fulano Mengano']);
+        $other_deft = $objectManager->getRepository('InterpretersOffice\Entity\Defendant')
+        ->findOneBy(['surnames' => 'Franco']);
         $event = new Entity\Event();
         $now = new \DateTime();
         $collection = new ArrayCollection([
@@ -60,7 +65,7 @@ class EventLoader implements FixtureInterface
             ->setModifiedBy($user)
              ->setSubmissionDate(new \DateTime('-1 hour'))
              ->setSubmissionTime(new \DateTime('-1 hour'))
-             ->addDefendant($defendant)
+             ->addDefendant($defendant)->addDefendant($other_deft)
              ->addInterpreterEvents(
                  $collection
              );
