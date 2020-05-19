@@ -212,6 +212,10 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
             $entity->setModified($this->now);
             $entity->setModifiedBy($user);
         }
+        /* 
+            now the interesting part: guess the criteria for resetting the 
+            sent_confirmation_email property of the related InterpreterEvents;
+        */
     }
 
     /**

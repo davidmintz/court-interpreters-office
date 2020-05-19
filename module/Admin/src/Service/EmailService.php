@@ -496,7 +496,11 @@ EOD;
                 $ie->setSentConfirmationEmail(true);
             }
             $em->flush();
+        } else {
+            $this->getLogger()->info('email event "confirmation" template was used but no assigned interpreters were found',['channel'=>'email']);
         }
+
+        return $this;
     }
 
     public function render($layout, $markup = null)
