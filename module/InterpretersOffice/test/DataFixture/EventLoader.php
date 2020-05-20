@@ -10,7 +10,7 @@ use InterpretersOffice\Entity;
 class EventLoader implements FixtureInterface
 {
     
-    const DUMMY_DOCKET = '2016-CR-0123';
+    const DUMMY_DOCKET = '2020-CR-0123';
 
     public function load(ObjectManager $objectManager)
     {
@@ -54,7 +54,7 @@ class EventLoader implements FixtureInterface
             ->setJudge($judge)
             ->setLanguage($language)
             ->setEventType($event_type)
-            ->setDocket('2016-CR-0123')
+            ->setDocket(self::DUMMY_DOCKET)
             ->setComments($comments)
             ->setAdminComments('')
             ->setSubmitter($user->getPerson())
