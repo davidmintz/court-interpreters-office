@@ -211,24 +211,37 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         if ($fields_updated) {
             $entity->setModified($this->now);
             $entity->setModifiedBy($user);
-            if (count($entity->getInterpreters())) {
-                $changeset = $args->getEntityChangeSet();
-                $this->logger->debug("what is being changed? ",[array_keys($changeset)]);
-                if (in_array('cancellation_reason',array_keys($changeset))) {
-                    // if it's going from null to not null or vice-versa, that's significant
-
-                }
-                foreach (['date','time','cancellation_reason'] as $something_important) {
-
-
-                }
-            }
-            
-        }
-        /* 
-            now the interesting part: guess the criteria for resetting the 
+            $cancellation_status_changed = false;   
+            /* 
+            now the interesting part: guessing the criteria for resetting the 
             sent_confirmation_email property of the related InterpreterEvents;
-        */
+            */
+            if (count($entity->getInterpreterEvents())) {
+                $this->logger->debug(sprintf("there are %d interpreter_events",count($entity->getInterpreterEvents())));
+                $changeset = $args->getEntityChangeSet();
+                          
+                if (in_array('cancellation_reason',array_keys($changeset))) {                    
+                    // if it's going from null to not null or vice-versa, that's significant
+                    $before_and_after = $changeset['cancellation_reason'];
+                    if (!$before_and_after[0] or !$before_and_after[1]) {
+                        $cancellation_status_changed = true;   
+                    }
+                }
+                if ($cancellation_status_changed  or 
+                    in_array('date',$fields_updated)  or 
+                    in_array('time',$fields_updated)
+                ) {
+                    foreach($entity->getInterpreterEvents() as $ie) {
+                        $ie->setSentConfirmationEmail(false);
+                    }
+                    $this->logger->debug("set sent_confirmation = false for "
+                        .count($entity->getInterpreterEvents()) . " i-events" );
+                } else {
+                    $this->logger->debug("found interpreters assigned, not changing confirmation status");
+                }
+            }           
+        }
+        
     }
 
     /**
