@@ -490,12 +490,21 @@ EOD;
         $params['emails'] = array_column($data['to'],'email');
         $params['recipient_ids'] = array_column($data['to'],'id');
         $result = $em->createQuery($dql)->setParameters($params)->getResult();
-        $this->getLogger()->debug(count($result).  " interpreter_events to mark confirmed");       
+        // $this->getLogger()->debug(count($result).  " interpreter_events to mark confirmed");       
         if (count($result)) {
             foreach ($result as $ie) {
                 $ie->setSentConfirmationEmail($flag);
             }
             $em->flush();
+            $this->logger->info(
+                sprintf('marking as CONFIRMED: interpreter %s on event #%d',$ie->getInterpreter()->getFullName(),$data['event_id']),
+                [
+                    'interpreter_id' => $ie->getInterpreter()->getId(),
+                    'entity_id' => $data['event_id'],
+                    'entity_class'=> Entity\Event::class,
+                    'channel' => 'email'
+                ]
+            );
         } else {
             $this->getLogger()->info('email event "confirmation" template was used but no assigned interpreters were found',['channel'=>'email']);
         }

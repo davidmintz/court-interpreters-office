@@ -237,7 +237,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                     $who = implode('; ',array_map(function($i){return "{$i->getFullname()} <{$i->getEmail()}>";},
                         $entity->getInterpreters()));
                     $log_message = sprintf(
-                        'user %s changed the %s of event #%d; email confirmation status set to false for %d interpreter(s): %s',
+                        'user %s changed the %s of event #%d; email confirmation status set to FALSE for %d interpreter(s): %s',
                         $user->getUsername(), implode(', ',$fields_updated),$id, $result, $who
                     );
                     $this->logger->info($log_message,

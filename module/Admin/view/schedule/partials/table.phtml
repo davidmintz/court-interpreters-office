@@ -57,6 +57,7 @@
             <td class="d-none d-lg-table-cell" style="line-height: 1.2em; font-size: 95%"><?php echo $this->escapeHtml($e['comments']) ?></td>
             <td data-language_id="<?php echo $e['language_id']?>" class="interpreters-assigned text-nowrap border-right-0"><?php echo $this->interpreters($e['id'])?></td>
             <td class="border-left-0">
+                <!-- <?php if (isset($this->data['interpreters'][$e['id']])):?>boink<?php else : ?>fuck?<?php endif ?> -->
                 <a class="edit-interpreters" data-toggle="tooltip"  title="add/remove interpreters" data-container="#schedule-table" role="button" href="#"><span class="fas fa-edit"></span></a></td>
         </tr>
     <?php endforeach;  // data-container="tr[data-id=<?php echo $e['id']]..."

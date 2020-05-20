@@ -369,7 +369,7 @@ DQL;
     public function getInterpretersForEvents(array $ids)
     {
         $query = $this->getEntityManager()->createQuery(
-            'SELECT e.id event_id, i.id, i.lastname, i.firstname FROM '
+            'SELECT e.id event_id, i.id, i.lastname, i.firstname, ie.sent_confirmation_email FROM '
             . 'InterpretersOffice\Entity\InterpreterEvent ie JOIN ie.interpreter i '
             . 'JOIN ie.event e WHERE e.id IN (:ids) ORDER BY ie.created, i.lastname'
         );
