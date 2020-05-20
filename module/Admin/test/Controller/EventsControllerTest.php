@@ -3,17 +3,18 @@ namespace ApplicationTest\Controller;
 
 use ApplicationTest\AbstractControllerTest;
 use ApplicationTest\FixtureManager;
-use ApplicationTest\DataFixture;
 
 use InterpretersOffice\Entity;
 use Laminas\Stdlib\Parameters;
 
 use Laminas\Dom;
 
-class EventControllerTest extends AbstractControllerTest
+use ApplicationTest\DummyDataTrait;
+
+class EventsControllerTest extends AbstractControllerTest
 {
 
-    protected $dummy_data;
+    use DummyDataTrait;
 
     public function setUp()
     {
@@ -24,52 +25,7 @@ class EventControllerTest extends AbstractControllerTest
         $this->reset(true);
     }
 
-    protected function getDummyData()
-    {
-        if ($this->dummy_data) {
-            return $this->dummy_data;
-        }
-        $data = [];
-        $em = FixtureManager::getEntityManager();
-        $judge = $em->getRepository(Entity\Judge::class)
-                ->findOneBy(['lastname' => 'Dinklesnort']);
-        $data['judge'] = $judge->getId();
-        // $this->assertTrue(is_integer($data['judge']));
-        $language = $em->getRepository(Entity\Language::class)
-                ->findOneBy(['name' => 'Spanish']);
-        $data['language'] = $language->getId();
-
-        $data['date'] = (new \DateTime("next Monday"))->format("m/d/Y");
-        $data['time'] = '10:00 am';
-        $data['docket'] = '2017-CR-123';
-        $type = $em->getRepository(Entity\EventType::class)->findOneBy(['name' => 'conference']);
-        $data['event_type'] = $type->getId();
-        $location = $em->getRepository(Entity\Location::class)
-                ->findOneBy(['name' => '14B']);
-        $data['location'] = $location->getId();
-        $parent_location = $em->getRepository(Entity\Location::class)
-                ->findOneBy(['name' => '500 Pearl']);
-        $data['parentLocation'] = $parent_location->getId();
-        $data['submission_date'] = (new \DateTime('-1 day'))->format("m/d/Y");
-        $data['submission_time'] = '9:43 am';//(new \DateTime('-5 minutes'))->format("g:i a");
-        $clerk_hat = $em->getRepository(Entity\Hat::class)
-                ->findOneBy(['name' => 'Law Clerk']);
-        $data['anonymous_submitter'] = $clerk_hat->getId();
-        $dql = 'SELECT u FROM InterpretersOffice\Entity\User u JOIN u.person p '
-                . ' WHERE p.email = :email';
-        $user = $em->createQuery($dql)
-            ->setParameters(['email' => 'jane_zorkendoofer@nysd.uscourts.gov'])
-            ->getOneorNullResult();
-        $data['submitter'] = $user->getPerson()->getId();
-        $data['anonymous_judge'] = '';
-        $data['is_anonymous_judge'] = '';
-        $data['cancellation_reason'] = '';
-        $data['id'] = '';
-
-        $this->dummy_data = $data;
-        return $data;
-    }
-
+    
 
     public function testLoadEventInsertForm()
     {
@@ -381,9 +337,7 @@ class EventControllerTest extends AbstractControllerTest
             ],
             [
                 'interpreter' => $entity->getInterpreters()[0]->getId(),
-                'event'       => $entity->getId(),
-
-            ]
+                'event'       => $entity->getId(),            ]
         );
         $url = "/admin/schedule/edit/{$data['id']}";
         $this->login('david', 'boink');
@@ -435,8 +389,7 @@ class EventControllerTest extends AbstractControllerTest
           ->createQuery('SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e')
           ->getSingleScalarResult();
         $this->assertEquals(
-            $count_before,
-            $count_after,
+            $count_before, $count_after,
             'Event count was incremented where insertion should have failed'
         );
     }
@@ -467,6 +420,141 @@ class EventControllerTest extends AbstractControllerTest
             ->getOneOrNullResult();
         $this->assertTrue(is_object($entity));
         $this->assertTrue($entity->isDeleted());
+    }
 
+    public function testEventEmailConfirmationStatusIsTurnedOffWhenEventIsCancelled(){
+
+        $em = FixtureManager::getEntityManager();
+        /** @var InterpretersOffice\Entity\Event $event */
+        $event = $em->getRepository(Entity\Event::class)->findOneBy(['docket'=>\ApplicationTest\DataFixture\EventLoader::DUMMY_DOCKET]);
+        $interpreter_events = $event->getInterpreterEvents();
+        foreach( $interpreter_events as $ie) {
+            $ie->setSentConfirmationEmail(true);
+        }
+        $em->flush();
+        // sanity checks
+        foreach($interpreter_events as $ie) {
+            $this->assertTrue($ie->getSentConfirmationEmail());
+        }
+        $this->assertNull($event->getCancellationReason());
+        $id = $event->getId();
+        // now change it to cancelled
+        $belated_cancellation = $em->getRepository('InterpretersOffice\Entity\ReasonForCancellation')
+        ->findOneBy(['reason'=>'belatedly adjourned']);
+        $data = [
+            'cancellation_reason' => $belated_cancellation->getId(), // here's what's signicant
+            'judge' => $event->getJudge()->getId(),
+            'language' => $event->getLanguage()->getId(),
+            'date'=> $event->getDate()->format("m/d/Y"),
+            'docket'=> $event->getDocket(),
+            'time'=> '10:00 am',
+            'event_type' => $event->getEventType()->getId(),
+            'is_anonymous_judge'=>'',
+            'anonymous_submitter'=>'',
+            'submitter'=>$event->getSubmitter()->getId(),
+            'submission_date'=>$event->getSubmissionDate()->format("m/d/Y"),
+            'submission_time'=>$event->getSubmissionTime()->format("g:i a"),
+            'id' => $id,
+            'interpreterEvents' => [
+                ['interpreter' => $event->getInterpreters()[0]->getId(),
+                'event'  => $id,
+                ],
+            ],
+            'defendants' =>array_map(function($d){return $d->getId();},$event->getDefendants()->toArray()),
+        ];
+        
+        $url = '/admin/schedule/edit/'.$id;
+        $this->reset(true);
+        $this->login('david', 'boink');
+        $this->reset(true);
+        $token = $this->getCsrfToken($url);
+        $this->dispatch(
+            $url,
+            'POST',
+            ['event' => $data, 
+            'csrf' => $token, 
+            'modified' => $event->getModified()->format('Y-m-d H:i:s')
+            ], true
+        );
+        $content = $this->getResponse()->getContent();
+        $this->assertJson($content);
+        $response = json_decode($content);
+        $this->assertTrue($response->status == 'success');
+
+        // moment of truth
+        $em->refresh($event);
+        $interpreter_events = $event->getInterpreterEvents();
+        $this->assertTrue($interpreter_events->count() > 0);
+        foreach ($interpreter_events as $ie) {
+            $this->assertFalse($ie->getSentConfirmationEmail());
+        }       
+    }
+
+    public function testEventEmailConfirmationStatusIsTurnedOffWhenDateIsChanged()
+    {
+        $em = FixtureManager::getEntityManager();
+        /** @var InterpretersOffice\Entity\Event $event */
+        $event = $em->getRepository(Entity\Event::class)->findOneBy(['docket'=>\ApplicationTest\DataFixture\EventLoader::DUMMY_DOCKET]);
+        $interpreter_events = $event->getInterpreterEvents();
+        foreach( $interpreter_events as $ie) {
+            $ie->setSentConfirmationEmail(true);
+        }
+        $em->flush();
+        // sanity checks
+        foreach($interpreter_events as $ie) {
+            $this->assertTrue($ie->getSentConfirmationEmail());
+        }
+        $this->assertNull($event->getCancellationReason());
+        $id = $event->getId();
+        
+        // now change the date
+        $new_date = $event->getDate()->add(new \DateInterval('P7D'));
+        $data = [
+            'cancellation_reason' => '',//$event->getCancellationReason()->getId(),
+            'judge' => $event->getJudge()->getId(),
+            'language' => $event->getLanguage()->getId(),
+            'date'=> $new_date->format("m/d/Y"),
+            'docket'=> $event->getDocket(),
+            'time'=> '10:00 am',
+            'event_type' => $event->getEventType()->getId(),
+            'is_anonymous_judge'=>'',
+            'anonymous_submitter'=>'',
+            'submitter'=>$event->getSubmitter()->getId(),
+            'submission_date'=>$event->getSubmissionDate()->format("m/d/Y"),
+            'submission_time'=>$event->getSubmissionTime()->format("g:i a"),
+            'id' => $id,
+            'interpreterEvents' => [
+                ['interpreter' => $event->getInterpreters()[0]->getId(),
+                'event'  => $id,
+                ],
+            ],
+            'defendants' =>array_map(function($d){return $d->getId();},$event->getDefendants()->toArray()),
+        ];
+        
+        $url = '/admin/schedule/edit/'.$id;
+        $this->reset(true);
+        $this->login('david', 'boink');
+        $this->reset(true);
+        $token = $this->getCsrfToken($url);
+        $this->dispatch(
+            $url,
+            'POST',
+            ['event' => $data, 
+            'csrf' => $token, 
+            'modified' => $event->getModified()->format('Y-m-d H:i:s')
+            ], true
+        );
+        $content = $this->getResponse()->getContent();
+        $this->assertJson($content);
+        $response = json_decode($content);
+        $this->assertTrue($response->status == 'success');
+
+        // moment of truth
+        $em->refresh($event);
+        $interpreter_events = $event->getInterpreterEvents();
+        $this->assertTrue($interpreter_events->count() > 0);
+        foreach ($interpreter_events as $ie) {
+            $this->assertFalse($ie->getSentConfirmationEmail());
+        }       
     }
 }

@@ -55,11 +55,19 @@ class InterpreterEvent
     protected $created_by;
 
     /**
-     * current data and time
+     * current date and time
      *
      * @var \DateTime
      */
     protected $now;
+
+    /**
+     * whether a confirmation email was sent
+     *
+     * @ORM\Column(type="boolean",nullable=false,options={"default":0})
+     * @var boolean
+     */
+    private $sent_confirmation_email = false;
 
     /**
      * constructor.
@@ -189,5 +197,28 @@ class InterpreterEvent
     public function getCreatedBy()
     {
         return $this->created_by;
+    }
+
+    /**
+     * sets sent_confirmation_email
+     * 
+     * @param bool $flag
+     * @return InterpreterEvent
+     */
+    public function setSentConfirmationEmail(bool $flag) : InterpreterEvent
+    {
+        $this->sent_confirmation_email = $flag;
+
+        return $this;
+    }
+
+    /**
+     * gets sent_confirmation_email
+     * 
+     * @return bool
+     */
+    public function getSentConfirmationEmail() : bool
+    {
+        return $this->sent_confirmation_email;
     }
 }

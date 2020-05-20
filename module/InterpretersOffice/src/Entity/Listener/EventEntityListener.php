@@ -194,8 +194,8 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         $fields_updated = $this->reallyModified($entity, $args);
         $user = $this->getAuthenticatedUser($args);
         //$shit = array_keys($args->getEntityChangeSet());
+        $id = $entity->getId();
         if (in_array('deleted', $fields_updated) && $entity->getDeleted()) {
-            $id = $entity->getId();
             if ((string)$user->getRole() !== 'submitter') {
                 $message = sprintf(
                     'user %s deleted event #%d from the schedule',
@@ -211,7 +211,44 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
         if ($fields_updated) {
             $entity->setModified($this->now);
             $entity->setModifiedBy($user);
+            $cancellation_status_changed = false;   
+            /* 
+            now the interesting part: guessing the criteria for resetting the 
+            sent_confirmation_email property of the related InterpreterEvents;
+            */
+            if (count($entity->getInterpreterEvents())) {
+                $this->logger->debug(sprintf("there are %d interpreter_events",count($entity->getInterpreterEvents())));
+                $changeset = $args->getEntityChangeSet();
+                          
+                if (in_array('cancellation_reason',array_keys($changeset))) {                    
+                    // if it's going from null to not null or vice-versa, that's significant
+                    $before_and_after = $changeset['cancellation_reason'];
+                    if (!$before_and_after[0] or !$before_and_after[1]) {
+                        $cancellation_status_changed = true;   
+                    }
+                }
+                if ($cancellation_status_changed  or in_array('date',$fields_updated) 
+                    or in_array('time',$fields_updated)
+                ) {  // turn off sent_confirmation_email for related InterpreterEvent entities                   
+                    $em = $args->getEntityManager();                   
+                    $dql = 'UPDATE InterpretersOffice\Entity\InterpreterEvent ie 
+                        SET ie.sent_confirmation_email = false WHERE ie.event = :event';
+                    $result = $em->createQuery($dql)->setParameters(['event'=>$entity])->getResult();
+                    $who = implode('; ',array_map(function($i){return "{$i->getFullname()} <{$i->getEmail()}>";},
+                        $entity->getInterpreters()));
+                    $log_message = sprintf(
+                        'user %s changed the %s of event #%d; email confirmation status set to FALSE for %d interpreter(s): %s',
+                        $user->getUsername(), implode(', ',$fields_updated),$id, $result, $who
+                    );
+                    $this->logger->info($log_message,
+                        ['entity_class' => Entity\Event::class,'entity_id' => $id,'channel' => 'scheduling', ]
+                    );
+                } else {
+                    $this->logger->debug("found interpreters assigned, not changing confirmation status");
+                }
+            }           
         }
+        
     }
 
     /**

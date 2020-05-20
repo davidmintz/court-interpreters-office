@@ -12,7 +12,8 @@ class CancellationReasonLoader implements FixtureInterface
     {
         $reasons = [
             'interpreter not required',
-            'adjourned without notice',
+            // 'adjourned without notice',
+            'belatedly adjourned',
             'defendant not produced',
             'forçe majeure',
             'party did not appear',

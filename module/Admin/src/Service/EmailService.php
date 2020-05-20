@@ -465,7 +465,51 @@ EOD;
         if (! empty($data['cc'])) {
             $result['cc_to'] = $data['cc']; // for confirmation
         }
+        if (in_array($data['template_hint'],['confirmation','update'])) {
+
+           $this->setInterpreterEventConfirmation($data);
+        }
+        
         return array_merge($result, ['status' => 'success','info' => "template: $template",]);
+    }
+
+    /**
+     * sets "sent_email_confirmation" flag on InterpreterEvent entities
+     * 
+     * @param array $data
+     * @param bool $flag
+     * @return EmailService
+     */
+    private function setInterpreterEventConfirmation(Array $data, bool $flag = true)
+    {
+        $em = $this->getObjectManager();
+        $dql = 'SELECT DISTINCT ie FROM InterpretersOffice\Entity\InterpreterEvent ie 
+        JOIN ie.interpreter i JOIN ie.event e WHERE e.id = :event_id 
+            AND (i.id IN (:recipient_ids) OR i.email  IN (:emails))';
+        $params['event_id'] = $data['event_id'];
+        $params['emails'] = array_column($data['to'],'email');
+        $params['recipient_ids'] = array_column($data['to'],'id');
+        $result = $em->createQuery($dql)->setParameters($params)->getResult();
+        // $this->getLogger()->debug(count($result).  " interpreter_events to mark confirmed");       
+        if (count($result)) {
+            foreach ($result as $ie) {
+                $ie->setSentConfirmationEmail($flag);
+            }
+            $em->flush();
+            $this->logger->info(
+                sprintf('marking as CONFIRMED: interpreter %s on event #%d',$ie->getInterpreter()->getFullName(),$data['event_id']),
+                [
+                    'interpreter_id' => $ie->getInterpreter()->getId(),
+                    'entity_id' => $data['event_id'],
+                    'entity_class'=> Entity\Event::class,
+                    'channel' => 'email'
+                ]
+            );
+        } else {
+            $this->getLogger()->info('email event "confirmation" template was used but no assigned interpreters were found',['channel'=>'email']);
+        }
+
+        return $this;
     }
 
     public function render($layout, $markup = null)

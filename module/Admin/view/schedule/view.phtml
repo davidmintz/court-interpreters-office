@@ -18,7 +18,7 @@ $this->headStyle()->captureStart();?>
  * @var \InterpretersOffice\Entity\Event $event
  */
 $event = $this->event;
-
+$confirmed = 0;
 if ('submitter' ==  $event['last_update_user_role']) :
     $event['last_updated_by'] = 'system';
     // instead of "{$event['last_update_firstname_init']}. {$event['last_update_lastname']}";
@@ -58,6 +58,7 @@ endif;
 ?>
 <div data-modified="<?php echo $event['last_updated'] ? $event['last_updated']->format('Y-m-d H:i:s') : ''?>" data-event_category="<?php echo $event['category']?>" data-event_datetime="<?php echo $event['datetime']?>" data-event_id="<?php echo $event['id']?>" class="row event-details mx-auto border p-2 shadow-sm" style="max-width:900px">
 <?php
+
 if (!$this->before):?>
     <div class="col-sm-3 text-muted text-md-right">
         date
@@ -120,9 +121,17 @@ if (!$this->before):?>
         interpreters
     </div>
     <div class="col-sm-3 pl-0 interpreters"><?php
-    echo implode('<br>',array_map(function($i){
-        return $this->escapeHtml("{$i['lastname']}, {$i['firstname']}");
-    },$this->event['interpreters']))
+    $text = implode('<br>',array_map(function($i){
+        $return = $this->escapeHtml("{$i['lastname']}, {$i['firstname']}");
+        if ($i['sent_confirmation_email']) :
+            $return .= ' <span title="confirmation has been emailed to this interpreter" class="fa fa-check text-success"></span>'
+                        .'<span class="sr-only"> (confirmed)</span>';
+           
+        endif;
+        return $return;
+    },$this->event['interpreters']));
+    if (strstr($text,'fa-check text-success')) : $confirmed++; endif; 
+    echo $text;
     ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
@@ -392,6 +401,7 @@ endif;?></span>
     <div class="col-sm-9 pl-0 offset-sm-3  text-muted border-bottom-0" style=font-size:90%;>
         <?php if ($event['request_id']):?>* request was submitted online<br><?php endif; ?>
         <?php if ($event['is_default_location']) :?>** location not specified; this is the default<?php endif; ?>
+        <?php if ($confirmed):?><span class="fa fa-check text-success"></span><span class="sr-only"><em>confirmed</em>: </span> indicates email has been sent to this interpreter by way of confirmation and/or event update<?php endif ?>
     </div>
     <?php endif;?>
 </div>

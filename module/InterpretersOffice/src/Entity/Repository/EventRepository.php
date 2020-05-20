@@ -195,7 +195,7 @@ DQL;
         $event['defendants'] = $entityManager->createQuery($deft_dql)
             ->setParameters(['id' => $id])
             ->useResultCache($this->cache_enabled)->getResult();
-        $interp_dql = 'SELECT i.lastname, i.firstname, i.id, i.email
+        $interp_dql = 'SELECT i.lastname, i.firstname, i.id, i.email, ie.sent_confirmation_email
             FROM InterpretersOffice\Entity\InterpreterEvent ie
             JOIN ie.interpreter i JOIN ie.event e  WHERE e.id = :id';
         $event['interpreters'] = $entityManager->createQuery($interp_dql)
@@ -369,7 +369,7 @@ DQL;
     public function getInterpretersForEvents(array $ids)
     {
         $query = $this->getEntityManager()->createQuery(
-            'SELECT e.id event_id, i.id, i.lastname, i.firstname FROM '
+            'SELECT e.id event_id, i.id, i.lastname, i.firstname, ie.sent_confirmation_email FROM '
             . 'InterpretersOffice\Entity\InterpreterEvent ie JOIN ie.interpreter i '
             . 'JOIN ie.event e WHERE e.id IN (:ids) ORDER BY ie.created, i.lastname'
         );
