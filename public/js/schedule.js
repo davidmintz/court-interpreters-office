@@ -1,5 +1,5 @@
 /**  public/js/schedule.js */
-/* global  $:false, fail:false, moment:false; */
+/* global $, moment,fail */
 /* eslint-disable no-console */
 
 /**
@@ -23,7 +23,7 @@ const renderInterpreterEditor = function(){
     var assigned = $(this).parent().prev().children();
     var html = $(".interpreter-editor-wrapper").html();
     var event_id = $(this).closest("tr").data().id;
-    var interpreters = `<form><ul class="list-group">`;
+    var interpreters = "<form><ul class=\"list-group\">";
     if (assigned.length) {
         assigned.each(function(i){
             var name = $(this).text();
@@ -107,7 +107,7 @@ $(function() {
         html: true,
         placement: "left",
         sanitize : false,
-        title : `update interpreters <a href="#" class="close btn-cancel" title="cancel" data-dismiss="alert">&times;</a>`,
+        title : "update interpreters <a href=\"#\" class=\"close btn-cancel\" title=\"cancel\" data-dismiss=\"alert\">&times;</a>",
         content : renderInterpreterEditor,
     };
 
@@ -120,7 +120,8 @@ $(function() {
         console.log("running io.reload custom event handler");
         $(".edit-interpreters").on("click",(e)=>e.preventDefault())
             .popover(popover_opts);
-        $(`table [data-toggle="tooltip"]`).tooltip();
+        $(".admin_comments").on("click",(e)=>e.preventDefault()).popover({trigger : "hover focus",title:""});
+        $("table [data-toggle=\"tooltip\"]").tooltip();
         if ($(".no-events").length) {
             schedule_table.removeClass("table-hover");
         } else {
@@ -138,51 +139,51 @@ $(function() {
     /**
      * removes an interpreter from the popover
      */
-    .on("click",".popover-body .btn-remove-item",function(event){
-        event.preventDefault();
-        console.log("interpreter to be deleted: "+$(this).prev().text());
-        $(this).prev(".interpreter-name").css({textDecoration:"line-through"});
-        $(this).closest("li").slideUp(500,function(){$(this).remove();});
-    })
+        .on("click",".popover-body .btn-remove-item",function(event){
+            event.preventDefault();
+            console.log("interpreter to be deleted: "+$(this).prev().text());
+            $(this).prev(".interpreter-name").css({textDecoration:"line-through"});
+            $(this).closest("li").slideUp(500,function(){$(this).remove();});
+        })
     /**
      * submits interpreter data
      */
-    .on("click",".popover-body .btn-success",function(event){
-        event.preventDefault();
-        var csrf = schedule_table.data("csrf");
-        var button = $(this);
-        var popover_body = button.closest(".popover-body");
-        var popover = popover_body.parent();
-        var event_id = popover.data().event_id;
-        var data = popover_body.children("form").serialize() + `&csrf=${csrf}`;
-        $.post("/admin/schedule/update-interpreters/"+event_id,data)
-            .then((response)=>{
-                var element = popover.data("bs.popover").element;
-                var td = $(element).parent().prev("td");
-                td.html(response.html);
-                if (response.status === "success") {
-                    return popover.popover("hide");
+        .on("click",".popover-body .btn-success",function(event){
+            event.preventDefault();
+            var csrf = schedule_table.data("csrf");
+            var button = $(this);
+            var popover_body = button.closest(".popover-body");
+            var popover = popover_body.parent();
+            var event_id = popover.data().event_id;
+            var data = popover_body.children("form").serialize() + `&csrf=${csrf}`;
+            $.post("/admin/schedule/update-interpreters/"+event_id,data)
+                .then((response)=>{
+                    var element = popover.data("bs.popover").element;
+                    var td = $(element).parent().prev("td");
+                    td.html(response.html);
+                    if (response.status === "success") {
+                        return popover.popover("hide");
                     // console.warn("praise the lord!!");
-                }
-                if (response.status == "error") {
-                    popover_body.children("form").hide();
-                    popover_body.find(".input-group")
-                        .html(`<p class="alert alert-warning border border-danger">Oops! ${response.message}</p>`);
-                    button.attr({disabled:true});
-                    button.next("button").one("click",function(){
-                        td.parent().slideUp();
-                    });
-                }
-                if (response.validation_errors) {
-                    if (response.validation_errors.csrf) {
-                        var message = "Sorry &mdash; it appears your security token has timed out. Please refresh this page and try again";
-                        popover.addClass("alert alert-warning").html(message);
-                    } else {
-                        fail(response);
                     }
-                }
-            })
-            .fail(fail);
+                    if (response.status == "error") {
+                        popover_body.children("form").hide();
+                        popover_body.find(".input-group")
+                            .html(`<p class="alert alert-warning border border-danger">Oops! ${response.message}</p>`);
+                        button.attr({disabled:true});
+                        button.next("button").one("click",function(){
+                            td.parent().slideUp();
+                        });
+                    }
+                    if (response.validation_errors) {
+                        if (response.validation_errors.csrf) {
+                            var message = "Sorry &mdash; it appears your security token has timed out. Please refresh this page and try again";
+                            popover.addClass("alert alert-warning").html(message);
+                        } else {
+                            fail(response);
+                        }
+                    }
+                })
+                .fail(fail);
         })
         /**
          * adds to the popover the interpreter to be assigned
@@ -214,62 +215,61 @@ $(function() {
      * when popover is shown, sets data attributes and populates
      * interpreter select element
      */
-    .on("shown.bs.popover",".edit-interpreters",(e)=>{
-        var language_id = $(e.target).parent().prev().data().language_id;
-        var event_data = $(e.target).closest("tr").data();
-        var event_id = event_data.id;
-        var popover = $(".popover").last();
-        popover.data({event_id});
-        var interpreter_select = popover.find("select");
+        .on("shown.bs.popover",".edit-interpreters",(e)=>{
+            var language_id = $(e.target).parent().prev().data().language_id;
+            var event_data = $(e.target).closest("tr").data();
+            var event_id = event_data.id;
+            var popover = $(".popover").last();
+            popover.data({event_id});
+            var interpreter_select = popover.find("select");
 
-        $.getJSON("/admin/schedule/interpreter-options?language_id="
+            $.getJSON("/admin/schedule/interpreter-options?language_id="
         + language_id + "&csrf=1" )
-            .then((response)=>{
-                var options = response.options.map(function(item){
-                    var opt = $("<option>").val(item.value).text(item.label);
-                    if (item.attributes) {
-                        for (let [key, value] of Object.entries(item.attributes)) {
-                            opt.attr(key,value);
+                .then((response)=>{
+                    var options = response.options.map(function(item){
+                        var opt = $("<option>").val(item.value).text(item.label);
+                        if (item.attributes) {
+                            for (let [key, value] of Object.entries(item.attributes)) {
+                                opt.attr(key,value);
+                            }
                         }
-                    }
-                    // disabled the option if the interpreter has issues with this
-                    // event's submitter|judge
-                    if (item.attributes && item.attributes["data-banned_by"]) {
-                        var disabled = check_banned(item.attributes["data-banned_by"],event_data);
-                        if (disabled) { opt.attr({disabled}); }
-                    }
-                    return opt;
+                        // disabled the option if the interpreter has issues with this
+                        // event's submitter|judge
+                        if (item.attributes && item.attributes["data-banned_by"]) {
+                            var disabled = check_banned(item.attributes["data-banned_by"],event_data);
+                            if (disabled) { opt.attr({disabled}); }
+                        }
+                        return opt;
+                    });
+                    interpreter_select.append(options);
+                    schedule_table.data({csrf:response.csrf});
                 });
-                interpreter_select.append(options);
-                schedule_table.data({csrf:response.csrf});
-            });
-    })
+        })
     /**
      * toggles display of additional defendant-names
      */
-    .on("click", "a.expand-deftnames", function(e){
-        e.preventDefault();
-        $(this).hide().siblings().slideDown();
-    })
-    .on("click","a.collapse-deftnames", function(e){
-        e.preventDefault();
-        var self = $(this);
-        self.hide().siblings().not(":first-of-type").hide();
-        self.siblings("a.expand-deftnames").show();
-    })
+        .on("click", "a.expand-deftnames", function(e){
+            e.preventDefault();
+            $(this).hide().siblings().slideDown();
+        })
+        .on("click","a.collapse-deftnames", function(e){
+            e.preventDefault();
+            var self = $(this);
+            self.hide().siblings().not(":first-of-type").hide();
+            self.siblings("a.expand-deftnames").show();
+        })
     /**
      * triggers click on interpreter-edit button when they click adjacent
      * TD element containing interpreter names
      */
-    .on("click",".interpreters-assigned",function(){
-        $(this).next("td").children("a").trigger("click");
-    });
+        .on("click",".interpreters-assigned",function(){
+            $(this).next("td").children("a").trigger("click");
+        });
 
-    //-------- end #schedule-table event handlers --------------
-
-    // initialize Bootstrap popover for editing interpreters
-    $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
-    $(`[data-toggle="tooltip"]`).tooltip();
+        
+        // initialize Bootstrap popover for editing interpreters
+        $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
+    $("[data-toggle=\"tooltip\"]").tooltip();
 
     // refresh table when they change language filter
     $("#language-select").on("change",function(){
@@ -278,6 +278,10 @@ $(function() {
         url += "?language=" + $(this).val();
         return reload_schedule(url);
     });
+    
+    $(".admin_comments").on("click",(e)=>e.preventDefault()).popover({trigger : "hover focus",title:""});
+    
+    //-------- end #schedule-table event handlers --------------
 
     /*
     decide interval for reloading the schedule data
