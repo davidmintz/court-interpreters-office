@@ -280,7 +280,7 @@ DQL;
          lang.name AS language,
          lang.id AS language_id,
          e.docket,
-         e.comments,
+         e.comments,e.admin_comments,
          loc.name AS location,
          ploc.name AS parent_location,
          cat.category,

@@ -54,7 +54,9 @@
             <td><?php echo $this->escapeHtml($e['language']) ?></td>
             <td class="text-nowrap d-none d-lg-table-cell"><?php echo $this->escapeHtml(substr($e['docket'], 2))?></td>
             <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
-            <td class="d-none d-lg-table-cell" style="line-height: 1.2em; font-size: 95%"><?php echo $this->escapeHtml($e['comments']) ?></td>
+            <td class="d-none d-lg-table-cell" style="line-height: 1.2em; font-size: 95%"><?php echo $this->escapeHtml($e['comments']) ?><?php 
+                if ($e['admin_comments']): ?> <span title="<?= $this->escapeHtml($e['admin_comments'])?>" class="far fa-comment-dots text-primary" style="font-size:1.2em"></span><?php endif
+            ?></td>
             <td data-language_id="<?php echo $e['language_id']?>" class="interpreters-assigned text-nowrap border-right-0"><?php echo $this->interpreters($e['id'])?></td>
             <td class="border-left-0">
                 <!-- <?php if (isset($this->data['interpreters'][$e['id']])):?>boink<?php else : ?>fuck?<?php endif ?> -->
