@@ -56,10 +56,10 @@ return [
             'email' => 'interpreters@nysd.uscourts.gov',
         ],
     ],
-    'permissions' => [
+   'permissions' => [
         'schedule' => [
             'anonymous_ips_allowed' => [],
-            'host_domain_allowed' => '',
+            'host_domains_allowed' => [],
         ],
     ],
     'security' => [

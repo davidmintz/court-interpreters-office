@@ -34,6 +34,12 @@ return   [
         ],
         'from_address' => 'default_from_address@example.org',
         'from_entity' => 'Interpreters Office',
+        // optional headers; if set, they will be used;
+        // otherwise the above from_xxxx are the default
+        // format: 'name'=> 'Proper Name', 'email'=>'you@example.org'
+        'Reply-to' => [],
+        'Cc'       => [],
+
     ],
      /** contact information variables for your layout */
     'site' => [
@@ -45,13 +51,14 @@ return   [
             'website' => 'https://interpreters.example.org',
         ],        
     ],
-    /** optional list of IP addresses that can read the interpreters schedule without logging in (experimental) 
-    *  OR pattern that the hosting domain must match
-    */
+    /**
+     *   optional: IP addresses OR host domains (that are on a private network)
+     *   from which anonymous users will be allowed to see the interpreters' schedule
+     */
     'permissions' => [
         'schedule' => [
             'anonymous_ips_allowed' => [],
-            'host_domain_allowed' => '',
+            'host_domains_allowed' => [],
         ],
     ],
     'security' => [
