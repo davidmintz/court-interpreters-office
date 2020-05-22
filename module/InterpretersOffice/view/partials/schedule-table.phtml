@@ -1,0 +1,36 @@
+<?php /** module/InterpretersOffice/view/partials/schedule-table.phtml */
+
+if (!isset($this->data['events'])):?>
+<p class="border border-info rounded shadow-sm p-3 mt-4 mx-auto" style="max-width:500px">
+    No events on the Interpreters' schedule for the above date and language.
+</p>
+<?php return; else : ?>
+<!-- <pre><?php // print_r($this->data['events'][0]) ?></pre> -->
+<table id="schedule-table" class="table table-hover table-bordered table-sm rounded mt-2">
+    <thead>
+        <tr>
+            <th class="text-info font-weight-normal">time</th>
+            <th class="text-info font-weight-normal">type</th>
+            <th class="text-info font-weight-normal">judge</th>
+            <th class="text-info font-weight-normal">language</th>
+            <th class="d-none d-lg-table-cell text-info font-weight-normal">docket</th>
+            <th class="text-info font-weight-normal">defendants</th>
+            <th class="d-sm-none d-lg-table-cell text-info font-weight-normal">notes</th>
+            <th class="border-right-0 text-info font-weight-normal">interpreters</th>
+        </tr>
+    </thead>
+<tbody><?php  foreach ($this->data['events'] as $e) :?>
+    <tr data-id="<?=$e['id']?>" class="<?php if ($e['cancellation']): ?>event-cancelled<?php endif;?>">
+        <td class="text-right pr-2"><?php if ($e['time']): echo $e['time']->format('g:i'); endif;?></td>
+        <td><?= $this->escapeHtml($e['type'])?><?php if ($e['category']=="out" && $e['location']): ?><br><span class="text-muted"><?=$this->escapeHtml($e['location'])?></span><?php endif;?></td>
+        <td class="text-nowrap"><?=  $this->escapeHtml($e['judge'])?><?php if ($e['category']=="in" && $e['location']):?><br><span class="text-muted text-nowrap"><?=$this->escapeHtml($e['location'])?> <?php if ($e['parent_location']): echo $this->escapeHtml($e['parent_location']); endif?><?php  endif;?></td>
+        <td><?= $this->escapeHtml($e['language'])?></td>
+        <td class="d-none d-lg-table-cell text-nowrap"><?= $e['docket'] ? substr($this->escapeHtml($e['docket']),2):''?></td>
+        <td class="defendants text-nowrap"><?php echo $this->defendants($e['id'])?></td>
+        <td class="d-sm-none d-lg-table-cell" style="line-height: 1.2em; font-size: 95%"><?= $this->escapeHtml($e['comments'])?></td>
+        <td class="text-nowrap"><?php echo $this->interpreters($e['id'])?></td>        
+    </tr>
+<?php endforeach ?>
+</tbody>
+</table>
+<?php endif; ?>

@@ -2,7 +2,7 @@
 //$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
 $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
-    ->appendFile($this->basePath('js/schedule.js'));
+    ->appendFile($this->basePath('js/admin/schedule.js'));
 $this->headTitle($this->date->format('D d M Y'));
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :

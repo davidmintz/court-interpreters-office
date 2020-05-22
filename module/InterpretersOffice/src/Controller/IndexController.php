@@ -138,15 +138,15 @@ class IndexController extends AbstractActionController implements ResourceInterf
                 break;
         }
         $data = $repository->getSchedule($opts);
+        // $data['date'] = $opts['date'];
         $data['prev'] = (new \DateTime("$string $prev days"))->format('/Y/m/d');
         $data['next'] = (new \DateTime("$string $next days"))->format('/Y/m/d');
+        $view = new ViewModel(['data'=>$data,'date'=>$opts['date'],'language'=>strtolower($opts['language'])]);
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $view->setTemplate('partials/schedule-table')->setTerminal(true);
+        }
 
-        return [
-            'data'=>$data,
-            'language'=>strtolower($opts['language']),
-            'date' => $opts['date'],
-        ];
-        
+        return $view;
     }
 
 
