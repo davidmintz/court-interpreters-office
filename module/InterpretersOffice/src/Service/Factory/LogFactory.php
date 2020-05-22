@@ -31,8 +31,9 @@ class LogFactory implements FactoryInterface
         $log = new Logger();
         $path = getcwd().'/data/log/app.log.'.date('Y-m-d');
         $writer = new Stream($path, 'a');
-        /** @todo make verbosity level an environment-dependent config variable */
-        $filter = new Filter(Logger::DEBUG);
+        /* make verbosity level environment-dependent */        
+        $level = getenv('environment') == 'production' ? Logger::INFO : Logger::DEBUG;
+        $filter = new Filter($level);
         $writer->addFilter($filter);
         // I think the 2nd argument 'priority' means the order
         // in which writers write, not the filter
