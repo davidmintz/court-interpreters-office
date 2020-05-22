@@ -29,10 +29,8 @@ return [
            Controller\AccountController::class => Controller\Factory\AccountControllerFactory::class,
            Controller\LocationsController::class => Controller\Factory\LocationsControllerFactory::class,
            Controller\DefendantsController::class => Controller\Factory\DefendantsControllerFactory::class,
-        ],
-        'invokables' => [
-            Controller\IndexController::class => Controller\IndexController::class,
-        ],
+           Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
+        ],       
     ],
     'view_manager' => [
         'display_not_found_reason' => true,
@@ -126,6 +124,39 @@ return [
                         'controller' => Controller\IndexController::class,
                         'action' => 'index',
                     ],
+                ],
+            ],
+            'schedule' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/schedule[/:year/:month/:date[/:language]]',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\IndexController::class,
+                        'action' => 'schedule',                         
+                    ],
+                    'constraints' => [
+                        'shit' => '',
+                        'year' => '[12]\d\d\d',
+                        'month' => '\d\d',
+                        'date' => '\d\d',
+                        'language'=>'(non-)?[Ss]panish|all',
+                        
+                    ],
+                ],                
+            ],
+            'view-event' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/schedule/view/:id',
+                    'defaults' => [
+                        'module' => __NAMESPACE__,
+                        'controller' => Controller\IndexController::class,
+                        'action' => 'view-event',                         
+                    ],
+                    'constraints' => [                  
+                        'id' => '[1-9][0-9]+',                    
+                    ],              
                 ],
             ],
             'contact' => [

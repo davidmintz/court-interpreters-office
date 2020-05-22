@@ -6,7 +6,6 @@
 use InterpretersOffice\Admin\Controller as Admin;
 use InterpretersOffice\Controller as Main;
 use InterpretersOffice\Requests\Controller as Requests;
-use InterpretersOffice\Requests\Entity\Request;
 use InterpretersOffice\Admin\Notes;
 
 return [
@@ -21,6 +20,7 @@ return [
 
     'resources' => [
         // 'resource name (controller)' => 'parent resource'
+        Main\IndexController::class => null,
         Admin\LanguagesController::class => null,
         Admin\ConfigController::class => null,
         Admin\EventTypesController::class => Admin\LanguagesController::class,
@@ -63,10 +63,9 @@ return [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
             Requests\IndexController::class => ['index','list','view','create','update','search','cancel','help','docket-search'],
-            Requests\WriteController::class => ['create','update','cancel'],
-            // not sure what we were thinking when this was allowed...
-            //Admin\EventsController::class => ['index', 'view', 'search'],
+            Requests\WriteController::class => ['create','update','cancel'],            
             Main\AuthController::class => ['logout'],
+            Main\IndexController::class => ['schedule','view-event'],
         ],
         'manager' => [
             Admin\IndexController::class => null,
@@ -88,6 +87,7 @@ return [
         'administrator' => null,
         'anonymous' => [
             Main\AuthController::class => 'login',
+            
         ]
     ],
     'deny' => [
@@ -97,7 +97,8 @@ return [
         ],
 
         'anonymous' => [
-            Main\AuthController::class => 'logout'
+            Main\AuthController::class => 'logout',
+            Main\IndexController::class => ['schedule','view-event'],
         ],
     ]
 ];

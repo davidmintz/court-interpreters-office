@@ -45,7 +45,7 @@ class ScheduleController extends AbstractActionController
     public function __construct(EntityManagerInterface $e, array $config)
     {
         $this->entityManager = $e;
-        $this->session = new Session('schedule');
+        $this->session = new Session('admin_schedule');
         $this->config = $config;
     
     }

@@ -102,39 +102,7 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($e) use ($log, $db_writer) {
             $log->addWriter($db_writer);
         });
-        // desperation shot. note to self: learn how to do this properly.
-        // I'm sick of getting the HTML error page when there's an error
-        // in response to an xhr request
-        /*$json_error = function($e){
-            $container = $e->getApplication()->getServiceManager();
-            $request = $container->get('Request');
-            $response = $container->get('Response');
-            if ($request->isXmlHttpRequest()) {
-                $exception = $e->getParam("exception");
-                if ($exception) {
-                    $data = [
-                        'message' => $exception->getMessage(),
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'code' => $exception->getCode(),
-                        'class' => get_class($exception),
-                        'uri'  => (string)$request->getUri()
-                    ];
-                } else {
-                    $data = [
-                        'message' => 'unexpected error encounted, no exception available',
-                        'uri'  => (string)$request->getUri(),
-                    ];
-                }
-                $response->getHeaders()
-                ->addHeaderLine('Content-type', 'application/json');
-                $response->setContent(json_encode($data));
-                $response->sendHeaders();
-                exit((string)$response->getContent());
-            }
-        };*/
-        // $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR,$json_error);
-        // $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR,$json_error);
+        
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
@@ -197,8 +165,8 @@ class Module
         }
         $module = $match->getParam('module');
         if ('InterpretersOffice' == $module) {
-             // doesn't expose anything; anyone is allowed access
-             return;
+            // ACL is enforced further down the lin
+            return;
         }
         $allowed = true;
         $container = $event->getApplication()->getServiceManager();
@@ -273,8 +241,7 @@ class Module
         $privilege = $match->getParam('action', \strtolower($event->getRequest()->getMethod()));
         $log = $event->getApplication()->getServiceManager()->get('log');        
         $log->debug(sprintf(__METHOD__." checking role %s access to resource %s, privilege %s",
-                $role,
-                is_object($resource) ? get_class($resource) : $resource,
+                $role, is_object($resource) ? get_class($resource) : $resource,
                 $privilege
             )
         );
