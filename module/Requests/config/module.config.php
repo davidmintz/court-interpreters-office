@@ -180,6 +180,12 @@ return [
                 ]
             ],
             [
+                'label'=>'schedule',
+                'route' => 'schedule',
+                'title' => 'view the interpreters\' schedule'
+
+            ],
+            [
                 'route' => 'requests/help',
                 'route_matches' => ['requests/help'],
                 'label' => 'help',
