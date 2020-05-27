@@ -484,7 +484,8 @@ class EventsController extends AbstractActionController
                     $template,
                     $i->getId(),
                     $i->getLastname(),
-                    $i->getFirstname()
+                    $i->getFirstname(),
+                    '' // intuitive, I know.
                 );
             }
             return new JsonModel([
