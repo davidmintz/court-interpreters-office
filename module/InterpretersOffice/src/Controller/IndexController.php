@@ -66,8 +66,11 @@ class IndexController extends AbstractActionController implements ResourceInterf
             $log->debug("anon user allowed?  ".($allowed?"true":"false"));
             if ($allowed) { 
                 $this->allow_schedule_access = true;
-            } else {                    
-                return $this->redirect()->toRoute('login');
+            } else {   
+                $action = $this->params()->fromRoute('action');
+                if (in_array($action,['schedule','view-event']))  {
+                    return $this->redirect()->toRoute('login');
+                }             
             }
         } else {
             $this->allow_schedule_access = true;
