@@ -26,7 +26,14 @@ class IndexController extends AbstractActionController implements ResourceInterf
      * @var EntityManager
      */
     private $entityManager;
-    
+
+    /**
+     * access to read-only schedule
+     * 
+     * @var bool
+     */
+    private $allow_schedule_access = false;
+
     /**
      * implements ResourceInterface
      *
@@ -47,23 +54,25 @@ class IndexController extends AbstractActionController implements ResourceInterf
         $app = $e->getApplication();
         $container = $app->getServiceManager();
         $log = $container->get('log');        
-        $action = $this->params()->fromRoute()['action'];
-        if (in_array($action,['schedule','view-event'])) {
+        $auth = $container->get('auth');
+        if (! $auth->hasIdentity()) {
+            // if they're not authenticated they *may* still 
+            // be authorized to view the schedule
             $acl =  $container->get('acl');
-            $auth = $container->get('auth');
-            $user = $auth->hasIdentity() ? $auth->getIdentity() : null;
-            $log->debug("checking permissions for action $action");
-            if (! $user) {
-                $acl->allow(
-                    $user, $this,$action, new ScheduleAccessAssertion($e)
-                );
-                $allowed = $acl->isAllowed($user,$this,$action);
-                $log->debug("allowed?  ".($allowed?"true":"false"));
-                if (!$allowed) { 
-                    return $this->redirect()->toRoute('login');
-                }
+            $acl->allow(
+                null, $this,'schedule', new ScheduleAccessAssertion($e)
+            );
+            $allowed = $acl->isAllowed(null,$this,'schedule');
+            $log->debug("anon user allowed?  ".($allowed?"true":"false"));
+            if ($allowed) { 
+                $this->allow_schedule_access = true;
+            } else {                    
+                return $this->redirect()->toRoute('login');
             }
+        } else {
+            $this->allow_schedule_access = true;
         }
+
         return parent::onDispatch($e);
     }
 
@@ -84,7 +93,7 @@ class IndexController extends AbstractActionController implements ResourceInterf
      */
     public function indexAction()
     {
-        return new ViewModel();
+        return new ViewModel(['allow_schedule_access'=>$this->allow_schedule_access]);
     }
   
 
