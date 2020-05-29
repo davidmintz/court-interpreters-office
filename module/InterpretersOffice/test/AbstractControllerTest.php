@@ -104,7 +104,7 @@ abstract class AbstractControllerTest extends AbstractHttpControllerTestCase
         if (!isset($results) or ! count($results)) {
             //echo($html);
             throw new \Exception("selector was $selector -- could not parse "
-                    . "CSRF token! does the element exist? Is the HTML too deformed by error output?\nDEBUG: $DEBUG\n");
+                    . "CSRF token! response HTML:\n\n$html");
         }
         $node = $results->current();
         $token = $node->attributes->getNamedItem('value')->nodeValue;

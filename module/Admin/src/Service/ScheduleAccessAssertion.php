@@ -42,15 +42,17 @@ class ScheduleAccessAssertion implements AssertionInterface
         $container = $event->getApplication()->getServiceManager();
         $config = $container->get('config');
         $log = $container->get('log');
-        $permissions = $config['permissions'] ?? null;
+        $permissions = $config['permissions'] ?? [];
         if (! $permissions) {
             $log->info("local permissions not set for schedule access, access denied",
             ['channel'=>'security']);
+            // return false;
         }
         /** @var Laminas\Http\PhpEnvironment\Request $request */
         $request = $event->getRequest();
-        $domain = $request->getServer()->get('HTTP_HOST');
-        $allowed_domains = $permissions['schedule']['host_domains_allowed'];
+        $domain =  $request->getServer()->get('HTTP_HOST') ?: 'office.localhost';       
+        
+        $allowed_domains = $permissions['schedule']['host_domains_allowed'] ?? [];
         if (in_array($domain, $allowed_domains)) {
             // $log->debug("domain $domain allows anonymous schedule access");
             return true;
