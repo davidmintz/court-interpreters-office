@@ -1,22 +1,17 @@
 <?php
 /** module/InterpretersOffice/view/interpreters-office/index/index.phtml */
+$authenticated = $this->identity() ? true : false;
 ?>
 <div class="jumbotron text-center py-4">
     <h2 class="text-monospace border border-primary rounded mx-auto pt-3 pb-2" style="max-width:500px">InterpretersOffice</h2>
-    <p>The court interpreter management system.</p>
-    <?php if (! $this->identity()) : ?>
-    <div class="mx-auto" style="max-width:500px">
-    
-        <!-- <a id="login" href="<?php echo $this->basePath('login')?>"><button class="btn btn-primary btn-lg btn-block">log in</button></a> -->
-        
-        <!-- <a href="<?php echo $this->basePath('user/register')?>"><button class="btn btn-primary btn-lg border btn-block">create an account</button></a> -->
-    </div>
-    <?php endif; ?>
+    <p>The court interpreter management system.</p>    
 </div>
 <?php
+
 if (file_exists(
     './module/InterpretersOffice/view/interpreters-office/custom/index/index.phtml'
 )) :
     echo $this->render('interpreters-office/custom/index/index');
 endif;
+
 ?>
