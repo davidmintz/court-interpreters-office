@@ -76,19 +76,6 @@ CREATE TABLE `app_event_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `availability_invitees`
---
-
-DROP TABLE IF EXISTS `availability_invitees`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `availability_invitees` (
-  `interp_id` smallint(5) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `banned`
 --
 
@@ -261,30 +248,6 @@ CREATE TABLE `event_categories` (
   `category` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_event_category` (`category`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `event_emails`
---
-
-DROP TABLE IF EXISTS `event_emails`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `event_emails` (
-  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
-  `event_id` mediumint(8) unsigned DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  `user_id` smallint(5) unsigned NOT NULL,
-  `recipient_id` smallint(5) unsigned DEFAULT NULL,
-  `email` varchar(60) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `subject` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `comments` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `event_id` (`event_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `event_emails_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `event_emails_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
