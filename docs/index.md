@@ -19,7 +19,6 @@ came into being because there was nothing else available that served our needs. 
 
 The source code is freely available on [github](https://github.com/davidmintz/court-interpreters-office).
 
-Prose documentation is still embryonic (as is this website), but we have begun documenting 
-[the installation process](documentation/setup.html).
+[Prose documentation](documentation) is very much a work in progress, but we have begun.
 
 Feel free to [contact the developer](/contact.html) with any questions.
