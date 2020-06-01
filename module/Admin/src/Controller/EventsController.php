@@ -476,15 +476,17 @@ class EventsController extends AbstractActionController
             $this->entityManager->flush();
             $collection = $entity->getInterpreterEvents();
             $html = '';
-            $template = (new \InterpretersOffice\View\Helper\InterpreterNames())
-                ->template;
+            $helper = new \InterpretersOffice\View\Helper\InterpreterNames();
+            $template = $helper->template;
             foreach ($collection as $ie) {
                 $i = $ie->getInterpreter();
                 $html .= sprintf(
                     $template,
                     $i->getId(),
                     $i->getLastname(),
-                    $i->getFirstname()
+                    $i->getFirstname(),
+                    $ie->getSentConfirmationEmail() ? $helper->check : ''
+                    
                 );
             }
             return new JsonModel([

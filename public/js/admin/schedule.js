@@ -46,6 +46,9 @@ const renderInterpreterEditor = function(){
  * @return {string}
  */
 const renderInterpreter = function(index,name,interpreter_id,event_id) {
+    if (name.match(/confirmed$/)) {
+        name = name.replace(/confirmed$/, " <span title='a confirmation email was sent' class='fa fa-check text-success'></span><span class= 'sr-only'>confirmed</span>");
+    }
     return `<li class="list-group-item pr-1 py-1">
         <input name="event[interpreterEvents][${index}][interpreter]" type="hidden" value="${interpreter_id}">
         <input name="event[interpreterEvents][${index}][event]" type="hidden" value="${event_id}">

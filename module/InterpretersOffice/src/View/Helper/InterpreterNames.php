@@ -29,6 +29,13 @@ class InterpreterNames extends AbstractHelper
     public $template = '<div data-interpreter_id="%d">%s<span class="d-none d-lg-inline">, %s</span>%s</div>';
 
     /**
+     * confirmation indicator
+     * 
+     * @var string
+     */
+    public $check = ' <span title="a confirmation email was sent" class="fa fa-check text-success"></span><span class="sr-only">confirmed</span>';
+
+    /**
      * get the interpreters indexed by event id
      *
      * @return array
@@ -61,7 +68,7 @@ class InterpreterNames extends AbstractHelper
         }
         foreach ($this->interpreters[$id] as $n) { 
             if ($n['sent_confirmation_email']) {
-                $check = ' <span title="a confirmation email was sent" class="fa fa-check text-success"></span><span class="sr-only">confirmed</span>';
+                $check = $this->check;//' <span title="a confirmation email was sent" class="fa fa-check text-success"></span><span class="sr-only">confirmed</span>';
             } else {
                 $check = '';
             }
