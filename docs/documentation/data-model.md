@@ -108,20 +108,22 @@ CREATE TABLE `events` (
   ) ENGINE=InnoDB AUTO_INCREMENT=122912 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 ```
 
-An *event* has attributes that include: date, time, language, judge, docket number, location, and event-type. 
+An *event* has attributes that include, among other things: date, time, language, judge, docket number, location, event-type, 
+and the reason for a possible cancellation. 
 
 The *date* and *time* columns refer to the date and time the event is scheduled to take place. They are stored in separate 
 fields rather than a single timestamp for a reason:  sometimes users need to create a date with a null time because they know the date, but not the time at which the event will take place, so 
 they need to create a placeholder event and add the time later. 
 
-The point of the *language_id* column is self-evident. Note that on some rare occasions, an single court proceeding requires interpreters of more than one language. 
+The point of the *language_id* column is self-evident. Note that on some rare occasions, a single court proceeding requires interpreters of more than one language. 
 In such cases a separate event is created for each language.
 
 The *judge_id* field is set to a non-null value when the identity of the judge is significant, which normally means it's 
-a District Court Judge as opposed to Magistrate. Many proceedings take place before the on-duty Magistrate and 
+a District Court Judge as opposed to Magistrate. Many proceedings take place before the on-duty Magistrate, and 
 <span class="text-monospace">InterpretersOffice</span> does not bother to record the Magistrate's identity because it is 
 basically random and does not help to identify the case in a longitudinal sense. In case of a generic or anonymous judge, 
-the *anonymous_judge_id* field is populated instead.
+the *anonymous_judge_id* field is populated instead. It's worth noting that one and only one of either the 
+*judge_id* or the *anonymous_judge_id* must be null.
 
 The *docket* column contains a docket number (string) in a consistent format that is enforced by the application.
 
@@ -129,6 +131,23 @@ The *location_id* column refers to the place where the event takes place -- for 
 
 The *event-type* (represented by the *event_type_id* column) refers to the name of the court proceeding (e.g., pretrial conference)or ancillary event (e.g., 
 attorney-client interview.)
+
+Belated cancellation is such a common occurrence that <span class="text-monospace">InterpretersOffice</span> also treats the 
+reasons for a cancellation as an attribute *cancellation_reason_id*, which is left as null if not applicable.
+
+The *comments* and *admin_comments* are for just that: writing any comments or observations that are relevant to 
+the event. The difference is that *comments* are intended to be viewed by anyone who has read access to the 
+interpreters schedule, i.e., any court employee and any contract interpreter who is on site; 
+*admin_comments*  are intended only for the eyes of Interpreters Office staff.
+
+The columns *submitter_id* and *anonymous_submitter_id* refer to the person (or type of person) who submitted 
+the request for an interpreter. The former points to a record in the *people* table; it is populated when the 
+identity of the person is required (more about that later). The latter points to the generic type or job description 
+of person submitting the request, and is used when the identity of the person making the request 
+is not of interest, and it points to a record in the *hats* table. 
+
+
+
 
 
 
