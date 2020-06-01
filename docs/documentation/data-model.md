@@ -129,8 +129,8 @@ The *docket* column contains a docket number (string) in a consistent format tha
 
 The *location_id* column refers to the place where the event takes place -- for in-court proceedings, a courtroom. 
 
-The *event-type* (represented by the *event_type_id* column) refers to the name of the court proceeding (e.g., pretrial conference)or ancillary event (e.g., 
-attorney-client interview.)
+The *event-type* (represented by the *event_type_id* column) refers to the name of the court proceeding (e.g., pretrial conference)
+or ancillary event (e.g., attorney-client interview.)
 
 Belated cancellation is such a common occurrence that <span class="text-monospace">InterpretersOffice</span> also treats the 
 reasons for a cancellation as an attribute *cancellation_reason_id*, which is left as null if not applicable.
@@ -144,7 +144,14 @@ The columns *submitter_id* and *anonymous_submitter_id* refer to the person (or 
 the request for an interpreter. The former points to a record in the *people* table; it is populated when the 
 identity of the person is required (more about that later). The latter points to the generic type or job description 
 of person submitting the request, and is used when the identity of the person making the request 
-is not of interest, and it points to a record in the *hats* table. 
+is not of interest. It points to a record in the *hats* table. The reasoning here is that when a request 
+is submitted for certain types of event-types, such as in-court proceedings and USPO PSI interviews, the identity 
+of the submitter is useful, if not essential, in order to carry out the assignment or negotiate details around 
+it. In other cases -- e.g., when things are busy and the phone is ringing with requests for intake interviews 
+for new arrests -- the name of the person calling is not particularly important, only the department -- e.g., 
+Pretrial or Magistrates.
+
+[to be continued]
 
 
 
