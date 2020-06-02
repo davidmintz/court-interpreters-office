@@ -22,7 +22,6 @@ $modules = [
     'InterpretersOffice\Admin\Notes',
     'InterpretersOffice\Admin\Rotation',
     'InterpretersOffice\Requests',
-    'Sandbox'
 ];
 if (! getenv('TRAVIS')) {
     $modules[] = 'SDNY\Vault';
