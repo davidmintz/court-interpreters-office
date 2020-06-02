@@ -104,7 +104,9 @@ class EventTypeRepository extends EntityRepository implements CacheDeletionInter
         } else {
             // alas, we have to hard-code this until we think of something better
             $qb->where("c.category = 'out'")->andWhere(
-                "t.name LIKE '%supervision%' OR t.name LIKE '%probation%'"
+                "t.name LIKE '%supervision%' OR 
+                t.name LIKE '%probation%' OR t.name LIKE '%PSI interview%'
+                OR t.name LIKE '%presentence%'"
             );
         }
 
