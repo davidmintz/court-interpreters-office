@@ -63,6 +63,10 @@ of the following tables, most of which are mapped to Doctrine entity classes:
   </code>
 </pre>
 
+The number and complexity of the relationships makes it difficult to diagram, but [one we have attempted to create](https://dbdiagram.io/d/5ed5abe839d18f5553001627) with 
+the online diagram tool provided by [dbdiagram.io](https://dbdiagram.io) shows most of the entity relationships involved the <span class="text-monospace">InterpretersOffice</span>'s
+core functions.
+
 ### The `events` table
 
 The **events** entity is central; it represents an event that requires the services of one or more 
@@ -197,12 +201,12 @@ where it takes place (possibly null), a reason why it was cancelled (*cancellati
 named or anonymous/generic submitter. The former is related to the *people* table; the latter, to the *hats* table. 
 
 At this writing, the *hats*, *cancellation_reasons* and *anonymous_judges* cannot be updated by the user; they are basically hard-coded at installation time (this may change 
-in a future version). The remaining entities are per force exposed to the users, who have to maintain them. In other words, the users maintain their own lists of languages, 
-locations, judges, and event types, using interfaces provided by <span class="text-monospace">InterpretersOffice</span>. These end up populating the options of the 
+in a future version). The remaining entities are per force exposed to the users because they need to maintain their own lists of languages, 
+locations, judges, event-types, etc., using interfaces provided by <span class="text-monospace">InterpretersOffice</span>. These end up populating the options of the 
 select elements of the form used for creating and updating events.
 
-Some of the entities that are in a M-1 relationship with *events* are themselves what we might call compound entities:  they have attributes which are entities unto themselves. One example 
-is the <span class="text-monospace">InterpretersOffice\Entity\Location</span>, which has an attribute *location_type* which is represented by the <span class="text-monospace">InterpretersOffice\Entity\LocationType</span>
+Some entities with which the <span class="text-monospace">InterpretersOffice\Entity\Event</span> has a 1-M relationship likewise have 1-M relationships with other entities. 
+One example is the <span class="text-monospace">InterpretersOffice\Entity\Location</span>, which has an attribute *location_type* which is represented by the <span class="text-monospace">InterpretersOffice\Entity\LocationType</span>
 entity, providing a basic taxonomy for location entities.  A location can be one of several types:
 
 <pre class="text-white bg-dark pl-2">
@@ -223,6 +227,18 @@ MariaDB [office]> select * from location_types;
 </code>
 </pre>
 
+Similarly, the <span class="text-mononspace">Location</span> entity, <span class="text-monospace">InterpretersOffice\Entity\EventType</span> has a property that is itself
+represented by the entity <span class="text-monospace">InterpretersOffice\Entity\EventCategory</span>, a minimal class mapped to the *event_categories* data table,which 
+is also populated when the database is first initialized and never modified thereafter. An event-type has one of three categories: "in", "out", or "not applicable." Respectively, 
+these mean in-court, as in an official on-the-record proceeding; out-of-court, as in ancillary events like PSI interviews and attorney-client meetings; and neither of the above, 
+which is applicable in less frequent cases such as document translation. One of the administrative reasons for tracking this datum in federal court is that the 
+Administrative Office of the US Courts requires District Courts to report it.
+
+There are other examples of this type of entity relationship, but this should suffice as an overview. For further details the 
+[source code for the entity classes](https://github.com/davidmintz/court-interpreters-office/tree/master/module/InterpretersOffice/src/Entity) in the application's main 
+module is a good resource.
+
+
 ### entities in a M-M relationship with `events`
 
 One of the most important pieces of the model is of course the *interpreter.* An event can have multiple interpreters, and interpreters can be assigned, over time, to 
@@ -230,7 +246,7 @@ thousands of events. Accordingly, there is an association class <span class="tex
 called **interpreters_events.** In addition to the IDs of the interpreter and the event, this table holds metadata about the assignment -- who assigned the interpreter to the event, and when -- as well as a 
 field indicating whether the interpreter has been sent a confirmation notice via email.
 
-For statistical reporting and other administrative purposes, a court interpreting "event" is frequently a misnomer. What we really are talking about, in many 
+For statistical reporting and other administrative purposes, a court interpreting "event" is frequently a misnomer. What we're really talking about, in many 
 cases, is *interpreter-events*. A sentencing hearing involving one non-English language in front of a judge is represented by one row in the events table, but 
 there may well be two rows in *interpreters_events* that are related to that event record. In such a case, for reporting purposes, that single court proceeding is 
 counted as two interpreter-events, not one. 
@@ -240,10 +256,9 @@ the Court and for whom the interpreters are interpreting. For lack of a better t
 (and stores their surnames and given names in an eponymous table). In federal court interpreting, the non-English speaker is usually, 
 though not always, a defendant in a criminal proceeding. Although they are in fact people, the data about them is stored in a separate
 from the *people table* for a couple of good reasons, the most compelling of which is that unlike systems used by the immigration or prison authorities,
- <span class="text-monospace">InterpretersOffice</span> *does not try to track the actual identity of defendants.*  
- The names of defendants involved in court interpreted events are primarily used as an attribute to  help distinguish one event from another and 
- avoid under- or over-counting. We therefore "recycle" names when they recur, rather than trying to maintain a separate 
- record for each and every individual for whom the interpreters interpret.
+ <span class="text-monospace">InterpretersOffice</span> *does not try to track the actual identity of defendants.*  The names of defendants involved in 
+ court interpreted events are primarily used as an attribute to help distinguish one event from another and avoid under- or over-counting. 
+ We therefore "recycle" names when they recur, rather than trying to maintain a separate record for each and every individual for whom the interpreters interpret.
 
  Hereagain, as with the interpreters, an event can have multiple defendants and defendants are nearly always associated with multiple events.
  Hence the many-to-many relationship. The *defendants_events* table has only the two columns *event_id* and *defendant_id* and no corresponding association class. 
