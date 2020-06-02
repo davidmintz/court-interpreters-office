@@ -1,0 +1,15 @@
+
+
+highlighter: rouge
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "project"
+      project: InterpretersOffice
+      
+
+

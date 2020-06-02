@@ -69,7 +69,7 @@ core functions.
 
 ### The `events` table
 
-The **events** entity is central; it represents an event that requires the services of one or more 
+The  [<span class="text-monospace text-nowrap">InterpretersOffice\Entity\Event</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/InterpretersOffice/src/Entity/Event.php) entity is central; it represents an event that requires the services of one or more 
 court interpreters. The core of <span class="text-monospace">InterpretersOffice</span> is CRUD operations 
 on these entities. It is also the most complex entity, with several attributes that are entities unto 
 themselves.
@@ -127,7 +127,7 @@ CREATE TABLE `events` (
 
 
 
-An *event* has attributes that include, among other things: date, time, language, judge, docket number, location, event-type, 
+An  <span class="text-monospace">Event</span> has attributes that include, among other things: date, time, language, judge, docket number, location, event-type, 
 and the reason for a possible cancellation. 
 
 The *date* and *time* columns refer to the date and time the event is scheduled to take place. They are stored in separate 
@@ -138,7 +138,7 @@ they need to create a placeholder event and add the time later.
 The *end_time* is a field that users with maximum adminstrative privileges can enable or disable. When enabled, it is used to store the 
 time at which an event actually ended -- not a speculative or aspirational time at which it is hoped or predicted that it will end. 
 This feature was added when in the Southern District of New York the interpreters were asked to keep track of the hours and minutes spent 
-on interpreting assignments, in addition to existing reporting requirements. It has proven useful, however as an indicator of 
+on interpreting assignments, in addition to existing reporting requirements. It has proven useful, however, as an indicator of 
 whether an event is over or still in progress. On busy days it helps administrators keep track of where interpreters are (or at least,
 where they are not).
 
@@ -150,7 +150,10 @@ a District Court Judge as opposed to Magistrate. Many proceedings take place bef
 <span class="text-monospace">InterpretersOffice</span> does not bother to record the Magistrate's identity because it is 
 basically random and does not help to identify the case in a longitudinal sense. In case of a generic or anonymous judge, 
 the *anonymous_judge_id* field is populated instead. It's worth noting that one and only one of either the 
-*judge_id* or the *anonymous_judge_id* must be null.
+*judge_id* or the *anonymous_judge_id* must be null. We should also point out that the [<span class="text-monospace">Judge</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/InterpretersOffice/src/Entity/Judge.php)
+entity is a subclass of [<span class="text-monospace">Person</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/InterpretersOffice/src/Entity/Person.php) with a couple of peculiar properties, such as a 
+default [<span class="text-monospace text-nowrap">InterpretersOffice\Entity\Location</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/InterpretersOffice/src/Entity/Location.php) and a 
+[<span class="text-monospace">InterpretersOffice\Entity\JudgeFlavor</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/InterpretersOffice/src/Entity/JudgeFlavor.php)
 
 The *docket* column contains a docket number (string) in a consistent format that is enforced by the application.
 
@@ -183,21 +186,21 @@ Note that in both of these cases, in addition to the validation rules applied by
 a [Doctrine lifecycle callback](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/events.html#lifecycle-callbacks) to enforce this 
 constraint.
 
-The columns *created*, *modified*, *created_by_id*, and *modified_by_id* are metadata columns for recording who created the event record and when, who was the 
-last user to update it and when. Note that the primary-key relationship of *created_by_id* and *modified_by_id* is with the **users** table, rather than with **people**. The reason 
-is that the data is always manipulated by users, meaning people who are both authenticated and authorized, whereas a request for an interpreter can be and often is 
-received from a person who does not have any user account in this system. (Of course, the **users** and **people** tables have a primary key relationship. 
-A user is a person, but not necessarily vice-versa. More about this in the section on authentication and authorization.)
+The columns *created*, *modified*, *created_by_id*, and *modified_by_id* are metadata columns for recording who created the event record and when, and who was the 
+last user to update it and when. Note that the foreign-key relationship of *created_by_id* and *modified_by_id* is with the **users** table, rather than 
+with **people**. The reason is that the data is always manipulated by users, meaning people who are both authenticated and authorized, whereas a 
+request for an interpreter can be and often is received from a person who does not have any user account in this system. 
+(Of course, the **users** and **people** tables have a foreign-key relationship. A user is a person, but not necessarily vice-versa. More about this in the section on authentication and authorization.)
 
-The column *deleted* is a boolean flag indicating whether the record has been deleted by a user -- soft deletion, in other words. This feature was added 
-by popular demand. At present there is no facility for viewing or undeleting records that have been soft-deleted. It merely prevents users from deleting 
-event records and provides a way to restore them, if only by use of the command-line client.
+The column *deleted* is essentially a boolean flag indicating whether the record has been deleted by a user -- soft deletion, in other words. This feature was added 
+by popular demand. At present there is no facility for viewing or undeleting records that have been soft-deleted. It merely prevents users from physically deleting 
+event records and provides a way to restore them, if only by means of the command-line client.
 
 ### entities in a 1-M relationship with `events`
 
-**anonymous_judges**, **judges**, **event_types**,  **languages**, **locations**, **cancellation_reasons**, **people**, **hats** and **users** are all entities with which 
-the **events** table has a one-to-many relationship. As mentioned earlier, an event entity has either a named judge or an anonymous, generic judge; it also has a *location* 
-where it takes place (possibly null), a reason why it was cancelled (*cancellation_reason_id* also possibly null), a language, and an event-type. It also has either a 
+**anonymous_judges**, **judges**, **event_types**,  **languages**, **locations**, **cancellation_reasons**, **people**, **hats** and **users** are all tables (mapped to 
+entity classes) with which the **events** table has a one-to-many relationship. As mentioned earlier, an  <span class="text-monospace text-nowrap">Event</span>  entity has either a named judge or an anonymous, generic judge; 
+it also has a *location* where it takes place (possibly null), a reason why it was cancelled (*cancellation_reason_id* also possibly null), a language, and an event-type. It also has either a 
 named or anonymous/generic submitter. The former is related to the *people* table; the latter, to the *hats* table. 
 
 At this writing, the *hats*, *cancellation_reasons* and *anonymous_judges* cannot be updated by the user; they are basically hard-coded at installation time (this may change 
@@ -205,8 +208,9 @@ in a future version). The remaining entities are per force exposed to the users 
 locations, judges, event-types, etc., using interfaces provided by <span class="text-monospace">InterpretersOffice</span>. These end up populating the options of the 
 select elements of the form used for creating and updating events.
 
-Some entities with which the <span class="text-monospace">InterpretersOffice\Entity\Event</span> has a 1-M relationship likewise have 1-M relationships with other entities. 
-One example is the <span class="text-monospace">InterpretersOffice\Entity\Location</span>, which has an attribute *location_type* which is represented by the <span class="text-monospace">InterpretersOffice\Entity\LocationType</span>
+Some entities with which the <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Event</span> has a 1-M relationship likewise have 1-M relationships with other entities. 
+One example is the <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Location</span>, which has an attribute *location_type* which is 
+represented by the <span class="text-monospace">InterpretersOffice\Entity\LocationType</span>
 entity, providing a basic taxonomy for location entities.  A location can be one of several types:
 
 <pre class="text-white bg-dark pl-2">
@@ -227,8 +231,11 @@ MariaDB [office]> select * from location_types;
 </code>
 </pre>
 
-Similarly, the <span class="text-mononspace">Location</span> entity, <span class="text-monospace">InterpretersOffice\Entity\EventType</span> has a property that is itself
-represented by the entity <span class="text-monospace">InterpretersOffice\Entity\EventCategory</span>, a minimal class mapped to the *event_categories* data table,which 
+The <span class="text-monospace">Location</span> entity has a self-referencing foreign key called *parent_location_id*. This is to say that up to one level of nesting is supported: 
+a location can be in another (parent) location, or it can be a parent location and have no parent. This is useful for modeling courtrooms and courthouses.
+
+Similarly to the <span class="text-monospace">Location</span> entity, <span class="text-monospace text-nowrap">InterpretersOffice\Entity\EventType</span> has a property that is itself
+represented by the entity <span class="text-monospace text-nowrap">InterpretersOffice\Entity\EventCategory</span>, a minimal class mapped to the **event_categories** data table,which 
 is also populated when the database is first initialized and never modified thereafter. An event-type has one of three categories: "in", "out", or "not applicable." Respectively, 
 these mean in-court, as in an official on-the-record proceeding; out-of-court, as in ancillary events like PSI interviews and attorney-client meetings; and neither of the above, 
 which is applicable in less frequent cases such as document translation. One of the administrative reasons for tracking this datum in federal court is that the 
@@ -242,8 +249,8 @@ module is a good resource.
 ### entities in a M-M relationship with `events`
 
 One of the most important pieces of the model is of course the *interpreter.* An event can have multiple interpreters, and interpreters can be assigned, over time, to 
-thousands of events. Accordingly, there is an association class <span class="text-monospace">InterpretersOffice\Entity\InterpreterEvent</span> which is mapped to a join table 
-called **interpreters_events.** In addition to the IDs of the interpreter and the event, this table holds metadata about the assignment -- who assigned the interpreter to the event, and when -- as well as a 
+thousands of events. Accordingly, there is an association class [<span class="text-monospace text-nowrap">InterpretersOffice\Entity\InterpreterEvent</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/InterpretersOffice/src/Entity/InterpreterEvent.php)
+ which is mapped to a join table called **interpreters_events.** In addition to the IDs of the interpreter and the event, this table holds metadata about the assignment -- who assigned the interpreter to the event, and when -- as well as a 
 field indicating whether the interpreter has been sent a confirmation notice via email.
 
 For statistical reporting and other administrative purposes, a court interpreting "event" is frequently a misnomer. What we're really talking about, in many 
@@ -254,25 +261,70 @@ counted as two interpreter-events, not one.
 Another critically important element of the model -- the *raison d'être* of the entire court interpreting profession -- is the person who does not speak the language of 
 the Court and for whom the interpreters are interpreting. For lack of a better term, <span class="text-monospace">InterpretersOffice</span> labels them **defendants** 
 (and stores their surnames and given names in an eponymous table). In federal court interpreting, the non-English speaker is usually, 
-though not always, a defendant in a criminal proceeding. Although they are in fact people, the data about them is stored in a separate
-from the *people table* for a couple of good reasons, the most compelling of which is that unlike systems used by the immigration or prison authorities,
+though not always, a defendant in a criminal proceeding. Although they are in fact people, the data about them is stored in a table separate
+from the *people* table for a couple of good reasons, the most compelling of which is that unlike systems used by the immigration or prison authorities,
  <span class="text-monospace">InterpretersOffice</span> *does not try to track the actual identity of defendants.*  The names of defendants involved in 
  court interpreted events are primarily used as an attribute to help distinguish one event from another and avoid under- or over-counting. 
  We therefore "recycle" names when they recur, rather than trying to maintain a separate record for each and every individual for whom the interpreters interpret.
 
  Hereagain, as with the interpreters, an event can have multiple defendants and defendants are nearly always associated with multiple events.
  Hence the many-to-many relationship. The *defendants_events* table has only the two columns *event_id* and *defendant_id* and no corresponding association class. 
- The `$defendants` property is simply mapped in the  <span class="text-monospace">InterpretersOffice\Entity\Event</span> class as a many-to-many 
- relationship with the <span class="text-monospace">InterpretersOffice\Entity\Defendant</span> entity.
+ The `$defendants` property is simply mapped in the <span class="text-monospace">InterpretersOffice\Entity\Event</span> class as a many-to-many 
+ relationship with the <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Defendant</span> entity.
 
-[more to come]
+### people, interpreters and languages
+
+Interpreters have one or more working languages, and most of our languages are associated with more than one interpreter. Consequently, the interpreter-language is modeled
+by the <span class="text-monospace text-nowrap">InterpretersOffice\Entity\InterpreterLanguage</span> entity, which is mapped to an *interpreters_languages* table. The 
+<span class="text-monospace text-nowrap">InterpreterLanguage</span> entity in turn has a 1-M relationship with a 
+<span class="text-monospace text-nowrap">InterpretersOffice\Entity\LanguageCredential</span> entity whose underlying table is initialized at setup time, and 
+currently cannot be updated by the user. The purpose of tracking the <span class="text-monospace text-nowrap">LanguageCredential</span> in the federal court system 
+is that the AO uses it to set compensation levels for contract interpreters, and also requires this data in quarterly reports.
+
+The  <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Interpreter</span>  entity is a subclass 
+of <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Person</span>. This is implemented using 
+Doctrine's [class table inheritance](https://www.doctrine-project.org/projects/doctrine-orm/en/2.7/reference/inheritance-mapping.html#class-table-inheritance). 
+
+
+### people and hats, users and roles
+
+A user account "has" an associated person and the corresponding entity classes are designed accordingly. This is to say that a user is always associated with a person,
+but not vice-versa. A user entity "has" a role entity, the hard-coded roles being "submitter", "administrator", "manager" and "staff". The "submitter" role is for 
+users who are authorized only to create and manage their requests for interpreting services, and read (but not edit) the Interpreters' schedule. The "administrator" role 
+can do any administrative action involving the interpreters data and application configuration. The "manager" role can do nearly everything the "administrator" can do, the 
+exceptions being a few advanced administrative actions and escalation of user privileges beyond its own level. The "staff" role is the least privileged non-submitter role, 
+intended for cases such as interns or assistants assigned to the Interpreters office on a temporary basis.
+
+A user account is associated with a person, as noted above, and the <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Person</span> entity has 
+a particular <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Hat</span>. Primarily used for classifying and identifying people 
+for contact management purposes, a <span class="text-monospace text-nowrap">Hat</span> may be constrained (by foreign key relationship) to a 
+particular <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Role</span>. The point is to constrain user-roles to people with particular 
+functions (hats, if you will) in the organization. Thus a user who has the "submitter" role has to be (associated with) 
+a <span class="text-monospace text-nowrap">Person</span> entity whose hat is either "Courtroom Deputy," "Law Clerk", "USPO", or "Pretrial Services Officer."
+
+Some users are associated with people, hence <span class="text-monospace text-nowrap">Hat</span>s, 
+that report to a particular <span class="text-monospace text-nowrap">Judge</span> -- and in rare cases, possibly more than one judge. And Judges 
+invariably have multiple clerks, i.e., Law Clerks and/or a Courtroom Deputy Clerk. Therefore you have a many-to-many relationship, which 
+is represented by a **clerks_judges** join table.
+
+Complicated? Yes. A great deal of thought has gone into this design and, complicated though it is, this was the simplest model 
+I could come up with to separate and manage these various concepts and their relationships.
+
+The foregoing explanation is not exhaustive; it deals with most of the entities found in the main <span class="text-monospace text-nowrap">InterpretersOffice</span> 
+module, which are in the <span class="text-monospace text-nowrap">InterpretersOffice\Entity</span> namespace. There are other entity classes in the 
+<span class="text-monospace text-nowrap">InterpretersOffice\Requests</span>, <span class="text-monospace text-nowrap">InterpretersOffice\Admin\Notes</span>, and 
+<span class="text-monospace text-nowrap">InterpretersOffice\Admin\Rotation</span> modules. While all three of these modules are technically optional, they 
+exist because users want them and they're unlikely to change their minds.
+
+
+
 <div>
 <!-- 
   div 
  | app_event_log          |
  | banned                 |
  | cancellation_reasons   |
- | category               |
+ |
  | clerks_judges          |
  | court_closings         |
  | defendant_names        |
