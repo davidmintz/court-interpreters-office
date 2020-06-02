@@ -313,8 +313,8 @@ I could come up with to separate and manage these various concepts and their rel
 The foregoing explanation is not exhaustive; it deals with most of the entities found in the main <span class="text-monospace text-nowrap">InterpretersOffice</span> 
 module, which are in the <span class="text-monospace text-nowrap">InterpretersOffice\Entity</span> namespace. There are other entity classes in the 
 <span class="text-monospace text-nowrap">InterpretersOffice\Requests</span>, <span class="text-monospace text-nowrap">InterpretersOffice\Admin\Notes</span>, and 
-<span class="text-monospace text-nowrap">InterpretersOffice\Admin\Rotation</span> modules. While all three of these modules are technically optional, they 
-exist because users want them and they're unlikely to change their minds.
+<span class="text-monospace text-nowrap">InterpretersOffice\Admin\Rotation</span> modules. The source code for all of 
+these modules [can be browsed on Github](https://github.com/davidmintz/court-interpreters-office/tree/master/module).
 
 
 

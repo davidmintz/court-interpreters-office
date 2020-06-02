@@ -218,12 +218,12 @@ In `config/autoload/local.production.php` there a couple more sections to be edi
 ],
 /** 
 *   optional list of IP addresses from which users can read the interpreters schedule 
-*   without logging in (experimental)  OR pattern that the hosting domain must match
+*   without logging in, and/or strings one of which the hosting domain must match
 */
 'permissions' => [
     'schedule' => [
         'anonymous_ips_allowed' => [],
-        'host_domain_allowed' => '',
+        'host_domains_allowed' => [],
     ],
 ],
 'security' => [
@@ -232,8 +232,22 @@ In `config/autoload/local.production.php` there a couple more sections to be edi
 
 ```
 
-The `contact` array is injected into the main layout and into some email templates. The `permissions` section is currently not 
-in use and can be left as is. The `max_login_failures` variable refers to how many consecutive failed logins are permitted 
+The `contact` array is injected into the main layout and into some email templates.
+
+The `permissions` settings are used to determine under what conditions, if any, read-access to the 
+Interpreters schedule is allowed to anonymous users. The value of this is for contract interpreters who 
+legitimately need to see the schedule, but since they do not have user accounts they can never log in.
+
+If the *host domain* is one you know to be running on a private network, anyone 
+using the application is presumptively authorized to be inside that network, so you may wish to enable 
+anonymous schedule access by adding that host name to the `host_domains_allowed` array. The `anonymous_ips_allowed` 
+applies similar logic in reverse. If, for example, you know a particular IP address to be that of the gateway in front 
+of a private network, you may wish to add it to the `anonymous_ips_allowed` array.
+
+If you simply leave this `permissions` array untouched, all users will be required to be authenticated 
+in order to view the Interpreters schedule. 
+
+The `max_login_failures` variable refers to how many consecutive failed logins are permitted 
 before a user account is disabled. You can set this value pretty high if you like, but currently you cannot set it to 
 zero to mean unlimited. The default (six) seems sensible.
 
