@@ -75,7 +75,7 @@ class DocketAnnotationRepository extends EntityRepository implements
     {
         $dql = 'SELECT COUNT(e.id) FROM InterpretersOffice\Entity\Event e
        WHERE e.docket = :docket AND e.deleted = false';
-        return $this->getEntityManager()->createQuery($dql)
+        return (int)$this->getEntityManager()->createQuery($dql)
         ->setParameters([':docket' => $docket])
         ->useResultCache(false)->getSingleScalarResult();
     }
