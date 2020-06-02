@@ -295,22 +295,87 @@ can do any administrative action involving the interpreters data and application
 exceptions being a few advanced administrative actions and escalation of user privileges beyond its own level. The "staff" role is the least privileged non-submitter role, 
 intended for cases such as interns or assistants assigned to the Interpreters office on a temporary basis.
 
-A user account is associated with a person, as noted above, and the <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Person</span> entity has 
+A user account is associated with a person, as noted above, and the 
+<span class="text-monospace text-nowrap">InterpretersOffice\Entity\Person</span> entity has 
 a particular <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Hat</span>. Primarily used for classifying and identifying people 
-for contact management purposes, a <span class="text-monospace text-nowrap">Hat</span> may be constrained (by foreign key relationship) to a 
-particular <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Role</span>. The point is to constrain user-roles to people with particular 
-functions (hats, if you will) in the organization. Thus a user who has the "submitter" role has to be (associated with) 
+for contact management purposes, some <span class="text-monospace text-nowrap">Hat</span> entities are bound 
+(by foreign key relationship) to a particular <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Role</span>. 
+The point is to constrain certain user-roles to people with certain functions (or hats, if you will) in the organization. Thus a user who has the "submitter" role has to be (associated with) 
 a <span class="text-monospace text-nowrap">Person</span> entity whose hat is either "Courtroom Deputy," "Law Clerk", "USPO", or "Pretrial Services Officer."
 
-Some users are associated with people, hence <span class="text-monospace text-nowrap">Hat</span>s, 
-that report to a particular <span class="text-monospace text-nowrap">Judge</span> -- and in rare cases, possibly more than one judge. And Judges 
+Here is what the data in the **roles** and **hats** tables looks like:
+
+<pre class="text-white bg-dark pl-2">
+  <code>
+    MariaDB [office]> select * from roles;
+    +----+---------------+----------+
+    | id | name          | comments |
+    +----+---------------+----------+
+    |  1 | submitter     |          |
+    |  2 | manager       |          |
+    |  3 | administrator |          |
+    |  4 | staff         |          |
+    +----+---------------+----------+
+    4 rows in set (0.00 sec)
+
+    MariaDB [office]> select * from hats;
+    +----+---------+----------------------------+-----------+-----------------+
+    | id | role_id | name                       | anonymity | is_judges_staff |
+    +----+---------+----------------------------+-----------+-----------------+
+    |  1 |       2 | staff court interpreter    |         0 |               0 |
+    |  2 |       2 | Interpreters Office staff  |         0 |               0 |
+    |  3 |    NULL | contract court interpreter |         0 |               0 |
+    |  4 |    NULL | defense attorney           |         2 |               0 |
+    |  5 |    NULL | AUSA                       |         2 |               0 |
+    |  6 |       1 | Courtroom Deputy           |         0 |               1 |
+    |  7 |       1 | Law Clerk                  |         0 |               1 |
+    |  8 |       1 | USPO                       |         0 |               0 |
+    |  9 |       1 | Pretrial Services Officer  |         0 |               0 |
+    | 10 |    NULL | paralegal                  |         2 |               0 |
+    | 11 |    NULL | staff, US Attorneys Office |         2 |               0 |
+    | 12 |    NULL | Pretrial                   |         1 |               0 |
+    | 13 |    NULL | Magistrates                |         1 |               0 |
+    | 14 |    NULL | Judge                      |         0 |               0 |
+    +----+---------+----------------------------+-----------+-----------------+
+    14 rows in set (0.00 sec)
+    
+  </code>
+</pre>
+
+The *is_judges_staff* column expresses the fact that some users are associated with people, hence <span class="text-monospace text-nowrap">Hat</span>s, 
+that report to a particular <span class="text-monospace text-nowrap">Judge</span> -- and in rare cases, more than one judge. And Judges 
 invariably have multiple clerks, i.e., Law Clerks and/or a Courtroom Deputy Clerk. Therefore you have a many-to-many relationship, which 
 is represented by a **clerks_judges** join table.
 
-Complicated? Yes. A great deal of thought has gone into this design and, complicated though it is, this was the simplest model 
-I could come up with to separate and manage these various concepts and their relationships.
+The *anonymity* column determines certain input validation rules applied to the HTML form used for creating and updating 
+<span class="text-monospace">Event</span> entities; the values 0, 1 and 2 are assigned to class constants. The 0 means that 
+if the submitter of the request has this <span class="text-monospace">Hat</span>, the submitter cannot be anonymous, but 
+must be identified as a <span class="text-monospace">Person</span>. A value of 1 means the submitter is never identified; 
+a value of 2 means identification of the individual <span class="text-monospace">Person</span> is optional. To summarize: 
+0 means no anonymity; 1 means yes anonymity; 2 means anonymity optional.
 
-The foregoing explanation is not exhaustive; it deals with most of the entities found in the main <span class="text-monospace text-nowrap">InterpretersOffice</span> 
+Complicated? Yes it is. A great deal of thought has gone into this design and, complicated though it is, this was the simplest 
+and cleanest model I could come up with to separate and manage these various concepts and their relationships.
+
+A screenshot and a bit of digression may help to visualize how some of this works from the front end point of view.
+
+<img src="/assets/images/screenshot-event-form.submitter.png" alt="the submitter form controls are two select elements: one for the Hat and one for the Person" class="img-fluid py-2 border border-info rounded">
+
+There are two form controls adjacent to the label "submitted by." The first is for the <span class="text-monospace">Hat</span>, the second 
+is for the <span class="text-monospace">Person</span>. Of course, the latter is repopulated dynamically by a Javascript listener attached 
+to the <span class="text-monospace">change</span> event on the <span class="text-monospace">Hat</span> element; it fetches via xhr the 
+<span class="text-monospace">Person</span> entities, formatted as JSON, that have the currently selected <span class="text-monospace">Hat</span>. 
+The *anonymity* values discussed above are transmitted from the server as data attributes of the <span class="text-monospace">Hat</span> select menu's option 
+elements, as a hint to Javascript as to when the <span class="text-monospace">Person</span> select menu should be enabled or 
+disabled.
+
+When the form is submitted and validated, server-side logic decides whether the submitter -- the entity who asked for a court interpreter -- 
+should be saved as a specific <span class="text-monospace">Person</span> or a generic <span class="text-monospace">Hat</span>. In other words, 
+ultimately, whether the *submitter_id* or the *anonymous_submitter_id* column will contain a non-null value.
+
+The handling of named Judges versus generic, anonymous judges is similar.
+
+The foregoing discussion is far from exhaustive; it deals with most of the entities found in the main <span class="text-monospace text-nowrap">InterpretersOffice</span> 
 module, which are in the <span class="text-monospace text-nowrap">InterpretersOffice\Entity</span> namespace. There are other entity classes in the 
 <span class="text-monospace text-nowrap">InterpretersOffice\Requests</span>, <span class="text-monospace text-nowrap">InterpretersOffice\Admin\Notes</span>, and 
 <span class="text-monospace text-nowrap">InterpretersOffice\Admin\Rotation</span> modules. The source code for all of 
