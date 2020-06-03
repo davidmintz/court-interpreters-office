@@ -137,10 +137,10 @@ they need to create a placeholder event and add the time later.
 
 The *end_time* is a field that users with maximum adminstrative privileges can enable or disable. When enabled, it is used to store the 
 time at which an event actually ended -- not a speculative or aspirational time at which it is hoped or predicted that it will end. 
-This feature was added when in the Southern District of New York the interpreters were asked to keep track of the hours and minutes spent 
+This feature was added when the interpreters in the Southern District of New York were asked to keep track of the hours and minutes spent 
 on interpreting assignments, in addition to existing reporting requirements. It has proven useful, however, as an indicator of 
-whether an event is over or still in progress. On busy days it helps administrators keep track of where interpreters are (or at least,
-where they are not).
+whether an event is over or still in progress. On busy days it helps managers of the Interpreters schedule keep track of where 
+interpreters are (or at least, where they are not).
 
 The point of the *language_id* column is self-evident. Note that on some rare occasions, a single court proceeding requires interpreters of more than one language. 
 In such cases a separate event is created for each language.
@@ -295,12 +295,12 @@ can do any administrative action involving the interpreters data and application
 exceptions being a few advanced administrative actions and escalation of user privileges beyond its own level. The "staff" role is the least privileged non-submitter role, 
 intended for cases such as interns or assistants assigned to the Interpreters office on a temporary basis.
 
-A user account is associated with a person, as noted above, and the 
-<span class="text-monospace text-nowrap">InterpretersOffice\Entity\Person</span> entity has 
+A <span class="text-monospace text-nowrap">user</span> account is associated with a <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Person</span>, as noted above, and the 
+<span class="text-monospace text-nowrap">Person</span> entity has 
 a particular <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Hat</span>. Primarily used for classifying and identifying people 
 for contact management purposes, some <span class="text-monospace text-nowrap">Hat</span> entities are bound 
 (by foreign key relationship) to a particular <span class="text-monospace text-nowrap">InterpretersOffice\Entity\Role</span>. 
-The point is to constrain certain user-roles to people with certain functions (or hats, if you will) in the organization. Thus a user who has the "submitter" role has to be (associated with) 
+The point is to constrain certain user-roles to people with certain functions (or *hats*, if you will) in the organization. Thus a user who has the "submitter" role has to be (associated with) 
 a <span class="text-monospace text-nowrap">Person</span> entity whose hat is either "Courtroom Deputy," "Law Clerk", "USPO", or "Pretrial Services Officer."
 
 Here is what the data in the **roles** and **hats** tables looks like:
@@ -362,9 +362,9 @@ A screenshot and a bit of digression may help to visualize how some of this work
 <img src="/assets/images/screenshot-event-form.submitter.png" alt="the submitter form controls are two select elements: one for the Hat and one for the Person" class="img-fluid py-2 border border-info rounded">
 
 There are two form controls adjacent to the label "submitted by." The first is for the <span class="text-monospace">Hat</span>, the second 
-is for the <span class="text-monospace">Person</span>. Of course, the latter is repopulated dynamically by a Javascript listener attached 
-to the <span class="text-monospace">change</span> event on the <span class="text-monospace">Hat</span> element; it fetches via xhr the 
-<span class="text-monospace">Person</span> entities, formatted as JSON, that have the currently selected <span class="text-monospace">Hat</span>. 
+is for the <span class="text-monospace">Person</span>. Of course, the latter is repopulated dynamically by a [Javascript listener](https://github.com/davidmintz/court-interpreters-office/blob/8117d1001c80b2a85cccd6b1253771cb1a54ecf2/public/js/event-form.js#L348) attached 
+to the <span class="text-monospace">change</span> event on the <span class="text-monospace">Hat</span> element; if it detects a non-anonymous 
+<span class="text-monospace">Hat</span>, it fetches via xhr the <span class="text-monospace">Person</span> entities, formatted as JSON, that have the currently selected <span class="text-monospace">Hat</span>. 
 The *anonymity* values discussed above are transmitted from the server as data attributes of the <span class="text-monospace">Hat</span> select menu's option 
 elements, as a hint to Javascript as to when the <span class="text-monospace">Person</span> select menu should be enabled or 
 disabled.
@@ -374,7 +374,7 @@ should be saved as a specific <span class="text-monospace">Person</span> or a ge
 ultimately, whether the *submitter_id* or the *anonymous_submitter_id* column will contain a non-null value.
 
 The handling of named Judges versus generic, anonymous judges is similar.
-
+<hr>
 The foregoing discussion is far from exhaustive; it deals with most of the entities found in the main <span class="text-monospace text-nowrap">InterpretersOffice</span> 
 module, which are in the <span class="text-monospace text-nowrap">InterpretersOffice\Entity</span> namespace. There are other entity classes in the 
 <span class="text-monospace text-nowrap">InterpretersOffice\Requests</span>, <span class="text-monospace text-nowrap">InterpretersOffice\Admin\Notes</span>, and 
