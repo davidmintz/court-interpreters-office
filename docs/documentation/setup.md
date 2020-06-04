@@ -55,7 +55,7 @@ both but currently my preference is mariadb.
         </code>
     </li>
 </ol>
- <div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3">
+ <div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3" hidden>
     A non-root user needing to set up and maintain <span class="text-monospace">InterpretersOffice</span> will need
     <ul>
         <li>a mysql user account with permissions to create the database</li>
@@ -306,7 +306,7 @@ There is [a blog post about our Vault integration](https://blog.vernontbludgeon.
 interpreters' sensitive data at rest is symmetrically encryted, and the cipher for encryption/decryption is secured in Vault rather than lying around in plain text. 
 In other words the encryption/decryption key is never stored anywhere on the server in plain text.
 
-<div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3">
+<div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3" hidden>
     If you plan to run Vault on the same machine as <span class="text-monospace">InterpretersOffice</span> (although <a href="https://learn.hashicorp.com/vault/operations/production-hardening">Vault recommends single-tenancy</a>), 
     a non-root user 
     needing to set up and maintain <span class="text-monospace">InterpretersOffice</span> will need
