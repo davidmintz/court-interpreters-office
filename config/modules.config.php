@@ -14,7 +14,7 @@ $modules = [
     'Laminas\ZendFrameworkBridge',
     'DoctrineModule',
     'DoctrineORMModule',
-    'Laminas\Form',// yes necessary
+    'Laminas\Form',
     'Laminas\Router',
     'Laminas\Navigation',
     'InterpretersOffice',
