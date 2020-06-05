@@ -46,16 +46,6 @@ class Module
     public function onBootstrap(\Laminas\EventManager\EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
-
-        $log = $container->get('log');
-
-        //$log->addWriter($container->get(DbWriter::class));
-        /*
-         * for TEMPORARY debugging
-         */
-         // ===============
-        //
-         //==============
         // set the "breadcrumbs" navigation view-helper separator
         // unless there's a better way to make sure this gets done globally...
         $navigation = $container->get('ViewHelperManager')->get("navigation");
@@ -109,8 +99,7 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, function ($event) use ($viewModel) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
-                $viewModel->setVariables($routeMatch->getParams());
-                //var_dump($routeMatch->getParams());
+                $viewModel->setVariables($routeMatch->getParams());                
                 // really? not sure why we need this...
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
             }
