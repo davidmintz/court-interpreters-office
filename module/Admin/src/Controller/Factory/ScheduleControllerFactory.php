@@ -21,6 +21,20 @@ class ScheduleControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
+        
+        $end_time_enabled = $this->getEndTimeEnabled();
+        $em = $container->get('entity-manager');
+
+        return new ScheduleController($em, ['end_time_enabled'=>$end_time_enabled]);
+    }
+
+    /**
+     * whether event "end_time" is enabled
+     * 
+     * @return bool
+     */
+    private function getEndTimeEnabled()
+    {
         $config_path = 'module/Admin/config/forms.json';
         $end_time_enabled = false;
         if (is_readable($config_path)) {
@@ -33,6 +47,7 @@ class ScheduleControllerFactory implements FactoryInterface
                 }
             }
         }
-        return new ScheduleController($container->get('entity-manager'),['end_time_enabled'=>$end_time_enabled]);
+        
+        return $end_time_enabled;
     }
 }
