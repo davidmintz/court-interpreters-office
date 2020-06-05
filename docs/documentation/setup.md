@@ -6,8 +6,6 @@ name : documentation | setup | InterpretersOffice.org
 
 # setting up the server
 
-{{ page.project }} is the name.
-
 These are the requirements for running <span class="text-monospace">InterpretersOffice</span>. My intention is make installation easier than what is described below, 
 with less manual setup involved, but for now <em>illud est quod est</em>. And of course, if you already have your web and database servers 
 installed, there is less to do. These instructions assume a server with a Linux OS and little else.
@@ -26,7 +24,7 @@ reload the server should you need to change this configuration.
 3. Enable <code>mod_rewrite</code> (or equivalent)  
 This is necessary because <span class="text-monospace">InterpretersOffice</span> uses [an MVC framework](https://docs.laminas.dev/laminas-mvc/) that depends on URL rewriting to route requests to the proper controller/action.
 
-<div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3">
+<div class="border border-info rounded sm-shadow py-2 bg-light px-3 mb-3" hidden>
 A non-root user needing to set up and maintain <span class="text-monospace">InterpretersOffice</span> will need
 <ul>
     <li>sufficient permissions to stop, start, reload the web server</li>
@@ -44,8 +42,8 @@ A non-root user needing to set up and maintain <span class="text-monospace">Inte
 ###  <span id="database">database server: *mariadb or mysql*</span>
 <ol>
     <li>Install the database server.<br>
-        You can use either mysql or mariadb but for master-server replication it is best to pick one or the other exclusively. I have been happy with 
-both but currently my preference is mariadb. 
+        You can use either mysql or mariadb, but if you opt to set up master-server replication, it is recommended 
+        that you choose one or the other exclusively. I have been happy with both but currently my preference is mariadb. 
     </li>
     <li>Create the database.<br>You can call it what you like, but the name I have been using is <strong>office</strong>.</li>
     <li>Create the database user and grant privileges:<br>  
@@ -253,8 +251,8 @@ zero to mean unlimited. The default (six) seems sensible.
 
 
 There are a couple more configuration files that have to be present and writeable by the server: `module/Admin/config/forms.json`
-`and module/Rotation/config/config.json`. The former looks like
-
+`and module/Rotation/config/config.json`. In the Interpreters Office for the Southern District of New York, 
+the former configuration looks like
 
 ```json
 {
@@ -287,9 +285,9 @@ There are a couple more configuration files that have to be present and writeabl
 
 The first two sections are for enabling/disabling optional fields for interpreter entities and event entities.
 
-The `users` section controls what email domains users of the system are permitted to have, preventing users from registering accounts
-from arbitrary email addresses. It also imposes validation rules for the user profile and administrative user editing forms. If you 
-want to disable this, leave the `allow_email_domains` section as an empty array.
+The `users` section is a whitelist of email domains users of the system are permitted to have, preventing users from 
+registering accounts from arbitrary email addresses. It also imposes validation rules for the user profile and 
+administrative user editing forms. If you want to disable this, leave the `allow_email_domains` section as an empty array.
 
 Additionally, the subdirectory `module/Requests/config` has to be server-writeable.
 
