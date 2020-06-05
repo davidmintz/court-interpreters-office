@@ -6,12 +6,9 @@
 namespace InterpretersOffice\Admin;
 
 use Laminas\Mvc\MvcEvent;
+use Laminas\EventManager\EventInterface;
 use Laminas\Session\SessionManager;
-
-use InterpretersOffice\Admin\Controller;
-use InterpretersOffice\Entity\Listener\EventEntityListener;
 use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
-
 use Laminas\Uri\UriFactory;
 
 /**
@@ -43,7 +40,7 @@ class Module
      * interesting discussion, albeit for ZF2
      * http://stackoverflow.com/questions/14169699/zend-framework-2-how-to-place-a-redirect-into-a-module-before-the-application#14170913
      */
-    public function onBootstrap(\Laminas\EventManager\EventInterface $event)
+    public function onBootstrap(EventInterface $event)
     {
         $container = $event->getApplication()->getServiceManager();
         // set the "breadcrumbs" navigation view-helper separator
@@ -91,8 +88,7 @@ class Module
         $eventManager = $event->getApplication()->getEventManager();
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($e) use ($log, $db_writer) {
             $log->addWriter($db_writer);
-        });
-        
+        });        
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
@@ -125,11 +121,7 @@ class Module
         // designed to avoid the possibility of sending emails that say some
         // database updates were run when, in the event of an Exception, they
         // really weren't.
-        $sharedEvents->attach(
-            '*',
-            'postFlush',
-            [$scheduleManager,'dispatchEmail']
-        );
+        $sharedEvents->attach('*', 'postFlush', [$scheduleManager,'dispatchEmail']);
         /*  -------------------------------------------------------------    */
     }
 
@@ -154,7 +146,7 @@ class Module
         }
         $module = $match->getParam('module');
         if ('InterpretersOffice' == $module) {
-            // ACL is enforced further down the lin
+            // more access control is enforced further down the line
             return;
         }
         $allowed = true;
