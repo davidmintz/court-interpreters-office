@@ -80,7 +80,7 @@ Now let's go back and look at this same example again with a little more detail,
 The top level of the application directory looks like 
 
 <pre class="bg-dark text-white p-2"><code>
-    david@lin-chi:/opt/www/court-interpreters-office$ tree -La 1
+    david@lin-chi:/opt/www/court-interpreters-office$ tree -aL 1
     .
     ├── bin
     ├── composer.json
@@ -269,7 +269,7 @@ must come first, in that order; the ones following depend on them.
 
 All of these modules, with the exception of <span class="text-monospace text-nowrap">Vault</span>, are under the <span class="text-monospace">InterpretersOffice</span> 
 namespace. Each module has its own <span class="text-monospace text-nowrap">config</span> and other subdirectories. This helps to keep the modules separate and self-contained. 
-Each module's <span class="text-monospace text-nowrap">src</span> subdirectory contain module-specific classes: service classes that do especially heavy lifting, controllers, 
+Each module's <span class="text-monospace text-nowrap">src</span> subdirectory contains module-specific classes: service classes that do especially heavy lifting, controllers, 
 factory classes, form classes derived from <span class="text-monospace text-nowrap">Laminas\Form</span>, and more. The <span class="text-monospace text-nowrap">view</span> 
 subdirectory is for viewscripts, as you might have guessed; and similarly, the <span class="text-monospace text-nowrap">test</span> subdirectory 
 contains [phpunit](https://phpunit.de/) tests.
@@ -316,9 +316,11 @@ For this example, assume the user is logged in and has the role *manager.* Per o
 <span class="text-monospace text-nowrap">schedule</span> action of the <span class="text-monospace text-nowrap">InterpretersOffice\Admin\ScheduleController</span>, 
 so we move on.
 
+### an example controller, action and view
+
 We mentioned earlier that during bootstrapping, Laminas initializes a *service manager*. The framework uses this service manager to instantiate 
-controllers via factory classes,  i.e., classes that implement <span class="text-monospace">Laminas\ServiceManager\Factory\FactoryInterface</span>. A standard practice is to write 
-configuration in a module's <span class="text-monospace">module.config.php</span> mapping controllers to factories. Looking at the 
+controllers via factory classes,  i.e., classes that implement <span class="text-monospace">Laminas\ServiceManager\Factory\FactoryInterface</span>. 
+A standard practice is to write configuration in a module's <span class="text-monospace">module.config.php</span> mapping controllers to factories. Looking at the 
 [<span class="text-monospace">ScheduleControllerFactory</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/Admin/src/Controller/Factory/ScheduleControllerFactory.php)'s
 <span class="text-monospace">invoke__</span> method you'll notice that the first argument is an implementation 
 of <span class="text-monospace">Interop\Container\ContainerInterface</span>. That <code class="language-php">$container</code> is 
@@ -342,7 +344,7 @@ the service manager, which (if properly set up) provides access to all the depen
    }</code></pre>
 
 Line 11 is concerned with getting a configuration datum to help the <span class="text-monospace">ScheduleController</span> configure the 
-view for purposes of display logic, but this detail is merely incidental for purposes of this discussion. The 
+view for purposes of presentation logic, but this detail is merely incidental for purposes of this discussion. The 
 main point is that the controller factories have access, via the service manager a/k/a <code class="language-php">$container</code>,
  to whatever dependencies the controller requires.
 
@@ -351,6 +353,36 @@ main point is that the controller factories have access, via the service manager
  we write and register with the module configuration. Conventionally, you identify classes by their fully qualified class names, or 
  other likewise unique identifiers, to avoid  ambiguity or collisions. But you can also set aliases for convenience. In the above example, 
  'entity-manager' is an alias for the more verbose <span class="text-monospace text-nowrap">doctrine.entitymanager.orm_default</span>
+
+ With a <span class="text-monospace text-nowrap">ScheduleController</span> having been instantiated by the framework, it now dispatches 
+ the action matched by routing, in this case <span class="text-monospace text-nowrap">scheduleAction()</span>:
+ <pre><code class="language-php line-numbers">
+ public function scheduleAction()
+    {
+        $filters = $this->getFilters();
+        $date = new \DateTime($filters['date']);
+        $repo = $this->entityManager->getRepository(Entity\Event::class);
+        $data = $repo->getSchedule($filters);
+        $end_time_enabled = $this->config['end_time_enabled'];
+        $viewModel = new ViewModel(compact('data', 'date','end_time_enabled'));
+        $this->setPreviousAndNext($viewModel, $date)
+            ->setVariable('language', $filters['language']);
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $viewModel
+                ->setTemplate('interpreters-office/admin/schedule/partials/table')
+                ->setTerminal(true);
+        }
+        return $viewModel;
+    }
+</code></pre>
+
+Briefly, this method fetches interpreter scheduling data -- an array of <span class="text-monospace text-nowrap">Event</span> entities -- 
+for a particular date. It has to figure out what filters to apply to the database query and a few other details, assign these 
+variables to a <span class="text-monospace text-nowrap">ViewModel</span>, and return the <span class="text-monospace text-nowrap">ViewModel</span> 
+object. 
+
+The <code class="language-php">$this->entityManager</code> is that entity manager that was passed to the controller's constructor back 
+at the factory. We use it to access a custom repository class yadda yadda
 
  [to be continued]
 
