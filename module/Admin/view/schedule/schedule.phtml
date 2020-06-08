@@ -1,5 +1,4 @@
-<?php /* module/Admin/view/interpreters-office/admin/schedule/index.phtml */
-//$this->headLink()->appendStylesheet($this->basePath('css/jquery-ui.min.css'));
+<?php  /** module/Admin/view/schedule/schedule.phtml */
 $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
     ->appendFile($this->basePath('js/admin/schedule.js'));
@@ -7,8 +6,6 @@ $this->headTitle($this->date->format('D d M Y'));
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
-// elseif ($messenger->hasErrorMessages()) :
-//     echo $messenger->render('danger', ['alert','alert-danger',], false);
 endif;
 echo $this->errorMessage($this->errorMessage);  ?><?php
 if ($this->errorMessage) :   return;  endif;
