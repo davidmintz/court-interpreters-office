@@ -6,7 +6,7 @@ const reload_schedule = function(url) {
     $.get(url).then(function(res){
         $("#schedule").html(res);
     });
-}
+};
 $(function(){
     // initialize jquery-ui datepicker
     var date_input = $("#date-input");
