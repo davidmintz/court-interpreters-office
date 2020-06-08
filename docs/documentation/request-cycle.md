@@ -7,7 +7,7 @@ title: documentation | request cycle and application code organization | Interpr
 
 <span class="text-monospace">InterpretersOffice</span> uses the [Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
 pattern and is built on the [Laminas MVC framework](https://docs.laminas.dev/mvc/), formerly know as Zend. Laminas/Zend now seems to be less 
-popular than some other PHP frameworks around, notably Laravel and Symfony IV. The MVC pattern also seems to be passé, having been overtaken 
+popular than some other PHP frameworks around, notably Laravel and Symfony IV. The MVC pattern also seems to be becoming passé, having been overtaken 
 by the middleware paradigm. Laminas MVC is nevertheless a reasonable choice -- a quality framework with a strong user community 
 where you can find support if you need it.
 
@@ -140,7 +140,7 @@ config
 └── modules.config.php
 </code></pre>
 
-<span class="text-monospace text-nowrap">application.config.php</span> contains settings that the Framework uses 
+<span class="text-monospace text-nowrap">application.config.php</span> contains settings that Laminas uses 
 early in the bootstrapping phase, and which you will rarely if ever need to change.
 
 In the <span class="text-monospace text-nowrap">autoload</span> subdirectory, everything with a <span class="text-monospace text-nowrap">.dist</span> 
@@ -278,10 +278,12 @@ Each module's <span class="text-monospace text-nowrap">src</span> folder include
 can optionally define an <span class="text-monospace text-nowrap">onBootstrap()</span> method, invoked early in the request cycle, where you can attach event 
 listeners that may be triggered later in the cycle. On the plus side, it encourages separation of concerns, but it can get complicated. Internally, Laminas 
 relies heavily on its [event system](https://docs.laminas.dev/laminas-mvc/mvc-event/)  and <span class="text-monospace">InterpretersOffice</span> uses it as well. 
-When trying to comprehend the flow of execution you may find it helpful to recursively grep <span class="text-monospace text-nowrap">src</span> folders for 
+When trying to comprehend the flow of execution you may find it helpful either to use a debugger or recursively grep <span class="text-monospace text-nowrap">src</span> folders for 
 strings like "attach" and "trigger."
 
-All that said, let's return to the example in which the user requests <span class="text-monospace">/admin/schedule</span>. 
+All that said, let's return to the example in which the user requests <span class="text-monospace text-nowrap">/admin/schedule</span>.
+
+### authentication and authorization
 
 The Admin module's <span class="text-monospace text-nowrap">onBootstrap()</span> method does some initialization work,
 which includes attaching a listener to the <code class="language-php">MvcEvent::EVENT_ROUTE</code> event to enforce 
@@ -303,7 +305,7 @@ of [<span class="text-monospace text-nowrap">Admin\Module.php</span>](https://gi
 when the routing event has taken place -- in other words, once we know what module, controller and action are going to serve the request.
 
 <span class="text-monospace text-nowrap">enforceAuthentication()</span> considers whether authentication is required (for a few routes, it is not).
-If the user is not authenticated, and is requesting a resource that requires authentication, we redirect to the login page. If the user is authenticated, 
+If the user is not authenticated, and is requesting a *resource* that requires authentication, we redirect to the login page. If the user is authenticated, 
 we next consider whether this user is *authorized* access to the requested resource, using a [service](https://github.com/davidmintz/court-interpreters-office/blob/master/module/Admin/src/Service/Acl.php) derived from the 
 [Laminas ACL](https://docs.laminas.dev/laminas-permissions-acl/usage/) implementation and an extensive configuration file located at 
 <span class="text-monospace text-nowrap">module/Admin/config/acl.php</span>. Note that other modules can contribute their 
@@ -316,7 +318,7 @@ For this example, assume the user is logged in and has the role *manager.* Per o
 <span class="text-monospace text-nowrap">schedule</span> action of the <span class="text-monospace text-nowrap">InterpretersOffice\Admin\ScheduleController</span>, 
 so we move on.
 
-### an example controller, action and view
+### controller, action and view
 
 We mentioned earlier that during bootstrapping, Laminas initializes a *service manager*. The framework uses this service manager to instantiate 
 controllers via factory classes,  i.e., classes that implement <span class="text-monospace">Laminas\ServiceManager\Factory\FactoryInterface</span>. 
@@ -344,16 +346,21 @@ the service manager, which (if properly set up) provides access to all the depen
    }</code></pre>
 
 Line 11 is concerned with getting a configuration datum to help the <span class="text-monospace">ScheduleController</span> configure the 
-view for purposes of presentation logic, but this detail is merely incidental for purposes of this discussion. The 
-main point is that the controller factories have access, via the service manager a/k/a <code class="language-php">$container</code>,
- to whatever dependencies the controller requires.
+view for purposes of presentation logic, but this detail is merely incidental to this discussion. The main point is that the controller 
+factories have access, via the service manager a/k/a <code class="language-php">$container</code>, to whatever dependencies 
+the controller requires.
 
  This pattern recurs throughout the application. We usually don't instantiate objects, but rather pull them from the container. By default, 
- the container will re-use any already-existing instance, and again, the dependency injection is taken care of via the factory classes 
- we write and register with the module configuration. Conventionally, you identify classes by their fully qualified class names, or 
- other likewise unique identifiers, to avoid  ambiguity or collisions. But you can also set aliases for convenience. In the above example, 
+ the container will re-use any already-existing instance, and again, the dependency injection is taken care of via factories 
+ that we write and register with the module configuration. Conventionally, you identify classes by their fully qualified class names, or 
+ other likewise unique identifiers, to avoid  ambiguity and collisions. But you can also set aliases for convenience. In the above example, 
  'entity-manager' is an alias for the more verbose <span class="text-monospace text-nowrap">doctrine.entitymanager.orm_default</span>
 
+ Controllers are found in each module's <span class="text-monospace text-nowrap">src/Controllers</span> folder. The factories in most 
+ cases are in <span class="text-monospace text-nowrap">src/Controller/Factory</span>, to keep <span class="text-monospace text-nowrap">src/Controllers</span> 
+ from becoming too cluttered (with the smaller modules I decided it was not necessary to dedicate a folder to the factory classes, 
+ so they sit alongside the controllers.)
+ 
  With a <span class="text-monospace text-nowrap">ScheduleController</span> having been instantiated by the framework, it now dispatches 
  the action matched by routing, in this case <span class="text-monospace text-nowrap">scheduleAction()</span>:
  <pre><code class="language-php line-numbers">
@@ -376,15 +383,53 @@ main point is that the controller factories have access, via the service manager
     }
 </code></pre>
 
-Briefly, this method fetches interpreter scheduling data -- an array of <span class="text-monospace text-nowrap">Event</span> entities -- 
-for a particular date. It has to figure out what filters to apply to the database query and a few other details, assign these 
-variables to a <span class="text-monospace text-nowrap">ViewModel</span>, and return the <span class="text-monospace text-nowrap">ViewModel</span> 
-object. 
+This controller fetches interpreter scheduling data -- an array of <span class="text-monospace">Event</span> entities -- 
+for a particular date. It uses a helper method to apply filters to the database query, collects a few other details, assigns these 
+variables to a <span class="text-monospace text-nowrap">ViewModel</span>, and returns the <span class="text-monospace text-nowrap">ViewModel</span> 
+object.
 
-The <code class="language-php">$this->entityManager</code> is that entity manager that was passed to the controller's constructor back 
-at the factory. We use it to access a custom repository class yadda yadda
+The <code class="language-php">$this->entityManager</code> in the above excerpt is the Doctrine entity manager that was passed 
+to the controller's constructor back at the factory. Nearly all of the communication with the data layer is done through this object. 
+In this example we use it for access to a custom repository class that knows how to fetch the schedule data. The bulk of our 
+entity models and repositories are in <span class="text-monospace text-nowrap">module/InterpretersOffice/src/Entity</span>
 
- [to be continued]
+Viewscripts are located in each module's <span class="text-monospace">view</span> subdirectory. The framework consults its configuration to determine
+viewscript to use for rendering, as described above. In this example our viewscript is 
+[<span class="text-monospace text-nowrap">module/Admin/view/schedule/schedule.phtml</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/Admin/view/schedule/schedule.phtml), 
+which loads some Javascript for things like a datepicker for navigating by date and other interactive controls, then handles display 
+logic to show the user the events on the interpreters' schedule for a given date.
+
+<pre><code class="language-php"><?php  /** module/Admin/view/schedule/schedule.phtml */
+    $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+        ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
+        ->appendFile($this->basePath('js/admin/schedule.js'));
+    $this->headTitle($this->date->format('D d M Y'));
+    $messenger = $this->flashMessenger();
+    if ($messenger->hasSuccessMessages()) :
+        echo $messenger->render('success', ['alert','alert-success',], false);
+    endif;
+    // etc
+</code></pre>
+
+The <code class="php-language">$messenger</code> refers to a controller plugin with which you can set a message to show the 
+user, then redirect to another page and display it. <span class="text-monospace">InterpretersOffice</span> uses this 
+technique frequently for showing the user confirmation messages, sometimes with server-side redirection, sometimes client-side 
+with Javascript by saying <code class="language-javascript">document.location = some_other_url</code>
+
+<hr>
+
+The preceding walk-through is intended to provide a feel for how a typical request/response cycle 
+works, and where the various files are found in the application directory tree. This example is for a GET request, 
+where the user is reading data as opposed to changing it. The pattern for pages for creating or editing 
+entities is the typical web application flow. We display an HTML form; the user enters data in the form and POSTs it; 
+we validate the input; if validation fails we display error messages; otherwise we update the database 
+using the Doctrine API, and then display a confirmation.
+
+For the most part, the forms are built by extending [Laminas\Form](https://docs.laminas.dev/laminas-form/) components, which 
+take an object-oriented approach for form elements, data validation and filtering.
+
+For further information you can examine the source code, read the documentation sites for the framework and various libraries, 
+or ask me a question:  david@davidmintz.org. 
 
  
  
