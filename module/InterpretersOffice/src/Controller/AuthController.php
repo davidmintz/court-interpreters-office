@@ -82,6 +82,7 @@ class AuthController extends AbstractActionController
                         :
                          new ViewModel(['form' => $form]);
             }
+            
             // actual authentication
             $data = $form->getData();
             $this->auth->getAdapter()
@@ -110,9 +111,12 @@ class AuthController extends AbstractActionController
                         ['form' => $form, 'warning' => $warning,'status' => $result->getCode()]
                     );
             }
+            // successful authentication
+
             $user = $this->auth->getIdentity();
             $role = $user->role;
-
+            $event_params['auth'] = $this->auth;
+            $this->events->trigger(__FUNCTION__, $this, $event_params);
             // if they tried to load a page and were sent away, send them back
             $session = new \Laminas\Session\Container('Authentication');
 
@@ -147,8 +151,7 @@ class AuthController extends AbstractActionController
                 // everyone else goes to the main page
                 $route = 'home';
             }
-            $event_params['auth'] = $this->auth;
-            $this->events->trigger(__FUNCTION__, $this, $event_params);
+           
             $this->redirect()->toRoute($route);
         }
         $this->getResponse()->getHeaders()
