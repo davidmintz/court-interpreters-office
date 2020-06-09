@@ -51,7 +51,7 @@ endif;
             continue;
         else :
             if (is_string($entity[$field])):  
-                $entity[$field] = strip_tags($entity[$field],'<ins><del>'); 
+                $entity[$field] = strip_tags($entity[$field],'<ins><del><br>');                 
             endif;
         endif;
         if ($field == 'submitter') :
@@ -69,7 +69,7 @@ endif;
         <td style="border-bottom:1px dotted gray; vertical-align:top"><?php echo $label ?></td>
         <td style="border-bottom:1px dotted gray"><?php
            // the "escaped" flag means it is already string data/finished HTML
-            if ($this->escaped): echo $entity[$field];
+            if ($this->escaped): echo $entity[$field]; echo " (escaped?)";
             elseif (is_string($entity[$field])):
                 echo $this->escapeHtml($entity[$field]);
             else:
