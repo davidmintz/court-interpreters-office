@@ -69,7 +69,7 @@ endif;
         <td style="border-bottom:1px dotted gray; vertical-align:top"><?php echo $label ?></td>
         <td style="border-bottom:1px dotted gray"><?php
            // the "escaped" flag means it is already string data/finished HTML
-            if ($this->escaped): echo $entity[$field]; echo " (escaped?)";
+            if ($this->escaped): echo $entity[$field];
             elseif (is_string($entity[$field])):
                 echo $this->escapeHtml($entity[$field]);
             else:
