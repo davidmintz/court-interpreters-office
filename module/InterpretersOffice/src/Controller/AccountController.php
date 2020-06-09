@@ -9,9 +9,7 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Laminas\Session\Container as Session;
-use Laminas\InputFilter\InputFilterInterface;
 use Laminas\Authentication\AuthenticationServiceInterface;
-use Laminas\Form\FormInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Form\User\RegistrationForm;
@@ -90,7 +88,6 @@ class AccountController extends AbstractActionController
         $thing2 = $plugins->get('layout');
         echo get_class($thing2) . " is the class of \$plugins->get('layout') in our controller<br>";
         */
-        //return false;
         return new ViewModel();
     }
     /**
