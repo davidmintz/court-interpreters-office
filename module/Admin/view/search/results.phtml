@@ -24,7 +24,7 @@ endif; ?>
 </thead>
     <tbody>
         <?php foreach ($this->results as $e): $id = $e->getId(); ?>
-            <tr>
+            <tr <?php if ($e->getCancellationReason()):?> class="event-cancelled"<?php endif?>>
                 <td><?php echo $e->getDate()->format('d-M-Y')?></td>
                 <td><?php echo $this->escapeHtml($e->getLanguage())?></td>
                 <td><?php echo $this->escapeHtml($e->getEventType())?></td>
