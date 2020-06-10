@@ -23,8 +23,6 @@ class AuthControllerFactory
      * @param string             $requestedName
      * @param array              $options
      *
-     * @todo rethink this approach?
-     *
      * @return AuthController
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
