@@ -7,7 +7,7 @@ title: documentation | request cycle and application code organization | Interpr
 
 <span class="text-monospace">InterpretersOffice</span> uses the [Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
 pattern and is built on the [Laminas MVC framework](https://docs.laminas.dev/mvc/), formerly know as Zend. Laminas/Zend now seems to be less 
-popular than some other PHP frameworks around, notably Laravel and Symfony IV. The MVC pattern also seems to be becoming passé, having been overtaken 
+popular than some other PHP frameworks around, notably Laravel and Symfony 4. The MVC pattern also seems to be becoming passé, having been overtaken 
 by the middleware paradigm. Laminas MVC is nevertheless a reasonable choice -- a quality framework with a strong user community 
 where you can find support if you need it.
 
@@ -411,7 +411,8 @@ logic to show the user the events on the interpreters' schedule for a given date
     // etc
 </code></pre>
 
-The <code class="php-language">$messenger</code> refers to a controller plugin with which you can set a message to show the 
+The <code class="php-language">$messenger</code> refers to a Laminas 
+[controller plugin](https://docs.laminas.dev/laminas-mvc-plugin-flashmessenger/) with which you can set a message to show the 
 user, then redirect to another page and display it. <span class="text-monospace">InterpretersOffice</span> uses this 
 technique frequently for showing the user confirmation messages, sometimes with server-side redirection, sometimes client-side 
 with Javascript by saying <code class="language-javascript">document.location = some_other_url</code>
@@ -420,13 +421,13 @@ with Javascript by saying <code class="language-javascript">document.location = 
 
 The preceding walk-through is intended to provide a feel for how a typical request/response cycle 
 works, and where the various files are found in the application directory tree. This example is for a GET request, 
-where the user is reading data as opposed to changing it. The pattern for pages for creating or editing 
-entities is the typical web application flow. We display an HTML form; the user enters data in the form and POSTs it; 
-we validate the input; if validation fails we display error messages; otherwise we update the database 
-using the Doctrine API, and then display a confirmation.
+where the user is reading data as opposed to changing it.
 
-For the most part, the forms are built by extending [Laminas\Form](https://docs.laminas.dev/laminas-form/) components, which 
-take an object-oriented approach for form elements, data validation and filtering.
+The pattern for pages for creating or editing entities is typical web application flow. We display an HTML form; 
+the user enters data in the form and POSTs it; we validate the input; if validation fails we display error messages; 
+otherwise we update the database using the Doctrine API, and then display a confirmation. For the most part, the 
+forms are built by extending [Laminas\Form](https://docs.laminas.dev/laminas-form/) components, which take an object-oriented 
+approach for form elements, data validation and filtering.
 
 For further information you can examine the source code, read the documentation sites for the framework and various libraries, 
 or ask me a question:  david@davidmintz.org. 
