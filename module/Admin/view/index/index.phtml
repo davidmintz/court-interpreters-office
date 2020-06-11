@@ -23,13 +23,13 @@ $this->headStyle()->captureStart();?>
     <table class="table">
         <tr>
             <th>resource</th>
-            <?php foreach ($roles as $role) { ?><th><?=$role?></th>
+            <?php foreach (['submitter','staff','manager','administrator'] as $role) { ?><th><?=$role?></th>
     <?php }
     ?></tr><?php
     foreach($resources as $resource) {
         ?><tr>
-            <td><?=str_replace('InterpretersOffice\\','',$resource)?></td>
-            <?php foreach ($roles as $role) { ?>
+            <td><?=str_replace('InterpretersOffice\\','IO\\',$resource)?></td>
+            <?php foreach (['submitter','staff','manager','administrator'] as $role) { ?>
                 <td><?php
                 $access = $acl->isAllowed($role,$resource,'index') ? "allowed":"denied";
                 $color = $access == 'allowed' ? 'green' : 'red';

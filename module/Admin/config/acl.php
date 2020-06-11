@@ -20,7 +20,7 @@ return [
 
     'resources' => [
         // 'resource name (controller)' => 'parent resource'
-        Main\IndexController::class => null,
+       // Main\IndexController::class => null,
         Admin\LanguagesController::class => null,
         Admin\ConfigController::class => null,
         Admin\EventTypesController::class => Admin\LanguagesController::class,
@@ -55,10 +55,13 @@ return [
         'submitter' => null,
         'staff' => null,
         // probably don't need this in production :-)
-        'DoctrineORMModule\Yuml\YumlController' => null,
+       // 'DoctrineORMModule\Yuml\YumlController' => null,
     ],
-    // how do we configure this to use Assertions?
-    // I think we don't
+    /* How do we configure this to use Assertions?
+       I think we don't. What we probably could do is use PHP 
+       to reason about the environment and set the rules dynamically
+       in that way. 
+    */
     'allow' => [
         //'role' => [ 'resource (controller)' => [ priv, other-priv, ...  ]
         'submitter' => [
@@ -86,8 +89,7 @@ return [
         ],
         'administrator' => null,
         'anonymous' => [
-            Main\AuthController::class => 'login',
-            
+            Main\AuthController::class => 'login',            
         ]
     ],
     'deny' => [
