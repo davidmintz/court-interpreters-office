@@ -247,8 +247,7 @@ class EventEntityListener implements EventManagerAwareInterface, LoggerAwareInte
                     $this->logger->debug("found interpreters assigned, not changing confirmation status");
                 }
             }           
-        }
-        
+        }        
     }
 
     /**

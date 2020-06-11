@@ -43,9 +43,7 @@ class EventsControllerFactory implements FactoryInterface
         $resolver->register($container->get(Listener\EventEntityListener::class));
         $resolver->register($container->get(Listener\UpdateListener::class)->setAuth($auth));
 
-        $sharedEvents = $container->get('SharedEventManager');
-        /** @var \Laminas\Log\Logger $log */
-        $log = $container->get('log');
+        $sharedEvents = $container->get('SharedEventManager');       
         $sharedEvents->attach(
             EventsController::class,
             'deleteEvent',
@@ -55,6 +53,8 @@ class EventsControllerFactory implements FactoryInterface
          * this next bit is a shit-show but never fear, we  will clean it up
          * @todo clean this up
          */
+         /** @var \Laminas\Log\Logger $log */
+         $log = $container->get('log');
         $sharedEvents->attach(
             Listener\EventEntityListener::class,
             'postLoad',
