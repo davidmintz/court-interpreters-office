@@ -45,7 +45,7 @@ class AclFactory implements FactoryInterface
                     is_string($resource) ? $resource : $resource->getResourceId(),
                     $e->getParam('privilege', 'N/A')
                 );
-                 $log->warn($message, ['channel' => 'security']);
+                 $log->info($message, ['channel' => 'security']);
             }
         );
        // note to self: if $acl implements EventManagerAwareInterface,
