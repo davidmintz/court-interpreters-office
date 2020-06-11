@@ -65,7 +65,7 @@ class IndexController extends AbstractActionController
      */
     public function getScheduledAction()
     {
-        echo "hi there";
+        //echo "hi there";
         return false;
     }
 
@@ -131,7 +131,11 @@ class IndexController extends AbstractActionController
      */
     public function configAction()
     {
-        $form = new ConfigForm();
+        $acl = $this->getEvent()->getApplication()->getServiceManager()
+            ->get('acl');
+        $role = $this->auth->getIdentity()->role;
+        $allowed = $acl->isAllowed($role, self::class, 'updateConfig');
+        $form = new ConfigForm(['disabled'=>!$allowed ]);
         $data = $form->data;
         $object = new \Laminas\Stdlib\ArrayObject($data);
         $form->bind($object);
@@ -139,11 +143,7 @@ class IndexController extends AbstractActionController
             $data = $this->getRequest()->getPost();
             return new JsonModel($data);
         }
-        $acl = $this->getEvent()->getApplication()->getServiceManager()
-            ->get('acl');
-        $role = $this->auth->getIdentity()->role;
-        $allowed = $acl->isAllowed($role, self::class, 'updateConfig');
-        //echo "FUCK? $role allowed? ".($allowed ? "true":"false");
+        
         return new ViewModel(['form' => $form,'update_allowed' => $allowed,
             'customized_settings' =>
                 file_exists($this->config_dir.'/custom.event-listeners.json')

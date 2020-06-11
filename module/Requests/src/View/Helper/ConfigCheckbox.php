@@ -30,7 +30,7 @@ TEMPLATE;
      */
     public function __invoke(ElementInterface $element)
     {
-        $rendered_element = $this->getView()->formElement($element);
+        $rendered_element = $this->getView()->formElement($element);       
         $id = $element->getAttribute('id');
         $label = $element->getLabel();
 

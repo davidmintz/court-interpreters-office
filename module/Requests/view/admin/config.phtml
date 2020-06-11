@@ -34,7 +34,7 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
                 <td>in-court</td>
                 <td><?php $fs = $this->form->get('cancel');
                 $base = 'in-court.spanish.';
-                $element = $fs->get($base.'delete-scheduled-event');
+                $element = $fs->get($base.'delete-scheduled-event');               
                 echo $this->configCheckbox($element);
                 $element = $fs->get($base.'notify-assigned-interpreters');
                 echo $this->configCheckbox($element);
@@ -182,10 +182,17 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
       </div>
       <?php if ($this->update_allowed): ?><p class="alert alert-warning border border-danger text-danger">
           You should not change the default settings unless you're sure you know what you're doing.
-      </p><?php endif ?>
-        <button <?php if (! $this->update_allowed): ?> disabled title="current user is not authorized to modify these settings" style="cursor:not-allowed"<?php endif ?> type="button" id="save" name="button" class="btn btn-success btn-lg border">save configuration</button>
-        <?php $display = $this->customized_settings && $this->update_allowed ? 'inline':'none' ?>
-        <button type="button" id="restore-defaults" class="btn btn-success btn-lg border" style="display:<?php echo $display?>;">restore defaults</button>
+      </p>
+      <button type="button" id="save" name="button" class="btn btn-success btn-lg border">save configuration</button>
+
+    <?php $display = $this->customized_settings ? 'inline':'none' ?>
+    <button type="button" id="restore-defaults" class="btn btn-success btn-lg border" style="display:<?php echo $display?>;">restore defaults</button>
+      <?php else: ?>
+            <p class="alert alert-info border border-warning rounded shadow-sm">
+                Your user account is not authorized to modify these settings.
+            </p>
+        <?php endif ?>
+        
     </div>
     </form>
     <hr class="my-4">

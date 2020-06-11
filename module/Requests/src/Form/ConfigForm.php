@@ -13,12 +13,20 @@ use Laminas\Form\Form;
  */
 class ConfigForm extends Form implements InputFilterProviderInterface
 {
+    
+    /**
+     * whether form controls should be read-only
+     */
+    private $disabled;
+
     /**
      * constructor
      */
-    public function __construct()
+    public function __construct(Array $options)
     {
         parent::__construct('config-form');
+        $this->disabled = $options['disabled'];
+
         $this->init();
     }
 
@@ -42,15 +50,15 @@ class ConfigForm extends Form implements InputFilterProviderInterface
     public function init()
     {
         $basedir = 'module/Requests/config';
-        $prefix = file_exists("$basedir/custom.event-listeners.json is") ?
+        $prefix = file_exists("$basedir/custom.event-listeners.json") ?
             'custom' : 'default';
         $json = file_get_contents("$basedir/${prefix}.event-listeners.json");
         $data  = json_decode($json, true);
         $this->data = $data;
         $this->setHydrator(new ArraySerializable());
-        $this->setAllowedObjectBindingClass(ArrayObject::class);
+        $this->setAllowedObjectBindingClass(ArrayObject::class);        
         foreach ($data as $event_name => $event_array) {
-            $fieldset = new ConfigFieldset($event_name, ['config' => $event_array]);
+            $fieldset = new ConfigFieldset($event_name, ['config' => $event_array, 'disabled' => $this->disabled]);
             $this->add($fieldset);
         }
     }
