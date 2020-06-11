@@ -96,9 +96,8 @@ The main configuration file for access control is <span class="text-monospace te
 found in other modules' <span class="text-monospace text-nowrap">config/module.config.php</span> files. Familiarity with [Laminas ACL](https://docs.laminas.dev/laminas-permissions-acl/usage/) is required 
 in order to make any sense out of them.
 
-At this writing, **ACL configuration is hard-coded**
-in the application. You can change it, but when you update the application you'll run into merge conflicts or clobber your local changes unless precautions are 
-taken. I may address this in a future version.
+At this writing, **ACL configuration is hard-coded** in the application. You can change it, but when you update the application you'll run
+into merge conflicts or clobber your local changes unless precautions are taken. I may address this in a future version.
 
 
 
