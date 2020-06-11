@@ -393,8 +393,8 @@ to the controller's constructor back at the factory. Nearly all of the communica
 In this example we use it for access to a custom repository class that knows how to fetch the schedule data. The bulk of our 
 entity models and repositories are in <span class="text-monospace text-nowrap">module/InterpretersOffice/src/Entity</span>
 
-Viewscripts are located in each module's <span class="text-monospace">view</span> subdirectory. The framework consults its configuration to determine
-viewscript to use for rendering, as described above. In this example our viewscript is 
+Viewscripts are located in each module's <span class="text-monospace">view</span> subdirectory. The framework consults its configuration 
+to determine what viewscript to use for rendering, as described above. In this example our viewscript is 
 [<span class="text-monospace text-nowrap">module/Admin/view/schedule/schedule.phtml</span>](https://github.com/davidmintz/court-interpreters-office/blob/master/module/Admin/view/schedule/schedule.phtml), 
 which loads some Javascript for things like a datepicker for navigating by date and other interactive controls, then handles display 
 logic to show the user the events on the interpreters' schedule for a given date.

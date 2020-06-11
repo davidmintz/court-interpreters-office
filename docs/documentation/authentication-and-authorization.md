@@ -76,10 +76,29 @@ By design, the admin user-management interface provides no means of setting or g
 they are hashed). The only way users can reset their passwords is through the actions provided by the 
 [<span class="text-monospace"></span>AccountController](https://github.com/davidmintz/court-interpreters-office/blob/master/module/InterpretersOffice/src/Controller/AccountController.php).
 
-You can set any user's password from the command line with: <span class="text-monospace text-nowrap">bin/admin-cli {{ "<email_address> <password>" | escape }}</span>
+You can set any user's password from the command line with: <span class="text-monospace text-nowrap">bin/admin-cli admin:user-password {{ "<email_address> <password>" | escape }}</span>
 
 ### authorization
 
-As described in the 
+Please see the section dealing with authentication authorization in the discussion of [the request cycle](./request-cycle.md#authentication-and-authorization), which 
+gives a fair overview. An additional point worth noting is that <span class="text-monospace">InterpretersOffice</span> does most 
+of its authorization checking via the event listener attached in the <span class="text-monospace">Admin</span> module's <span class="text-monospace">onBootstrap()</span>
+method. If authorization is denied, a message is logged to that effect. If the authorization is denied by this event listener, it means a user actually tried 
+to navigate to a URL that is not authorized, and was turned away. In some other cases, we simply query the [ACL service](https://github.com/davidmintz/court-interpreters-office/blob/master/module/Admin/src/Service/Acl.php) to determine whether a particular button 
+or link should be displayed to the user, but if the result is negative, the log message is likewise generated. Thus presence of "access denied" messages 
+in the log does not necessarily mean anyone was trying to do something nefarious. In future versions we might tweak this behavior to make it more nuanced.
+
+The authorization system confers only a few privileges on *administrator* that *manager* does not have. Among these is write-access to the configuration 
+settings for the  <span class="text-monospace">Requests</span> module, available at <span class="text-monospace text-nowrap">/admin/configuration/requests</span>  which allows 
+the user to control what event listeners will be triggered on various actions on the part of the submitters.
+
+The main configuration file for access control is <span class="text-monospace text-nowrap">module/Admin/config/acl.php</span>; other ACL configuration may be 
+found in other modules' <span class="text-monospace text-nowrap">config/module.config.php</span> files. Familiarity with [Laminas ACL](https://docs.laminas.dev/laminas-permissions-acl/usage/) is required 
+in order to make any sense out of them.
+
+At this writing, **ACL configuration is hard-coded**
+in the application. You can change it, but when you update the application you'll run into merge conflicts or clobber your local changes unless precautions are 
+taken. I may address this in a future version.
+
 
 
