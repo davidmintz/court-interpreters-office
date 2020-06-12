@@ -169,7 +169,7 @@ errors as well as a variety of user actions including logging in and out, creati
 interesting aspect of the logging system is that where possible, it notes the entity class and the entity id as well as a textual description 
 of what is happening. This would make it reasonably easy to create a feature -- yet to be implemented -- whereby users can examine log events, with 
 hypertext links to the entities that are involved. Another field in log records is a "channel" -- a simple string, not normalized in the database sense -- 
-that serves as a sort of tag that can be used for filtering records. 
+that serves as a sort of tag that can be used for filtering records, in addition to the standard [log severity levels](https://en.wikipedia.org/wiki/Syslog#Severity_level).
 
 The log files are stored in the <span class="text-monospace text-nowrap">data/log</span> subdirectory and named in the format <span class="text-monospace text-nowrap">app.log.YYYY-MM-DD</span> 
 indicating the date. You may want to set a cron job to archive these somehow, or rotate them out periodically so they don't consume an indefinite 
@@ -177,7 +177,8 @@ amount of disk space. As we observed in the section on [setting up the applicati
 server, or else we throw an Exception.
 
 The database log writer is [<span class="text-monospace text-nowrap">module/Admin/src/Service/Log/Writer.php</span>]({{$site.data.vars.github}}/module/Admin/src/Service/Log/Writer.php).
-It bypasses Doctrine to execute database inserts as quickly and simply as possible, using the same PDO object wrapped by Doctrine.
+It bypasses Doctrine to execute database inserts as quickly and simply as possible, using the same PDO object wrapped by Doctrine. The table it writes to 
+<span class="text-monospace">app_event_log</span>. 
 
 
 

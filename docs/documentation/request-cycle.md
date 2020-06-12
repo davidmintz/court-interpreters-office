@@ -37,7 +37,7 @@ The framework then examines that configuration to see what controller to instant
 
 <div class="border border-info rounded sm-shadow py-3 bg-light px-3 mb-3">
     This is an oversimplification. Earlier in the request cycle, an event listener looks at the incoming request and makes
-    decisions about authentication and authorization -- more about that in the 
+    decisions about authentication and authorization -- more about that <a href="#authentication-and-authorization">below</a> and in the 
     <a href="/documentation/authentication-and-authorization.html">section on authentication and authorization</a>.
 </div>
 
@@ -211,7 +211,7 @@ by using a view helper that ships with Laminas, e.g.,
 
 ### the modules
 
-Virtually all <span class="text-monospace">InterpretersOffice</span>'s server-side PHP reside in <span class="text-monospace text-nowrap">module</span>. 
+Virtually all <span class="text-monospace">InterpretersOffice</span>'s server-side PHP resides in <span class="text-monospace text-nowrap">module</span>. 
 Tbe standard modular structure of Laminas MVC is neatly organized:
 <pre class="bg-dark text-white p-2"><code>
     david@lin-chi:/opt/www/court-interpreters-office$ tree -L 2 module

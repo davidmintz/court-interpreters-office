@@ -190,7 +190,8 @@ The columns *created*, *modified*, *created_by_id*, and *modified_by_id* are met
 last user to update it and when. Note that the foreign-key relationship of *created_by_id* and *modified_by_id* is with the **users** table, rather than 
 with **people**. The reason is that the data is always manipulated by users, meaning people who are both authenticated and authorized, whereas a 
 request for an interpreter can be and often is received from a person who does not have any user account in this system. 
-(Of course, the **users** and **people** tables have a foreign-key relationship. A user is a person, but not necessarily vice-versa. More about this in the section on authentication and authorization.)
+(Of course, the **users** and **people** tables have a foreign-key relationship. A user is a person, but not necessarily vice-versa. 
+<!-- More about this in the section on authentication and authorization. -->)
 
 The column *deleted* is essentially a boolean flag indicating whether the record has been deleted by a user -- soft deletion, in other words. This feature was added 
 by popular demand. At present there is no facility for viewing or undeleting records that have been soft-deleted. It merely prevents users from physically deleting 

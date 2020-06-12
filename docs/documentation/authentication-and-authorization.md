@@ -85,7 +85,7 @@ gives a fair overview. An additional point worth noting is that <span class="tex
 of its authorization checking via the event listener attached in the <span class="text-monospace">Admin</span> module's <span class="text-monospace">onBootstrap()</span>
 method. If authorization is denied, a message is logged to that effect. If the authorization is denied by this event listener, it means a user actually tried 
 to navigate to a URL that is not authorized, and was turned away. In some other cases, we simply query the [ACL service](https://github.com/davidmintz/court-interpreters-office/blob/master/module/Admin/src/Service/Acl.php) to determine whether a particular button 
-or link should be displayed to the user, but if the result is negative, the log message is likewise generated. Thus presence of "access denied" messages 
+or link should be displayed to the user, but if the result is negative, the log message is likewise generated. Thus the presence of "access denied" messages 
 in the log does not necessarily mean anyone was trying to do something nefarious. In future versions we might tweak this behavior to make it more nuanced.
 
 The authorization system confers only a few privileges on *administrator* that *manager* does not have. Among these is write-access to the configuration 
