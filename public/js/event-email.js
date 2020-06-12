@@ -546,7 +546,7 @@ $(function(){
                 // subject should not be "your request"
                     if ( "your request" === $("#subject-dropdown").data("template_hint")) {
                         $("#subject-dropdown").data({template_hint:""});
-                        $("#message-subject").val("");
+                        // $("#message-subject").val("");
                     }
                 }
             });
