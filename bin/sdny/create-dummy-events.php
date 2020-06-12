@@ -248,10 +248,38 @@ while ($e = $events_stmt->fetch()) {
     if (! isset($user_id_map[$e->created_by_id])) {
         $get_random_office_user->execute(['hat_id'=>$e->creator_hat_id]);
         $dummy_id = $get_random_office_user->fetch(PDO::FETCH_COLUMN);
+        
         $user_id_map[$e->created_by_id] = $dummy_id;
     }
     $params['created_by_id'] = $user_id_map[$e->created_by_id];
+/* 
+parameters: Array
+(
+    [language_id] => 21
+    [event_type_id] => 3
+    [judge_id] => 10
+    [anonymous_judge_id] => 
+    [comments] => 
+    [admin_comments] => 
+    [date] => 2020-07-21
+    [time] => 14:00:00
+    [docket] => 2019-CR-0651
+    [created] => 2020-01-09 16:18:07
+    [modified] => 2020-06-04 16:54:57
+    [submission_date] => 2020-01-09
+    [submission_time] => 15:49:57
+    [anonymous_submitter_id] => 
+    [deleted] => 0
+    [end_time] => 
+    [cancellation_reason_id] => 
+    [created_by_id] => 1
+    [modified_by_id] => 
+    [location_id] => 24
+    [submitter_id] => 47
+)
 
+
+*/
     // last modified by ...
     if ($e->modified_by_id == $e->created_by_id) {
         $params['modified_by_id'] = $params['created_by_id'];
@@ -259,6 +287,18 @@ while ($e = $events_stmt->fetch()) {
         if (! isset($user_id_map[$e->modified_by_id])) {
             $get_random_office_user->execute(['hat_id'=>$e->modifier_hat_id]);
             $dummy_id = $get_random_office_user->fetch(PDO::FETCH_COLUMN);
+            if (! $dummy_id) {
+                //echo "\ndummy id is: ";var_dump($dummy_id);
+                // try something else
+                /* if the modifier is NOT interpreter/office staff try the judge's clerk OR the request submitter ?*/
+                // is there a request?  try to get the submitter_id's user id
+            $dummy_id = $pdo_dummy->query("SELECT u.id FROM users u JOIN clerks_judges cj ON u.id = cj.user_id WHERE cj.judge_id = {$params['judge_id']} LIMIT 1")
+                ->fetch(PDO::FETCH_COLUMN);
+            if (! $dummy_id) {
+                exit("\nshit, still can't figure out 'modified_by' property for event $e->id");
+            }
+
+            }
             $user_id_map[$e->modified_by_id] = $dummy_id;
         }
         $params['modified_by_id'] = $user_id_map[$e->modified_by_id];
@@ -321,7 +361,7 @@ while ($e = $events_stmt->fetch()) {
         $event_id_map[$e->id] = $dummy_id;
         printf("inserted %d of %d event records\r",++$i,$count);
     } catch (\Exception $ex) {
-        exit("fuck: ".$ex->getMessage()
+        exit("\nfuck: ".$ex->getMessage()
             ."\nparameters: ".print_r($params,true)
             ."\ndata: ".print_r($e,true)
         );
