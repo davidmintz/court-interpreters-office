@@ -390,7 +390,7 @@ return [
                     ],
                     [
                         'label' => 'reports',
-                        'uri' => 'reports',                        
+                        'route' => 'reports',                        
                         'order' => 20,
                     ],
                     [
