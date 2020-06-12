@@ -139,9 +139,10 @@ td.interpreters-assigned div:not(:last-child) {
 .event-details div:last-child {
     border-bottom: none ;
 }
-.event-details a {
+
+/* .event-details a {
     border-right : 2px solid #dee2e6 !important;
-}
+} */
 
 /* maybe do away with this, and add some margin instead? */
 .btn:focus, .btn:active {

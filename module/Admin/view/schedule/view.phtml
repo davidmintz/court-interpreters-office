@@ -21,6 +21,9 @@ $event = $this->event;
 $confirmed = 0;
 if ('submitter' ==  $event['last_update_user_role']) :
     $event['last_updated_by'] = 'system';
+    // $event['last_updated_by'] = sprintf('<a title="this event was automatically updated when %s updated the corresponding request" data-toggle="popover" href="#">system</a>',
+    // "user {$event['last_update_firstname_init']}. {$event['last_update_lastname']}"
+    // );
     // instead of "{$event['last_update_firstname_init']}. {$event['last_update_lastname']}";
 endif;
 $this->entity = $event;
@@ -169,15 +172,25 @@ if (!$this->before):?>
         <?php echo $this->escapeHtml("{$event['created']->format('d-M-Y g:i a')}  ({$event['created_by']})"); ?>
     </div>
     <div class="col-sm-3 text-muted text-md-right">
-        last updated
+         last updated
     </div>
     <div class="col-sm-3 pl-0 last-modified">
         <?php
-        echo $event['created'] != $event['last_updated'] ?
-        ("{$this->event['last_updated']->format('d-M-Y g:i a')}<br>".$this->escapeHtml("({$event['last_updated_by']})"))
-        : '<span class="text-muted">n/a</span>';
-        ?>
-    </div>
+        // if ('system' == $event['last_updated_by']) : 
+        //  printf('<a title="this event was automatically updated when %s updated the corresponding request" data-toggle="popover" href="#">system</a>',
+        //      "user {$event['last_update_firstname_init']}. {$event['last_update_lastname']}"
+        // );                
+        // else :
+        if ($event['created'] != $event['last_updated']) :
+            echo "{$this->event['last_updated']->format('d-M-Y g:i a')}<br>";
+            if ('system' != $event['last_updated_by']): 
+                echo $this->escapeHtml("({$event['last_updated_by']}");
+            else:             
+                printf('(<a data-content="this event was automatically updated when user %s updated the corresponding request." data-toggle="popover" href="#">system</a>)',
+                  "user {$event['last_update_firstname_init']}. {$event['last_update_lastname']}");
+            endif;
+        endif;        
+  ?></div>
     <?php if ($event['submitter_comments']): ?>
     <div class="col-sm-3 text-muted text-md-right">
         submitter comments

@@ -335,6 +335,7 @@ $(function(){
     $(".alert button[data-hide]").on("click",
         function(){$(this).parent().slideUp();});
     $("div.popover").css({zIndex:1500});
+    $(".last-modified a").popover({trigger:"hover focus"});
     const boilerplate_popover  = $("label[for=template] a[data-toggle=\"popover\"]");
     /* popover with help info for the boilerplate/template control */
     boilerplate_popover.popover({
