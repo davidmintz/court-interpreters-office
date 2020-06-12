@@ -265,10 +265,16 @@ class NotesController extends AbstractRestfulController
     {
         $type = $this->params()->fromRoute('type');
         $date_string = $this->params()->fromRoute('date');
+        try {
+            $date_obj = new \DateTime($date_string);
+        } catch (\Exception $e) {
+            // bad date parameter. and the route constraint should prevent this but does not.
+            return new ViewModel(['error_message'=>'Invalid url parameter: '.$date_string . '. The format YYYY-MM-DD is required.']);
+        }
         if ('motw' == $type) {
             //$date_string = $this->notesService->getSession()['settings']['date'];
         }
-        $notes = $this->notesService->getAllForDate(new \DateTime($date_string));
+        $notes = $this->notesService->getAllForDate($date_obj);
         // make sure someone didn't already create one
         $existing = $notes[$type]; //$this->notesService->getNoteByDate(new \DateTime($date_string),$type);
         if ($existing) {

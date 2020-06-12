@@ -4,6 +4,13 @@ $this->headScript()
     ->appendFile($this->basePath('js/admin/notes-form.js'));
 ?>
 <h2><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<?php if ($this->error_message):  ?>
+
+<div class="alert alert-warning rounded shadow-sm p-3 mx-auto border-danger" style="max-width:600px">
+    <h3>error</h3>
+    <?= $this->escapeHtml($this->error_message) ?>
+</div>   
+<?php return; endif;?>
 <pre class="border p-1" hidden>
 layout->action is <?php echo $this->layout()->action ?>
 
