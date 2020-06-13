@@ -184,7 +184,7 @@ if (!$this->before):?>
         if ($event['created'] != $event['last_updated']) :
             echo "{$this->event['last_updated']->format('d-M-Y g:i a')}<br>";
             if ('system' != $event['last_updated_by']): 
-                echo $this->escapeHtml("({$event['last_updated_by']}");
+                echo $this->escapeHtml("({$event['last_updated_by']})");
             else:             
                 printf('(<a data-content="this event was automatically updated when user %s updated the corresponding request." data-toggle="popover" href="#">system</a>)',
                   "user {$event['last_update_firstname_init']}. {$event['last_update_lastname']}");
