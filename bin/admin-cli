@@ -80,7 +80,7 @@ class ClearCacheCommand extends Command
     protected function configure()
     {
         $this->setName("admin:clear-cache")
-            ->setDescription("clears Doctrine filesystem cache (really)")
+            ->setDescription("clears Doctrine filesystem and application configuration caches (really)")
             ->setHelp("not much to it, just do it");
 
     }
@@ -90,11 +90,19 @@ class ClearCacheCommand extends Command
         $path = dirname(__FILE__).'/../data/DoctrineModule/cache/*';
         system("rm -r $path", $exit_status);
         if ("0" != $exit_status) {
-            $io->error("could not clear filesystem cache");
-            return 1;
+            $io->error("could not clear filesystem cache (maybe it was empty)");
+            //return 1;
+        } else {
+            $io->success("Successfully cleared Doctrine filesystem cache.");
         }
-        $io->success("Successfully cleared filesystem cache.");
-
+        $path = dirname(__FILE__).'/../data/cache/*';
+        system("rm -rf $path", $exit_status);
+        if ("0" != $exit_status) {
+            $io->error("could not clear app configuration cache");
+            //return 1;
+        } else {
+            $io->success("Successfully cleared configuration cache.");
+        }
         return 0;
     }
 }
