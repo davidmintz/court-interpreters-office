@@ -566,7 +566,7 @@ class Interpreter extends Person
      * @param DateTime $BOPFormSubmissionDate
      * @return Interpreter
      */
-    public function setBOPFormSubmissionDate(DateTime $BOPFormSubmissionDate)
+    public function setBOPFormSubmissionDate(DateTime $BOPFormSubmissionDate = null)
     {
         $this->BOP_form_submission_date = $BOPFormSubmissionDate;
 
