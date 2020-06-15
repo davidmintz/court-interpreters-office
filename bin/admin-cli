@@ -67,8 +67,10 @@ class LoadInitialDataCommand extends Command
                $connection->exec($q);
             }
             $io->success("Required initial data loaded successfully.");
+            return 0;
         } catch (\Exception $e) {
             $io->error("Sorry! caught exception: ".$e->getMessage());
+            return 1;
         }
     }
 }
@@ -80,7 +82,7 @@ class ClearCacheCommand extends Command
     protected function configure()
     {
         $this->setName("admin:clear-cache")
-            ->setDescription("clears Doctrine filesystem and application configuration caches (really)")
+            ->setDescription("clears Doctrine filesystem (really) and application configuration caches (really)")
             ->setHelp("not much to it, just do it");
 
     }
