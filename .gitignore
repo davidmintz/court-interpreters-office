@@ -33,3 +33,4 @@ bin/scratch
 **/.jekyll-cache
 buildfiles/
 .mysql/
+.docker-sync/
