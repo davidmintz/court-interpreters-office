@@ -31,3 +31,4 @@ doc/parser*
 bin/sdny/excel/warnings*
 bin/scratch
 **/.jekyll-cache
+buildfiles/
