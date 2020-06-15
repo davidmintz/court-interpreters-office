@@ -1,0 +1,40 @@
+version: '3.3'
+
+networks:
+  app-tier:
+    driver: bridge
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - app-tier
+    ports:
+      - "80:80"
+    volumes:
+      - court-interpreters-office-sync:/var/www:rw
+      - ./config/autoload/local.php:/var/www/config/autoload/local.php
+      - ./config/development.config.php.dist:/var/www/config/development.config.php
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=123
+    ports:
+      - "3306:3306"
+    networks:
+      - app-tier
+    volumes:
+      - ./.mysql/mysql:/var/lib/mysql
+      - ./.docker/config/my.cnf:/etc/mysql/conf.d/custom.cnf
+
+  redis:
+    image: redis:latest
+    networks:
+      - app-tier
+
+volumes:
+  court-interpreters-office-sync:
+    external: true
