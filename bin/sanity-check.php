@@ -22,34 +22,42 @@ try {
         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8',
     ]);
     
-    // the latest holiday in the database should be at least 12 weeks in the future
+    // the latest holiday in the database should be at least 90 days in the future
     $date_str = $db->query('SELECT date FROM court_closings ORDER BY date DESC LIMIT 1')
         ->fetchColumn();
     $latest = new \DateTime($date_str);
-    $diff = $latest->diff(new \DateTime());
-    $days = $diff->format('%R%d');
+    $diff =(new \DateTime())->diff($latest);
+    $format = $diff->invert ? '%R%d' : '%d';
+    $days = $diff->format($format);
     if ($days < 90) {
-       
-        $service = new Service\BatchEmailService($container->get('config')['mail']);
+        
+        $config = $container->get('config');
+        $service = new Service\BatchEmailService($config['mail']);
         $transport = $service->getTransport();
         $mailer = new Swift_Mailer($transport);
-        $message = new Swift_Message('Your InterpretersOffice database needs maintenance');
-        $view = new ViewModel(['content'=>'Not enough holidays in your database']);
+        $message = new Swift_Message('InterpretersOffice database maintenance required');
+        $content = 
+        "<p>Hello,</p>
+
+        <p>This automated message is to let you know that some maintenance needs to 
+        be done with your <code>InterpretersOffice</code> application database. The latest date in your list of official 
+        Court holidays should be no less than 90 days into the future, but your latest date is only $days days from now. 
+        Please log in and go to your application's <code>/admin/court-closings</code> page to insert holidays.</p>";
+        $view = new ViewModel(['content'=>$content]);
         $view->setTemplate('interpreters-office/email/layout.phtml');
         $html = $container->get('ViewRenderer')->render($view);
-        
-        // $layout->setVariable('content', $this->viewRenderer->render($view));
-        // $content = $this->viewRenderer->render($layout);
-        // echo get_class($transport);
-        // $message = $service->createEmailMessage('<p>You need to add more Court holidays to your database</p>','');
-        // $message->setTo('david@davidmintz.org');
-        // $message->setFrom('webmaster@davidmintz.org');
-        // $transport = $service->getMailTransport();
-        //$transport->send($message);
+        $text = strip_tags($content);
+        $address = [$config['mail']['from_address']=>$config['mail']['from_entity']];
+        $message->setBody($text)->addPart($html,'text/html')->setFrom($address)
+            ->setTo($address);
+        $transport->send($message);
+        $container->get('log')->warn("Latest holiday in the database is $days days away. We emailed a notice to {$config['mail']['from_address']}",['channel'=>'data-maintenance']);
+
     }
 
 } catch (\Exception $e) {
     $filename = basename(__FILE__);
-    exit(sprintf( "%s failed with error message: %s\n",$filename,$e->getMessage()));
+    $log->err(sprintf( "%s failed with error message: %s\n",$filename,$e->getMessage()));
+    exit(1);
 
 }
