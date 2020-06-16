@@ -98,8 +98,10 @@ const get_event_details = function()
         if (!obj.length) {
             console.warn("!! dude, no ."+fields[i]);
         } else {
-            //var html = obj.html().trim();
             data[fields[i]] = obj.html().trim();
+            if (fields[i] === "interpreters") {
+                data[fields[i]] = data[fields[i]].replace(" (confirmed)","");
+            }
         }
     }
 

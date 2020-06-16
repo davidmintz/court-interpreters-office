@@ -78,7 +78,7 @@ endif;
                 if ('defendants' == $field):
                     echo $helper->renderDefendants($data);
                 elseif ('interpreters' == $field) :
-                    echo strip_tags($helper->renderInterpreters($data),'<ins><del>'); 
+                    echo strip_tags($helper->renderInterpreters($data),'<ins><del><br>'); 
                 elseif ($data instanceof \DateTime) :
                     echo $helper->renderDateTime($field, $data);
                 else :
