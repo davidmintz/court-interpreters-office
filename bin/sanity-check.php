@@ -57,7 +57,7 @@ try {
 
 } catch (\Exception $e) {
     $filename = basename(__FILE__);
-    $log->err(sprintf( "%s failed with error message: %s\n",$filename,$e->getMessage()));
+    $container->get('log')->err(sprintf( "%s failed with error message: %s\n",$filename,$e->getMessage()));
     exit(1);
 
 }
