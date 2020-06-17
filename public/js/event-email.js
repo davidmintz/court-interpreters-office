@@ -46,13 +46,13 @@ const create_recipient = function(email,name, role, person_id){
 
 const append_salutation = function (name, email) {
     console.debug("appending name to salutation select");
-    $("#message-salutation").append(`<option id="salutation-${email.replace("@",".at.").toLowerCase()}" value="Dear ${name}">Dear ${name}:</option>`);
+    $("#message-salutation").append(`<option id="salutation-${email.replace("@",".at.").toLowerCase()}" value="Dear ${name}:">Dear ${name}:</option>`);
 };
 const remove_salutation = function(name) {
     var el = $(`option:contains("${name}")`);
     if (el.length) {
         el.remove();
-        console.debug("removed recipient: "+name);
+        console.debug("removed salutation option: "+name);
     } 
 };
 /**
@@ -242,7 +242,7 @@ const send_email = function(){
         message.request_id = $("div#request-details").data("id");
         message.entity_class = "Request";
     }
-
+    message.salutation = $("#message-salutation").val();
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
     $.post(url,{message, csrf}).done((response)=> {
@@ -440,7 +440,7 @@ $(function(){
                 var n = ui.item.label.lastIndexOf(", ");
                 var name = `${ui.item.label.substring(n+2)} ${ui.item.label.substring(0,n)}`;
                 var html = create_recipient(email, name, role, ui.item.id);
-                
+                append_salutation(name,email);
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
                 $(this).val("");

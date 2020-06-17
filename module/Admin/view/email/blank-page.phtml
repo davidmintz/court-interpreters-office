@@ -1,13 +1,6 @@
 <?php
 /**  module/Admin/view/email/blank-page.phtml  */
-$address = $this->to;
-if (!empty($address['name'])):
-    $salutation = "Dear {$address['name']}:";
-else:
-    $salutation = 'Hello,';
-endif;
-?>
-<p><?php echo $salutation ?></p>
+echo $this->salutation();?>
 <p>
 <?php echo //nl2br()
     $this->notes ?>

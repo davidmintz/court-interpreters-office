@@ -1,15 +1,8 @@
 <?php
 /** module/Admin/view/email/assignment-confirmation-notice.phtml */
 
-$address = $this->to;
-if (!empty($address['name'])):
-    $salutation = "Dear {$address['name']}:";
-else:
-    $salutation = 'Hello,';
-endif;
-?>
-<p><?php echo $salutation ?></p>
-<?php if (!$this->entity):?>
+echo $this->salutation();
+if (!$this->entity):?>
 <p><?php echo $this->notes ?></p>
 <?php else: ?>
 <p>

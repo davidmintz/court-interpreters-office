@@ -7,10 +7,7 @@
 namespace InterpretersOffice\Admin;
 
 use InterpretersOffice\Entity\Listener;
-// use InterpretersOffice\Entity\Listener\InterpreterEventEntityListener;
-// use InterpretersOffice\Entity\Listener\Factory\InterpreterEntityListenerFactory;
-// use InterpretersOffice\Admin\Service\Factory\DbLogWriterFactory;
-// use InterpretersOffice\Admin\Controller\DocketAnnotationsController;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
 
@@ -48,6 +45,15 @@ return [
         'template_map' => include(__DIR__.'/template_map.php'),
         'template_path_stack' => [
             __DIR__.'/../view',
+        ],
+    ],
+    // more of this in module/InterpretersOffice/config/module.config.php
+    'view_helpers' => [
+        'factories' => [
+            View\Helper\EmailSalutation::class => InvokableFactory::class,
+        ],
+        'aliases' => [
+            'salutation' => View\Helper\EmailSalutation::class,
         ],
     ],
 

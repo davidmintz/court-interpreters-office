@@ -1,13 +1,6 @@
-<?php /** module/Admin/view/email/assignment-availability-notice.phtml */
+<?php /** module/Admin/view/email/assignment-availability-notice.phtml */?>
 
-$address = $this->to;
-if (!empty($address['name'])):
-    $salutation = "Dear {$address['name']}:";
-else:
-    $salutation = 'Hello,';
-endif;
-?>
-<p><?php echo $salutation ?></p>
+<?= $this->salutation() ?>
 <p>
     We are writing to see if you are available to accept the interpreting assignment shown below.
 </p>
