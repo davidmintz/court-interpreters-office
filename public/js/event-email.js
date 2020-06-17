@@ -44,6 +44,17 @@ const create_recipient = function(email,name, role, person_id){
     </div>`;
 };
 
+const append_salutation = function (name, email) {
+    console.debug("appending name to salutation select");
+    $("#message-salutation").append(`<option id="salutation-${email.replace("@",".at.").toLowerCase()}" value="Dear ${name}">Dear ${name}:</option>`);
+};
+const remove_salutation = function(name) {
+    var el = $(`option:contains("${name}")`);
+    if (el.length) {
+        el.remove();
+        console.debug("removed recipient: "+name);
+    } 
+};
 /**
  * gets short textual description of the event
  *
@@ -381,6 +392,7 @@ $(function(){
                 }
                 var name = input.next("label").text().trim();
                 var html = create_recipient(email,name,"interpreter",input.data("id"));
+                append_salutation(name, email);
                 $("#email-form .email-subject").before(html);
                 input.attr("disabled","disabled");
                 if (! $("#email-dropdown input").not(":disabled").length)
@@ -428,6 +440,7 @@ $(function(){
                 var n = ui.item.label.lastIndexOf(", ");
                 var name = `${ui.item.label.substring(n+2)} ${ui.item.label.substring(0,n)}`;
                 var html = create_recipient(email, name, role, ui.item.id);
+                
                 $(".email-subject").before(html);
                 $("span.email-recipient").tooltip();
                 $(this).val("");
@@ -525,6 +538,7 @@ $(function(){
             $(this).tooltip("hide");
             var input = $(this).prev(".form-control").children("input");
             var email = input.val().toLowerCase();
+            var name = $(this).prev().text().trim();
             var dropdown_item = $(`#email-dropdown input[value="${email}"]`);
             if (dropdown_item.length && dropdown_item.is(":disabled")) {
                 dropdown_item.removeAttr("disabled").removeClass("disabled");
@@ -540,6 +554,7 @@ $(function(){
             }
             var div = $(this).closest(".form-row");
             div.slideUp(()=> {
+                remove_salutation(name);
                 div.remove();
                 // if no recipients, disable "send" button
                 if (! $("input.email-recipient[name=\"to[]\"]").length) {
@@ -559,6 +574,13 @@ $(function(){
             var input = $(this).parent().next().find("input.email-recipient");
             var name = input.attr("name") ===  "to[]" ? "cc[]" : "to[]";
             input.attr({name});
+            var recipient_name = $(this).parent().next().find("span.email-recipient").text().trim();
+            var salutation_opt = $(`#message-salutation option:contains(${recipient_name})`);
+            if ($(this).val() === "cc") {
+                salutation_opt.attr({disabled : true});
+            } else {
+                salutation_opt.removeAttr("disabled");
+            }
             if (! $("input.email-recipient[name=\"to[]\"]").length) {
                 $("#btn-send").addClass("disabled").attr("disabled");
             } else {
@@ -589,6 +611,9 @@ $(function(){
             console.log(element.data());
             if (! $(`.form-control input[value="${email}"]`).length) {
                 var html = create_recipient(email,name,element.data("role"),element.data("id"));
+                append_salutation(name,email);
+                // console.debug("appending name to salutation select");
+                // $("#message-salutation").append(`<option id="salutation-${email.replace("@",".at.")}" value="Dear ${name}">Dear ${name}:</option>`);
                 $("#email-form .email-subject").before(html);
             }
             // disable this element, since the address has now been added
