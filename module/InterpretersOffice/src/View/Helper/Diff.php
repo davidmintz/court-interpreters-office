@@ -106,7 +106,7 @@ class Diff extends AbstractHelper
             return sprintf('<del>%s</del>%s<ins>%s</ins>', $before[$field], $sep, $data);
         }
 
-        if ($data instanceof \DateTime) {
+        if ($data instanceof \DateTime && isset($before[$field])) {
             $string_before = $this->renderDateTime($field, $before[$field]);
             $string_after  = $this->renderDateTime($field, $data);
             if ($string_before != $string_after) {
