@@ -10,7 +10,7 @@ printf('You have <span id="requests-pending">%s %s</span> pending addition to th
     <thead>
         <tr>
             <th class="text-info font-weight-normal">date</th>
-            <th class="text-info font-weight-normal d-md-none d-lg-table-cell">time</th>
+            <th class="text-info font-weight-normal d-sm-none d-lg-table-cell">time</th>
             <th class="text-info font-weight-normal">language</th>
             <th class="text-info font-weight-normal">type</th>
             <th class="text-info font-weight-normal d-md-none d-lg-table-cell">location</th>
@@ -23,11 +23,11 @@ printf('You have <span id="requests-pending">%s %s</span> pending addition to th
     <?php foreach ($this->paginator as $r) : $r = array_merge($r,$r[0]); unset($r[0])?>
     <tr class="request" data-id="<?php echo $r['id']?>">
         <td class="text-nowrap"><?php echo $r['date']->format('d-M-Y')?></td>
-        <td class="text-nowrap"><?php echo $r['time']->format('g:i a')?></td>
+        <td class="text-nowrap d-sm-none d-lg-table-cell"><?php echo $r['time']->format('g:i a')?></td>
         <td class="language"><?php echo $r['language']?></td>
         <td><?php echo $r['type']?></td>
-        <td><?php echo $r['location']?></td>
-        <td class="text-nowrap"><?php echo substr($r['docket'],2)?></td>
+        <td class="d-md-none d-lg-table-cell"><?php echo $r['location']?></td>
+        <td class="text-nowrap d-md-none d-lg-table-cell"><?php echo substr($r['docket'],2)?></td>
         <td><?php echo $r['judge']?></td>
         <td><?php echo $this->defendants($r['id'])?></td>
         <td class="dropdown dropleft"><a style="color:gray" id="request-dropdown-<?php echo $r['id']?>" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">actions</span><span class="fas fa-bars"></span></a>
