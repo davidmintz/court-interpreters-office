@@ -23,9 +23,12 @@ class ScheduleControllerFactory implements FactoryInterface
     {
         
         $end_time_enabled = $this->getEndTimeEnabled();
+        $module_manager = $container->get("ModuleManager");
+        $modules = array_keys($module_manager->getLoadedModules());
+        $requests_enabled = in_array('InterpretersOffice\Requests',$modules);
         $em = $container->get('entity-manager');
-
-        return new ScheduleController($em, ['end_time_enabled'=>$end_time_enabled]);
+        
+        return new ScheduleController($em, compact('end_time_enabled','requests_enabled'));
     }
 
     /**

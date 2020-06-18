@@ -262,4 +262,16 @@ class IndexController extends AbstractActionController
 
         return new JsonModel($result);
     }
+
+    /**
+     * returns number of Requests pending insertion
+     * 
+     */
+    public function countPendingAction()
+    {
+        /** @var InterpretersOffice\Requests\Entity\RequestRepository $repository */
+        $repository = $this->objectManager->getRepository(Request::class);
+        $count = $repository->countPending();
+        return new JsonModel(['pending' => $count,]);
+    }
 }

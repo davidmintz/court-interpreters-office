@@ -60,10 +60,18 @@ class ScheduleController extends AbstractActionController
 
         $filters = $this->getFilters();
         $date = new \DateTime($filters['date']);
+        /** @var InterpretersOffice\Entity\Repository\EventRepository $repo */
         $repo = $this->entityManager->getRepository(Entity\Event::class);
         $data = $repo->getSchedule($filters);
         $end_time_enabled = $this->config['end_time_enabled'];
-        $viewModel = new ViewModel(compact('data', 'date','end_time_enabled'));
+        $requests_enabled = $this->config['requests_enabled'];
+        if ($requests_enabled) {
+            $repository = $this->entityManager->getRepository('InterpretersOffice\Requests\Entity\Request');
+            $pending = $repository->countPending();
+        } else {
+            $pending = null;
+        }
+        $viewModel = new ViewModel(compact('data', 'date','end_time_enabled','requests_enabled','pending'));
         $this->setPreviousAndNext($viewModel, $date)
             ->setVariable('language', $filters['language']);
         if ($this->getRequest()->isXmlHttpRequest()) {

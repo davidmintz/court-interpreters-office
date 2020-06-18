@@ -64,7 +64,6 @@ return [
         ],
     ],
 
-    // work in progress
     'navigation' => [
         'admin_breadcrumbs' =>  [
             [
@@ -76,10 +75,7 @@ return [
                         'route' => 'admin-requests',
                         'expand' => false,
                         'pages' => [
-                            // [
-                            //     'label'=>'configuration',
-                            //     'route'=>'admin-requests/config',
-                            // ],
+                            
                             [
                                 'label' => 'view details',
                                 'route' => 'admin-requests/view',
@@ -87,7 +83,7 @@ return [
                             ],
                         ],
                     ],
-                    // see what would happens if we move this to the Requests config
+                    // see what would happen if we move this to the Requests config
                     'configuration' =>[
                         'label' => 'configuration',
                         'route' => 'configuration',
@@ -275,6 +271,15 @@ return [
                                     'action' => 'view|schedule',
                                     'id' => '[1-9]\d*',
                                 ],
+                            ],
+                        ],
+                    ],
+                    'count-pending' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route' => '/count',
+                            'defaults' => [
+                                'action' => 'count-pending'
                             ],
                         ],
                     ],

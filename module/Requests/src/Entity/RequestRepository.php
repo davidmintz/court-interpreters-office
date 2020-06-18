@@ -37,19 +37,16 @@ class RequestRepository extends EntityRepository
     }
 
     /**
-     * counts Request entities matching certain criteria.
-     *
-     * work in progress
-     *
-     * @param  array  $options
+     * counts pending Request entities.
+     * 
      * @return int
      */
-    // public function count(Array $options = [])
-    // {
-    //     $dql = 'SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r';
-    //
-    //     return $this->getEntityManager()->createQuery($dql)->getSingleScalarResult();
-    // }
+    public function countPending() : int
+    {
+        $dql = 'SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r WHERE r.pending = true';
+        
+        return $this->getEntityManager()->createQuery($dql)->getSingleScalarResult();
+    }
 
     /**
      * gets fully-hydrated Request entity.

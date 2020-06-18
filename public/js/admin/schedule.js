@@ -271,7 +271,7 @@ $(function() {
 
         
         // initialize Bootstrap popover for editing interpreters
-        $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
+    $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
     $("[data-toggle=\"tooltip\"]").tooltip();
 
     // refresh table when they change language filter
@@ -317,7 +317,20 @@ $(function() {
             document.location = url + date;
         }
     });
-
+    /* check for pending requests every 3 minutes */
+    var requests_pending = $("#requests-pending span");
+    if (requests_pending.length) {
+        var requests_interval = 180000;
+        window.t = window.setTimeout(function check_requests(){
+            console.log("hello.");
+            $.get("/admin/requests/count").then(res=>{
+                if ("number" === typeof res.pending) {
+                    requests_pending.text(res.pending);
+                }       
+                window.t = window.setTimeout(check_requests,requests_interval);
+            }).fail(res=>{fail(res); window.t = null;});
+        },requests_interval);    
+    }
 
     /**
      * periodically reloads schedule data.
