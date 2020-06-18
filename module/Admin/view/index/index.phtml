@@ -69,6 +69,12 @@ $this->headStyle()->captureStart();?>
             </p>
         </div>
         <div class="col">
+            <?php if (in_array('InterpretersOffice\Requests',$this->modules)):?>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('admin-requests')?>">requests</a>
+                manage request that have been submitted online
+            </p>
+            <?php endif ?>
             <p>
                 <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('court-closings')?>">court closings</a>
                 official Court holidays and ad-hoc closings
@@ -117,5 +123,6 @@ $this->headStyle()->captureStart();?>
             </ul>
         </div>
     </div>
+    <!-- <pre><?php print_r(preg_grep('/InterpretersOffice/',$this->modules))?></pre> -->
 </div>
 
