@@ -6,11 +6,12 @@ $this->headTitle('admin | reports')?>
     <form action="">
     <div class="form-row mb-2">
         <label class="col-md-2 col-form-label" for="report">report</label><div class="col-md-7"><select name="report" id="report" class="custom-select form-control">
-            <option value="1">interpreter usage by language</option>
-            <option value="2">interpreter usage by interpreter</option>
-            <option value="3">belated cancellations per judge</option>
-            <option value="4">belated requests per judge</option>
-        </select></div>
+            <?php $default_report_opt = $this->defaults['report']??1; 
+            foreach ($this->reports as $i =>$option): ?>
+                <option value="<?=$i?>"<?php if ($i == $default_report_opt):?> selected="selected"<?php endif ?>><?=$option?></option>
+            <?php endforeach;?>            
+        </select>
+    </div>
     </div>
     <div class="form-row mb-2">
         <label class="col-md-2 col-form-label" for="dates">date range</label><div class="col-md-7"><select name="dates" id="dates" class="custom-select form-control">

@@ -4,9 +4,9 @@ namespace InterpretersOffice\Admin\Controller;
 
 use Laminas\Mvc\Controller\AbstractActionController;
 // use Laminas\View\Model\ViewModel;
-// use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
-
+use InterpretersOffice\Admin\Service\ReportService;
 // use InterpretersOffice\Entity;
 
 /**
@@ -20,9 +20,9 @@ class ReportsController extends AbstractActionController
      /**
      * entity manager
      *
-     * @var EntityManagerInterface
+     * @var ReportService
      */
-    private $em;
+    private $reports;
 
     /**
      * @var SessionContainer
@@ -37,9 +37,9 @@ class ReportsController extends AbstractActionController
      *
      * @param EntityManagerInterface $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ReportService $reports)
     {
-        $this->em = $em;
+        $this->reports = $reports;
         $this->session = new \Laminas\Session\Container("reports");
     }
 
@@ -47,6 +47,34 @@ class ReportsController extends AbstractActionController
      * index page
      */
     public function indexAction()
+    {        
+        $params = $this->params()->fromQuery();
+        if ($params) {
+           
+            $input = $this->reports->getInputFilter();
+            $input->setData($params);
+            if (! $input->isValid()) {
+                return new JsonModel(['validation_errors'=>$input->getMessages()]);
+            }
+            return new JsonModel(['data'=>['boink!']]);
+        }
+        return ['reports'=>$this->reports->getReports(),
+            'defaults'=>$this->getDefaults()];
+    }
+    /**
+     * figures out default report settings
+     * 
+     * @return array
+     */
+    private function getDefaults()
     {
+        
+        $get = $this->params()->fromQuery();
+        if ($get) {
+            $filter = $this->service->getInputFilter();
+            $filter->setData($get);
+        }
+        
+        return [];
     }
 }

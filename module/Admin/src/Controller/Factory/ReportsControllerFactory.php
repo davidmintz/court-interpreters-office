@@ -5,6 +5,7 @@ namespace InterpretersOffice\Admin\Controller\Factory;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use InterpretersOffice\Admin\Controller\ReportsController;
+use InterpretersOffice\Admin\Service\ReportService;
 
 /** factory */
 class ReportsControllerFactory implements FactoryInterface
@@ -19,6 +20,6 @@ class ReportsControllerFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
-        return new ReportsController($container->get('entity-manager'));
+        return new ReportsController(new ReportService($container->get('entity-manager')));
     }
 }
