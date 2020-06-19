@@ -1,6 +1,33 @@
-<div style="max-width:700px" class="mx-auto">
+<?php $this->headScript()->appendFile($this->basePath("js/admin/reports.js"));
+$this->headTitle('admin | reports')?>
+<div style="max-width:800px" class="mx-auto">
     <h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
-    <p class="mt-4">
-        The reporting feature is coming soon. In the meantime please contact the application developer (david@davidmintz.org) if you need assistance.
-    </p>
+    <p class="alert alert-warning rounded border border-warning shadow-sm py-2 px-5 mx-auto mt-3">This still in development and does not yet work.</p>
+    <form action="">
+    <div class="form-row mb-2">
+        <label class="col-md-2 col-form-label" for="report">report</label><div class="col-md-7"><select name="report" id="report" class="custom-select form-control">
+            <option value="1">interpreter usage by language</option>
+            <option value="2">interpreter usage by interpreter</option>
+            <option value="3">belated cancellations per judge</option>
+            <option value="4">belated requests per judge</option>
+        </select></div>
+    </div>
+    <div class="form-row mb-2">
+        <label class="col-md-2 col-form-label" for="dates">date range</label><div class="col-md-7"><select name="dates" id="dates" class="custom-select form-control">
+            <option value="1">current calendar year to date</option>
+            <option value="2">current quarter to date</option>
+            <option value="3">previous year</option>
+            <option value="4">previous quarter</option>
+            <option value="5">current fiscal year to date</option>
+            <option value="6">previous fiscal year</option>
+            <option value="7">custom...</option>
+        </select></div>
+    </div>
+    <div class="form-row mb-2">
+    <label class="col-md-2 col-form-label" for="date-from">from</label>
+    <div class="col-md-2"><input name="date-from" id="date-from" class="form-control" type="text"></div>
+    <label for="date-to" class="col-form-label col-auto">to</label>
+    <div class="col-md-2"><input name="date-to" id="date-to" class="form-control" type="text"></div>
+    </div>
+    </form>
 </div>

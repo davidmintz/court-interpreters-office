@@ -97,6 +97,10 @@ $this->headStyle()->captureStart();?>
                 <a class="btn btn-block btn-outline-primary" role="button" href="<?=$this->url('search') ?>">search</a>
                 search your database for past and future interpreter-events based on various criteria
             </p>
+            <p>
+                <a class="btn btn-block btn-outline-primary" role="button" href="<?=$this->url('reports') ?>">reports</a>
+                generate interpreter activity reports
+            </p>
             <?php if (in_array('InterpretersOffice\Admin\Notes', $this->modules)):?>
             <p>
                 <a class="btn btn-block btn-outline-primary" role="button" href="<?=$this->url('notes') ?>">MOTD/MOTW</a>
