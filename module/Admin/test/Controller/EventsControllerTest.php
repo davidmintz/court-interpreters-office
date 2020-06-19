@@ -140,6 +140,31 @@ class EventsControllerTest extends AbstractControllerTest
         );
     }
 
+    public function testNonAnonymousHatRequiresSubmitterIdentification()
+    {
+         // $data = [];
+         $em = FixtureManager::getEntityManager();
+
+        
+         $event = $this->getDummyData();
+         $event['submitter'] = ''; // should be sufficient to trigger validation error
+         //$event['anonymous_submitter']
+         $this->login('david', 'boink');
+         $this->reset(true);
+         $token = $this->getCsrfToken('/admin/schedule/add');
+         $this->getRequest()->setMethod('POST')->setPost(
+             new Parameters([
+                     'event' => $event,
+                     'csrf' => $token,
+                 ])
+         );
+         $this->dispatch('/admin/schedule/add');
+         $this->assertJson($this->getResponse()->getBody());
+         $res = json_decode($this->getResponse()->getBody());
+        //  print_r($res);
+         $this->assertTrue(isset($res->validation_errors));
+         $this->assertTrue(isset($res->validation_errors->event->submitter));
+    }
     /**
      * @depends testAddInCourtEvent
      *
@@ -344,6 +369,7 @@ class EventsControllerTest extends AbstractControllerTest
         $this->reset(true);
         $token = $this->getCsrfToken($url, 'csrf');
         //printf("\nthe fucking token is %s\n",$token);
+        $data['anonymous_submitter'] = 0;
         $this->getRequest()
             ->setMethod('POST')->setPost(
             new Parameters([
@@ -355,9 +381,12 @@ class EventsControllerTest extends AbstractControllerTest
 
         $this->dispatch($url);
         $this->assertResponseStatusCode(200);
+        $json = $this->getResponse()->getBody();
+        $response = json_decode($json);
+        $this->assertTrue($response->status == "success");
         $now =  $entity = FixtureManager::getEntityManager()->find('InterpretersOffice\Entity\Event',1)
             ->getModified()->format('Y-m-d H:i:s');
-        //$this->dumpResponse();
+        // $this->dumpResponse();
         $this->assertNotEquals($then,$now);
         /**/
 
@@ -468,6 +497,7 @@ class EventsControllerTest extends AbstractControllerTest
         $this->login('david', 'boink');
         $this->reset(true);
         $token = $this->getCsrfToken($url);
+        $data['anonymous_submitter'] = 0;
         $this->dispatch(
             $url,
             'POST',
@@ -480,7 +510,7 @@ class EventsControllerTest extends AbstractControllerTest
         $this->assertJson($content);
         $response = json_decode($content);
         $this->assertTrue($response->status == 'success');
-
+        // print_r($response);
         // moment of truth
         $em->refresh($event);
         $interpreter_events = $event->getInterpreterEvents();
@@ -536,6 +566,7 @@ class EventsControllerTest extends AbstractControllerTest
         $this->login('david', 'boink');
         $this->reset(true);
         $token = $this->getCsrfToken($url);
+        $data['anonymous_submitter'] = 0;
         $this->dispatch(
             $url,
             'POST',

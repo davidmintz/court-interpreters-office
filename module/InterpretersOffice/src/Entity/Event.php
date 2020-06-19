@@ -1006,6 +1006,12 @@ class Event implements Interpretable
                     .' one must be null and the other not-null'
             );
         }
+        if (! $this->getSubmitter() && !$this->getAnonymousSubmitter()->getAnonymity()) {
+            throw new \RuntimeException(sprintf(
+                'The request submitter of type "%s" cannot be anonymous. This may be a bug in the application\'s input validation',
+                (string)$this->getAnonymousSubmitter()
+            ));
+        }
         if (! ($this->anonymous_judge === null xor $this->judge === null)) {
             $debug = "\nanonymous_judge: " .(is_null($this->anonymous_judge) ? "null" : "not null");
             $debug .= "\nJudge: " .(is_null($this->judge) ? "null" : "not null");

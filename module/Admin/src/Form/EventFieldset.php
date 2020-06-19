@@ -494,11 +494,11 @@ class EventFieldset extends AbstractEventFieldset
             ],
             'anonymous_submitter' => [
                 'required' => true,
-                'allow_empty' => true,
+                'allow_empty' => false,// conditionally
             ],
             'submitter' => [
                 'required' => true,
-                'allow_empty' => true,// conditionally
+                'allow_empty' => false,// conditionally
             ],
             'end_time' => [
                 'required' => false,

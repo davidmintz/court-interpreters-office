@@ -220,7 +220,7 @@ class EventForm extends LaminasForm implements
                     [ 'isEmpty' => "identity of submitter is required"],
                 'break_chain_on_failure' => true,
             ]);
-            //$submitter_input->setAllowEmpty(false); // deprecated
+            // $submitter_input->setAllowEmpty(false); // deprecated
             $submitter_input->getValidatorChain()->attach($validator);
             $log->debug(__METHOD__. " we attached a validator for non-anonymous hat type");
         }
@@ -288,7 +288,7 @@ class EventForm extends LaminasForm implements
             $log->debug("tried to rig shit up");
         }
         $shit = print_r($event, true);
-        $log->debug($shit);
+        $log->debug($shit . " at line ".__LINE__);
         $input->set('event', $event);
     }
 
