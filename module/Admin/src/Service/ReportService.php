@@ -41,14 +41,13 @@ class ReportService
      * date ranges for form
      */
     private static $date_range_options = [
-        1 => 'current calendar year to date',
-            'current calendar year to date',
-            'current quarter to date',
-            'previous year',
-            'previous quarter',
-            'current fiscal year to date',
-            'previous fiscal year',
-            'custom...'
+        'YTD' =>  'current calendar year to date',
+        'QTD'=>   'current quarter to date',
+        'PY'=>    'previous year',
+        'PQ'=>    'previous quarter',
+        'FYTD'=>  'current fiscal year to date',
+        'PFY'=>   'previous fiscal year',
+        'CUSTOM'=>'custom...'
     ];
 
     /**

@@ -59,11 +59,12 @@ class ReportsController extends AbstractActionController
             $this->session->defaults = $input->getValues();
             return new JsonModel(['data'=>$input->getValues()]);
         }
-        // else 
+
         return [
             'reports'=>$this->reports->getReports(),
             'date_ranges' => $this->reports->getDateRangeOptions(),
-            'defaults'=>$this->getDefaults()];
+            'defaults'=>$this->getDefaults()
+        ];
     }
     /**
      * figures out default report settings
