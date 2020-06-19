@@ -56,9 +56,13 @@ class ReportsController extends AbstractActionController
             if (! $input->isValid()) {
                 return new JsonModel(['validation_errors'=>$input->getMessages()]);
             }
-            return new JsonModel(['data'=>['boink!']]);
+            $this->session->defaults = $input->getValues();
+            return new JsonModel(['data'=>$input->getValues()]);
         }
-        return ['reports'=>$this->reports->getReports(),
+        // else 
+        return [
+            'reports'=>$this->reports->getReports(),
+            'date_ranges' => $this->reports->getDateRangeOptions(),
             'defaults'=>$this->getDefaults()];
     }
     /**
@@ -68,13 +72,14 @@ class ReportsController extends AbstractActionController
      */
     private function getDefaults()
     {
-        
-        $get = $this->params()->fromQuery();
-        if ($get) {
-            $filter = $this->service->getInputFilter();
-            $filter->setData($get);
-        }
-        
-        return [];
+        if ($this->session->defaults) {
+            return $this->session->defaults;
+        } else {
+            return [
+                'report' => '',
+                'date-from' => '',
+                'date-to' => '',
+            ];
+        }        
     }
 }

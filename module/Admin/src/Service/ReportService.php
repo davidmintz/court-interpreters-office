@@ -36,6 +36,22 @@ class ReportService
     ];
 
     /**
+     * @var array
+     * 
+     * date ranges for form
+     */
+    private static $date_range_options = [
+        1 => 'current calendar year to date',
+            'current calendar year to date',
+            'current quarter to date',
+            'previous year',
+            'previous quarter',
+            'current fiscal year to date',
+            'previous fiscal year',
+            'custom...'
+    ];
+
+    /**
      * entity manager
      *
      * @var EntityManagerInterface $em
@@ -58,6 +74,16 @@ class ReportService
     }
 
     /**
+     * gets date-range options
+     * 
+     * @return array
+     */
+    public function getDateRangeOptions() : array
+    {
+        return self::$date_range_options;
+    }
+
+    /**
      * gets inputfilter
      * 
      * @return InputFilter
@@ -76,13 +102,23 @@ class ReportService
                 'validators' => [],
                 'filters' => [],
             ],
+            'date-range'=> [
+                'name' => 'date-range',
+                'required' => false,
+                'validators' => [],
+                'filters' => [],
+            ],
             'date-from' => [
                 'name' => 'date-from',
                 'required' => true,
+                'validators' => [],
+                'filters' => [],
             ],
             'date-to' => [
                 'name' => 'date-to',
                 'required' => true,
+                'validators' => [],
+                'filters' => [],
             ],
         ];
     }
