@@ -17,12 +17,41 @@ $(function () {
             element_to.val(to.format("MM/DD/YYYY"));
             break;
         case "QTD":
-            var q = parseInt(today.month()/4) + 1;
-            console.log(`current quarter seems to be: ${q}`);
+            // find first day of current quarter, shouldn't be so hard )-:
+            var q_month, current_month = today.month();
+            if (current_month <= 2) { 
+                q_month = "01" ;
+            } else if (current_month <= 5) { 
+                q_month = "04" ;
+            } else if (current_month <= 8) { 
+                q_month = "07" ;
+            } else {
+                q_month = "10";
+            }
+            from = moment(`${today.year()}-${q_month}-01`);
+            to = today;
+            element_from.val(from.format("MM/DD/YYYY"));
+            element_to.val(to.format("MM/DD/YYYY"));
+            
             break;
         case "PY":
             break;
         case "PQ":
+            var pq_month; current_month = today.month();
+            if (current_month <= 2) { 
+                pq_month = "10" ;
+            } else if (current_month <= 5) { 
+                pq_month = "01" ;
+            } else if (current_month <= 8) { 
+                pq_month = "04" ;
+            } else {
+                pq_month = "07";
+            }
+            from = moment(`${today.year()}-${pq_month}-01`);
+            element_from.val(from.format("MM/DD/YYYY"));
+            to = moment(`${today.year()}-${pq_month}-01`).add(3,"months")
+                .subtract(1,"day");
+            element_to.val(to.format("MM/DD/YYYY"));
             break;
         case "FYTD":
             break;
@@ -34,11 +63,7 @@ $(function () {
             break;
         }
     });
-/* for (i = 0; i < 12; i++) {
-   
-  // console.log(`month: ${i}; over 4 rounded +1 ${parseInt(i/4) +1} modulus ${i % 4}`);
-	if (i <= 2) { Q = 1 } else if (i <= 5) { Q = 2} else if ( i <= 8) { Q = 3} else { Q = 4 ;}
-	console.log(`m ${i} is in Q ${Q}`);*/
+
     btn.on("click", function (e) {
         e.preventDefault();
         var params = form.serialize();
