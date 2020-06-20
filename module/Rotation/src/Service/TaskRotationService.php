@@ -726,7 +726,7 @@ class TaskRotationService
 
     private function doCreateRotation(Array $data) : Entity\Rotation
     {
-        if (is_int($data['task'])) {
+        if (is_scalar($data['task'])) {
             $task = $this->em->find(Entity\Task::class,$data['task']);
         } else {
             $task = $data['task'];
