@@ -156,8 +156,7 @@ class EventForm extends LaminasForm implements
             $entity = $this->getObject();
             if ($event['is_anonymous_judge']) {
                 $event['anonymous_judge'] = $event['judge'];
-                //$event['judge'] = '';
-                unset($event['judge']);
+                
                 $this->getInputFilter()->get('event')->remove('judge');
                 if ($entity->getJudge()) {
                     $entity->setJudge(null);
@@ -179,8 +178,7 @@ class EventForm extends LaminasForm implements
         // prevent Doctrine from wasting an update
         $this->filterDateTimeFields(
             ['date','time','end_time','submission_date','submission_time'],
-            $event,
-            'event'
+            $event,  'event'
         );
 
         // if the source of this Event was a Request, the metadata -- who
@@ -208,6 +206,7 @@ class EventForm extends LaminasForm implements
         $can_be_anonymous = (! $key) ? false :
                 $hat_options[$key]['attributes']['data-anonymity'] <> "0";
         $log->debug('can be anonymous? '.($can_be_anonymous ? 'true' : 'false'));
+       
         $submitter_input = $this->getInputFilter()->get('event')
                 ->get('submitter');
 
@@ -220,23 +219,21 @@ class EventForm extends LaminasForm implements
                     [ 'isEmpty' => "identity of submitter is required"],
                 'break_chain_on_failure' => true,
             ]);
-            // $submitter_input->setAllowEmpty(false); // deprecated
+            // $submitter_input->setAllowEmpty(false); // it's deprecated
             $submitter_input->getValidatorChain()->attach($validator);
             $log->debug(__METHOD__. " we attached a validator for non-anonymous hat type");
         }
-        // if NO submitter but YES anonymous submitter, unset submitter
+        // if NO submitter but YES anonymous submitter, remove submitter element
         elseif (empty($event['submitter']) && ! empty($event['anonymous_submitter'])) {
-            unset($event['submitter']);
-            //$submitter_input->setRequired(false); //->setAllowEmpty(true);
+                       
             $this->getInputFilter()->get('event')->remove('submitter');
         }
-        // if YES submitter and YES anonymous submitter, unset anon submitter
+        // if YES submitter and YES anonymous submitter, remove anon submitter element
         elseif (! empty($event['submitter'])
             && ! empty($event['anonymous_submitter'])) {
-            unset($event['anonymous_submitter']);
-            $anon_submitter_input = $this->getInputFilter()->get('event')
-                ->remove('anonymous_submitter');
-            //$anon_submitter_input->setRequired(false)->setAllowEmpty(true);
+
+           $this->getInputFilter()->get('event')
+                ->remove('anonymous_submitter');            
         }
 
         if (empty($event['date']) && isset($event['dates'])) {
@@ -284,8 +281,7 @@ class EventForm extends LaminasForm implements
                         ],
                     ],
                 ],
-            ]);
-            $log->debug("tried to rig shit up");
+            ]);           
         }
         $shit = print_r($event, true);
         $log->debug($shit . " at line ".__LINE__);
