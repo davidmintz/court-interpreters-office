@@ -4,63 +4,80 @@ $(function () {
     var form = btn.closest("form");
     var today = moment();
     var date_range = $("#date-range");
-    var element_from = $("#date-from");
-    var element_to = $("#date-to");
     date_range.on("change",function(){
         var to, from;
+        var from_el = $("#date-from");
+        var to_el = $("#date-to");
         switch (date_range.val()) {
         case "YTD":
             to = today;
-            from = moment(`${today.year()}-01-01`);
-            // just for kicks, for now...
-            element_from.val(from.format("MM/DD/YYYY"));
-            element_to.val(to.format("MM/DD/YYYY"));
+            from = moment([today.year()]);           
             break;
         case "QTD":
-            // find first day of current quarter, shouldn't be so hard )-:
-            var q_month, current_month = today.month();
-            if (current_month <= 2) { 
-                q_month = "01" ;
-            } else if (current_month <= 5) { 
-                q_month = "04" ;
-            } else if (current_month <= 8) { 
-                q_month = "07" ;
-            } else {
-                q_month = "10";
-            }
-            from = moment(`${today.year()}-${q_month}-01`);
+            switch (today.quarter()) {
+            case 1:
+                from = moment([today.year()]); 
+                break;
+            case 2:
+                from = moment([today.year(),3]); 
+                break;
+            case 3:
+                from = moment([today.year(),6]);
+                break;
+            case 4: 
+                from = moment([today.year(),9]);                
+            }            
             to = today;
-            element_from.val(from.format("MM/DD/YYYY"));
-            element_to.val(to.format("MM/DD/YYYY"));
-            
             break;
         case "PY":
+            var YYYY = today.year() - 1;
+            from = moment([YYYY]);
+            to = moment(from).add(1,"year").subtract(1,"day");
             break;
         case "PQ":
-            var pq_month; current_month = today.month();
-            if (current_month <= 2) { 
-                pq_month = "10" ;
-            } else if (current_month <= 5) { 
-                pq_month = "01" ;
-            } else if (current_month <= 8) { 
-                pq_month = "04" ;
-            } else {
-                pq_month = "07";
+            YYYY = today.year();
+            switch (today.quarter()) {
+            case 1:
+                from = moment([YYYY - 1, 9]);
+                break;
+            case 2:
+                from = moment([YYYY]);
+                break;
+            case 3:
+                from = moment([YYYY,3]);
+                break;
+            case 4:
+                from = moment([YYYY,6]);
+                break;                    
             }
-            from = moment(`${today.year()}-${pq_month}-01`);
-            element_from.val(from.format("MM/DD/YYYY"));
-            to = moment(`${today.year()}-${pq_month}-01`).add(3,"months")
-                .subtract(1,"day");
-            element_to.val(to.format("MM/DD/YYYY"));
+            to = moment(from).add(3,"month").subtract(1, "day");
             break;
         case "FYTD":
+            if (today.month() >= 9) {
+                from = moment([today.year(),9]);                
+            } else {
+                from = moment([today.year()-1,9]);
+            }
+            to = today;           
             break;
         case "PFY":
+            if (today.month() >= 9) {
+                from = moment([today.year()-1,9]);
+            } else {
+                from = moment([today.year()-2,9]);
+            }
+            to = moment(from).add(1, "year").subtract(1,"day");
             break;
         case "CUSTOM":
+            to_el.val("");
+            from_el.val("")[0].focus();
             break;
         default:
             break;
+        }
+        if (from && to) {
+            from_el.val(from.format("MM/DD/YYYY"));
+            to_el.val(to.format("MM/DD/YYYY"));
         }
     });
 
