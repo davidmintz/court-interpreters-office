@@ -69,15 +69,15 @@ $(function () {
             to = moment(from).add(1, "year").subtract(1,"day");
             break;
         case "CUSTOM":
-            to_el.val("");
-            from_el.val("")[0].focus();
+            to_el.val("").removeAttr("readonly");
+            from_el.val("").removeAttr("readonly")[0].focus();            
             break;
         default:
             break;
         }
         if (from && to) {
-            from_el.val(from.format("MM/DD/YYYY"));
-            to_el.val(to.format("MM/DD/YYYY"));
+            from_el.val(from.format("MM/DD/YYYY")).attr({readonly:true});
+            to_el.val(to.format("MM/DD/YYYY")).attr({readonly:true});
         }
     });
 
