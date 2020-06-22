@@ -18,6 +18,7 @@ use Laminas\Validator;
 use Laminas\Filter;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Admin\Service\MarkdownTrait;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 /**
  * manages MOTW|MOTDs
@@ -670,17 +671,26 @@ class NotesService
         $entity = new $class;
         $user = $this->em->getRepository(Entity\User::class)->find($this->user->id);
         $now = new DateTime();
-        $entity->setContent($this->escape($data['content']))
-            ->setCreated($now)
-            ->setDate(new DateTime($data['date'] ?? $data['week_of']))
-            ->setCreatedBy($user)
-            ->setModifiedBy($user)
-            ->setModified($now);
-        $this->em->persist($entity);
-        $this->em->flush();
+        try {
 
-        return [$data['type'] => $entity, 'status'=>'success'];
-
+            $entity->setContent($this->escape($data['content']))
+                ->setCreated($now)
+                ->setDate(new DateTime($data['date'] ?? $data['week_of']))
+                ->setCreatedBy($user)
+                ->setModifiedBy($user)
+                ->setModified($now);
+            $this->em->persist($entity);
+            $this->em->flush();
+    
+            return [$data['type'] => $entity, 'status'=>'success'];
+        } catch (UniqueConstraintViolationException $e) {
+            return [$data['type'] => $entity, 'status'=>'error',
+            'exception'=>'UniqueConstraintViolationException',
+            'message' => sprintf('You can\'t create a new %s for %s because one already exists.',
+            strtoupper($data['type']),
+            $entity->getDate()->format("D d-M-Y")
+        ),];
+        }
     }
 
     /**
