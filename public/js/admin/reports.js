@@ -1,4 +1,14 @@
 /* global displayValidationErrors, moment, $ */
+
+
+var dp_defaults = {
+    // dateFormat:"yy-mm-dd",
+    showOtherMonths : true,
+    selectOtherMonths : true,
+    changeMonth : true,
+    changeYear : true
+};
+
 $(function () {
     var btn = $("#btn-run");
     var form = btn.closest("form");
@@ -80,9 +90,9 @@ $(function () {
             to_el.val(to.format("MM/DD/YYYY")).attr({readonly:true});
         }
     });
-
+    $("input.date").datepicker(dp_defaults);
     btn.on("click", function (e) {
-        e.preventDefault();
+        e.preventDefault();        
         var params = form.serialize();
         $.get(form.attr("action"), params)
             .then(res => {
