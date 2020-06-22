@@ -139,18 +139,18 @@ class NotesService
      * @param DateTime
      * @return DateTime a new DateTime object
      */
-    function normalize(DateTime $theirs) : \DateTimeImmutable
+    function normalize(DateTime $theirs) : DateTimeImmutable
     {
         
         // exit("\$theirs is ".$theirs->format('D d-M-Y'));
         $dow = (int)$theirs->format('N');
         if (1 == $dow) {
-            return new \DateTimeImmutable($theirs->format('Y-m-d'));            
+            return new DateTimeImmutable($theirs->format('Y-m-d'));            
         } else {
             $date = new DateTime($theirs->format('Y-m-d'));
             $interval = sprintf('P%sD',$dow - 1);
             $date->sub(new \DateInterval($interval));
-            $return = \DateTimeImmutable::createFromMutable($date);
+            $return = DateTimeImmutable::createFromMutable($date);
             // exit(get_class($return));
             return $return;
         }
