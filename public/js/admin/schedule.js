@@ -196,6 +196,7 @@ $(function() {
             var btn = $(this);
             var option = btn.prev().children("option:selected");
             var interpreter_id = option.val();
+            if (! interpreter_id) { return; }
             var list = btn.closest(".popover-body").find("ul.list-group");
             var existing = list.find(`input[value="${interpreter_id}"][name*="interpreter"]`);
             if (existing.length) { return; }
@@ -270,7 +271,7 @@ $(function() {
         });
 
         
-        // initialize Bootstrap popover for editing interpreters
+    // initialize Bootstrap popover for editing interpreters
     $(".edit-interpreters").on("click",(e)=>e.preventDefault()).popover(popover_opts);
     $("[data-toggle=\"tooltip\"]").tooltip();
 
