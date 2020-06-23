@@ -78,10 +78,11 @@ class ReportService
         $to = new \DateTime($options['date-to']);
         $qb = $this->em->createQueryBuilder();
         switch($options['report']) {
-            case self::REPORT_USAGE_BY_LANGUAGE:
+            case self::REPORT_USAGE_BY_LANGUAGE:                
                 $data = $this->createLanguageUsageQuery($qb)
                     ->where($qb->expr()->between('e.date',':from',':to'))
-                    ->setParameters([':from'=>$from, ':to' => $to])
+                    ->andWhere('l.name != :bullshit')
+                    ->setParameters([':from'=>$from, ':to' => $to, ':bullshit'=>'CART'])
                     ->getQuery()->getResult();
                 $totals = ['completed' => 0,'cancelled'=> 0];
                 foreach($data as $i => $record) {
@@ -97,6 +98,7 @@ class ReportService
             'from' => $from->format('Y-m-d'),
             'to' => $to->format('Y-m-d'),
             'totals' => $totals,
+            'report_type' => self::$reports[$options['report']],
             'data' => $data ,
         ];
     }
@@ -185,17 +187,7 @@ class ReportService
                             ],
                         ],
                         'break_chain_on_failure' => true,
-                    ],
-                    // [
-                    //     'name' => Validator\InArray::class,
-                    //     'options' => [
-                    //         'messages' => [
-                    //             Validator\InArray::NOT_IN_ARRAY => "invalid report type",
-                    //             'haystack' => array_keys($this->getReports()),
-                    //         ]
-                    //     ],
-                    //     'break_chain_on_failure' => true,
-                    // ],
+                    ],                   
                 ],
                 'filters' => [],
             ],
