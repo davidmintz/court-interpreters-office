@@ -8,7 +8,7 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-
+use InterpretersOffice\Entity;
 
 /**
  * generates reports
@@ -92,18 +92,27 @@ class ReportService
                    $data[$i] = $record;
                 }
             break;
+
+            case self::REPORT_USAGE_BY_INTERPRETER:
+                $data = $this->createInterpreterUsageQuery($qb)
+                ->where($qb->expr()->between('e.date',':from',':to'))
+                    ->andWhere('l.name != :bullshit')
+                    ->setParameters([':from'=>$from, ':to' => $to, ':bullshit'=>'CART'])
+                    ->getQuery()->getResult();
+            break;
         }
 
         return [            
             'from' => $from->format('Y-m-d'),
             'to' => $to->format('Y-m-d'),
-            'totals' => $totals,
+            'totals' => $totals??[],
             'report_type' => self::$reports[$options['report']],
-            'data' => $data ,
+            'data' => $data,
         ];
     }
 
-    public function createLanguageUsageQuery(QueryBuilder $qb) {
+    public function createLanguageUsageQuery(QueryBuilder $qb) : QueryBuilder
+    {
     /*
     SELECT l.name language, SUM(IF(c.category="in",1,0)) as `in-court`, SUM(IF(c.category = "out",1,0)) as `ex-court`, 
         COUNT(ie.event_id) AS total FROM languages l JOIN events e ON l.id = e.language_id 
@@ -123,6 +132,22 @@ class ReportService
         ->join('t.category','c')
         ->orderBy('total','DESC')
         ->groupBy('l.name');      
+    }
+
+    public function createInterpreterUsageQuery(QueryBuilder $qb) : QueryBuilder {
+        /* "SELECT CONCAT(i.lastname, ', ',i.firstname) AS interpreter, l.name AS language, 
+         COUNT(ie.interpreter) AS events FROM InterpretersOffice\Entity\InterpreterEvent ie 
+        JOIN ie.interpreter i JOIN ie.event e JOIN e.language l WHERE e.date > '2019-12-31' GROUP BY i, l"
+        */
+        return $qb->select([
+            'i.id','h.name AS hat',
+            "CONCAT(i.lastname, ', ',i.firstname) AS interpreter",
+            'l.name AS language', 'COUNT(ie.interpreter) AS events',
+        ])->from(Entity\InterpreterEvent::class,'ie')
+        ->join('ie.interpreter','i')->join('ie.event','e')
+        ->join('i.hat','h')
+        ->join('e.language','l')->groupBy('i.id','l.name')->orderBy('events','DESC');
+
     }
 
     /**

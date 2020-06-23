@@ -8,7 +8,7 @@ var dp_defaults = {
     changeYear : true
 };
 
-const render_interpreter_usage_by_language = function(data, table) {
+const table_interpreter_usage_by_language = function(data, table) {
     table.children("thead").html(
         "<tr><th class=\"text-left\">language</th><th class=\"text-right\">in-court</th><th class=\"text-right\">ex-court</th><th class=\"text-right\">other</th><th class=\"text-right\">cancelled</th><th class=\"text-right\">total</th></tr>"
     );
@@ -33,12 +33,28 @@ const render_interpreter_usage_by_language = function(data, table) {
     <td class="text-right">${totals.total}</td>`));
     table.children("tbody").html(rows);    
 };
+const table_interpreter_usage_by_interpreter = (report_data,table)=>
+{
+    table.children("thead").html(
+        "<tr><th class=\"text-left\">interpreter</th><th class=\"text-right\">language</th><th class=\"text-right\">no. events</th></tr>"
+    );
+    var rows = [];
+    report_data.forEach(r=>{
+        var row = $("<tr></tr>");
+        row.append(
+            `<td>${r.interpreter}</td><td class="text-right">${r.language}</td><td class="text-right">${r.events}</td>`   
+        );
+        rows.push(row);
+    });
+    table.children("tbody").html(rows);
 
-const chart_interpreter_usage_by_language = function(report_data){
+};
+const chart_interpreter_usage_by_language = (report_data) => {
     console.log(`languages: ${report_data.length}`);
     var max = Math.max(...report_data.map(x=>parseInt(x.total)));
     console.log(`setting max = ${parseInt(max + (max/10))}`);
     var container = document.getElementById("chart");
+    $(container).empty();
     var data = {
         categories : report_data.map(x=>x.language),
         series: [
@@ -162,24 +178,30 @@ $(function () {
     });
     $("input.date").datepicker(dp_defaults);
     btn.on("click", function (e) {
-        e.preventDefault();        
+        e.preventDefault();
+        btn.html("<span class='fa fa-cog fa-spin'></span");      
         var params = form.serialize();
         $.get(form.attr("action"), params)
             .then(res => {
+                btn.html("run");  
                 if (res.validation_errors) {
                     return displayValidationErrors(res.validation_errors);
                 }
                 $("form .validation-error").hide();
-                var data = res.result.data;
-                // var languages = data.map(x=>x.language);
-                // console.log(languages);
-                // console.log(data);
+                var data = res.result.data;               
                 switch (res.result.report_type) {
                 case "interpreter usage by language":
-                    render_interpreter_usage_by_language(data,$("#table > table"));
+                    table_interpreter_usage_by_language(data,$("#table > table"));
                     chart_interpreter_usage_by_language(data);
                     break;
+                case "interpreter usage by interpreter":
+                    table_interpreter_usage_by_interpreter(data,$("#table > table"));
+                    $("#chart").html(
+                        "<p style='max-width:300px' class='p-2 border border-warning rounded mx-auto shadow-sm mt-3'>chart is not yet implemented</p>"
+                    );
+                    break;
                 }
+
             });
     });
 });
