@@ -1,4 +1,4 @@
-/* global displayValidationErrors, moment, $ */
+/* global displayValidationErrors, moment, tui $ */
 
 
 var dp_defaults = {
@@ -99,7 +99,49 @@ $(function () {
                 if (res.validation_errors) {
                     return displayValidationErrors(res.validation_errors);
                 }
-                console.log(res);
+                var data = res.result.data;
+                var languages = data.map(x=>x.language);
+                console.log(languages);
+                
             });
     });
 });
+/*
+    var container = document.getElementById("result");
+    var data = {
+        categories: ["June", "July", "Aug", "Sep", "Oct", "Nov"],
+        series: [
+            {
+                name: "Budget",
+                data: [5000, 3000, 5000, 7000, 6000, 4000]
+            },
+            {
+                name: "Income",
+                data: [8000, 1000, 7000, 2000, 5000, 3000]
+            }
+        ]
+    };
+    var options = {
+        chart: {
+            width: 1000,
+            height: 650,
+            title: "Monthly Revenue",
+            format: "1,000"
+        },
+        yAxis: {
+            title: "Month"
+        },
+        xAxis: {
+            title: "Amount",
+            min: 0,
+            max: 9000,
+            suffix: "$"
+        },
+        series: {
+            showLabel: true
+        }
+    };
+
+    tui.chart.barChart(container, data, options);
+
+*/

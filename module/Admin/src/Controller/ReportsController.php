@@ -57,7 +57,7 @@ class ReportsController extends AbstractActionController
                 return new JsonModel(['validation_errors'=>$input->getMessages()]);
             }
             $this->session->defaults = $input->getValues();
-            return new JsonModel(['data'=>$this->reports->createReport($input->getValues())]);
+            return new JsonModel(['result'=>$this->reports->createReport($input->getValues())]);
         }
 
         return [

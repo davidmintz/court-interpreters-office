@@ -7,7 +7,7 @@ use Laminas\InputFilter\Factory;
 use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\QueryBuilder;
 
 
 /**
@@ -79,20 +79,29 @@ class ReportService
         $qb = $this->em->createQueryBuilder();
         switch($options['report']) {
             case self::REPORT_USAGE_BY_LANGUAGE:
-                $this->createLanguageUsageReport($qb);
+                $data = $this->createLanguageUsageQuery($qb)
+                    ->where($qb->expr()->between('e.date',':from',':to'))
+                    ->setParameters([':from'=>$from, ':to' => $to])
+                    ->getQuery()->getResult();
+                $totals = ['completed' => 0,'cancelled'=> 0];
+                foreach($data as $i => $record) {
+                   $record['completed'] = $record['total'] - $record['cancelled'];
+                   $totals['completed'] += $record['completed'];
+                   $totals['cancelled'] += $record['cancelled'];
+                   $data[$i] = $record;
+                }
             break;
         }
-        $qb->where($qb->expr()->between('e.date',':from',':to'))->setParameters(
-            [':from'=>$from, ':to' => $to]
-        );
-        return [
+
+        return [            
             'from' => $from->format('Y-m-d'),
             'to' => $to->format('Y-m-d'),
-            'result' => $qb->getQuery()->getResult(),
+            'totals' => $totals,
+            'data' => $data ,
         ];
     }
 
-    public function createLanguageUsageReport( $qb) {
+    public function createLanguageUsageQuery(QueryBuilder $qb) {
     /*
     SELECT l.name language, SUM(IF(c.category="in",1,0)) as `in-court`, SUM(IF(c.category = "out",1,0)) as `ex-court`, 
         COUNT(ie.event_id) AS total FROM languages l JOIN events e ON l.id = e.language_id 
@@ -100,7 +109,7 @@ class ReportService
         JOIN event_categories c ON t.category_id = c.id  
         GROUP BY l.name ORDER BY `total` DESC LIMIT 20;
     */
-        $qb->select(['l.name',
+        return $qb->select(['l.name AS language',
         'SUM(CASE WHEN e.cancellation_reason IS NOT NULL THEN 1 ELSE 0 END) AS cancelled',
         'SUM(CASE WHEN c.category = \'in\' THEN 1 ELSE 0 END) AS in_court',
         'SUM(CASE WHEN c.category = \'out\' THEN 1 ELSE 0 END) AS ex_court',
@@ -110,7 +119,8 @@ class ReportService
         ->join('e.language','l')
         ->join('e.event_type','t')
         ->join('t.category','c')
-        ->groupBy('l.name');
+        ->orderBy('total','DESC')
+        ->groupBy('l.name');      
     }
 
     /**
