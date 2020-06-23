@@ -1,8 +1,8 @@
 <?php $this->headScript()
     ->appendFile($this->basePath("js/lib/moment/min/moment.min.js"))
-    ->appendFile($this->basePath("js/lib/tui-chart/tui.chart-3.11.2/dist/tui-chart-all.min.js"))
+    ->appendFile($this->basePath("js/lib/tui.chart/dist/tui-chart-all.min.js"))
     ->appendFile($this->basePath("js/admin/reports.js"));
-$this->headStyle()->appendStyle($this->basePath("js/lib/tui-chart/tui.chart-3.11.2/dist/tui-chart.min.css"));
+$this->headStyle()->appendStyle($this->basePath("js/lib/tui.chart/dist/tui-chart.min.css"));
 $this->headTitle('admin | reports');
 $this->headStyle()->captureStart()?>
 #table table th { font-weight: normal; color : #17a2b8; }
