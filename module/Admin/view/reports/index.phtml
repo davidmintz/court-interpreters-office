@@ -10,9 +10,9 @@ $this->headTitle('admin | reports')?>
     <form action="<?php echo $this->url('reports') ?>">
     <div class="form-row mb-2">
         <label class="col-md-2 col-form-label float-sm-left" for="report">report</label><div class="col-md-7"><select name="report" id="report" class="custom-select form-control">
-            <?php $default_report_opt = $this->defaults['report']??1; 
+            <?php $default_report = $this->defaults['report']??"YTD"; 
             foreach ($this->reports as $i =>$option): ?>
-                <option value="<?=$i?>"<?php if ($i == $default_report_opt):?> selected="selected"<?php endif ?>><?=$option?></option>
+                <option value="<?=$i?>"<?php if ($i == $default_report):?> selected="selected"<?php endif ?>><?=$option?></option>
             <?php endforeach;?>            
         </select>
     </div>
@@ -27,11 +27,11 @@ $this->headTitle('admin | reports')?>
     </div>
     <div class="form-row mb-2">
     <label class="col-md-2 col-form-label" for="date-from">from</label>
-    <div class="col-md-2"><input value="<?= $this->defaults['date-from']??''?>"name="date-from" id="date-from" class="form-control date" type="text"></div>
+    <div class="col-md-2"><input value="<?= $this->defaults['date-from']??''?>"name="date-from" id="date-from" class="form-control date" type="text"<?php 
+    if (isset($this->defaults['date-from']) && $default_date_range != 'CUSTOM'):?> readonly<?php endif;?>></div>
     <label for="date-to" class="col-form-label col-auto">to</label>
-    <div class="col-md-2"><input value="<?= $this->defaults['date-to']??''?>" name="date-to" id="date-to" class="form-control date" type="text"></div><div class="col-md-2"><button id="btn-run" class="btn btn-success">run</button>
-        <input type="hidden" name="" value="">
-        <input type="hidden" name="" value="">
+    <div class="col-md-2"><input value="<?= $this->defaults['date-to']??''?>" name="date-to" id="date-to" class="form-control date" type="text" <?php 
+    if (isset($this->defaults['date-from']) && $default_date_range != 'CUSTOM'):?> readonly<?php endif;?>></div><div class="col-md-2"><button id="btn-run" class="btn btn-success">run</button>
     </div>
     </div>
     </form>    
