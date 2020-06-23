@@ -250,6 +250,22 @@ class ReportService
                         ],
                         'break_chain_on_failure' => true,
                     ],
+                    [
+                        'name' => Validator\Callback::class,
+                        'options' => [
+                            'callBack' => function ($value, $context) {
+                                $to = preg_replace('|(\d\d)/(\d\d)/(\d{4})|',"$3-$1-$2",$value);
+                                $from = preg_replace('|(\d\d)/(\d\d)/(\d{4})|',"$3-$1-$2",$context['date-from']);
+                                if (! preg_match('/\d{4}-\d\d-\d\d/',$from)) {
+                                    return true; // not our problem
+                                }
+                                return $to >= $from;
+                            },
+                            'messages' => [
+                                'callbackValue' => '"to" date cannot precede "from"',
+                            ],
+                        ],
+                    ],
                 ],
                 'filters' => [],
             ],
