@@ -167,7 +167,7 @@ $(function(){
         var id = form.find("input[name=\"id\"]").val();
         var url, method;
         var data = form.serialize();
-        if (id) {
+        if (!id) {
             // update
             console.log("doing an update?");
             url = `/admin/notes/update/${type}/${id}`;
@@ -226,7 +226,11 @@ $(function(){
             }
 
             if (res.status === "error") {
-                var error_div = $("<div>").addClass("alert alert-warning validation-error");
+                var error_div = form.children("div.alert-warning").first();
+                if (! error_div.length) { 
+                    error_div = $("<div>").addClass("alert alert-warning validation-error");
+                    form.prepend(error_div); 
+                }
                 // a modification timestamp mismatch?
                 var ours = $("input[name=\"modified\"]").val();
                 var theirs = res.modified || null;
@@ -237,7 +241,7 @@ $(function(){
                 } else {
                     error_div.text(res.message);
                 }
-                form.prepend(error_div);
+                
             }
         }).fail((res)=>{
             console.log(res);
