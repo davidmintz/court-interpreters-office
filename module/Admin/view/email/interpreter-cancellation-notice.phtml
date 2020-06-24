@@ -13,7 +13,7 @@ echo $this->salutation();?>
     earliest convenience to acknowledge this notice.</em></p>
 <?php
 echo $this->partial('interpreters-office/email/partials/event-details.phtml',
-    ['entity'=>$entity, ]);
+    ['entity'=>$entity, 'escaped'=>$this->escaped,]);
 ?>
 <?php if ($this->notes):?>
 <p>Additional notes:</p>
