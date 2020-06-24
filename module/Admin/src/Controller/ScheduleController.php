@@ -63,11 +63,12 @@ class ScheduleController extends AbstractActionController
             $return['shutdown'] = true;
             $return['message'] = "There are no court closings in your database. You need to insert some in order to continue using the application.";
         } else {
+            // print_r($result);
             $latest = new \DateTime($result['latest']);
             $diff =(new \DateTime())->diff($latest); 
-            $format = $diff->invert ? '%R%d' : '%d';
-            $days = (int)$diff->format($format);
-            if ($days <= 10) {
+            
+            if ($diff->days <= 10) {
+                $days = $diff->invert ? "-".$diff->days : $diff->days;
                 $container = $this->getEvent()->getApplication()->getServiceManager();
                 $renderer = $container->get('ViewRenderer');
                 $url = $renderer->url('court-closings');
