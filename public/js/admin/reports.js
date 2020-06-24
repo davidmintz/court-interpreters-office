@@ -176,6 +176,10 @@ $(function () {
             to_el.val(to.format("MM/DD/YYYY")).attr({readonly:true});
         }
     });
+    // initialize
+    if (date_range.val() !== "CUSTOM") {
+        date_range.trigger("change");
+    }
     $("input.date").datepicker(dp_defaults);
     btn.on("click", function (e) {
         e.preventDefault();
