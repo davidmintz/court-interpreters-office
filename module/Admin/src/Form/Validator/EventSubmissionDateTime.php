@@ -20,6 +20,8 @@ class EventSubmissionDateTime extends AbstractValidator
 
     const FUTURE_SUBMISSION_DATE_TIME = 'futureSubmissionDateTime';
 
+    const INVALID_SUBMISSION_DATETIME = 'invalidSubmissionDateTime';
+
     /**
      * max negative minutes between event and submission datetimes
      *
@@ -61,7 +63,9 @@ class EventSubmissionDateTime extends AbstractValidator
             'submission date and time cannot be more than %max% minutes '
             . 'after the event',
         self::FUTURE_SUBMISSION_DATE_TIME =>
-        'submission date and time cannot be in the future'
+        'submission date and time cannot be in the future',
+        self::INVALID_SUBMISSION_DATETIME => 
+            'submission date/time format is invalid',
     ];
 
     /**
@@ -102,8 +106,13 @@ class EventSubmissionDateTime extends AbstractValidator
                 return false;
             }
         }
-        $event_datetime = new \DateTime($context['date'].' '.$context['time']);
-        $submission_datetime = new \DateTime($value .' '.$context['submission_date']);
+        try {
+            $event_datetime = new \DateTime($context['date'].' '.$context['time']);
+            $submission_datetime = new \DateTime($value .' '.$context['submission_date']);
+        } catch (\Exception $e) {
+            $this->error(self::INVALID_SUBMISSION_DATETIME);
+            return false;
+        }
         $now = new \DateTime();
         if ($submission_datetime > $now) {
             $this->error(self::FUTURE_SUBMISSION_DATE_TIME);
