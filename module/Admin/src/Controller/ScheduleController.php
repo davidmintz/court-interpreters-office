@@ -55,33 +55,22 @@ class ScheduleController extends AbstractActionController
      * 
      * @return array
      */
-    private function sanityCheck()
+    private function sanityCheck() : array
     {
-        $return = ['shutdown'=>false,'message'=>null];
-        $result = $this->entityManager->createQuery('SELECT MAX(c.date) latest FROM InterpretersOffice\Entity\CourtClosing c')->getOneOrNullResult();
-        if (! $result) {
-            $return['shutdown'] = true;
-            $return['message'] = "There are no court closings in your database. You need to insert some in order to continue using the application.";
-        } else {
-            // print_r($result);
-            $latest = new \DateTime($result['latest']);
-            $diff =(new \DateTime())->diff($latest); 
-            
-            if ($diff->days <= 10) {
-                $days = $diff->invert ? "-".$diff->days : $diff->days;
-                $container = $this->getEvent()->getApplication()->getServiceManager();
-                $renderer = $container->get('ViewRenderer');
-                $url = $renderer->url('court-closings');
-                $return['shutdown'] = true;
-                $return['message'] = sprintf(
-                    'The latest court closing in your database is %d days away. In order to continue please
-                    consult your Court\'s official list of holidays and <a href="%s">insert court closings</a> 
-                    further into the future.', $days, $url
-                );
-            }
+        /** @var InterpretersOffice\Entity\Repository\CourtClosingRepository $repo */
+        $repo = $this->entityManager->getRepository(Entity\CourtClosing::class);
+        $check = $repo->sanityCheck();
+        if (! $check['sanity']) {
+            // append to the returned message
+            $container = $this->getEvent()->getApplication()->getServiceManager();
+            $url = $container->get('ViewRenderer')->url('court-closings');
+            $check['message'] .= sprintf (' In order to continue please consult 
+            your Court\'s official list of holidays and add <em>all</em> of them 
+            to your <a href="%s">list of court closings</a>.', 
+            $url);
         }
-
-        return $return;
+        
+        return $check;
     }
 
     /**
@@ -91,9 +80,9 @@ class ScheduleController extends AbstractActionController
      */
     public function scheduleAction()
     {
-
         $sanity = $this->sanityCheck();
-        if ($sanity['shutdown']) {
+        
+        if (!$sanity['sanity']) {
             return ['errorMessage'=>$sanity['message']];
         }
         

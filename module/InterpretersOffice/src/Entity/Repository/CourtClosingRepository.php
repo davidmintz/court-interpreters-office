@@ -4,10 +4,10 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Laminas\Paginator\Paginator as LaminasPaginator;
-use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
-use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
-use Doctrine\ORM\EntityManagerInterface;
+// use Laminas\Paginator\Paginator as LaminasPaginator;
+// use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
+// use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
+// use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Service\HolidayProviderInterface;
@@ -47,6 +47,53 @@ class CourtClosingRepository extends EntityRepository implements
         //     'DoctrineExtensions\Query\Mysql\Year');
         $this->cache = $config->getResultCacheImpl();
         $this->cache->setNamespace($this->cache_namespace);
+    }
+
+    /**
+     * tries to check that there are enough holidays in the db
+     * 
+     * @return array
+     */
+    public function sanityCheck() : array
+    {
+        
+        $result = $this->getEntityManager()->createQuery('SELECT MAX(c.date) latest FROM InterpretersOffice\Entity\CourtClosing c')->getOneOrNullResult();
+        if (! $result) {
+            return [
+                'sanity' => false,
+                'message' => 'There are no court closings in your database.'];
+        } else {
+            $latest = new \DateTime($result['latest']);
+            $diff =(new \DateTime())->diff($latest);             
+            if ($diff->days <= 10) {
+                $days = $diff->invert ? "-".$diff->days : $diff->days;
+                return  [
+                    'sanity' => false,
+                    'message' => sprintf(
+                    'The latest court closing in your database is %d days away.', $days),
+                ];
+               
+            } else {                
+                // key month => value expected minimum holidays for that month plus two
+                $sanity = [
+                    1 => 3, 1, 1, 1, 2, 1, 2, 2, 5, 6, 7, 5
+                ];
+                $today = new \DateTime();               
+                $from = new \DateTimeImmutable(sprintf('%s-01',$today->format('Y-m')));
+                $to = $from->add(new \DateInterval('P3M'));
+                $expected = $sanity[$today->format('n')];
+                $actual = count($this->getHolidaysForPeriod($to, $from));
+                if ($actual < $expected) {
+                    return [
+                        'sanity' => false, 
+                        'message' => 
+                            'There does not appear to be enough holidays in your database for the coming three month period.'
+                    ];
+                }
+            }
+        }
+
+        return ['sanity'=> true, 'message' => null];
     }
 
      /**
@@ -121,22 +168,25 @@ class CourtClosingRepository extends EntityRepository implements
         if (! $from) {
             $from = date('Y-m-d');
         }
-        if ($from instanceof \DateTime) {
+        if ($from instanceof \DateTimeInterface) {
             $from = $from->format('Y-m-d');
         }
-        if ($until instanceof \DateTime) {
+        if ($until instanceof \DateTimeInterface) {
             $until = $until->format('Y-m-d');
         }
         //$cache = $this->getCacheAdapter();
         $cache = $this->cache;
         $key = "holidays-$from-$until";
         if ($cache && $cache->contains($key)) {
+            
             return $cache->fetch($key);
         }
+        
         $connection = $this->getEntityManager()->getConnection();
         $sql = 'SELECT date FROM court_closings WHERE date BETWEEN :from AND :until and holiday_id IS NOT NULL ORDER BY date';
         $result = $connection->executeQuery($sql, ['from' => $from, 'until' => $until]);
         $data = $result->fetchAll(\PDO::FETCH_COLUMN);
+        
         $cache->save($key, $data);
 
         return $data;
