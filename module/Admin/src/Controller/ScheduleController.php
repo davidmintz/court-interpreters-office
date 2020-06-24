@@ -51,6 +51,39 @@ class ScheduleController extends AbstractActionController
     }
 
     /**
+     * sanity check
+     * 
+     * @return array
+     */
+    private function sanityCheck()
+    {
+        $return = ['shutdown'=>false,'message'=>null];
+        $result = $this->entityManager->createQuery('SELECT MAX(c.date) latest FROM InterpretersOffice\Entity\CourtClosing c')->getOneOrNullResult();
+        if (! $result) {
+            $return['shutdown'] = true;
+            $return['message'] = "There are no court closings in your database. You need to insert some in order to continue using the application.";
+        } else {
+            $latest = new \DateTime($result['latest']);
+            $diff =(new \DateTime())->diff($latest); 
+            $format = $diff->invert ? '%R%d' : '%d';
+            $days = (int)$diff->format($format);
+            if ($days <= 10) {
+                $container = $this->getEvent()->getApplication()->getServiceManager();
+                $renderer = $container->get('ViewRenderer');
+                $url = $renderer->url('court-closings');
+                $return['shutdown'] = true;
+                $return['message'] = sprintf(
+                    'The latest court closing in your database is %d days away. In order to continue please
+                    consult your Court\'s official list of holidays and <a href="%s">insert court closings</a> 
+                    further into the future.', $days, $url
+                );
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * index action
      *
      * @return mixed
@@ -58,6 +91,11 @@ class ScheduleController extends AbstractActionController
     public function scheduleAction()
     {
 
+        $sanity = $this->sanityCheck();
+        if ($sanity['shutdown']) {
+            return ['errorMessage'=>$sanity['message']];
+        }
+        
         $filters = $this->getFilters();
         $date = new \DateTime($filters['date']);
         /** @var InterpretersOffice\Entity\Repository\EventRepository $repo */

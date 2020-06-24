@@ -2,7 +2,7 @@
 $this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
     ->appendFile($this->basePath('js/admin/schedule.js'));
-$this->headTitle($this->date->format('D d M Y'));
+$this->headTitle(! $this->errorMessage ? $this->date->format('D d M Y') : 'error');
 $messenger = $this->flashMessenger();
 if ($messenger->hasSuccessMessages()) :
     echo $messenger->render('success', ['alert','alert-success',], false);
