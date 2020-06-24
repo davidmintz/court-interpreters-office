@@ -109,7 +109,7 @@ class DateCalculator
     }
 
     /**
-    * gets difference between two dates
+    * gets difference between two dates counting only business days
     *
     * @param $until \DateTime|string
     * @param $from \DateTime|string

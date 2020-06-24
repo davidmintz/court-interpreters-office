@@ -71,7 +71,7 @@ endif;
            // the "escaped" flag means it is already string data/finished HTML
             if ($this->escaped): echo $entity[$field];
             elseif (is_string($entity[$field])):
-                echo $this->escapeHtml($entity[$field]);
+            echo $this->escapeHtml($entity[$field]);
             else:
                 $helper = new Diff();
                 $data = $entity[$field];
