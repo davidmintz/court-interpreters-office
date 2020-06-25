@@ -9,6 +9,7 @@ use Laminas\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity;
+use InterpretersOffice\Service\DateCalculator;
 
 /**
  * generates reports
@@ -100,6 +101,14 @@ class ReportService
                     ->setParameters([':from'=>$from, ':to' => $to, ':bullshit'=>'CART'])
                     ->getQuery()->getResult();
             break;
+
+            case self::REPORT_BELATED_BY_JUDGE:
+                $data = ["Here's to Ben"];                
+                /** @var CourtClosingRepository $repo  */
+                $repo = $this->em->getRepository(Entity\CourtClosing::class);
+                $dateCalculator = new DateCalculator($repo);
+                $data["PS"] = get_class($dateCalculator);
+            break;
         }
 
         return [            
@@ -132,6 +141,12 @@ class ReportService
         ->join('t.category','c')
         ->orderBy('total','DESC')
         ->groupBy('l.name');      
+    }
+
+    public function createBelatedInCourtByJudgeQuery(QueryBuilder $qb): QueryBuilder
+    {
+        // $dateCalculator = new ServiceDateCalculator($this->em->createRepository(Entity\CourtClosing::class));
+        return $qb;
     }
 
     public function createInterpreterUsageQuery(QueryBuilder $qb) : QueryBuilder {
