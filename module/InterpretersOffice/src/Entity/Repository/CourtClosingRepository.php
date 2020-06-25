@@ -4,10 +4,6 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-// use Laminas\Paginator\Paginator as LaminasPaginator;
-// use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
-// use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
-// use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity\CourtClosing;
 use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use InterpretersOffice\Service\HolidayProviderInterface;
