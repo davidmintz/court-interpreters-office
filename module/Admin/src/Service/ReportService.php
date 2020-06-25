@@ -8,8 +8,14 @@ use Laminas\InputFilter\InputFilter;
 use Laminas\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\ResultSetMapping;
 use InterpretersOffice\Entity;
-use InterpretersOffice\Service\DateCalculator;
+
+/*
+"SELECT j.lastname AS judge, SDNY_DATE_DIFF(e.submission_date,e.submission_time,e.date, e.time) AS days_notice 
+FROM InterpretersOffice\Entity\Event e INNER JOIN e.judge j INNER JOIN e.event_type t INNER JOIN t.category c WHERE c.category = 'in'
+AND j.lastname = 'Castel' AND e.date >= '2020-06-01'"
+*/
 
 /**
  * generates reports
@@ -43,7 +49,7 @@ class ReportService
         self::REPORT_USAGE_BY_LANGUAGE => 'interpreter usage by language',
         self::REPORT_USAGE_BY_INTERPRETER => 'interpreter usage by interpreter',
         self::REPORT_CANCELLATIONS_BY_JUDGE => 'belated cancellations per judge',
-        self::REPORT_BELATED_BY_JUDGE => 'belated requests per judge',
+        self::REPORT_BELATED_BY_JUDGE => 'belated in-court requests per judge',
     ];
 
     /**
@@ -75,7 +81,7 @@ class ReportService
         if (!isset($options['report'])) {
             throw new \RuntimeException(sprintf('missing report "report" option in %s',__FUNCTION__));
         }
-        $from= new \DateTime($options['date-from']);
+        $from = new \DateTime($options['date-from']);
         $to = new \DateTime($options['date-to']);
         $qb = $this->em->createQueryBuilder();
         switch($options['report']) {
@@ -103,11 +109,16 @@ class ReportService
             break;
 
             case self::REPORT_BELATED_BY_JUDGE:
-                $data = ["Here's to Ben"];                
-                /** @var CourtClosingRepository $repo  */
-                $repo = $this->em->getRepository(Entity\CourtClosing::class);
-                $dateCalculator = new DateCalculator($repo);
-                $data["PS"] = get_class($dateCalculator);
+                // this one is a little different
+                try {
+                    $data = $this->createBelatedInCourtByJudgeReport($from,$to);
+                } catch (\Exception $e) {
+                    return ['error' => $e->getMessage(),'report_type' => self::$reports[$options['report']], 'data'=> null];
+                }
+                // /** @var CourtClosingRepository $repo  */
+                // $repo = $this->em->getRepository(Entity\CourtClosing::class);
+                // $dateCalculator = new DateCalculator($repo);
+                // $data["PS"] = get_class($dateCalculator);
             break;
         }
 
@@ -120,6 +131,11 @@ class ReportService
         ];
     }
 
+    /**
+     * language-usage query
+     * 
+     * @return QueryBuilder
+     */
     public function createLanguageUsageQuery(QueryBuilder $qb) : QueryBuilder
     {
     /*
@@ -143,10 +159,34 @@ class ReportService
         ->groupBy('l.name');      
     }
 
-    public function createBelatedInCourtByJudgeQuery(QueryBuilder $qb): QueryBuilder
+    /**
+     * belated in-court request query
+     * 
+     * @return array
+     */
+    public function createBelatedInCourtByJudgeReport(\DateTimeInterface $from, \DateTimeInterface $to): array
     {
-        // $dateCalculator = new ServiceDateCalculator($this->em->createRepository(Entity\CourtClosing::class));
-        return $qb;
+        $expr = 'SDNY_DATE_DIFF(e.submission_date,e.submission_time,e.date, e.time)';
+        $rsm = new ResultSetMapping();
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('judge','judge')
+        ->addScalarResult('sub_1','sub_1')
+        ->addScalarResult('sub_2','sub_2')
+        ->addScalarResult('total','total');
+        $expr = 'SDNY_DATE_DIFF(e.submission_date, e.submission_time, e.date, e.time)';
+        $sql = "SELECT e.id event_id, j.lastname AS judge,     
+        SUM(CASE WHEN $expr < 1 THEN 1 ELSE 0 END) AS sub_1,
+        SUM(CASE WHEN $expr < 2 AND $expr >= 1 THEN 1 ELSE 0 END) AS sub_2,
+        COUNT(e.id) AS total
+        FROM events e JOIN people j ON j.id = e.judge_id 
+        JOIN event_types t ON e.event_type_id = t.id 
+        JOIN event_categories c ON t.category_id = c.id 
+        WHERE c.category = 'in' 
+        AND e.date BETWEEN '{$from->format('Y-m-d')}' AND '{$to->format('Y-m-d')}' 
+        GROUP BY j.id ORDER BY judge";
+        $query = $this->em->createNativeQuery($sql,$rsm);
+
+        return $query->getResult();
     }
 
     public function createInterpreterUsageQuery(QueryBuilder $qb) : QueryBuilder {

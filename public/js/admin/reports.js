@@ -183,7 +183,8 @@ $(function () {
     $("input.date").datepicker(dp_defaults);
     btn.on("click", function (e) {
         e.preventDefault();
-        btn.html("<span class='fa fa-cog fa-spin'></span");      
+        btn.html("<span class='fa fa-cog fa-spin'></span");
+        var table = $("#table > table");   
         var params = form.serialize();
         $.get(form.attr("action"), params)
             .then(res => {
@@ -195,14 +196,17 @@ $(function () {
                 var data = res.result.data;               
                 switch (res.result.report_type) {
                 case "interpreter usage by language":
-                    table_interpreter_usage_by_language(data,$("#table > table"));
+                    table_interpreter_usage_by_language(data,table);
                     chart_interpreter_usage_by_language(data);
                     break;
                 case "interpreter usage by interpreter":
-                    table_interpreter_usage_by_interpreter(data,$("#table > table"));
+                    table_interpreter_usage_by_interpreter(data,table);
                     $("#chart").html(
                         "<p style='max-width:300px' class='p-2 border border-warning rounded mx-auto shadow-sm mt-3'>chart is not yet implemented</p>"
                     );
+                    break;
+                case "belated in-court requests per judge":
+                    console.log("boink");
                     break;
                 }
 
