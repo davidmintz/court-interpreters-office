@@ -36,19 +36,79 @@ const table_interpreter_usage_by_language = function(data, table) {
 const table_interpreter_usage_by_interpreter = (report_data,table)=>
 {
     table.children("thead").html(
-        "<tr><th class=\"text-left\">interpreter</th><th class=\"text-right\">language</th><th class=\"text-right\">no. events</th></tr>"
+        "<tr><th class=\"text-left\">interpreter</th><th>language</th><th class=\"text-right\">no. events</th></tr>"
     );
     var rows = [];
+    
     report_data.forEach(r=>{
         var row = $("<tr></tr>");
         row.append(
-            `<td>${r.interpreter}</td><td class="text-right">${r.language}</td><td class="text-right">${r.events}</td>`   
+            `<td>${r.interpreter}</td><td>${r.language}</td><td class="text-right">${r.events}</td>`   
         );
         rows.push(row);
     });
-    table.children("tbody").html(rows);
-
+    table.children("tbody").html(rows).after($("<tfoot>"));
 };
+const sort_by_pct = function(e){
+    var th = $(e.target);
+    var order = th.data("order")||"ASC";
+    console.log(`sort ${order}`);
+    var tbody = th.closest("thead").next("tbody");
+    var rows = tbody.children("tr");
+    console.log(`sorting ${rows.length} tr elements`);
+    var sorted = rows.sort((a,b)=>{
+        var i = parseInt($(a).children("td").last().text().trim());
+        var j = parseInt($(b).children("td").last().text().trim());
+        if (order === "ASC") {
+            if (i > j) { return 1; }
+            if (j < i) { return -1; }
+            return 0;
+        } else { // desc
+            if (i < j) { return 1; }
+            if (j > i) { return -1; }
+            return 0;
+        }
+    });
+    tbody.html(sorted);
+    // flip the sort order
+    th.data({order: order === "ASC" ? "DESC" : "ASC"});
+};
+const table_belated_in_court_request = function(report_data, table){
+    
+    table.children("thead").html(
+        `<tr>
+            <th class="text-left">judge</th><th class="text-right">&lt;1 day</th><th class="text-right">&lt;2 days</th><th class="text-right">total</th><th data-order="" style="cursor:pointer" class="text-right">% belated <span class="fa fa-sort"></th>
+        </tr>`
+    );
+    var rows = [];
+    var totals = {
+        sub_1: 0, sub_2 : 0, total: 0
+    };
+    report_data.forEach(r=>{
+        var row = $("<tr></tr>");
+        var pct = ((parseInt(r.sub_1)+parseInt(r.sub_2))/r.total *100).toFixed(2);
+        row.append(`<td>${r.judge}</td><td class="text-right">${r.sub_1}</td><td class="text-right pr-2">${r.sub_2}</td><td class="text-right pr-2">${r.total}</td><td data-order="" class="text-right">${pct}</span></td>`);
+        rows.push(row);
+        totals.sub_1 += parseInt(r.sub_1);
+        totals.sub_2 += parseInt(r.sub_2);
+        totals.total += parseInt(r.total);
+    });
+    var footer = table.children("tfoot").css({borderTop:"2px solid gray"});
+    var avg = ((totals.sub_1 + totals.sub_2)/totals.total*100).toFixed(2);    
+    table.children("tbody").html(rows);
+    footer.html(
+        `<tr>
+            <td>TOTAL ${rows.length} judges</td>
+            <td class="text-right">${totals.sub_1}</td>
+            <td class="text-right">${totals.sub_2}</td>
+            <td class="text-right">${totals.total}</td>
+            <td class="text-right">${avg}</td>
+        </tr>`);    
+    var th = table.find("th").last();
+    th.on("click",sort_by_pct);
+    
+};
+
 const chart_interpreter_usage_by_language = (report_data) => {
     console.log(`languages: ${report_data.length}`);
     var max = Math.max(...report_data.map(x=>parseInt(x.total)));
@@ -93,9 +153,11 @@ const chart_interpreter_usage_by_language = (report_data) => {
     tui.chart.barChart(container, data, options);
     // crude hack till we learn better
     $("text").css({fontSize: "13px"});
+    $("ul#tabs").show();
 };
 
 $(function () {
+    
     var btn = $("#btn-run");
     var form = btn.closest("form");
     var today = moment();
@@ -198,15 +260,15 @@ $(function () {
                 case "interpreter usage by language":
                     table_interpreter_usage_by_language(data,table);
                     chart_interpreter_usage_by_language(data);
+                    $("ul#tabs").show();
                     break;
                 case "interpreter usage by interpreter":
                     table_interpreter_usage_by_interpreter(data,table);
-                    $("#chart").html(
-                        "<p style='max-width:300px' class='p-2 border border-warning rounded mx-auto shadow-sm mt-3'>chart is not yet implemented</p>"
-                    );
+                    $("ul#tabs").hide();
                     break;
                 case "belated in-court requests per judge":
-                    console.log("boink");
+                    table_belated_in_court_request(data,table);
+                    $("ul#tabs").hide();
                     break;
                 }
 

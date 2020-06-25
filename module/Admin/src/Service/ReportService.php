@@ -120,6 +120,8 @@ class ReportService
                 // $dateCalculator = new DateCalculator($repo);
                 // $data["PS"] = get_class($dateCalculator);
             break;
+            default:
+                $data = [];
         }
 
         return [            
