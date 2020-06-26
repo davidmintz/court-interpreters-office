@@ -167,7 +167,7 @@ $(function(){
         var id = form.find("input[name=\"id\"]").val();
         var url, method;
         var data = form.serialize();
-        if (!id) {
+        if (id) {
             // update
             console.log("doing an update?");
             url = `/admin/notes/update/${type}/${id}`;
