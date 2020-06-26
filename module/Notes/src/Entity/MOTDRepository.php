@@ -3,18 +3,19 @@
 namespace InterpretersOffice\Admin\Notes\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\QueryBuilder;
-//use InterpretersOffice\Entity;
-//
-use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
+
+// caching is disabled for now
+// use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use \DateTime;
 
 /**
  * MOTD repository
+ * 
+ * 
  *
  */
-class MOTDRepository extends EntityRepository implements CacheDeletionInterface
+class MOTDRepository extends EntityRepository //implements CacheDeletionInterface 
 {
     /**
      * cache namespace
