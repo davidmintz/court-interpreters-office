@@ -50,9 +50,9 @@ class CourtClosingRepository extends EntityRepository implements
      * 
      * @return array
      */
-    public function sanityCheck() : array
+    public function sanityCheck(\DateTimeInterface $today = null) : array
     {
-        
+        if (! $today) { $today = new \DateTime(); }
         $result = $this->getEntityManager()->createQuery('SELECT MAX(c.date) latest FROM InterpretersOffice\Entity\CourtClosing c')->getOneOrNullResult();
         if (! $result) {
             return [
@@ -73,8 +73,7 @@ class CourtClosingRepository extends EntityRepository implements
                 // key month => value expected minimum holidays for that month plus two
                 $sanity = [
                     1 => 3, 1, 1, 1, 2, 1, 2, 2, 5, 6, 7, 5
-                ];
-                $today = new \DateTime();               
+                ];            
                 $from = new \DateTimeImmutable(sprintf('%s-01',$today->format('Y-m')));
                 $to = $from->add(new \DateInterval('P3M'));
                 $expected = $sanity[$today->format('n')];
