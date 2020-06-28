@@ -80,10 +80,10 @@ return [
         ],
         'configuration' => [
              'orm_default' => [
-                'query_cache' => $doctrine_cache,
+                'query_cache' => 'phpfilecache',//function($c) {return new \Doctrine\Common\Cache\PhpFileCache('data/cache');},
                 'result_cache' => $doctrine_cache,
-                'metadata_cache' => $doctrine_cache,
-                'hydration_cache' => $doctrine_cache,
+                'metadata_cache' => 'phpfilecache',
+                'hydration_cache' => 'phpfilecache',
              ],
         ],
     ],
@@ -101,6 +101,7 @@ return [
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
             Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,           
             Service\AccountManager::class => Service\Factory\AccountManagerFactory::class,
+            'doctrine.cache.phpfilecache' => Service\Factory\DoctrinePhpFileCacheFactory::class,
 
         ],
         'abstract_factories' => [
