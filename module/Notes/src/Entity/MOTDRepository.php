@@ -5,8 +5,8 @@ namespace InterpretersOffice\Admin\Notes\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
-// caching is disabled for now
-// use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
+
+use InterpretersOffice\Entity\Repository\CacheDeletionInterface;
 use \DateTime;
 
 /**
@@ -15,7 +15,7 @@ use \DateTime;
  * 
  *
  */
-class MOTDRepository extends EntityRepository //implements CacheDeletionInterface 
+class MOTDRepository extends EntityRepository implements CacheDeletionInterface 
 {
     /**
      * cache namespace
@@ -23,6 +23,16 @@ class MOTDRepository extends EntityRepository //implements CacheDeletionInterfac
      * @var string
      */
     protected $cache_namespace = 'motd';
+
+
+    /**
+     * @var boolean
+     * 
+     * whether to cache results, so we can hack at it
+     * while debugging
+     * 
+     */
+    protected $use_result_cache = false;
 
     /**
      * constructor
@@ -86,7 +96,7 @@ class MOTDRepository extends EntityRepository //implements CacheDeletionInterfac
         $qb->where("m.{$column} = :{$column}")
             ->setParameters([$column => $date]);
 
-        return $qb->getQuery()->useResultCache(true)->getOneOrNullResult();
+        return $qb->getQuery()->useResultCache($this->use_result_cache)->getOneOrNullResult();
     }
 
     /**
