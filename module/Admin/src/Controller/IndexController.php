@@ -21,6 +21,9 @@ class IndexController extends AbstractActionController
     {        
         // debug
         $container = $this->getEvent()->getApplication()->getServiceManager();
+        // $em = $container->get('entity-manager');
+        // $cache = $em->getConfiguration()->getResultCacheImpl();
+        // echo get_class($cache);
         $acl_config = $container->get('config')['acl'];
         $module_manager = $container->get("ModuleManager");
         $modules = array_keys($module_manager->getLoadedModules());

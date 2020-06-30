@@ -11,6 +11,22 @@ use Laminas\Mail\Transport\Smtp;
 use Laminas\Mail\Transport\SmtpOptions;
 
 return   [
+    'doctrine' => [
+        'cache' => [
+            'redis' => [
+                'namespace' => 'Doctrine',
+                'instance' => 'Service\Cache\Redis',
+            ],
+        ],
+        'configuration' => [
+             'orm_default' => [
+                'query_cache' => 'phpfilecache',
+                'result_cache' => 'redis',
+                'metadata_cache' => 'phpfilecache',
+                'hydration_cache' => 'phpfilecache',
+             ],
+        ],
+    ],
     'view_manager' => [
         'display_exceptions' => false,
     ],

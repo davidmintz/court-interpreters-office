@@ -78,14 +78,20 @@ return [
                 ],               
             ],
         ],
-        'configuration' => [
-             'orm_default' => [
-                'query_cache' => 'phpfilecache',//function($c) {return new \Doctrine\Common\Cache\PhpFileCache('data/cache');},
-                'result_cache' => $doctrine_cache,
-                'metadata_cache' => 'phpfilecache',
-                'hydration_cache' => 'phpfilecache',
-             ],
-        ],
+        // 'cache' => [
+        //     'redis' => [
+        //         'namespace' => 'Doctrine',
+        //         'instance' => 'Service\Cache\Redis',
+        //     ],
+        // ],
+        // 'configuration' => [
+        //      'orm_default' => [
+        //         'query_cache' => 'phpfilecache',//function($c) {return new \Doctrine\Common\Cache\PhpFileCache('data/cache');},
+        //         'result_cache' => 'redis',
+        //         'metadata_cache' => 'phpfilecache',
+        //         'hydration_cache' => 'phpfilecache',
+        //      ],
+        // ],
     ],
 
     'service_manager' => [
@@ -95,6 +101,7 @@ return [
           'log' => \Laminas\Log\Logger::class,
         ],
         'factories' => [
+            'Service\Cache\Redis'=> Service\Factory\RedisFactory::class, //function($container){$redis = new \Redis(); $redis->connect("localhost"); return $redis; },
             'Laminas\Authentication\AuthenticationService' => 'InterpretersOffice\Service\Factory\AuthenticationFactory',
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
             \Laminas\Log\Logger::class => Service\Factory\LogFactory::class,
