@@ -66,8 +66,9 @@ RUN chown -R www-data /var/www
 RUN chown -R www-data /var/lib/php/sessions
 RUN chmod -R 777 /var/www/data
 
-# This is a read-only token from github on TomHAnderson's account.
+# Install composer
 WORKDIR /var/www
+RUN composer install
 
 # Expose http
 EXPOSE 80

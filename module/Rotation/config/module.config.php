@@ -1,21 +1,23 @@
 <?php
 namespace InterpretersOffice\Admin\Rotation;
-use Laminas\Router\Http\Segment;
-return [
 
+use Laminas\Router\Http\Segment;
+
+return [
     'rotations' => [
         'enabled' => true,
     ],
     'doctrine' => [
         'driver' => [
-            'application_annotation_driver' => [
+            'rotation_annotation_driver' => [
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                 'paths' => [
                     __DIR__.'/../src/Entity',
                 ],
             ],
             'orm_default' => [
                 'drivers' => [
-                    __NAMESPACE__.'\Entity' => 'application_annotation_driver',
+                    __NAMESPACE__.'\Entity' => 'rotation_annotation_driver',
                 ],
             ],
         ],

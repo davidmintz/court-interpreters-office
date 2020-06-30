@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6a392b6116bf7156ba283c1fff1ef71",
+    "content-hash": "23e9d9e2a7c8fa006c33bb1ed6f59579",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1822,6 +1822,63 @@
             "time": "2019-12-31T16:30:11+00:00"
         },
         {
+            "name": "laminas/laminas-console",
+            "version": "2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-console.git",
+                "reference": "478a6ceac3e31fb38d6314088abda8b239ee23a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-console/zipball/478a6ceac3e31fb38d6314088abda8b239ee23a5",
+                "reference": "478a6ceac3e31fb38d6314088abda8b239ee23a5",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-stdlib": "^3.2.1",
+                "laminas/laminas-zendframework-bridge": "^1.0",
+                "php": "^5.6 || ^7.0"
+            },
+            "replace": {
+                "zendframework/zend-console": "self.version"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~1.0.0",
+                "laminas/laminas-filter": "^2.7.2",
+                "laminas/laminas-json": "^2.6 || ^3.0",
+                "laminas/laminas-validator": "^2.10.1",
+                "phpunit/phpunit": "^5.7.23 || ^6.4.3"
+            },
+            "suggest": {
+                "laminas/laminas-filter": "To support DefaultRouteMatcher usage",
+                "laminas/laminas-validator": "To support DefaultRouteMatcher usage"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.8.x-dev",
+                    "dev-develop": "2.9.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Console\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Build console applications using getopt syntax or routing, complete with prompts",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "console",
+                "laminas"
+            ],
+            "time": "2019-12-31T16:31:45+00:00"
+        },
+        {
             "name": "laminas/laminas-crypt",
             "version": "3.3.1",
             "source": {
@@ -2984,6 +3041,76 @@
             "time": "2019-12-31T17:33:14+00:00"
         },
         {
+            "name": "laminas/laminas-mvc-console",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-mvc-console.git",
+                "reference": "0c16223557fdb9bba853f6de22e1040824c1c966"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-mvc-console/zipball/0c16223557fdb9bba853f6de22e1040824c1c966",
+                "reference": "0c16223557fdb9bba853f6de22e1040824c1c966",
+                "shasum": ""
+            },
+            "require": {
+                "container-interop/container-interop": "^1.1",
+                "laminas/laminas-console": "^2.6",
+                "laminas/laminas-eventmanager": "^2.6.2 || ^3.0",
+                "laminas/laminas-modulemanager": "^2.7.1",
+                "laminas/laminas-mvc": "^3.0.3",
+                "laminas/laminas-router": "^3.0",
+                "laminas/laminas-servicemanager": "^2.7.5 || ^3.0.3",
+                "laminas/laminas-stdlib": "^2.7.5 || ^3.0",
+                "laminas/laminas-text": "^2.6",
+                "laminas/laminas-view": "^2.6.3",
+                "laminas/laminas-zendframework-bridge": "^1.0",
+                "php": "^5.6 || ^7.0"
+            },
+            "conflict": {
+                "laminas/laminas-mvc": "<3.0.0"
+            },
+            "replace": {
+                "zendframework/zend-mvc-console": "self.version"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~1.0.0",
+                "laminas/laminas-filter": "^2.6.1",
+                "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.4"
+            },
+            "suggest": {
+                "laminas/laminas-filter": "^2.6.1, to filter rendered results"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev",
+                    "dev-develop": "1.3.x-dev"
+                },
+                "laminas": {
+                    "component": "Laminas\\Mvc\\Console"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Mvc\\Console\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Integration between laminas-mvc and laminas-console",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "console",
+                "laminas",
+                "mvc"
+            ],
+            "time": "2019-12-31T17:33:37+00:00"
+        },
+        {
             "name": "laminas/laminas-mvc-plugin-flashmessenger",
             "version": "1.2.0",
             "source": {
@@ -3494,6 +3621,58 @@
                 "stdlib"
             ],
             "time": "2019-12-31T17:51:15+00:00"
+        },
+        {
+            "name": "laminas/laminas-text",
+            "version": "2.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-text.git",
+                "reference": "3601b5eacb06ed0a12f658df860cc0f9613cf4db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-text/zipball/3601b5eacb06ed0a12f658df860cc0f9613cf4db",
+                "reference": "3601b5eacb06ed0a12f658df860cc0f9613cf4db",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-servicemanager": "^2.7.5 || ^3.0.3",
+                "laminas/laminas-stdlib": "^2.7 || ^3.0",
+                "laminas/laminas-zendframework-bridge": "^1.0",
+                "php": "^5.6 || ^7.0"
+            },
+            "replace": {
+                "zendframework/zend-text": "self.version"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~1.0.0",
+                "laminas/laminas-config": "^2.6",
+                "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7.x-dev",
+                    "dev-develop": "2.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Text\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Create FIGlets and text-based tables",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "text"
+            ],
+            "time": "2019-12-31T17:54:52+00:00"
         },
         {
             "name": "laminas/laminas-uri",
@@ -5492,63 +5671,6 @@
             "time": "2020-01-13T18:16:40+00:00"
         },
         {
-            "name": "laminas/laminas-console",
-            "version": "2.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-console.git",
-                "reference": "478a6ceac3e31fb38d6314088abda8b239ee23a5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-console/zipball/478a6ceac3e31fb38d6314088abda8b239ee23a5",
-                "reference": "478a6ceac3e31fb38d6314088abda8b239ee23a5",
-                "shasum": ""
-            },
-            "require": {
-                "laminas/laminas-stdlib": "^3.2.1",
-                "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "^5.6 || ^7.0"
-            },
-            "replace": {
-                "zendframework/zend-console": "self.version"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "~1.0.0",
-                "laminas/laminas-filter": "^2.7.2",
-                "laminas/laminas-json": "^2.6 || ^3.0",
-                "laminas/laminas-validator": "^2.10.1",
-                "phpunit/phpunit": "^5.7.23 || ^6.4.3"
-            },
-            "suggest": {
-                "laminas/laminas-filter": "To support DefaultRouteMatcher usage",
-                "laminas/laminas-validator": "To support DefaultRouteMatcher usage"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.8.x-dev",
-                    "dev-develop": "2.9.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Console\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Build console applications using getopt syntax or routing, complete with prompts",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "console",
-                "laminas"
-            ],
-            "time": "2019-12-31T16:31:45+00:00"
-        },
-        {
             "name": "laminas/laminas-developer-tools",
             "version": "1.3.0",
             "source": {
@@ -7188,5 +7310,6 @@
     },
     "platform-dev": {
         "ext-dom": "*"
-    }
+    },
+    "plugin-api-version": "1.1.0"
 }

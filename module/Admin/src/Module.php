@@ -1,15 +1,12 @@
 <?php
-/**
- * module/Admin/src/Module.php.
- */
 
 namespace InterpretersOffice\Admin;
 
 use Laminas\Mvc\MvcEvent;
 use Laminas\EventManager\EventInterface;
 use Laminas\Session\SessionManager;
-use InterpretersOffice\Admin\Service\Log\Writer as DbWriter;
 use Laminas\Uri\UriFactory;
+use Laminas\Console\Request as ConsoleRequest;
 
 /**
  * Module class for our InterpretersOffice\Admin module.
@@ -82,20 +79,16 @@ class Module
         } catch (\Laminas\Session\Exception\RuntimeException $e) {
              return $this->getRedirectionResponse($event);
         }
-        $db_writer = $container->get(DbWriter::class);
         $log = $container->get('log');
         $log->debug("\n----------------------------------------\n");
         $eventManager = $event->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, function ($e) use ($log, $db_writer) {
-            $log->addWriter($db_writer);
-        });        
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this,'logError']);
         $eventManager->attach(MvcEvent::EVENT_ROUTE, [$this, 'enforceAuthentication']);
         $eventManager->attach(MvcEvent::EVENT_DISPATCH, function ($event) use ($viewModel) {
             $routeMatch = $event->getRouteMatch();
             if ($routeMatch) {
-                $viewModel->setVariables($routeMatch->getParams());                
+                $viewModel->setVariables($routeMatch->getParams());
                 // really? not sure why we need this...
                 $viewModel->routeMatch = $routeMatch->getMatchedRouteName();
             }
@@ -140,6 +133,12 @@ class Module
      */
     public function enforceAuthentication(MvcEvent $event)
     {
+        $request = $event->getRequest();
+
+        if ($request instanceof ConsoleRequest) {
+            return;
+        }
+
         $match = $event->getRouteMatch();
         if (! $match) {
             return;
@@ -152,7 +151,6 @@ class Module
         $allowed = true;
         $container = $event->getApplication()->getServiceManager();
         $auth = $container->get('auth');
-        $request = $event->getRequest();
         // temporary
         //$channel = ['channel'=>'redirect-debug'];
         //$log = $container->get('log');
@@ -190,7 +188,7 @@ class Module
                 $allowed = false;
             }
         }
-        if (! $allowed) {             
+        if (! $allowed) {
              return $this->getRedirectionResponse($event);
         }
         /** try to prevent us from timing out */
@@ -220,7 +218,7 @@ class Module
         }
         $resource  = $match->getParam('controller');
         $privilege = $match->getParam('action', \strtolower($event->getRequest()->getMethod()));
-        $log = $event->getApplication()->getServiceManager()->get('log');        
+        $log = $event->getApplication()->getServiceManager()->get('log');
         $log->debug(sprintf(__METHOD__." checking role %s access to resource %s, privilege %s",
                 $role, is_object($resource) ? get_class($resource) : $resource,
                 $privilege
@@ -289,7 +287,7 @@ class Module
      * @return Laminas\Http\PhpEnvironment\Response
      */
     public function getRedirectionResponse(MvcEvent $event)
-    {                
+    {
         $response = $event->getResponse();
         $baseUrl = $event->getRequest()->getBaseurl();
         $response->getHeaders()

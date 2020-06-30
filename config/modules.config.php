@@ -17,6 +17,7 @@ $modules = [
     'Laminas\Form',
     'Laminas\Router',
     'Laminas\Navigation',
+    'Zend\\Mvc\\Console',
     'InterpretersOffice',
     'InterpretersOffice\Admin',
     'InterpretersOffice\Admin\Notes',

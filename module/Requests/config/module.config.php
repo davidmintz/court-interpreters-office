@@ -10,12 +10,6 @@ use Laminas\Router\Http\Segment;
 
 use InterpretersOffice\Requests\Controller\Admin;
 
-//$environment = getenv('environment') ?: 'development';
-
-// set to 'array' to disable
-//$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
-//$
-
 $event_configuration_file = file_exists(
     __DIR__.'/custom.event-listeners.json') ?
     __DIR__.'/custom.event-listeners.json' :
@@ -51,14 +45,15 @@ return [
     // add the entity path to the doctrine config
     'doctrine' => [
         'driver' => [
-            'application_annotation_driver' => [
+            'requests_annotation_driver' => [
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                 'paths' => [
                     __DIR__.'/../src/Entity',
                 ],
             ],
             'orm_default' => [
                 'drivers' => [
-                    __NAMESPACE__.'\Entity' => 'application_annotation_driver',
+                    __NAMESPACE__.'\Entity' => 'requests_annotation_driver',
                 ],
             ],
         ],

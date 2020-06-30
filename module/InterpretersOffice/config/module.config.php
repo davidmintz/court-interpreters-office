@@ -14,13 +14,10 @@ use InterpretersOffice\Service;
 
 $environment = getenv('environment') ?: 'development';
 
-// set to 'array' to disable
-$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
-
 return [
     'form_elements' => [
         'factories' => [
-            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,            
+            Form\PersonForm::class => Form\Factory\PersonFormFactory::class,
         ],
     ],
     'controllers' => [
@@ -30,11 +27,9 @@ return [
            Controller\LocationsController::class => Controller\Factory\LocationsControllerFactory::class,
            Controller\DefendantsController::class => Controller\Factory\DefendantsControllerFactory::class,
            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
-        ],       
+        ],
     ],
     'view_manager' => [
-        'display_not_found_reason' => true,
-        'display_exceptions' => false,
         'doctype' => 'HTML5',
         'not_found_template' => 'error/404',
         'exception_template' => 'error/index',
@@ -60,12 +55,11 @@ return [
             ],
         ],
         'driver' => [
-            // defines an annotation driver with one path, and names it `my_annotation_driver`
-            'application_annotation_driver' => [
+            // Name drivers after the module
+            'interpreters_office_annotation_driver' => [
                 'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-                'cache' => 'array',
                 'paths' => [
-                    __DIR__.'/../src/Entity',
+                    __DIR__ . '/../src/Entity',
                 ],
             ],
 
@@ -74,17 +68,9 @@ return [
             'orm_default' => [
                 'drivers' => [
                     // register `my_annotation_driver` for any entity under namespace `My\Namespace`
-                    __NAMESPACE__.'\Entity' => 'application_annotation_driver',
-                ],               
+                    __NAMESPACE__ . '\Entity' => 'interpreters_office_annotation_driver',
+                ],
             ],
-        ],
-        'configuration' => [
-             'orm_default' => [
-                'query_cache' => $doctrine_cache,
-                'result_cache' => $doctrine_cache,
-                'metadata_cache' => $doctrine_cache,
-                'hydration_cache' => $doctrine_cache,
-             ],
         ],
     ],
 
@@ -99,7 +85,7 @@ return [
             'annotated-form-factory' => 'InterpretersOffice\Form\Factory\AnnotatedEntityFormFactory',
             \Laminas\Log\Logger::class => Service\Factory\LogFactory::class,
             Service\Listener\AuthenticationListener::class => Service\Factory\AuthenticationListenerFactory::class,
-            Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,           
+            Entity\Listener\UpdateListener::class => Entity\Listener\Factory\UpdateListenerFactory::class,
             Service\AccountManager::class => Service\Factory\AccountManagerFactory::class,
 
         ],
@@ -133,7 +119,7 @@ return [
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\IndexController::class,
-                        'action' => 'schedule',                         
+                        'action' => 'schedule',
                     ],
                     'constraints' => [
                         'shit' => '',
@@ -141,9 +127,9 @@ return [
                         'month' => '\d\d',
                         'date' => '\d\d',
                         'language'=>'(non-)?[Ss]panish|all',
-                        
+
                     ],
-                ],                
+                ],
             ],
             'view-event' => [
                 'type' => Segment::class,
@@ -152,11 +138,11 @@ return [
                     'defaults' => [
                         'module' => __NAMESPACE__,
                         'controller' => Controller\IndexController::class,
-                        'action' => 'view-event',                         
+                        'action' => 'view-event',
                     ],
-                    'constraints' => [                  
-                        'id' => '[1-9][0-9]+',                    
-                    ],              
+                    'constraints' => [
+                        'id' => '[1-9][0-9]+',
+                    ],
                 ],
             ],
             'contact' => [

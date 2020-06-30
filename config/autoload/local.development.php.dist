@@ -16,10 +16,66 @@
  */
 use Laminas\Mail;
 
+// set to 'array' to disable
+$environment = getenv('environment') ?: 'development';
+$doctrine_cache = $environment == 'testing' ? 'array' : 'filesystem';
+
 return [
     'view_manager' => [
         'display_exceptions' => true,
+        'display_not_found_reason' => true,
     ],
+    
+    'doctrine' => [
+        'connection' => [
+            // Configuration for service `doctrine.connection.orm_default` service
+            'orm_default' => [
+                // connection parameters, see
+                // http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
+                'driverClass' => 'Doctrine\\DBAL\\Driver\\PDOMySql\\Driver',
+                'params' => [
+                    'host'     => 'mysql',
+                    'port'     => '3306',
+                    'user'     => 'root',
+                    'password' => '123',
+                    'dbname'   => 'court_interpreters_office',
+                    'charset' => 'utf8mb4',
+                    'collate' => 'utf8mb4_unicode_ci',
+                ],
+            ],
+        ],
+
+        'configuration' => [
+             'orm_default' => [
+                'query_cache' => 'array',
+                'result_cache' => 'array',
+                'metadata_cache' => 'array',
+                'hydration_cache' => 'array',
+             ],
+        ],
+        
+        'driver' => [
+            'orm_default' => [
+                'class' => 'Doctrine\\ORM\\Mapping\\Driver\\DriverChain',
+            ],
+        ],
+    ],
+
+    // Custom logger for development; do not use database logging
+    'service_manager' => [
+        'factories' => [
+            \Laminas\Log\Logger::class => function($container) {
+                $writer = new \Laminas\Log\Writer\Stream(__DIR__ . '/../../data/log/app.log.' . date('Y-m-d'), 'a');
+                $log = new \Laminas\Log\Logger();
+                $log->addWriter($writer);
+                
+                return $log;
+            },
+        ],
+    ],
+    
+    
+    
     // for production...
     ///*
     // 'mail' => [

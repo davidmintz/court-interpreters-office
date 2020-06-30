@@ -31,22 +31,16 @@ class LogFactory implements FactoryInterface
         $log = new Logger();
         $path = getcwd().'/data/log/app.log.'.date('Y-m-d');
         $writer = new Stream($path, 'a');
-        /* make verbosity level environment-dependent */        
+        /* make verbosity level environment-dependent */
         $level = getenv('environment') == 'production' ? Logger::INFO : Logger::DEBUG;
         $filter = new Filter($level);
         $writer->addFilter($filter);
+
         // I think the 2nd argument 'priority' means the order
         // in which writers write, not the filter
+
         $log->addWriter($writer);
-        // $pdo = $container->get('entity-manager')
-        //     ->getConnection()->getWrappedConnection();
-        //$writer = new DbWriter($pdo);
-        // $log->addWriter($container->get(DbWriter::class));
-        //    ->getConnection()->getWrappedConnection();
-        //$db_writer = new DbWriter($pdo);
-        //$db_writer->addFilter(new Priority(Logger::INFO));
-        // for now, mark the (approximate) beginning of each request cycle
-        //$log->debug("\n================================\n");
+        $log->addWriter($container->get(DbWriter::class));
 
         return $log;
     }

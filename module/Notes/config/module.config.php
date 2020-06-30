@@ -9,14 +9,15 @@ return [
 
     'doctrine' => [
         'driver' => [
-            'application_annotation_driver' => [
+            'notes_annotation_driver' => [
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                 'paths' => [
                     __DIR__.'/../src/Entity',
                 ],
             ],
             'orm_default' => [
                 'drivers' => [
-                    __NAMESPACE__.'\Entity' => 'application_annotation_driver',
+                    __NAMESPACE__.'\Entity' => 'notes_annotation_driver',
                 ],
             ],
         ],

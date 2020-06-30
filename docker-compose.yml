@@ -15,7 +15,6 @@ services:
       - "80:80"
     volumes:
       - court-interpreters-office-sync:/var/www:rw
-      - ./config/autoload/local.php:/var/www/config/autoload/local.php
       - ./config/development.config.php.dist:/var/www/config/development.config.php
 
   mysql:
