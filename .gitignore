@@ -34,3 +34,4 @@ bin/scratch
 buildfiles/
 .mysql/
 .docker-sync/
+.vscode
