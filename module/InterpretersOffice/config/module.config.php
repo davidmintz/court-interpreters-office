@@ -84,14 +84,14 @@ return [
                 'instance' => 'Service\Cache\Redis',
             ],
         ],
-        'configuration' => [
-             'orm_default' => [
-                'query_cache' => 'phpfilecache',//function($c) {return new \Doctrine\Common\Cache\PhpFileCache('data/cache');},
-                'result_cache' => 'redis',
-                'metadata_cache' => 'phpfilecache',
-                'hydration_cache' => 'phpfilecache',
-             ],
-        ],
+        // 'configuration' => [
+        //      'orm_default' => [
+        //         'query_cache' => 'phpfilecache',//function($c) {return new \Doctrine\Common\Cache\PhpFileCache('data/cache');},
+        //         'result_cache' => 'redis',
+        //         'metadata_cache' => 'phpfilecache',
+        //         'hydration_cache' => 'phpfilecache',
+        //      ],
+        // ],
     ],
 
     'service_manager' => [
