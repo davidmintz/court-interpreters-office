@@ -9,6 +9,7 @@
         "ext-mbstring": "*",
         "ext-json": "*",
         "ext-intl": "*",
+	"ext-redis": "*",
         "laminas/laminas-mvc": "^3.1",
         "laminas/laminas-form": "^2.12",
         "laminas/laminas-log": "^2.10",
