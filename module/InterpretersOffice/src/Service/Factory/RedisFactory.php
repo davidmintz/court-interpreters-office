@@ -1,10 +1,11 @@
 <?php /** module/InterpretersOffice/src/Service/Factory/RedisFactory.php */
+declare(strict_types=1);
 
 namespace InterpretersOffice\Service\Factory;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-// use Redis;
+use Redis;
 
 /**
  * factory for Redis instance used for result caching
@@ -20,7 +21,7 @@ class RedisFactory implements FactoryInterface
      *
      * @return Redis $redis instance for result cache
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null): Redis
     {
         /** @var Redis $redis */
         $redis = new \Redis();
