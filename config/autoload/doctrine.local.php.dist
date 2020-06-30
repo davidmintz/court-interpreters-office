@@ -35,5 +35,15 @@ return [
                 ]
             ]
         ]
-    ]
+    ],
+    // this file ships with these set same as in module/InterpretersOffice/config/module/config.php
+    // but you can override these settings in your doctrine.local.php
+    'configuration' => [
+        'orm_default' => [
+            'query_cache' => 'phpfilecache',
+            'result_cache' => 'redis',
+            'metadata_cache' => 'phpfilecache',
+            'hydration_cache' => 'phpfilecache',
+        ],
+    ],
 ];
