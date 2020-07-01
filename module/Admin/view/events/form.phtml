@@ -284,4 +284,16 @@ endif;
     </div>
   </div>
 </div>
+<div id="modal-stray-defendant-name" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header"></div>
+      <div class="modal-body"></div>
+      <div class="modal-footer justify-content-center text-center">
+        <button id="btn-yes-search" type="button" class="btn btn-success mr-0" data-dismiss="modal">yes</button><!--
+        --><button id="btn-no-search" type="button" class="btn btn-secondary ml-1" data-dismiss="modal">no</button>
+      </div>
+    </div>
+  </div>
+</div>
 <?php echo $this->partial('schedule/confirm-delete-modal.phtml',['count_interpreters'=>$count_interpreters??0]);
