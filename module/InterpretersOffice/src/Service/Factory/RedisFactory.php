@@ -23,9 +23,10 @@ class RedisFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): Redis
     {
+        $host = $container->get('config')['redis']['host'];
         /** @var Redis $redis */
-        $redis = new \Redis();
-        $redis->connect("localhost");
+        $redis = new \Redis();        
+        $redis->connect($host);
 
         return $redis;
     }

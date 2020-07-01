@@ -27,6 +27,12 @@ return   [
              ],
         ],
     ],
+    // set this as needed
+    'redis' => [
+        'host' => 'localhost',
+        'port' => 6379,
+    ],
+
     'view_manager' => [
         'display_exceptions' => false,
     ],
