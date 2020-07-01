@@ -32,7 +32,7 @@ class MOTDRepository extends EntityRepository implements CacheDeletionInterface
      * while debugging
      * 
      */
-    protected $use_result_cache = false;
+    protected $use_result_cache = true;
 
     /**
      * constructor
