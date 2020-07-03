@@ -436,7 +436,8 @@ var eventForm = (function () {
     var formSubmit = function(event){
 
         event.preventDefault();
-
+        console.log("this is SUBMIT event, yes?");
+        // return false;
         if (! locationElement.val()) {
             // no specific location was selected, so the general location
             // should be submitted in its place
@@ -742,6 +743,8 @@ var eventForm = (function () {
          * did not click the button
          */
         $("input[value=save]").on("click",function(event){
+            event.preventDefault();
+            console.warn("this is CLICK event on save button");
             var submitButton = $(this);
             var banned_interpreter_found = (function(){
                 var opt = $("#interpreter-select option:selected");
@@ -773,8 +776,41 @@ var eventForm = (function () {
                     `Did you mean to assign interpreter <strong>${name}</strong> to this event?`);
                 $("#modal-assign-interpreter").modal();
             }
-        });
-        form.on("submit",formSubmit);
+            // and the stray deft name
+            if (defendantSearchElement.val()) {
+                console.warn("eat shit?");
+                var deft = defendantSearchElement.val().trim();
+                var deftname_modal = $("#modal-stray-defendant-name");
+                $("#modal-stray-defendant-name").modal({show:false});
+                $("#modal-stray-defendant-name .modal-header").html("Name has not been added");
+                $("#modal-stray-defendant-name .modal-body").html(`<strong>${deft}</strong> has not yet been added to this event.
+                Did you intend to look up this name?`);
+                
+                var wants_to_submit = false;
+                $("#btn-yes-search").on("click",(e)=>{
+                    e.preventDefault();
+                    wants_to_submit = false;
+                    deftname_modal.modal("hide");
+                    // deftname_modal.on("hide.bs.modal",()=>{
+                    console.warn("FUCK ME? they said YES search");
+                    $("#btn-defendant-search").trigger("click");
+                    // });
+                    // deftname_modal.modal("hide");               
+                });
+                $("#btn-no-search").on("click",()=>formSubmit(event));
+                $("#modal-stray-defendant-name").modal("show");
+                if (! wants_to_submit) {
+                    return false; 
+                } else {
+                    formSubmit(event);
+                }
+            } else {
+                formSubmit(event);
+            }
+        });//*/
+
+        // });
+        // form.on("submit",formSubmit);
     };
 
     return {
