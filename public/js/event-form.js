@@ -834,19 +834,18 @@ var eventForm = (function () {
  */
 var defendantForm = (function(){
 
-    var addDeftCallback = function(response){
-
+    var addDeftCallback = function(response){        
         if (response.validation_errors) {
             displayValidationErrors(response.validation_errors);
             return;
         }
-        if (response.id) { // successful insert
+        if (response.data && response.data.id) { // successful insert           
             eventForm.defendants.append({
-                id : response.id,
+                id : response.data.id,
                 surnames : $("#surnames").val().trim(),
                 given_names : $("#given_names").val().trim()
             });
-        }
+        } 
         if (response.duplicate_entry_error) {
             var existing = response.existing_entity;
             var exact_duplicate =
