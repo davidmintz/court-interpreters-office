@@ -209,9 +209,9 @@ var eventForm = (function () {
                 var el = $(html);
                 if (banned_by) { el.data({banned_by});}
                 $("#interpreters-assigned").append(el);
-                if (params && params.submit) {
-                    $("#event-form input[value=save]").trigger("click");
-                }
+                // if (params && params.submit) {
+                //     $("#event-form input[value=save]").trigger("click");
+                // }
             })
             .fail(fail);
     };
@@ -469,7 +469,7 @@ var eventForm = (function () {
 
         // multi-date stuff
         if (! form.data("multiDate")) {
-            $(`li.multidate, input[name="event[dates]"]`).remove();
+            $("li.multidate, input[name=\"event[dates]\"]").remove();
         }
 
         // and now...
@@ -481,7 +481,7 @@ var eventForm = (function () {
             }
             document.location = `${window.basePath}/admin/schedule/view/${response.id}`;
         })
-        .fail(fail);
+            .fail(fail);
     };
 
     /**
@@ -763,7 +763,7 @@ var eventForm = (function () {
                 $("#modal-assign-interpreter .modal-footer button").on("click",
                     function(event) {
                         var button = $(event.target);
-                        submitButton.off("click");
+                        //submitButton.off("click");
                         if (button.text()==="yes") {
                             interpreterButton.trigger("click",{submit:true});
                         } else {
@@ -775,6 +775,7 @@ var eventForm = (function () {
                 $("#modal-assign-interpreter .modal-body").html(
                     `Did you mean to assign interpreter <strong>${name}</strong> to this event?`);
                 $("#modal-assign-interpreter").modal();
+                return false;
             }
             // and the stray deft name
             if (defendantSearchElement.val()) {
@@ -802,10 +803,10 @@ var eventForm = (function () {
                 if (! wants_to_submit) {
                     return false; 
                 } else {
-                    formSubmit(event);
+                    // formSubmit(event);
                 }
             } else {
-                formSubmit(event);
+                // formSubmit(event);
             }
         });//*/
 
