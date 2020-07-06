@@ -9,6 +9,9 @@ use Laminas\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\ResultSetMapping;
+use Laminas\Paginator\Paginator as LaminasPaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
+use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
 use InterpretersOffice\Entity;
 
 /*
@@ -40,6 +43,7 @@ class ReportService
     const REPORT_USAGE_BY_INTERPRETER = 2;
     const REPORT_CANCELLATIONS_BY_JUDGE = 3;
     const REPORT_BELATED_BY_JUDGE = 4;
+    const REPORT_NON_SPANISH_WITH_LANGUAGE_CREDENTIAL = 5;
 
     /**
      * report id => label
@@ -50,6 +54,7 @@ class ReportService
         self::REPORT_USAGE_BY_INTERPRETER => 'interpreter usage by interpreter',
         self::REPORT_CANCELLATIONS_BY_JUDGE => 'belated cancellations per judge',
         self::REPORT_BELATED_BY_JUDGE => 'belated in-court requests per judge',
+        self::REPORT_NON_SPANISH_WITH_LANGUAGE_CREDENTIAL => 'non-Spanish events including language credential',
     ];
 
     /**
@@ -115,10 +120,25 @@ class ReportService
                 } catch (\Exception $e) {
                     return ['error' => $e->getMessage(),'report_type' => self::$reports[$options['report']], 'data'=> null];
                 }
-                // /** @var CourtClosingRepository $repo  */
-                // $repo = $this->em->getRepository(Entity\CourtClosing::class);
-                // $dateCalculator = new DateCalculator($repo);
-                // $data["PS"] = get_class($dateCalculator);
+
+            break;
+
+            case self::REPORT_NON_SPANISH_WITH_LANGUAGE_CREDENTIAL:
+                $qb = $this->createNonSpanishReport($qb)
+                ->andWhere($qb->expr()->between('e.date',':from',':to'))
+                ->setParameters([':from'=>$from, ':to' => $to, ]);
+                $query = $qb->getQuery();
+                //$query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+                $adapter = new DoctrineAdapter(new ORMPaginator($query));
+                $paginator = new LaminasPaginator($adapter);        
+                $paginator->setCurrentPageNumber($options['page']??1)->setItemCountPerPage(20);
+                $result = [
+                    'data' => $paginator->getCurrentItems(),
+                    'pages' => $paginator->getPages(),                   
+                ];
+                return $result;
+                
+
             break;
             default:
                 $data = [];
@@ -134,8 +154,47 @@ class ReportService
     }
 
     /**
+     * reports non-Spanish events for date range
+     * 
+     * @param QueryBuilder $qb
+     * @return QueryBuilder     
+     */
+    public function createNonSpanishReport(QueryBuilder $qb) : QueryBuilder
+    {
+        
+        /*
+        "SELECT COALESCE(j.lastname, aj.name) AS judge, l.name AS language, lc.abbreviation as rating, i.lastname AS interpreter 
+        FROM InterpretersOffice\Entity\Event e 
+        LEFT JOIN e.judge j LEFT JOIN e.anonymous_judge aj 
+        JOIN e.interpreterEvents ie JOIN ie.interpreter i  
+        JOIN e.language l 
+        JOIN i.interpreterLanguages il WITH e.language = il.language 
+        JOIN il.languageCredential lc WHERE e.date > '2020-06-30' AND l.name <> 'Spanish'"
+            'e.date','e.time', 'e.docket',
+         */
+        //'partial r.{id,date,time,docket, extraData}',
+        $qb->select(['PARTIAL e.{id, date, time, docket}',  'COALESCE(j.lastname, aj.name) AS judge', 
+            'CONCAT(i.lastname, \', \', i.firstname) AS interpreter',
+            'l.name AS language','lc.abbreviation AS rating','t.name AS event_type',
+            'CASE WHEN e.cancellation_reason IS NULL THEN false ELSE true END AS cancelled'
+        ])->from('InterpretersOffice\Entity\Event', 'e')
+        ->join('e.language','l')
+        ->join('e.interpreterEvents','ie')
+        ->join('ie.interpreter', 'i')
+        ->join('i.interpreterLanguages','il','WITH','e.language = il.language')
+        ->join('il.languageCredential','lc')
+        ->join('e.event_type','t')->where("l.name <> 'Spanish'")
+        ->leftJoin('e.judge','j')->leftJoin('e.anonymous_judge','aj')
+        ->orderBy('e.date','ASC');
+
+        return $qb;
+        
+    }
+
+    /**
      * language-usage query
      * 
+     * @param QueryBuilder $qb
      * @return QueryBuilder
      */
     public function createLanguageUsageQuery(QueryBuilder $qb) : QueryBuilder
