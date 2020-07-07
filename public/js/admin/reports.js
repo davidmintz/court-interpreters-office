@@ -14,7 +14,7 @@ var dp_defaults = {
 
 const non_spanish_event_report = function(result, table)
 {
-    table.children("tfoot").empty();console.warn("FUCK YOU?");
+    
     var keys = ["date","judge","interpreter","language","rating","type","docket"];
     var head = keys.map(i=>`<th>${i}</th>`).join("");
     table.children("thead").html(`<tr>${head}</tr>`);
@@ -128,7 +128,7 @@ const table_interpreter_usage_by_interpreter = (report_data,table)=>
         );
         rows.push(row);
     });
-    table.children("tbody").html(rows).after($("<tfoot>"));
+    table.children("tbody").html(rows);
 };
 const sort_by_pct = function(e){
     var th = $(e.target);
@@ -336,7 +336,8 @@ $(function () {
         e.preventDefault();
         // $("nav.pagination, p.pagination-head").empty();
         btn.html("<span class='fa fa-cog fa-spin'></span");
-        var table = $("#table > table");   
+        var table = $("#table > table"); 
+        table.children("tfoot").empty();
         var params = form.serialize();
         $.get(form.attr("action"), params)
             .then(res => {
