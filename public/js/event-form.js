@@ -209,9 +209,11 @@ var eventForm = (function () {
                 var el = $(html);
                 if (banned_by) { el.data({banned_by});}
                 $("#interpreters-assigned").append(el);
-                // if (params && params.submit) {
-                //     $("#event-form input[value=save]").trigger("click");
-                // }
+                // this means they are adding the interpreter after trying to submit
+                // the form and being prompted to add the interpreter who was pending
+                if (params && params.submit) {
+                    $("#event-form input[value=save]").trigger("click");
+                }
             })
             .fail(fail);
     };
@@ -426,56 +428,19 @@ var eventForm = (function () {
         return html;
     };
     /**
-     * callback for form's submit event
+     * POSTs form data
      *
      * admin mode only
      *
      * @param  {object} event
      * @return {void}
      */
-    var formSubmit = function(event){
+    var submit_form = function(){
 
-        event.preventDefault();
-        console.log("this is SUBMIT event, yes?");
-        // return false;
-        if (! locationElement.val()) {
-            // no specific location was selected, so the general location
-            // should be submitted in its place
-            var location_id = parentLocationElement.val();
-            if (location_id) {
-                locationElement.after(
-                    $("<input>").attr({
-                        name : "event[location]",
-                        type : "hidden"
-                    }).val(location_id)
-                );
-            }
-            if (form.data("deftnames_modified")) {
-                // hint to the controller that there was an update
-                // even though may look like like there wasn't. experimental.
-                form.append(
-                    $("<input>")
-                        .attr({name:"deftnames_modified",type:"hidden"}).val(1)
-                );
-            }
-        }
-        // if there is no judge selected, clear this so form validation
-        // doesn't give us false positive followed by Event entity exception
-        // due to both judge and anon judge props being null
-        if (! judgeElement.val()) {
-            anon_judge.val(0);
-            $("#anonymous_judge").val(judgeElement.val());
-        }
-
-        // multi-date stuff
-        if (! form.data("multiDate")) {
-            $("li.multidate, input[name=\"event[dates]\"]").remove();
-        }
-
-        // and now...
+        pre_submit();
         var data = form.serialize();
         var url = form.attr("action");
-        $.post(url,data).done(function(response) {
+        $.post(url,data).then(function(response) {
             if (response.validation_errors) {
                 return displayValidationErrors(response.validation_errors);
             }
@@ -609,6 +574,45 @@ var eventForm = (function () {
         );
     };
 
+    /**
+     * mangles form data prior to submission
+     */
+    var pre_submit = function()
+    {
+        if (! locationElement.val()) {
+            // no specific location was selected, so the general location
+            // should be submitted in its place
+            var location_id = parentLocationElement.val();
+            if (location_id) {
+                locationElement.after(
+                    $("<input>").attr({
+                        name : "event[location]",
+                        type : "hidden"
+                    }).val(location_id)
+                );
+            }
+            if (form.data("deftnames_modified")) {
+                // hint to the controller that there was an update
+                // even though may look like like there wasn't. experimental.
+                form.append(
+                    $("<input>")
+                        .attr({name:"deftnames_modified",type:"hidden"}).val(1)
+                );
+            }
+        }
+        // if there is no judge selected, clear this so form validation
+        // doesn't give us false positive followed by Event entity exception
+        // due to both judge and anon judge props being null
+        if (! judgeElement.val()) {
+            anon_judge.val(0);
+            $("#anonymous_judge").val(judgeElement.val());
+        }
+
+        // multi-date stuff
+        if (! form.data("multiDate")) {
+            $("li.multidate, input[name=\"event[dates]\"]").remove();
+        }
+    };
     /**
      * initializes form state and event handlers
      * @return {void}
@@ -745,7 +749,8 @@ var eventForm = (function () {
         $("input[value=save]").on("click",function(event){
             event.preventDefault();
             console.warn("this is CLICK event on save button");
-            var submitButton = $(this);
+
+            var has_pending_deftname, has_pending_interpreter;
             var banned_interpreter_found = (function(){
                 var opt = $("#interpreter-select option:selected");
                 if (! opt.length) { return false; }
@@ -756,62 +761,47 @@ var eventForm = (function () {
                 return opt.data("banned_by").toString().split(",").includes(person_id);
 
             })();
-            if ($("#interpreter-select").val() && ! banned_interpreter_found) {
-                // if there's a problem with a **banned** interpreter, we just let it go,
-                // because the interpreter in question won't get saved anyway.
-                event.preventDefault();
+            has_pending_interpreter = ($("#interpreter-select").val() && ! banned_interpreter_found);
+            has_pending_deftname = (defendantSearchElement.val().trim());
+            if (! has_pending_deftname && ! has_pending_interpreter) {
+                return submit_form();
+            }
+            if (has_pending_deftname){
+                console.warn("eat shit? a deft name is pending");
+                var deft = defendantSearchElement.val().trim();
+                var deftname_modal = $("#modal-stray-defendant-name");
+                deftname_modal.modal({show:false});
+                $("#modal-stray-defendant-name .modal-header").html("<h4>Name has not been added</h4>");
+                $("#modal-stray-defendant-name .modal-body").html(`<strong>${deft}</strong> has not yet been added to this event.
+                Did you intend to look up this name?`);
+                deftname_modal.modal("show");
+                $("#btn-yes-search").on("click",(e)=>{
+                    e.preventDefault();
+                    deftname_modal.modal("hide");                   
+                    console.debug("they said YES search");
+                    $("#btn-defendant-search").trigger("click");                    
+                });
+                $("#btn-no-search").on("click",()=> $("#defendant-search").val(""));
+            }
+            if (has_pending_interpreter) {
                 $("#modal-assign-interpreter .modal-footer button").on("click",
                     function(event) {
-                        var button = $(event.target);
-                        //submitButton.off("click");
+                        var button = $(event.target);                        
                         if (button.text()==="yes") {
                             interpreterButton.trigger("click",{submit:true});
                         } else {
+                            $("#modal-assign-interpreter").modal("hide");
                             $("#interpreter-select").val("");
-                            submitButton.trigger("click");
+                            submit_form();
                         }
                     });
                 var name = $("#interpreter-select option:selected").text();
                 $("#modal-assign-interpreter .modal-body").html(
                     `Did you mean to assign interpreter <strong>${name}</strong> to this event?`);
-                $("#modal-assign-interpreter").modal();
-                return false;
+                $("#modal-assign-interpreter").modal(); 
             }
-            // and the stray deft name
-            if (defendantSearchElement.val()) {
-                console.warn("eat shit?");
-                var deft = defendantSearchElement.val().trim();
-                var deftname_modal = $("#modal-stray-defendant-name");
-                $("#modal-stray-defendant-name").modal({show:false});
-                $("#modal-stray-defendant-name .modal-header").html("Name has not been added");
-                $("#modal-stray-defendant-name .modal-body").html(`<strong>${deft}</strong> has not yet been added to this event.
-                Did you intend to look up this name?`);
-                
-                var wants_to_submit = false;
-                $("#btn-yes-search").on("click",(e)=>{
-                    e.preventDefault();
-                    wants_to_submit = false;
-                    deftname_modal.modal("hide");
-                    // deftname_modal.on("hide.bs.modal",()=>{
-                    console.warn("FUCK ME? they said YES search");
-                    $("#btn-defendant-search").trigger("click");
-                    // });
-                    // deftname_modal.modal("hide");               
-                });
-                $("#btn-no-search").on("click",()=>formSubmit(event));
-                $("#modal-stray-defendant-name").modal("show");
-                if (! wants_to_submit) {
-                    return false; 
-                } else {
-                    // formSubmit(event);
-                }
-            } else {
-                // formSubmit(event);
-            }
-        });//*/
-
-        // });
-        // form.on("submit",formSubmit);
+            
+        });
     };
 
     return {
