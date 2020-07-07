@@ -38,7 +38,7 @@ $this->headStyle()->captureEnd()
     <label for="date-to" class="col-form-label col-auto">to</label>
     <div class="col-md-2"><input value="<?= $this->defaults['date-to']??''?>" name="date-to" id="date-to" class="form-control date" type="text" <?php 
     if (isset($this->defaults['date-from']) && $default_date_range != 'CUSTOM'):?> readonly<?php endif;?>></div><div class="col-md-2"><button id="btn-run" class="btn btn-success">run</button>
-    <input type="hidden" name="page" value="<?= $this->defaults['page']?? 1 ?>">
+    <input type="hidden" name="page" value="1<?//= $this->defaults['page']?? 1 ?>">
     </div>
     </div>
     </form>    

@@ -14,7 +14,7 @@ var dp_defaults = {
 
 const non_spanish_event_report = function(result, table)
 {
-    
+    table.children("tfoot").empty();console.warn("FUCK YOU?");
     var keys = ["date","judge","interpreter","language","rating","type","docket"];
     var head = keys.map(i=>`<th>${i}</th>`).join("");
     table.children("thead").html(`<tr>${head}</tr>`);
@@ -40,7 +40,8 @@ const non_spanish_event_report = function(result, table)
         var pages = result.pages;
         $("p.pagination-head").text(`Displaying ${pages.firstItemNumber} through ${pages.lastItemNumber} of ${pages.totalItemCount}`);
         var list = $("nav.pagination ul");
-        list.empty();  
+        list.empty();
+       
         /*<ul class="pagination mb-0">
 <li class="disabled"><span class="page-link">&lt;</span></li>
         <li class="page-item active"><span class="page-link">1</span></li>
@@ -362,6 +363,8 @@ $(function () {
                 case "non-Spanish events including language credential":
                     non_spanish_event_report(res.result, table);
                     break;
+                default:
+                    alert("sorry, this one is not yet implemented");
                 }
 
             });
