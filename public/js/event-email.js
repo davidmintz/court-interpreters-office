@@ -210,7 +210,7 @@ const display_email_suggestion = function() {
  * @param  {object} event
  * @return {void}
  */
-const send_email = function(){
+const send_email = function(e){
     console.log("show time!");
     var message = {to: [], cc: [] };
     if ($("#include-details").prop("checked")) {
@@ -245,6 +245,8 @@ const send_email = function(){
     message.salutation = $("#message-salutation").val();
     var csrf = $("[data-csrf]").data("csrf");
     var url = "/admin/email/event";
+    var btn = $(e.target);
+    btn.html("<span class='fa fa-cog fa-spin'></span");
     $.post(url,{message, csrf}).done((response)=> {
         if (response.status !== "success") {
             if (response.validation_errors) {
@@ -308,7 +310,7 @@ const send_email = function(){
         $("div.email-prompt").hide();
         /** to be revised... */
         fail(response);
-    });
+    }).always(()=>btn.html("send"));
 };
 
 $(function(){
