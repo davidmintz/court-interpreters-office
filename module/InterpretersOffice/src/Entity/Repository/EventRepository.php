@@ -5,14 +5,14 @@
 namespace InterpretersOffice\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Cache\CacheProvider;
+// use Doctrine\Common\Cache\CacheProvider;
 use Laminas\Paginator\Paginator as LaminasPaginator;
 use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrineAdapter;
 use Doctrine\ORM\Tools\Pagination\Paginator as ORMPaginator;
-use Doctrine\ORM\QueryBuilder;
+// use Doctrine\ORM\QueryBuilder;
 use InterpretersOffice\Entity;
 use InterpretersOffice\Service\ProperNameParsingTrait;
-use InterpretersOffice\Entity\Defendant;
+// use InterpretersOffice\Entity\Defendant;
 
 /**
  * EventRepository

@@ -1,11 +1,91 @@
 /* global displayValidationErrors, moment, tui $ */
 
+//08:30:00.000000
+
+// const { data } = require("jquery");
+
 var dp_defaults = {
     // dateFormat:"yy-mm-dd",
     showOtherMonths : true,
     selectOtherMonths : true,
     changeMonth : true,
     changeYear : true
+};
+
+const non_spanish_event_report = function(result, table)
+{
+    
+    var keys = ["date","judge","interpreter","language","rating","type","docket"];
+    var head = keys.map(i=>`<th>${i}</th>`).join("");
+    table.children("thead").html(`<tr>${head}</tr>`);
+    var data = result.data;
+    var rows = [];
+    Object.keys(data).forEach(r=>{
+       
+        var obj = moment(data[r].date.date);
+        console.log(obj.format("YYYY-MM-DD"));
+        data[r].date = obj.format("DD-MMM-YYYY");
+        // data[r].time = "shit";        
+        var row = $("<tr></tr>");
+        row.append(keys.map(i=>`<td>${data[r][i]}</td>`).join(""));
+        if (parseInt(data[r].cancelled)) {
+            row.addClass("event-cancelled");
+        }
+        row.children().last().addClass("text-nowrap");
+        row.children().first().addClass("text-nowrap");
+        rows.push(row);
+    });
+    table.children("tbody").html(rows);
+    if (result.pages) {
+        var pages = result.pages;
+        $("p.pagination-head").text(`Displaying ${pages.firstItemNumber} through ${pages.lastItemNumber} of ${pages.totalItemCount}`);
+        var list = $("nav.pagination ul");
+        list.empty();  
+        /*<ul class="pagination mb-0">
+<li class="disabled"><span class="page-link">&lt;</span></li>
+        <li class="page-item active"><span class="page-link">1</span></li>
+            <li class="page-item"><a class="page-link" href="/admin/search?page=2">2</a></li>
+           ...
+            <li class="page-item"><a class="page-link" href="/admin/search?page=9">9</a></li>
+            <li class="page-item"><a class="page-link" href="/admin/search?page=10">10</a></li>
+    <!-- Next page link -->
+  <li class="page-item"><a class="page-link" href="/admin/search?page=2">&gt;</a></li>
+<li class="page-item"><a class="page-link" title="last page of results" href="/admin/search?page=12">&gt;&gt;</a></li>
+</ul>*/
+        if (pages.pageCount < 2) {
+            return;
+        }
+        var links = Object.keys(pages.pagesInRange).map(i=>{
+            var li =  $("<li class=\"page-item\"></li>");
+            if (i == pages.current) { li.addClass("active"); }
+            return li.append(`<a data-page="${i}" href="#" class="page-link">${i}</a>`);
+        });
+        if (pages.firstPageInRange > 1) {
+            links.unshift($("<li class=\"page-item\"></li>").append(`<a class="page-link" data-page="${1}" href="#">&lt;</a>`));
+        }
+        links.push($("<li class=\"page-item\"></li>").append(`<a class="page-link" data-page="${pages.current + 1}" href="#">&gt;</a>`));
+        if (pages.pageCount > pages.lastPageInRange) {
+            var li = $("<li class=\"page-item\"></li>").append(`<a href="#" data-page="${pages.lastPageInRange + 1}" class="page-link">&gt;&gt;</a>`);
+            links.push(li);
+        }
+        list.append(links);        
+    }
+
+    /*
+        current: 1
+        currentItemCount: 20
+        first: 1
+        firstItemNumber: 1
+        firstPageInRange: 1
+        itemCountPerPage: 20
+        last: 12
+        lastItemNumber: 20
+        lastPageInRange: 10
+        next: 2
+        pageCount: 12
+    */
+
+
 };
 
 const table_interpreter_usage_by_language = function(data, table) {
@@ -243,8 +323,17 @@ $(function () {
         date_range.trigger("change");
     }
     $("input.date").datepicker(dp_defaults);
+
+    $("nav.pagination").on("click","li",function(e){
+        e.preventDefault();
+        var page = $(this).children("a").data("page");
+        $("input[name='page']").val(page);
+        btn.trigger("click");
+    });
+
     btn.on("click", function (e) {
         e.preventDefault();
+        // $("nav.pagination, p.pagination-head").empty();
         btn.html("<span class='fa fa-cog fa-spin'></span");
         var table = $("#table > table");   
         var params = form.serialize();
@@ -269,6 +358,9 @@ $(function () {
                 case "belated in-court requests per judge":
                     table_belated_in_court_request(data,table);
                     $("ul#tabs").hide();
+                    break;
+                case "non-Spanish events including language credential":
+                    non_spanish_event_report(res.result, table);
                     break;
                 }
 

@@ -81,6 +81,8 @@ class ReportsController extends AbstractActionController
                 'report' => '',
                 'date-from' => '',
                 'date-to' => '',
+                'date-range'=>'',
+                'page' => '',
             ];
         }        
     }

@@ -127,17 +127,12 @@ class ReportService
                 $qb = $this->createNonSpanishReport($qb)
                 ->andWhere($qb->expr()->between('e.date',':from',':to'))
                 ->setParameters([':from'=>$from, ':to' => $to, ]);
-                $query = $qb->getQuery();
-                //$query->setHydrationMode(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+                $query = $qb->getQuery();              
                 $adapter = new DoctrineAdapter(new ORMPaginator($query));
                 $paginator = new LaminasPaginator($adapter);        
                 $paginator->setCurrentPageNumber($options['page']??1)->setItemCountPerPage(20);
-                $result = [
-                    'data' => $paginator->getCurrentItems(),
-                    'pages' => $paginator->getPages(),                   
-                ];
-                return $result;
-                
+                $data = $paginator->getCurrentItems();
+                $pages = $paginator->getPages();
 
             break;
             default:
@@ -148,6 +143,7 @@ class ReportService
             'from' => $from->format('Y-m-d'),
             'to' => $to->format('Y-m-d'),
             'totals' => $totals??[],
+            'pages' => $pages ?? null,
             'report_type' => self::$reports[$options['report']],
             'data' => $data,
         ];
@@ -161,21 +157,17 @@ class ReportService
      */
     public function createNonSpanishReport(QueryBuilder $qb) : QueryBuilder
     {
-        
-        /*
-        "SELECT COALESCE(j.lastname, aj.name) AS judge, l.name AS language, lc.abbreviation as rating, i.lastname AS interpreter 
-        FROM InterpretersOffice\Entity\Event e 
-        LEFT JOIN e.judge j LEFT JOIN e.anonymous_judge aj 
-        JOIN e.interpreterEvents ie JOIN ie.interpreter i  
-        JOIN e.language l 
-        JOIN i.interpreterLanguages il WITH e.language = il.language 
-        JOIN il.languageCredential lc WHERE e.date > '2020-06-30' AND l.name <> 'Spanish'"
-            'e.date','e.time', 'e.docket',
-         */
-        //'partial r.{id,date,time,docket, extraData}',
-        $qb->select(['PARTIAL e.{id, date, time, docket}',  'COALESCE(j.lastname, aj.name) AS judge', 
-            'CONCAT(i.lastname, \', \', i.firstname) AS interpreter',
-            'l.name AS language','lc.abbreviation AS rating','t.name AS event_type',
+       /*
+       If you don't use this PARTIAL... syntax you get:
+       "Not all identifier properties can be found in the ResultSetMapping: id"
+       but if you DO use it, the resulting JS object is empty. Hence:
+       */
+        $qb->select(['PARTIAL e.{id}', 'e.date','e.time', 
+            "CASE WHEN e.docket <> '' THEN SUBSTRING(e.docket, 3) ELSE '' END AS docket",
+        'e.id',
+         'COALESCE(j.lastname, aj.name) AS judge', 
+            "CONCAT(i.lastname, ', ', i.firstname) AS interpreter",
+            'l.name AS language','lc.abbreviation AS rating','t.name AS type',
             'CASE WHEN e.cancellation_reason IS NULL THEN false ELSE true END AS cancelled'
         ])->from('InterpretersOffice\Entity\Event', 'e')
         ->join('e.language','l')
@@ -332,12 +324,10 @@ class ReportService
                 ],
                 'filters' => [],
             ],
-            // 'date-range'=> [
-            //     'name' => 'date-range',
-            //     'required' => false,
-            //     'validators' => [],
-            //     'filters' => [],
-            // ],
+            'date-range' => [
+                'name' => 'date-range',
+                'required' => false, 
+            ],
             'date-from' => [
                 'name' => 'date-from',
                 'required' => true,
@@ -361,6 +351,13 @@ class ReportService
                     ],
                 ],
                 'filters' => [],
+            ],
+            'page' => [
+                'name' => 'page',
+                'required' => false,
+                'filters' => [
+                    ['name'=>\Laminas\Filter\ToInt::class],
+                ],
             ],
             'date-to' => [
                 'name' => 'date-to',

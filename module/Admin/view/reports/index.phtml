@@ -38,6 +38,7 @@ $this->headStyle()->captureEnd()
     <label for="date-to" class="col-form-label col-auto">to</label>
     <div class="col-md-2"><input value="<?= $this->defaults['date-to']??''?>" name="date-to" id="date-to" class="form-control date" type="text" <?php 
     if (isset($this->defaults['date-from']) && $default_date_range != 'CUSTOM'):?> readonly<?php endif;?>></div><div class="col-md-2"><button id="btn-run" class="btn btn-success">run</button>
+    <input type="hidden" name="page" value="<?= $this->defaults['page']?? 1 ?>">
     </div>
     </div>
     </form>    
@@ -55,11 +56,13 @@ $this->headStyle()->captureEnd()
     </ul>
     <div class="tab-content" id="tab-content">
         <div class="tab-pane show active" id="table" role="tabpanel" aria-labelledby="table-tab">
-            <table class="table table-sm border border-top-0 mt-3 mx-auto" style="max-width:600px">
+            <p class="pagination-head"></p>
+            <table class="table table-sm border border-top-0 mt-3 mx-auto" style="max-width:800px">
                 <thead></thead>
                 <tbody></tbody>
                 <tfoot></tfoot>
             </table>
+            <nav class="pagination"><ul class="pagination mx-auto"></ul></nav>
         </div>
         <div class="tab-pane" id="chart" role="tabpanel" aria-labelledby="chart-tab">
             <!-- <div style="max-width:50px" class="bg-primary mx-auto text-center"><span class="fa fa-cog fa-spin text-white" style="font-size:1.2em"></div></p> -->
