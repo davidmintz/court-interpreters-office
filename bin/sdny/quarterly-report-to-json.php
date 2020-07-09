@@ -25,7 +25,6 @@ require 'vendor/autoload.php';
 $laminasApp = App::init(require 'config/application.config.php');
 $container = $laminasApp->getServiceManager();
 
-
 $today = getdate();
 $month = $today['mon'];
 $year = $today['year'];
@@ -45,7 +44,9 @@ if (in_array($month,[1,2,3])) {
     $from = "$year-07-01";
     $to   = "$year-09-30"; 
 }
-print("from $from to $to\n");
+// test with different data
+// $year = 2019;$from = "$year-10-01"; $to = "$year-12-31"; 
+
 /** @var Doctrine\ORM\EntityManager $em */
 $em = $container->get('entity-manager');
 /** @var \PDO $db */
@@ -63,12 +64,10 @@ $sql = 'SELECT DISTINCT e.id,e.date, e.docket, i.id AS interpreter_id , i.lastna
     JOIN event_categories c ON t.category_id = c.id
     WHERE e.date BETWEEN :from AND :to 
     AND c.category IN ("in","out")
-    ORDER BY e.date, e.docket';
+    ORDER BY l.name, e.date, e.docket';
 $stmt = $db->prepare($sql);
 $stmt->execute([':from'=>$from,':to'=>$to]);
 
-// fantasy numbers for the AO
-$report = [];
 // actual data
 $data = [];
 
@@ -82,6 +81,11 @@ $totals = [
 $template =  [
     'in_events' => 0, 'in_cost' => 0, 'in_expenses' => 0,
     'out_cost' => 0, 'out_expenses' => 0 , 'out_events' => 0,
+];
+// fantasy numbers for the AO
+$report = [
+    'Spanish/staff'=> ['in_events'=>0, 'out_events'=>0],
+    'Spanish/contract'=> $template,
 ];
 
 $total_events = $stmt->rowCount(); // true total events
@@ -97,11 +101,11 @@ while ($r = $stmt->fetch(\PDO::FETCH_ASSOC)) {
         $totals['Spanish'][$r['category']]++;
         if ($r['category'] == 'in') {            
             if ($r['status'] == 'staff') {
-                $totals['staff']['in']++;
+                $totals['staff']['in']++;                
             }
         } else {            
             if ($r['status'] == 'staff') {
-                $totals['staff']['out']++;
+                $totals['staff']['out']++;                
             }
         }
     } else { // non-Spanish
@@ -116,7 +120,7 @@ $stmt->closeCursor();
 
 // now iterate the $data to populate $report
 foreach ($data as $key =>$array)  {
-    $language = $array[0]['language'];
+    $language = $array[0]['language'];    
     $cats = array_unique(array_column($array,'category'));
     if (count($cats) == 1) {
         $category = $cats[0];            
@@ -124,15 +128,20 @@ foreach ($data as $key =>$array)  {
         $category = "in";
     }
     $report[$language]["{$category}_events"]++;
+    if ($array[0]['status'] == "staff") {
+        $report['Spanish/staff']["{$category}_events"]++;
+    } elseif ($language == "Spanish") {
+        $report['Spanish/contract']["{$category}_events"]++;
+    }
 }
 $report['_summary'] = [
+    'dates' => ['from'=>$from,'to'=>$to],
     'bullshit total events' => count($data),
     'actual total events' => $total_events,
     'actual totals' => $totals
 ];
-// printf("bullshit total: %s\n",count($data));
-// echo "actual total: $total_events\n";
-echo json_encode($report,\JSON_PRETTY_PRINT),"\n";
+
+echo json_encode($report);
 
 
 
