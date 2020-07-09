@@ -3,9 +3,13 @@ is a web application for managing busy court interpreters offices (in the Englis
 
 Developed and used by the Interpreters Office for the US District Court, Southern District of New York, InterpretersOffice
 is freely available to any other court interpreter offices that are interested in using it. The motivation for creating it 
-is that there is to our knowledge no software available, commercial or otherwise, specifically designed for managing a busy staff court interpreters office.
+is that there is to our knowledge no software available, commercial or otherwise, specifically designed for managing a 
+busy staff court interpreters office.
 
-InterpretersOffice is designed primarily with the US District Court system in mind, and is currently probably not well suited for adoption by other court systems. We should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is the language of the court.
+`InterpretersOffice` is designed primarily with the federal US District Court system in mind, and is currently probably not well 
+suited for adoption by other court systems. We should also mention, though it may seem obvious, that this an Anglophone-centric project. 
+Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is 
+the language of the court.
 
 # features
 
@@ -33,7 +37,8 @@ you'll be pleased to know that the requirements, in addition to the application 
 itself, are straightforward. In lay terms: you will need standard
 hardware and software for serving a web application. That means a computer on a network with its firewall
 configured to allow web traffic; installed on that computer, a properly configured web
-server such as [Apache](https://httpd.apache.org/); [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/) as a database server (others will likely work, but we haven't gone there yet); and the programming language
+server such as [Apache](https://httpd.apache.org/); [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/) 
+as a database server (others will likely work, but we haven't gone there yet); and the programming language
 [PHP](http://php.net/), minimum version 7.2. On the client side, users will need no more than a
 standard web browser and network access to the server where the application is installed.
 
@@ -54,9 +59,23 @@ completely free; the hardware you'll need is inexpensive.
 
 # installation
 
-Currently, installation requires some manual setup. We plan to make this more convenient in future releases. If you're a technical person and want to give it a shot, by all means feel free -- and contact me if you have questions. We have some [installation notes here](https://github.com/davidmintz/court-interpreters-office/blob/master/docs/documentation/setup.md).
+Currently, installation requires some manual setup. We plan to make this more convenient in future releases. If you're a technical person 
+and want to give it a shot, by all means feel free -- and contact me if you have questions. We have 
+some [installation instructions](https://interpretersoffice.org/documentation/setup.html) at the project website, 
+[interpretersoffice.org](https://interpretersoffice.org).
 
-Essentially, you need clone the repository (https://github.com/davidmintz/court-interpreters-office.git) or [download the source code](https://github.com/davidmintz/court-interpreters-office/releases/latest); using the industry-standard PHP dependency manager [composer](https://getcomposer.org), install the the software dependencies; create your mysql database and a mysql user/password for the application to use; initialize the database with a supplied SQL script; and finally, there are a couple of configuration files to edit and directories to be created and made server-writeable.
+Essentially, you need clone the repository (https://github.com/davidmintz/court-interpreters-office.git) or 
+[download the source code](https://github.com/davidmintz/court-interpreters-office/releases/latest); using the industry-standard 
+PHP dependency manager [composer](https://getcomposer.org), install the the software dependencies; create your mysql database and a mysql user/password 
+for the application to use; initialize the database with a supplied SQL script; and finally, there are a couple of configuration files to edit and 
+directories to be created and made server-writeable.
+
+# known issues and limitations
+
+The SDNY Interpreters Office has been successfully running `InterpretersOffice` since April 2020. It is stable and production-ready. There are still a few ragged edges which, once smoothed out, should improve long-term maintainability and performance:
+* The JQuery-based Javascript is old-school, and at this writing we still need to concatenate and minify Javascript and CSS assets.  
+* The ways in which similar problems are handled in various parts of the application are not always consistent, as I was learning more about Doctrine as the project 
+progressed.
 
 # demonstration
 
