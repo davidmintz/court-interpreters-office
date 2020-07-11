@@ -32,8 +32,8 @@ for i in range(2,sheet.nrows):
     if not date_obj >= date_from <= date_to:
         continue
     # now we have a row of payment data
-    row = sheet.row(i);
-    language = row[1].value.strip();
+    row = sheet.row(i)
+    language = row[1].value.strip()
     if language not in report.keys():
         errors += 1
         print("ERROR: language {0} in spreadsheet matches no language in your database"

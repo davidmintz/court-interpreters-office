@@ -142,11 +142,3 @@ $report['_summary'] = [
 ];
 
 echo json_encode($report);
-
-
-
-
-
-
-
-
