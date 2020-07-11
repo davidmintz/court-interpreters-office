@@ -17,9 +17,10 @@ return [
     'controllers' => [
 
         'invokables' => [
-            Controller\IndexController::class => Controller\IndexController::class,
+            // Controller\IndexController::class => Controller\IndexController::class,
         ],
         'factories' => [
+            Controller\IndexController::class => Controller\Factory\IndexControllerFactory::class,
             Controller\LanguagesController::class => Controller\Factory\BasicEntityControllerFactory::class,
             Controller\LocationsController::class => Controller\Factory\BasicEntityControllerFactory::class,
             Controller\EventTypesController::class => Controller\Factory\BasicEntityControllerFactory::class,

@@ -12,7 +12,7 @@ $this->headStyle()->captureStart();?>
     <pre>
 <?php
     /** @var \InterpretersOffice\Admin\Service\Acl $acl */
-    $acl = $this->acl;
+    $acl = $this->config['acl'];
     //print_r(get_class_methods($acl));
     $roles = $acl->getRoles();
     $resources = $acl->getResources();
@@ -72,7 +72,7 @@ $this->headStyle()->captureStart();?>
             <?php if (in_array('InterpretersOffice\Requests',$this->modules)):?>
             <p>
                 <a class="btn btn-block btn-outline-primary" role="button" href="<?= $this->url('admin-requests')?>">requests</a>
-                manage requests that have been submitted online
+                manage requests that have been submitted online (currently pending: <?= $this->requests_pending?>)
             </p>
             <?php endif ?>
             <p>
@@ -127,6 +127,6 @@ $this->headStyle()->captureStart();?>
             </ul>
         </div>
     </div>
-    <!-- <pre><?php print_r(preg_grep('/InterpretersOffice/',$this->modules))?></pre> -->
+    <!-- <pre><?php print_r(preg_grep('/InterpretersOffice/',$this->config['modules']))?></pre> -->
 </div>
 
