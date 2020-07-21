@@ -13,7 +13,18 @@ $this->headTitle($this->title);
 foreach (['success','default','error','info','warning'] as $ns) {
     echo $this->flashMessenger()->render($ns, ['alert', 'alert-dismissible', "alert-{$ns}"]);
 }
-?>
+// IE is currently NOT SUPPORTED
+if (preg_match('~MSIE|Internet Explorer~i', $this->user_agent) || preg_match('~Trident/7.0(; Touch)?; rv:11.0~',$this->user_agent)):?>
+    <div style="max-width:600px" class="mx-auto alert alert-warning text-danger mt-4 p-3 border border-danger shadow-sm rounded">
+        <h3 class="text-center">browser not supported</h3>
+        <p>The web browser you appear to be using is out of date and currently not supported. The recommended browser is Mozilla <strong>Firefox</strong>; 
+            you might also try Google Chrome or Microsoft Edge.
+        </p>
+        <p>We apologize for any inconvenience.</p>
+    </div>
+    
+<?php return; endif; ?>
+
 <div class="row">
     <div class="mx-auto">
             <!--<p style="margin:1em 0 2em 0;font-size:120%">Please log in to continue.</p>-->
@@ -27,5 +38,8 @@ foreach (['success','default','error','info','warning'] as $ns) {
     </div>
 </div>
 <!-- scratch
+if (preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT']) || preg_match('~Trident/7.0(; Touch)?; rv:11.0~',$_SERVER['HTTP_USER_AGENT'])) {
+//is IE 11 or below
+}
 <div class="text-center border"><button class="btn btn-primary btn-lg" style="background: linear-gradient(180deg, #4D82B6, #2991F9)">a button</button></div>
 -->

@@ -156,7 +156,9 @@ class AuthController extends AbstractActionController
         }
         $this->getResponse()->getHeaders()
             ->addHeaderLine('X-Authentication-required', "true");
-        return new ViewModel(['form' => $form, 'title' => 'user login']);
+        
+        $ua = $request->getServer('HTTP_USER_AGENT');
+        return new ViewModel(['form' => $form, 'title' => 'user login','user_agent'=>$ua]);
     }
 
     /**
