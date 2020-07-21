@@ -10,7 +10,7 @@ use InterpretersOffice\Entity\Listener;
 use InterpretersOffice\Entity\Listener\EventEntityListener;
 use InterpretersOffice\Requests\Acl\ModificationAuthorizedAssertion;
 use InterpretersOffice\Requests\Entity\Listener\RequestEntityListener;
-use InterpretersOffice\Service\SqlLogger;
+// use InterpretersOffice\Service\SqlLogger;
 
 use InterpretersOffice\Requests\Controller\Admin\IndexController as AdminController;
 
