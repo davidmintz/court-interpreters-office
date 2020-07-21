@@ -6,10 +6,8 @@ is freely available to any other court interpreter offices that are interested i
 is that there is to our knowledge no software available, commercial or otherwise, specifically designed for managing a 
 busy staff court interpreters office.
 
-`InterpretersOffice` is designed primarily with the federal US District Court system in mind, and is currently probably not well 
-suited for adoption by other court systems. We should also mention, though it may seem obvious, that this an Anglophone-centric project. 
-Court interpreters are required in a vast number of language combinations around the world. But this app assumes that English is 
-the language of the court.
+We should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required 
+in a vast number of language combinations around the world. But this app assumes English as the language of the court.
 
 # features
 
@@ -72,10 +70,16 @@ directories to be created and made server-writeable.
 
 # known issues and limitations
 
-The SDNY Interpreters Office has been successfully running `InterpretersOffice` since April 2020. It is stable and production-ready. There are still a few ragged edges which, once smoothed out, should improve long-term maintainability and performance:
+The SDNY Interpreters Office has been successfully running `InterpretersOffice` since April 2020. It is stable and production-ready. 
+There are still a few ragged edges which, once smoothed out, should improve long-term maintainability and performance. The following 
+are for the most part invisible to end users:
 * The JQuery-based Javascript is old-school, and at this writing we still need to concatenate and minify Javascript and CSS assets.  
-* The ways in which similar problems are handled in various parts of the application are not always consistent, as I was learning more about Doctrine as the project 
-progressed.
+* The ways in which similar problems are handled in various parts of the application are not always consistent, as I was 
+learning more about Doctrine as the project progressed.
+*  `InterpretersOffice` is designed mainly with the US federal court system in mind. It is not currently well-suited to other 
+judiciary systems, although we could and would change this in the future -- especially if there is interest.
+* The logic involved in email templating and the implementation of the Notes (MOTD/MOTW) module are needlessly complicated.
+
 
 # demonstration
 
