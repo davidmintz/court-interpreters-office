@@ -229,7 +229,7 @@ return [
             ],
             'account' => [
                 'type' => Segment::class,
-                'may_terminate' => true,
+                'may_terminate' => false,
                 'options' => [
                     'route' => '/user',
                     'defaults' => [
