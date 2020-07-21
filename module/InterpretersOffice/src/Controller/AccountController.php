@@ -74,7 +74,7 @@ class AccountController extends AbstractActionController
         return $this;
     }
 
-    /**
+    /*
      * index action
      * @return ViewModel
      */
@@ -88,7 +88,7 @@ class AccountController extends AbstractActionController
         $thing2 = $plugins->get('layout');
         echo get_class($thing2) . " is the class of \$plugins->get('layout') in our controller<br>";
         */
-        return new ViewModel();
+        return false;
     }
     /**
      * partial validation
