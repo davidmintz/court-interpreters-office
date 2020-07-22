@@ -80,8 +80,8 @@ fi;
 cd $path;
 TO_DELETE=$(find .  -maxdepth 1 -mtime +${DAYS});
 
-# dude, this is giving an error under certain circumstances.
-if [ -z $TO_DELETE ]; then 
+# dude, this was (is?) giving an error under certain circumstances.
+if [[ -z $TO_DELETE ]]; then 
     echo "found no backups older than ${DAYS} to rotate out"; 
 else 
     for file in $TO_DELETE; do
