@@ -3,7 +3,6 @@
 # dumps mysql databases, rotating out files older than 
 # 7 days for daily, 6 weeks for weekly. suitable for cron
 # to do: make target directory an option
-# to do: sync backup directory with s3  
 # author # david@davidmintz.org
 # with help from https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 
