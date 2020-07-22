@@ -987,11 +987,12 @@ var defendantForm = (function(){
             // update the existing thingy
         span.text(defendant_name);
         console.log("updated deft name");
-        var new_deft_id = response.insert_id
-                || response.deftname_replaced_by;
+        var new_deft_id = response.insert_id || response.deftname_replaced_by;
+        //var new_deft_id = response.entity.id !== id ? response.entity.id : null;
+        console.warn("new guy has been inserted|different guy returned");
         if (new_deft_id) {
             input.val(new_deft_id);
-            console.log("swapped out deft id with "+new_deft_id);
+            console.warn("swapped out deft id with "+new_deft_id);
         }
         $("#defendant-form-success").text("This name has been updated.").show();
         $("#event-form").data({deftnames_modified : 1});
@@ -1057,7 +1058,7 @@ var defendantForm = (function(){
         //console.debug("id is what? "+id);
         var url = `/admin/defendants/edit/${id}?context=events`;
         // we may need to supply an event id
-        var event_id = $(`input[name="event[id]"]`).val() || false;
+        var event_id = $("input[name=\"event[id]\"]").val() || false;
         if (event_id) {
             url += "&event_id="+event_id;
         }
