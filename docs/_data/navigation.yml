@@ -4,6 +4,8 @@
   link: /about.html
 - name: documentation
   link: /documentation/
+- name: faq
+  link: /faq.html
 - name: contact
   link: /contact.html  
 - name: github
