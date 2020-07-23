@@ -130,6 +130,7 @@ class DefendantNameService
                         $result['deft_name_inserted'] = $db->executeUpdate('INSERT INTO defendant_names (given_names,surnames)
                                 VALUES (?,?)', [$data['given_names'],$data['surnames']]);
                         $id = $db->lastInsertId();
+                        $result['insert_id'] = $id;
                         $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                     }
                     break;
@@ -182,14 +183,14 @@ class DefendantNameService
                             $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                             // therefore... the one they submitted can be deleted?
                             $entity_to_delete = $duplicate['entity'];
-                            $debug[] = "planning to remove duplicate entity {$duplicated['entity']->getId()}";
+                            $debug[] = "planning to remove duplicate entity {$duplicate['entity']->getId()}";
                         }
                     } else { // contextual update
                         $debug[] = "INEXACT duplicate, contextual update; duplicate resolution: " .$data['duplicate_resolution'];
                         if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
                             // ...first update the name
                             $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
-                            $params = [$data['surnames'],$data['given_names'],$duplicate->getId()];
+                            $params = [$data['surnames'],$data['given_names'],$duplicate['entity']->getId()];
                             $result['deft_name_updated'] = $db->executeUpdate($update, $params);
                         }
                         // and now use the duplicate to update defendants_events
