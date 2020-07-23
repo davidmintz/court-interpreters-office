@@ -16,6 +16,19 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `admin_comment_backup`
+--
+
+DROP TABLE IF EXISTS `admin_comment_backup`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `admin_comment_backup` (
+  `event_id` mediumint(8) unsigned NOT NULL,
+  `admin_comments` varchar(600) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `admin_users`
 --
 
@@ -76,6 +89,7 @@ CREATE TABLE `app_event_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
 -- Table structure for table `banned`
 --
 
@@ -107,7 +121,6 @@ CREATE TABLE `cancellation_reasons` (
   UNIQUE KEY `unique_cancel_reason` (`reason`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
 
 --
 -- Table structure for table `clerks_judges`
@@ -235,6 +248,19 @@ CREATE TABLE `event_categories` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_event_category` (`category`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `event_meta_comments`
+--
+
+DROP TABLE IF EXISTS `event_meta_comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_meta_comments` (
+  `id` mediumint(8) unsigned NOT NULL,
+  `comments` varchar(600) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -831,4 +857,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-05-19  9:23:20
+-- Dump completed on 2020-07-22 20:59:22
