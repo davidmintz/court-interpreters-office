@@ -43,9 +43,11 @@ class RequestRepository extends EntityRepository
      */
     public function countPending() : int
     {
-        $dql = 'SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r WHERE r.pending = true';
+        $dql = 'SELECT COUNT(r.id) FROM InterpretersOffice\Requests\Entity\Request r 
+            WHERE r.cancelled = false and r.pending = true';
         
-        return $this->getEntityManager()->createQuery($dql)->getSingleScalarResult();
+        return  (int)$this->getEntityManager()->createQuery($dql)->getSingleScalarResult();
+
     }
 
     /**
