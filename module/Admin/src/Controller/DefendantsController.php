@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use InterpretersOffice\Entity;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use InterpretersOffice\Admin\Form\DefendantForm;
-use InterpretersOffice\Entity\Defendant;
+
 
 use InterpretersOffice\Admin\Service\DefendantNameService;
 
