@@ -990,12 +990,18 @@ var defendantForm = (function(){
         var new_deft_id = response.insert_id || response.deftname_replaced_by;
         //var new_deft_id = response.entity.id !== id ? response.entity.id : null;
         if (new_deft_id) {
-            // console.warn("new guy has been inserted|different guy returned");
+            console.warn("new guy has been inserted|different guy returned");
             input.val(new_deft_id);
             console.warn("swapped out deft id with "+new_deft_id);
         } else { console.log("same deft entity returned as was submitted");}
         $("#defendant-form-success").text("This name has been updated.").show();
         $("#event-form").data({deftnames_modified : 1});
+        /// DEBUG
+        // if (0 === $("#event-form .debug").length) {
+        //     $("#event-form").append($("p").addClass("debug border border-info p-3 "));
+        // }
+        // $("#event-form .debug").first().html(response.debug.join("<br>"));
+        //// /DEBUG
         window.setTimeout(function(){
             $("#defendant-form-success").hide();
             $("#deftname-editor").modal("hide");
