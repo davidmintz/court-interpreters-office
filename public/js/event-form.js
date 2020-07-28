@@ -989,11 +989,11 @@ var defendantForm = (function(){
         console.log("updated deft name");
         var new_deft_id = response.insert_id || response.deftname_replaced_by;
         //var new_deft_id = response.entity.id !== id ? response.entity.id : null;
-        console.warn("new guy has been inserted|different guy returned");
         if (new_deft_id) {
+            // console.warn("new guy has been inserted|different guy returned");
             input.val(new_deft_id);
             console.warn("swapped out deft id with "+new_deft_id);
-        }
+        } else { console.log("same deft entity returned as was submitted");}
         $("#defendant-form-success").text("This name has been updated.").show();
         $("#event-form").data({deftnames_modified : 1});
         window.setTimeout(function(){
