@@ -85,11 +85,11 @@ For a complete, detailed understanding of the ACL system you should read the [La
 [acl configuration file](https://github.com/davidmintz/court-interpreters-office/blob/master/module/Admin/config/acl.php) and the [ACL class](https://github.com/davidmintz/court-interpreters-office/blob/master/module/Admin/src/Service/Acl.php) 
 that consumes this configuration.
 
-### Which tool or development environment used to create this application?
+### Which tool or development environment was used to create this application?
 
 Ha! I've had my share of relationships and breakups with IDEs. Right now I am pretty happy, and more or less monogamous, with VS Code.
 
-### How to you push changes to the production server?
+### How do you push changes to the production server?
 
 I don't exactly push to production servers. I push commits to the github repository, then SSH onto the production servers and 
 run <span class="text-monospace">git pull</span>. (With only two machines it isn't too onerous, but some using kind of 
