@@ -6,21 +6,21 @@ title: faq | InterpretersOffice.org
 # faq
 
 *This is very much a work in progress. And the F in FAQ is something of a misnomer; any question that's been asked more than zero times 
-is deemed frequent.*
+is deemed frequent. The following are predominantly system-administration-oriented, as you can see.*
 
 ### How do I create a user account?
 
 It depends on what role the user is going to have. Users who are going to be requesting interpreters, as opposed to managing the administrative back end,
  have the role <em>submitter</em>. They create their own accounts by going to <span class="text-monospace">/user/register</span>, submitting the form, 
- and responding to a confirmation email in standard fashion to activate their accounts. (As noted in the [setup documentation](/documentation/setup.html#other-configuration), 
- you can constrain the email  domains that are permitted via configuration.)
+ and following the link contained in an email verfication message to activate their accounts. (As noted in the 
+ [setup documentation](/documentation/setup.html#other-configuration), you can constrain the email  domains that are permitted via configuration.)
 
 The other roles are <em>administrator</em>, <em>manager</em>, and <em>staff</em>, in descending order of privilege. You create an 
 initial <em>administrator</em> as part of the application setup by running <span class="text-monospace">bin/admin-cli setup:create-admin-user</span>. 
 Then an <em>administrator</em> can create more users by using the application's user management, and each of those users in turn can create further 
 users in the same fashion. Think of it like dharma transmission in Zen.
 
-### What are the user’s most common daily activities?
+### What are the user’s most common daily activities? What features are used most often?
 
 Again, it depends on the role. The <em>submitter</em>s will spend the overwhelming majority of their time doing CRUD operations with 
 Request entities -- in English, creating, viewing, updating and cancelling their requests for interpreters.
@@ -29,29 +29,36 @@ On the administrative side, the majority of the users' activity is managing the 
 deleting events. A close second is using the in-context email feature found at <span class="text-monospace">/admin/schedule/view/:id</span>. 
 They also make heavy use of the roster of contract interpreters found at  <span class="text-monospace">/admin/interpreters</span>.
 
-If you really want objective information about what parts of the application are most used, there are two good techniques: (1) examine the 
+For further objective information about what parts of the application are most used, you can: (1) examine the 
 web server access logs; (2) take a look at the <span class="text-monospace">app_event_log</span> database table, which provides a fairly rich 
 narrative of what people have been up to. For now, the only way to do the latter is with the <span class="text-monospace">mysql</span> cli.
 
-### What are the most common questions from user?
+### What are the most common questions users?
 
-It's too early to say; there isn't yet enough data. The application has been in production since April 25, 2020, and this is 
-being written in July 2020. Moreover, court operations have not resumed running at their normal pace thanks to the pandemic. 
+It's a bit early to say because there isn't much data yet. The application has been in production since April 25, 2020, and this is 
+being written in July 2020. Moreover, court operations have not resumed running at their normal pace thanks to the coronavirus pandemic. 
 
 There have been a few "how do I...?" questions from the Interpreters Office personnel, but in most if not all those cases the answer was found 
 somewhere in the navigation links. In other words with a little more exploration they could have figured it out.
 
 Of course, during the first couple of months there have been bug reports and requests for features and modifications. I have been 
-responding to these as quickly as possible, and I think it's safe to say everything is sufficiently stable; the application is working and users 
+responding to these as quickly as possible, and I think it's safe to say everything is sufficiently stable; the application works and users 
 are generally comfortable with it. Some have complained about CSRF tokens timing out.
 
-I encourage you to ask them and find out for yourself, rather than taking my word for it.
+Occasionally users in the <em>submitter</em> role have problems logging in, especially for the initial login following 
+account registration. Questions to ask when troubleshooting logins are:  Is the user's account enabled? Has the user ever logged in successfully? 
+Is the user's email address correct?
 
-### Which features do users use the most?
+A frequent cause of first-time login problems is that they do not enter their own email address correctly and consequently do not 
+receive the email verification message, therefore the account is not enabled. A solution is to manually correct the email address 
+and manually enable the account through the user management interface located at <span class="text-monospace">/admin/users</span>.
 
-Please see [above](#what-are-the-users-most-common-daily-activities).
+User accounts can be disabled manually by a sufficiently privileged user, and may be disabled automatically following a 
+certain number of failed login attempts as set by [configuration]((/documentation/setup.html#other-configuration)). If a user's account 
+has been disabled, whatever the reason, the user will not be able to log in until someone re-enables the account.
 
-### What are the different level of authorization? What you can or cannot do?
+
+### What are the different levels of authorization? What can users do or not do?
 
 In descending order of privilege:
 
@@ -96,12 +103,6 @@ Nope. You now know all there is to know :-)
 
 OK, maybe not. You'll know where to reach me with further questions: david@davidmintz.org
 
-### Repository for documentation.
-
-Objection as to form!
-
-But if I do understand the question, there is the project website interpretersoffice.org, and there is inline 
-phpdoc so you can generate API documentation. The source for interpretersoffice.org itself is also in the github repo.
 
 ### Is the database and source code being backup daily? If yes, where?
 
@@ -113,17 +114,17 @@ and rotates out any files older than 7 days; it also does weekly backups which a
 that in case something really unfortunate happens and you wish you could roll back to an earlier point and recover some data, you can.
 
 Note that the application interface provides no means of actual physical deletion of rows in either the <span class="text-monospace">events</span> 
-  or <span class="text-monospace">requests</span> tables; "delete" means soft-deletion for these entities.
+  or <span class="text-monospace">requests</span> tables; "delete" is implemented as soft-deletion for these entities.
 
-There is also mysql replication in effect in the SDNY. Within our network we have a master running on one server and a replication slave running 
-on another. (I understand we aren't supposed to say master/slave any more, so call it an enslaved database server if you like.)
+There is also mysql replication in effect in the SDNY. Within our network we have a primary database server running on one host and a replication server running 
+on another. Please see the [Mariadb documentation](https://mariadb.com/kb/en/standard-replication/) for details.
 
 As for the source code, you've got your production installations, and you've got your github. I have sufficient faith in the technical competence of 
 github to trust them not to lose our repository. We don't need to worry about this or that instance of the app getting ahead of the github repository 
 if we follow the pattern described above: make changes on your development machine, test, commit, push, then go to the production machines and pull.
 
 <hr>
-*That's all the Qs we have in our FAQ for now, most of them system-administration-oriented as you can see. If you have any questions, especially of 
+*That's all the Qs we have in our FAQ for now. If you have any questions, especially of 
 the end-user variety, please feel free to convey them to me. Thanks,*
 
 *david@davidmintz.org*

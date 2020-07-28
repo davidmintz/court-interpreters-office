@@ -57,7 +57,7 @@ of example from the [admin EventsController factory](https://github.com/davidmin
 The above illustrates how the <code class="language-php">$container</code> provides access to the dependencies required by the 
 <span class="text-monospace">EventsController</span> as well as the objects we need in order to register the Doctrine entity listeners.
 These listeners themselves are of course produced by factories according to the mapping found in 
-[<span class="text-monospace">module/InterpretersOffice/config/module.config.php</span>]({{$site.data.vars.github}}/module/InterpretersOffice/config/module.config.php).
+[<span class="text-monospace">module/InterpretersOffice/config/module.config.php</span>]({{site.data.vars.github}}/module/InterpretersOffice/config/module.config.php).
 
 <!-- 
 {% highlight javascript %}
@@ -65,7 +65,7 @@ console.log('alert');
 {% endhighlight %} 
 -->
 
-As a further example, let's take one of the callback methods from the [<span class="text-monospace">EventEntityListener</span>]({{$site.data.vars.github}}/module/InterpretersOffice/src/Entity/Listener/EventEntityListener.php):
+As a further example, let's take one of the callback methods from the [<span class="text-monospace">EventEntityListener</span>]({{site.data.vars.github}}/module/InterpretersOffice/src/Entity/Listener/EventEntityListener.php):
 
 <pre><code class="language-php line-numbers">
 /**
@@ -176,7 +176,7 @@ indicating the date. You may want to set a cron job to archive these somehow, or
 amount of disk space. As we observed in the section on [setting up the application](./setup.html), this directory has to exist and be writeable by the 
 server, or else we throw an Exception.
 
-The database log writer is [<span class="text-monospace text-nowrap">module/Admin/src/Service/Log/Writer.php</span>]({{$site.data.vars.github}}/module/Admin/src/Service/Log/Writer.php).
+The database log writer is [<span class="text-monospace text-nowrap">module/Admin/src/Service/Log/Writer.php</span>]({{site.data.vars.github}}/module/Admin/src/Service/Log/Writer.php).
 It bypasses Doctrine to execute database inserts as quickly and simply as possible, using the same PDO object wrapped by Doctrine. The table it writes to 
 <span class="text-monospace">app_event_log</span>. 
 
