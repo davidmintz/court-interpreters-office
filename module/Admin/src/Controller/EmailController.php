@@ -71,7 +71,9 @@ class EmailController extends AbstractActionController
      * index page
      */
     public function indexAction()
-    {
+    {                
+        // $recipients = $this->emailService->getRecipientList('all active interpreters');
+        // printf('<pre>%s</pre>',print_r( array_column($recipients,'email')),true);exit;
         $config = $this->emailService->getConfig();
         $mailgun = $config['mailgun'] ?? false;
         return new ViewModel(
@@ -141,7 +143,7 @@ class EmailController extends AbstractActionController
         $config = $service->getConfig()['mail'];
         $transport = (new BatchEmailService($config))->getTransport();
         /** @todo maybe move this to the BatchEmailService class */
-        $recipients = $service->getRecipientList($data['recipient_list']);
+        $recipients = $service->getRecipientList($data['recipient_list']);        
         $total = count($recipients);
         header("content-type: application/json");
         echo json_encode(['status' => 'started','total' => count($recipients)]);
@@ -161,6 +163,7 @@ class EmailController extends AbstractActionController
         $message->setFrom([$config['from_address'] => $config['from_entity']]);
         $layout = $service->getLayout();
         $i = 0;
+        $errors = 0;
         foreach ($recipients as $person) {
             $markup = $service->renderMarkdown($data['body']);
             $name = "{$person['firstname']} {$person['lastname']}";
@@ -172,12 +175,18 @@ class EmailController extends AbstractActionController
             $message->addPart($data['body'], 'text/plain')
             ->setTo([$person['email'] => $name]);
             $log->debug("sending mail re {$data['subject']} to {$person['email']}");
-            $transport->send($message);
-            file_put_contents($file, ++$i ." of $total");
+            try {
+                $transport->send($message);
+                file_put_contents($file, ++$i ." of $total");
+            } catch (\Exception $e) {
+                $log->warn("batch email failed sending to '$name': ".$e->getMessage(),['trace'=>$e->getTrace()]);
+                $total -= 1;
+                $errors++;
+            }
         }
         file_put_contents($file, "done");
 
-        return new JsonModel(['total' => $total,'current' => $i]);
+        return new JsonModel(['total' => $total,'current' => $i, 'errors'=>$errors]);
     }
 
 

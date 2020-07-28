@@ -185,35 +185,36 @@ EOD;
     public function getRecipientList(string $list) : Array
     {
         $qb = $this->getObjectManager()->createQueryBuilder()
-            ->select('p.id, p.lastname, p.firstname, p.email');
+            ->select('p.id, p.lastname, p.firstname, p.email')
+            ->where("p.email IS NOT NULL");
 
         switch ($list) {
             case self::ACTIVE_INTERPRETERS:
                 $qb->from(Entity\Interpreter::class, 'p')
-                    ->where('p.active = true');
+                    ->andWhere('p.active = true');
                 break;
             case self::ACTIVE_SPANISH_INTERPRETERS:
                 $qb->from(Entity\Interpreter::class, 'p')
                     ->join('p.interpreterLanguages', 'il')->join('il.language', 'l')
-                    ->where('l.name = :spanish')
+                    ->andWhere('l.name = :spanish')
                     ->andWhere('p.active = true')
                     ->setParameters([':spanish' => 'Spanish']);
                 break;
             case self::AVAILABILITY_SOLICITATION_LIST:
                 $qb->from(Entity\Interpreter::class, 'p')
-                ->where('p.active = true')->andWhere('p.solicit_availability = true');
+                ->andWhere('p.active = true')->andWhere('p.solicit_availability = true');
                 break;
             case self::ACTIVE_SUBMITTERS:
                 $qb->from(Entity\Person::class, 'p')
                     ->join(Entity\User::class, 'u', 'WITH', 'u.person = p')
                     ->join('u.role', 'r')
-                    ->where('u.active = true')->andWhere('r.name = :role')
+                    ->andWhere('u.active = true')->andWhere('r.name = :role')
                     ->setParameters([':role' => 'submitter']);
                 break;
             case self::OFFICE_STAFF:
                 $qb->from(Entity\Person::class, 'p')->join(Entity\User::class, 'u', 'WITH', 'u.person = p')
                 ->join('u.role', 'r')
-                ->where('u.active = true')->andWhere('r.name IN (:role)')
+                ->andWhere('u.active = true')->andWhere('r.name IN (:role)')
                 ->setParameters([':role' => ['administrator','manager']]);
                 break;
             case self::TEST_GROUP:
