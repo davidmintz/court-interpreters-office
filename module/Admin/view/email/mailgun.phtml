@@ -6,7 +6,13 @@ $this->headScript()
     ->appendFile($this->basePath('js/admin/mailgun-batch-email.js'));
 ?>
 <h2 class="mx-auto text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
-<div style="max-width:800px" class="mx-auto p-2">    
+<div style="max-width:800px" class="mx-auto p-2">
+<?php if ('development' == getenv('environment')):?>
+    <div class="alert alert-warning border border-danger">
+            This is a development environment. Please don't do anything stupid.
+    </div>
+<?php endif?>
+
 <?php echo $this->errorMessage() ?>
 <div class="alert alert-success alert-dismissible fade show" role="alert" hidden>
     <p></p>

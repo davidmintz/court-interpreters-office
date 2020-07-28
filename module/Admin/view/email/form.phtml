@@ -1,12 +1,19 @@
 <?php
-/** module/Admin/view/email/index.phtml viewscript for batch-email */
+/** module/Admin/view/email/form.phtml viewscript for batch-email */
 $this->headTitle('admin | email');
 $this->headScript()
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
     ->appendFile($this->basePath('js/admin/batch-email.js'));
 ?>
 <h2 class="mx-auto text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+<?php if ('development' == getenv('environment')):?>
+    <div class="alert alert-warning border border-danger">
+        This is a development environment. Please don't do anything stupid.
+    </div>
+<?php endif?>
 <div style="max-width:800px" class="mx-auto p-2">
+
+
     <div class="progress mb-2 mx-auto" style="max-width:500px;display:none">
       <div id="progress" class="progress-bar progress-bar-striped bg-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
@@ -60,7 +67,7 @@ $this->headScript()
                     message
                 </label>
                 <div class="col-sm-9"><textarea placeholder="the body of your message" id="body" name="body" rows="8" class="form-control"></textarea>
-                <span class="text-muted">You can use <a target="__blank" href="https://www.markdownguide.org/basic-syntax">Markdown</a> for formatting</span>
+                <span class="text-muted">You can and use <a target="__blank" href="https://www.markdownguide.org/basic-syntax">Markdown</a> for formatting</span>
                 </div>
             </div>
             <div class="form-row form-group">
