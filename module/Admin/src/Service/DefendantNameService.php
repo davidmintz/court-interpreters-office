@@ -84,7 +84,7 @@ class DefendantNameService
         // and if so, whether it is exact or inexact
         if ($duplicate) {
             $match = $duplicate['match'];
-            $debug[] = "match: '$match'" ;
+            $debug[] = __LINE__.": type of duplicate match: '$match'" ;
         }
 
         // and if it is inexact, whether they submitted a resolution policy:
@@ -145,8 +145,8 @@ class DefendantNameService
                         $result['status'] = 'aborted';
                         $result['message'] = 'If you\'re only changing capitalization or accents, the update has to be universal 
                         rather than limited to specific docket numbers/judges. To continue, please select all the "context" checkboxes and hit "save."';
-                        $result['existing_entity'] = $duplicate['entity']->toArray();
-
+                        $result['entity'] = $duplicate['entity']->toArray();
+                        // $result['deftname_replaced_by'] = $id;
                         return $result;
                     }
                     break;
@@ -155,35 +155,38 @@ class DefendantNameService
                     $id = (int)$duplicate['entity']->getId();
                     if ($update_type == self::UPDATE_GLOBAL) {
                         // this is the case where there may be an orphan to remove after we're done
-                        $debug[] = "EXACT duplicate, global update";
+                        $debug[] = __LINE__.": we have an EXACT duplicate, global update";
                         // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id,$entity->getId());
                         $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
+                        $result['entity'] = $duplicate['entity']->toArray();
                         $entity_to_delete = $entity;
                     } else {
-                        $debug[] = "EXACT duplicate, contextual update, DUDE!";
+                        $debug[] = __LINE__.": EXACT duplicate, contextual update, DUDE!";
                         // $event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);
                         // $result['deft_events_updated'] = $this->doDeftEventsUpdate($id, $entity->getId(), $contexts_submitted);
                         $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                     }
+                    $result['entity'] = $duplicate['entity']->toArray();
+                    $result['deftname_replaced_by'] = $id;
                     break;
 
                 case self::INEXACT_DUPLICATE:
                     $id = (int)$duplicate['entity']->getId();
                     if ($update_type == self::UPDATE_GLOBAL) {
-                        $debug[] = "INEXACT duplicate, global update; duplicate resolution: " .$data['duplicate_resolution'];
+                        $debug[] = __LINE__.": found INEXACT duplicate, global update; duplicate resolution: " .$data['duplicate_resolution'];
                         if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
                             $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
                             $params = [$data['surnames'],$data['given_names'],$id];
                             $result['deft_name_updated'] = $db->executeUpdate($update, $params);
                             // since it's global, no defendants_events update is required
                             $entity_to_delete = $entity;
-                            $debug[] = "planning to remove submitted entity {$entity->getId()}";
+                            $debug[] = __LINE__.": planning to remove submitted entity {$entity->getId()}";
                         } else {
                             // we use the existing name in the provided contexts
                             $result = array_merge($result, $this->doRelatedTableUpdates((int)$id, $entity->getId(), $contexts_submitted));
                             // therefore... the one they submitted can be deleted?
                             $entity_to_delete = $duplicate['entity'];
-                            $debug[] = "planning to remove duplicate entity {$duplicate['entity']->getId()}";
+                            $debug[] = __LINE__.": planning to remove duplicate entity {$duplicate['entity']->getId()}";
                         }
                     } else { // contextual update
                         $debug[] = "INEXACT duplicate, contextual update; duplicate resolution: " .$data['duplicate_resolution'];
@@ -222,7 +225,9 @@ class DefendantNameService
             $result['message'] = $e->getMessage();
             $result['exception'] = $e;
         }
-        $result['entity'] = ['given_names' => $data['given_names'],'surnames' => $data['surnames'],'id' => $data['id'] ?? null];
+        if (! isset($result['entity'])) {
+            $result['entity'] = ['given_names' => $data['given_names'],'surnames' => $data['surnames'],'id' => $data['id'] ?? null];
+        }
         $result['debug'] = $debug;
 
         return $result;
@@ -384,11 +389,7 @@ class DefendantNameService
                 'status' => 'error',
                 'duplicate_entry_error' => true,
                 'exact_match' => $this->isExactMatch($entity, $existing_entity),
-                'existing_entity' => [
-                    'surnames' => $existing_entity->getSurnames(),
-                    'given_names' => $existing_entity->getGivenNames(),
-                    'id' => $existing_entity->getId(),
-                ],
+                'existing_entity' => $existing_entity->toArray(),
             ];
         }
     }
