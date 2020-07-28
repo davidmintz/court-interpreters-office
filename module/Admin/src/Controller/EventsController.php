@@ -9,7 +9,6 @@ use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Model\JsonModel;
 use Doctrine\ORM\EntityManagerInterface;
-use Laminas\EventManager\Event;
 use Laminas\Authentication\AuthenticationServiceInterface;
 use InterpretersOffice\Admin\Form;
 use InterpretersOffice\Entity;
