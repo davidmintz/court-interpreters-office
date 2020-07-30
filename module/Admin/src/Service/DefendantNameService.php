@@ -189,7 +189,7 @@ class DefendantNameService
                             $debug[] = __LINE__.": planning to remove duplicate entity {$duplicate['entity']->getId()}";
                         }
                     } else { // contextual update
-                        $debug[] = "INEXACT duplicate, contextual update; duplicate resolution: " .$data['duplicate_resolution'];
+                        $debug[] = __LINE__.":  INEXACT duplicate, contextual update; duplicate resolution: " .$data['duplicate_resolution'];
                         if ($data['duplicate_resolution'] == self::UPDATE_EXISTING_DUPLICATE) {
                             // ...first update the name
                             $update = 'UPDATE defendant_names SET surnames = ?, given_names = ? WHERE id = ?';
@@ -200,7 +200,10 @@ class DefendantNameService
                         //$event_ids = $this->getEventIdsForContexts($contexts_submitted,$entity);
                         // $result['deft_events_updated'] =  $this->doDeftEventsUpdate($duplicate->getId(),$entity->getId(),$contexts_submitted);
                         $result = array_merge($result, $this->doRelatedTableUpdates($id, $entity->getId(), $contexts_submitted));
-                        $result['entity'] = ['given_names' => $data['given_names'],'surnames' => $data['surnames'],'id' => $id];
+                        // $result['entity'] = ['given_names' => $data['given_names'],'surnames' => $data['surnames'],'id' => $id];
+                        $debug[] = __LINE__.": setting result[entity] =  ".print_r($duplicate['entity']->toArray(),true);
+                        $result['entity'] = $duplicate['entity']->toArray();
+                        $result['deftname_replaced_by'] = $id;
                     }
                 break;
             }
