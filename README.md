@@ -91,7 +91,7 @@ Feel free to contact me with any questions or suggestions: [david@davidmintz.org
 
 # the author
 
-My name is [David Mintz](https://davidmintz.org) and I'm a Spanish interpreter on staff at the [Interpreters Office](https://sdnyinterpreters.org/) of the US District Court, Southern District of New York, located in New York City. And I like coding web applications.
+My name is [David Mintz](https://davidmintz.org) and until my retirement in July 2020 I was a Spanish interpreter on staff at the [Interpreters Office](https://sdnyinterpreters.org/) of the US District Court, Southern District of New York, located in New York City. My career as a court interpreter lasted over 30 years. As a staff interpreter I Was motivated to pick up web application development by the complete lack of software for managing an interpreters office.
 
 # acknowledgments
 
