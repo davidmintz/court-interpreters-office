@@ -430,7 +430,7 @@ forms are built by extending [Laminas\Form](https://docs.laminas.dev/laminas-for
 approach for form elements, data validation and filtering.
 
 For further information you can examine the source code, read the documentation sites for the framework and various libraries, 
-or ask me a question:  david@davidmintz.org. 
+or ask me a question:  davidmintz@interpretersoffice.org. 
 
  
  

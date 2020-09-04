@@ -33,7 +33,7 @@ For further objective information about what parts of the application are most u
 web server access logs; (2) take a look at the <span class="text-monospace">app_event_log</span> database table, which provides a fairly rich 
 narrative of what people have been up to. For now, the only way to do the latter is with the <span class="text-monospace">mysql</span> cli.
 
-### What are the most common questions users?
+### What are the most common questions users ask?
 
 It's a bit early to say because there isn't much data yet. The application has been in production since April 25, 2020, and this is 
 being written in July 2020. Moreover, court operations have not resumed running at their normal pace thanks to the coronavirus pandemic. 
@@ -101,7 +101,7 @@ source code first and worry about PRs later, but hopefully you will never encoun
 
 Nope. You now know all there is to know :-) 
 
-OK, maybe not. You'll know where to reach me with further questions: david@davidmintz.org
+OK, maybe not. You'll know where to reach me with further questions: davidmintz@interpretersoffice.org
 
 
 ### Is the database and source code being backup daily? If yes, where?
@@ -127,5 +127,5 @@ if we follow the pattern described above: make changes on your development machi
 *That's all the Qs we have in our FAQ for now. If you have any questions, especially of 
 the end-user variety, please feel free to convey them to me. Thanks,*
 
-*david@davidmintz.org*
+*davidmintz@interpretersoffice.org*
 

@@ -43,11 +43,11 @@ on the server side. The front end uses <a href="https://getbootstrap.com/">Boots
 
 <strong>Who created it?</strong>
 
-<p class="ml-4">David Mintz, at the Interpreters Office, US District Court, Southern District of New York.</p>
+<p class="ml-4">David Mintz developed it for the Interpreters Office of the US District Court, Southern District of New York.</p>
 
 <strong>Can I try it out?</strong>
 
-<p class="ml-4">Yes. If you're interested in playing with a demo, we've got one up and running. Please contact david@davidmintz.org for further information.</p>
+<p class="ml-4">Yes. If you're interested in playing with a demo, we've got one up and running. Please contact davidmintz@interpretersoffice.org for further information.</p>
 
 <strong>How about a picture of one of your cats?</strong>
 

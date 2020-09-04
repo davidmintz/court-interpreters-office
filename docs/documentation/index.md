@@ -10,7 +10,7 @@ title: documentation | InterpretersOffice.org
 End user documentation has yet to be completed. We plan to record and publish some screencasts that demonstrate 
 the use of <span class="text-monospace">InterpretersOffice</span>.
 
-There is a demo installation available for you to test-drive. Please contact david@davidmintz.org for details.
+There is a demo installation available for you to test-drive. Please contact davidmintz@interpretersoffice.org for details.
 
 Finally, if you are truly curious and impatient, you can have a look at the technical documentation shown below. Although 
 it assumes the reader's understanding of object-oriented PHP and relational databases, non-technical readers may nonetheless 

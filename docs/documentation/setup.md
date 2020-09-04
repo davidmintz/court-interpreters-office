@@ -118,7 +118,7 @@ bin/admin-cli setup:create-admin-user
 Supply the answers as prompted, and you'll have an admin user who can log in and carry on using the web interface. 
 *(Please note: at this point it is technically possible to move forward with the database as is, but there are several data 
 tables that would have to be populated by the admin users, row by row, and it would be tedious. It's worth considering writing 
-some one-off scripts to import data from existing sources. Feel free to contact david@davidmintz.org to discuss.)*
+some one-off scripts to import data from existing sources. Feel free to contact davidmintz@interpretersoffice.org to discuss.)*
 
 ### email
 
@@ -250,8 +250,7 @@ before a user account is disabled. You can set this value pretty high if you lik
 zero to mean unlimited. The default (six) seems sensible.
 
 
-There are a couple more configuration files that have to be present and writeable by the server: `module/Admin/config/forms.json`
-`and module/Rotation/config/config.json`. In the Interpreters Office for the Southern District of New York, 
+There are a couple more configuration files that have to be present and writeable by the server: `module/Admin/config/forms.json` and `module/Rotation/config/config.json`. In the Interpreters Office for the Southern District of New York, 
 the former configuration looks like
 
 ```json
