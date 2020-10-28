@@ -80,7 +80,7 @@ You can set any user's password from the command line with: <span class="text-mo
 
 ### authorization
 
-Please see the section dealing with authentication authorization in the discussion of [the request cycle](./request-cycle.md#authentication-and-authorization), which 
+Please see the section dealing with authentication authorization in the discussion of [the request cycle](./request-cycle.html#authentication-and-authorization), which 
 gives a fair overview. An additional point worth noting is that <span class="text-monospace">InterpretersOffice</span> does most 
 of its authorization checking via the event listener attached in the <span class="text-monospace">Admin</span> module's <span class="text-monospace">onBootstrap()</span>
 method. If authorization is denied, a message is logged to that effect. If the authorization is denied by this event listener, it means a user actually tried 
