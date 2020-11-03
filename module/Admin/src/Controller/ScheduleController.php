@@ -80,11 +80,11 @@ class ScheduleController extends AbstractActionController
      */
     public function scheduleAction()
     {
-        $sanity = $this->sanityCheck();
+        // $sanity = $this->sanityCheck();
         
-        if (!$sanity['sanity']) {
-            return ['errorMessage'=>$sanity['message']];
-        }
+        // if (!$sanity['sanity']) {
+        //     return ['errorMessage'=>$sanity['message']];
+        // }
         
         $filters = $this->getFilters();
         $date = new \DateTime($filters['date']);
