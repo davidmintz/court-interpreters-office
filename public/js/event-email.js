@@ -212,10 +212,9 @@ const display_email_suggestion = function() {
  * @return {void}
  */
 const send_email = function(e){
-    console.log("show time!");
+    // console.log("show time!");
     var message = {to: [], cc: [], bcc: [] };
     if ($("#include-details").prop("checked")) {
-        console.log("doing event details...");
         message.event_details = get_event_details();
     }
     $("input.email-recipient").each(function(){
@@ -226,7 +225,6 @@ const send_email = function(e){
             recipient.name = input.data("recipient-name");
         }
         recipient.role = input.data("role") || "";
-        console.warn(input.attr("name") + " is the FUCKING attribute");
         switch (input.attr("name")) {
             case "to[]":
                 message.to.push(recipient);
@@ -238,12 +236,6 @@ const send_email = function(e){
                 message.bcc.push(recipient);
                 break;
         }
-        // if (input.attr("name") === "to[]") {
-        //     message.to.push(recipient);
-        // } else {
-        //     message.cc.push(recipient);
-        // }
-        console.log(message);
     });
     message.subject = $("#message-subject").val().trim();
     message.body = $("#message-body").val().trim();
@@ -304,6 +296,13 @@ const send_email = function(e){
             if (response.cc_to && response.cc_to.length) {
                 message += " with cc to: ";
                 message += response.cc_to.map(
+                    p => p.name ? `<strong>${p.name}</strong> &lt;${p.email}&gt;`
+                        :  `<strong>${p.email}</strong>`
+                ).join(", ");
+            }
+            if (response.bcc_to && response.bcc_to.length) {
+                message += ", bcc to: ";
+                message += response.bcc_to.map(
                     p => p.name ? `<strong>${p.name}</strong> &lt;${p.email}&gt;`
                         :  `<strong>${p.email}</strong>`
                 ).join(", ");
@@ -587,10 +586,8 @@ $(function(){
     /* updates To|Cc|Bcc email header */
         .on("change", "select.email-header",function(){
             var input = $(this).parent().next().find("input.email-recipient");
-            // var name = input.attr("name") ===  "to[]" ? "cc[]" : "to[]";
             var name = $(this).val() + "[]";
             input.attr({name});
-            console.warn("input's name attrib is now: "+name);
             var recipient_name = $(this).parent().next().find("span.email-recipient").text().trim();
             var salutation_opt = $(`#message-salutation option:contains(${recipient_name})`);
             if ($(this).val() === "cc") {
