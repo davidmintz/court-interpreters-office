@@ -392,20 +392,36 @@ EOD;
         $message = $this->createEmailMessage();
 
         $message->setFrom($mail_config['from_address'], $mail_config['from_entity'])
-            ->setBcc($mail_config['from_address'])
+            ->addBcc($mail_config['from_address'])
             ->setSubject($data['subject']);
         $log_comments = '';
-        if (isset($data['cc'])) {
-            $log_comments .= "Cc: ";
-            foreach ($data['cc'] as $address) {
-                $message->addCc($address['email'], ! empty($address['name']) ? $address['name'] : null);
+        foreach (['cc','bcc'] as $header) {
+            if (!isset($data[$header])) {
+                continue;
             }
-            $log_comments .= implode('; ', array_map(function ($a) {
-                return ! empty($a['name']) ? "{$a['name']} <{$a['email']}>"
-                    : $a['email'];
-            }, $data['cc']));
+            $add_method = 'add'. \ucfirst($header);
+            $log_comments .= "$header: ";
+            foreach($data[$header] as $address) {
+                $message->$add_method($address['email'], 
+                    ! empty($address['name']) ? $address['name'] : null);
+                $log_comments .= implode('; ', array_map(function ($a) {
+                    return ! empty($a['name']) ? "{$a['name']} <{$a['email']}>"
+                        : $a['email'];
+                }, $data[$header]));
+            }
+
         }
-        $result = ['sent_to' => [], 'cc_to' => []];
+        // if (isset($data['cc'])) {
+        //     $log_comments .= "Cc: ";
+        //     foreach ($data['cc'] as $address) {
+        //         $message->addCc($address['email'], ! empty($address['name']) ? $address['name'] : null);
+        //     }
+        //     $log_comments .= implode('; ', array_map(function ($a) {
+        //         return ! empty($a['name']) ? "{$a['name']} <{$a['email']}>"
+        //             : $a['email'];
+        //     }, $data['cc']));
+        // }
+        $result = ['sent_to' => [], 'cc_to' => [], 'bcc_to' => []];
         $view = new ViewModel();
         /**  set template based on input etc */
         $template = $this->template_map[$data['template_hint']];
@@ -465,6 +481,9 @@ EOD;
         }
         if (! empty($data['cc'])) {
             $result['cc_to'] = $data['cc']; // for confirmation
+        }
+        if (! empty($data['bcc'])) {
+            $result['bcc_to'] = $data['bcc']; // for confirmation
         }
         if (in_array($data['template_hint'],['confirmation','update'])) {
 
@@ -662,7 +681,7 @@ EOD;
         $mail_config = $this->config['mail'];
         $message = $this->createEmailMessage();
         $message->setFrom($mail_config['from_address'], $mail_config['from_entity'])
-            ->setBcc($mail_config['from_address'])
+            ->addBcc($mail_config['from_address'])
             ->setSubject("list of {$input['language']} interpreters")
             ->setTo($input['email'], $input['recipient'] ?? null);
         $parts = $message->getBody()->getParts();
@@ -724,7 +743,7 @@ EOD;
      */
     public function validate(Array &$data) : Array
     {
-        $validation_errors = ['to' => [], 'cc' => []];
+        $validation_errors = ['to' => [], 'cc' => [], 'bcc'=> []];
         $alpha = $whitespace = null;
         $validator = new EmailAddress();
         $whitespace = new \Laminas\Filter\PregReplace(
@@ -750,23 +769,44 @@ EOD;
             }
         }
         $data['subject'] = trim($whitespace->filter($data['subject']));
-        if (isset($data['cc'])) {
-            if (! is_array($data['cc'])) {
-                $validation_errors['cc'][] = 'invalid parameter in "Cc" field';
-            } else {
-                foreach ($data['cc'] as $i => $address) {
-                    if (empty($address['email'])) {
-                        $validation_errors['cc'][] = 'missing email address in "Cc" recipient';
-                    } elseif (! $validator->isValid($address['email'])) {
-                        $validation_errors['cc'][] = 'invalid email address: '.$address['email'];
-                    }
-                    if (! empty($address['name'])) {
-                        $filtered = $whitespace->filter($address['name']);
-                        $data['cc'][$i]['name'] = $filtered;
+        foreach (['cc','bcc'] as $header) {
+            if (!isset($data[$header])) {
+                continue;
+                if (! is_array($data[$header])) {
+                    $validation_errors[$header][] = 'invalid parameter in "Cc" field';
+                } else {
+                    foreach ($data[$header] as $i => $address) {
+                        if (empty($address['email'])) {
+                            $validation_errors[$header][] = sprintf('missing email address in "%s" recipient',
+                            ucfirst($header));
+                        } elseif (! $validator->isValid($address['email'])) {
+                            $validation_errors[$header][] = 'invalid email address: '.$address['email'];
+                        }
+                        if (! empty($address['name'])) {
+                            $filtered = $whitespace->filter($address['name']);
+                            $data[$header][$i]['name'] = $filtered;
+                        }
                     }
                 }
             }
         }
+        // if (isset($data['cc'])) {
+        //     if (! is_array($data['cc'])) {
+        //         $validation_errors['cc'][] = 'invalid parameter in "Cc" field';
+        //     } else {
+        //         foreach ($data['cc'] as $i => $address) {
+        //             if (empty($address['email'])) {
+        //                 $validation_errors['cc'][] = 'missing email address in "Cc" recipient';
+        //             } elseif (! $validator->isValid($address['email'])) {
+        //                 $validation_errors['cc'][] = 'invalid email address: '.$address['email'];
+        //             }
+        //             if (! empty($address['name'])) {
+        //                 $filtered = $whitespace->filter($address['name']);
+        //                 $data['cc'][$i]['name'] = $filtered;
+        //             }
+        //         }
+        //     }
+        // }
 
         foreach (['template_hint','body'] as $field) {
             if (! empty($data[$field])) {
@@ -792,7 +832,7 @@ EOD;
                 }
             }
         }
-        foreach (['to','cc'] as $field) {
+        foreach (['to','cc','bcc'] as $field) {
             if (! count($validation_errors[$field])) {
                 unset($validation_errors[$field]);
             }

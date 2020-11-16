@@ -28,6 +28,7 @@ const create_recipient = function(email,name, role, person_id){
             <select class="form-control custom-select email-header">
                 <option value="to">To</option>
                 <option value="cc">Cc</option>
+                <option value="bcc">Bcc</option>
             </select>
         </label>
         <div class="col-md-10">
@@ -212,7 +213,7 @@ const display_email_suggestion = function() {
  */
 const send_email = function(e){
     console.log("show time!");
-    var message = {to: [], cc: [] };
+    var message = {to: [], cc: [], bcc: [] };
     if ($("#include-details").prop("checked")) {
         console.log("doing event details...");
         message.event_details = get_event_details();
@@ -225,11 +226,23 @@ const send_email = function(e){
             recipient.name = input.data("recipient-name");
         }
         recipient.role = input.data("role") || "";
-        if (input.attr("name") === "to[]") {
-            message.to.push(recipient);
-        } else {
-            message.cc.push(recipient);
+        console.warn(input.attr("name") + " is the FUCKING attribute");
+        switch (input.attr("name")) {
+            case "to[]":
+                message.to.push(recipient);
+                break;
+            case "cc[]":
+                message.cc.push(recipient);
+                break;
+            case "bcc[]":
+                message.bcc.push(recipient);
+                break;
         }
+        // if (input.attr("name") === "to[]") {
+        //     message.to.push(recipient);
+        // } else {
+        //     message.cc.push(recipient);
+        // }
         console.log(message);
     });
     message.subject = $("#message-subject").val().trim();
@@ -534,7 +547,7 @@ $(function(){
             $("#message-body").text(default_notes);
         }
     })
-    /* remove form row (email recipient) when they click "x" */
+    /* removes form row (email recipient) when they click "x" */
         .on("click",".btn-remove-item",function(event){
             event.preventDefault();
             $(this).tooltip("hide");
@@ -571,11 +584,13 @@ $(function(){
                 }
             });
         })
-    /* toggle To|Cc email header */
+    /* updates To|Cc|Bcc email header */
         .on("change", "select.email-header",function(){
             var input = $(this).parent().next().find("input.email-recipient");
-            var name = input.attr("name") ===  "to[]" ? "cc[]" : "to[]";
+            // var name = input.attr("name") ===  "to[]" ? "cc[]" : "to[]";
+            var name = $(this).val() + "[]";
             input.attr({name});
+            console.warn("input's name attrib is now: "+name);
             var recipient_name = $(this).parent().next().find("span.email-recipient").text().trim();
             var salutation_opt = $(`#message-salutation option:contains(${recipient_name})`);
             if ($(this).val() === "cc") {
