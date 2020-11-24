@@ -312,7 +312,7 @@ class ScheduleUpdateManager
 
                     $message->setTo($contact['email'], $contact['organization_name'])
                         ->setFrom($contact['email'], $contact['organization_name'])
-                        ->setSubject($event->describe());
+                        ->setSubject('ACTION REQUIRED(?): ' .$event->describe());
                     $this->email_messages[] = $message;
                 }
             }
@@ -326,7 +326,7 @@ class ScheduleUpdateManager
      *
      * Email message objects are saved in $this->email_messages so we can wait
      * until the database transaction completes successfully, rather than risk
-     * sending email that announced something that didn't happen.
+     * sending email that announces something that didn't happen.
      *
      * @param  EventInterface $e [description]
      * @return void
