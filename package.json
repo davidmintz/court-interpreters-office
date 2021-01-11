@@ -12,7 +12,7 @@
   "dependencies": {
     "acorn": "^7.4.1",
     "ajv": "^6.12.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
