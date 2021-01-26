@@ -58,16 +58,17 @@ echo $this->headStyle();?>
     <?php  echo $this->content; ?>
     </div>
     <div class="container">        
-        <footer class="border-top border-bottom mt-4 text-center text-muted"><?php
+        <footer class="border-top border-bottom text-center text-muted"><?php
             echo
                 $this->layout()->organization_name," &bull; ",
                 $this->layout()->organization_locality," &bull; ",
                 $this->layout()->telephone," &bull; ", $this->layout()->email;
-        ?></footer>
+        ?>
     </div>
+        <script src="<?php echo $this->basePath('js/lib/popper.js')?>"></script>
         <script src="<?php echo $this->basePath('js/lib/jquery/dist/jquery.min.js')?>"></script>
-        <script src="<?php echo $this->basePath('js/lib/bootstrap/bootstrap.bundle.js')?>"></script>
-        <script src="<?php echo $this->basePath('js/lib/jquery-ui/jquery-ui.js')?>"></script>
+        <script src="<?php echo $this->basePath('js/lib/bootstrap/bootstrap.min.js')?>"></script>
+        <script src="<?php echo $this->basePath('js/lib/jquery-ui/jquery-ui.min.js')?>"></script>
         <script src="<?php echo $this->basePath('js/common.js')?>"></script>
         <script src="<?php echo $this->basePath('js/form-utilities.js')?>"></script>
         <script src="<?php echo $this->basePath('js/nav.js')?>"></script>
