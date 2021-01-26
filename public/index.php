@@ -15,6 +15,7 @@ if (php_sapi_name() === 'cli-server') {
     if (__FILE__ !== $path && is_file($path)) {
         return false;
     }
+    putenv('environment=development');
     unset($path);
 }
 
