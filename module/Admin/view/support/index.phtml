@@ -4,7 +4,25 @@
         Documentation is still incomplete, but whatever is available can be found at the InterpretersOffice project website: 
         <a href="https://interpretersoffice.org/documentation">https://interpretersoffice.org/documentation</a>         
     </p>
-    <p>
-        You are also welcome to contact the application developer with any questions: david@davidmintz.org
+    
+    <p>Here is some diagnostic information about your installation of <span class="text-monospace">InterpretersOffice</span>:</p>
+    <table class="table table-sm border" style="max-width:400px">
+        <tbody>
+            <tr>
+                <td>App version</td><td><?= ltrim($this->app_config['app_version'],'v')?></td>
+            </tr>
+            <tr>
+                <td>PHP version</td><td><?= \PHP_VERSION ?></td>
+            </tr>
+            <?php if (isset($_SERVER['SERVER_SOFTWARE'])):?>
+            <tr>
+                <td>Web server</td><td><?= $_SERVER['SERVER_SOFTWARE'] ?></td>
+            </tr>
+            <?php  endif?>
+        </tbody>        
+    </table>
+    <p class="mb-5">
+        You are also welcome to email the application developer with any questions: support@interpretersoffice.org
     </p>
+    <br>
 </div>
