@@ -16,6 +16,7 @@ use Laminas\Session\Validator\HttpUserAgent;
 
 return
 [
+    'app_version' => file_get_contents(__DIR__.'/../VERSION.txt'),
     // courtesy of:
     //https://github.com/olegkrivtsov/using-zf3-book-samples/blob/master/userdemo/config/autoload/global.php
     'session_config' => [
