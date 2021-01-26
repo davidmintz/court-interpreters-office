@@ -23,6 +23,7 @@ class IndexControllerFactory implements FactoryInterface
         $config = [
             'acl'=>$container->get('acl'),
             'modules' => $modules,
+            'app_config' => $container->get('config'),
         ];
         if (in_array('InterpretersOffice\Requests',$modules)) {
             /** @var InterpretersOffice\Requests\Entity\RequestRepository $repo  */

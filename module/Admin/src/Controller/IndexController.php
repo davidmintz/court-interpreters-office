@@ -23,6 +23,7 @@ class IndexController extends AbstractActionController
     public function __construct(array $config)
     {
         $this->config = $config;
+        
     }
     /**
      * index action.
@@ -30,16 +31,15 @@ class IndexController extends AbstractActionController
      * @return ViewModel
      */
     public function indexAction()
-    {        
-     
-        return new ViewModel($this->config); 
-    
+    {                
+        return new ViewModel($this->config);     
     }
 
     /**
      * serves the support page (WIP)
      */
     public function supportAction()
-    {
+    {        
+        return new ViewModel($this->config); 
     }
 }
