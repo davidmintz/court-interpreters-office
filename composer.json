@@ -6,7 +6,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.2.10",
+        "php": "^7.3",
         "ext-mbstring": "*",
         "ext-json": "*",
         "ext-intl": "*",
