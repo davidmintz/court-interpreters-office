@@ -1,5 +1,5 @@
 <?php  /** module/Admin/view/schedule/schedule.phtml */
-$this->headScript()->appendFile($this->basePath('js/lib/jquery-ui/jquery-ui.min.js'))
+$this->headScript()    
     ->appendFile($this->basePath('js/lib/moment/min/moment.min.js'))
     ->appendFile($this->basePath('js/admin/schedule.js'));
 $this->headTitle(! $this->errorMessage ? $this->date->format('D d M Y') : 'error');
