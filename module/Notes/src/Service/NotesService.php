@@ -477,7 +477,7 @@ class NotesService
                                 'notSame' => 'Security error: invalid/expired CSRF token.'
                                 .' Please reload the page and try again.',
                             ],
-                        'timeout' => 600,
+                        'timeout' => 2700,
                     ],
                 ],
             ]
