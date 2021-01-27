@@ -51,7 +51,7 @@ class DocketAnnotationsController extends AbstractActionController
         $request = $this->getRequest();
         $view = new ViewModel([
             'docket' => $docket, 'data' => $data ?? false,
-            'csrf' => (new Csrf(['timeout' => 1200]))->getHash(),
+            'csrf' => (new Csrf(['timeout' => 2700]))->getHash(),
             'referrer' => $request->getServer()->get('HTTP_REFERER'),
         ]);
         if ($request->isXmlHttpRequest()) {
@@ -72,7 +72,7 @@ class DocketAnnotationsController extends AbstractActionController
 
         $id = $this->params()->fromRoute('id');
         $note = $this->service->get((int)$id);
-        $token = (new Csrf(['timeout' => 1200]))->getHash();
+        $token = (new Csrf(['timeout' => 2700]))->getHash();
         return ['note' => $note, 'csrf' => $token];
     }
 
@@ -83,7 +83,7 @@ class DocketAnnotationsController extends AbstractActionController
      */
     public function addAction()
     {
-        $token = (new Csrf(['timeout' => 1200]))->getHash();
+        $token = (new Csrf(['timeout' => 2700]))->getHash();
         return ['csrf' => $token,'docket' => $this->params()->fromRoute('docket')];
     }
 }

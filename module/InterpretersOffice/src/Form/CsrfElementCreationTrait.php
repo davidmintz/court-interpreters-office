@@ -11,8 +11,6 @@ use Laminas\InputFilter;
 /**
  * trait to facilitate adding a CSRF element to a Form.
  *
- * yes, we could create subclasses of Laminas\Form\Form and Laminas\Form\Fieldset that
- * do this, and extend those instead. but this works, and Traits are cool.
  */
 trait CsrfElementCreationTrait
 {
@@ -32,7 +30,7 @@ trait CsrfElementCreationTrait
                         'notSame' => 'Security error: invalid/expired CSRF token.'
                         .' Please reload the page and try again.',
                     ],
-                'timeout' => 600,
+                'timeout' => 2700,
             ]
         );
         // it's no use. formHidden() helper evidently doesn't

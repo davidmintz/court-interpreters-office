@@ -158,7 +158,7 @@ class ScheduleController extends AbstractActionController
         $data = $this->entityManager->getRepository(Entity\Event::class)
            ->getView($id);
         $event = $data['event'] ?? null;
-        $csrf = (new \Laminas\Validator\Csrf('csrf', ['timeout' => 1200]))->getHash();
+        $csrf = (new \Laminas\Validator\Csrf('csrf', ['timeout' => 2700]))->getHash();
         $session = new \Laminas\Session\Container('event_updates');
         $before = null;
         if ($session->{$event['id']}) {

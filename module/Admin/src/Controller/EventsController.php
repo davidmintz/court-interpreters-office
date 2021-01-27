@@ -325,7 +325,7 @@ class EventsController extends AbstractActionController
         if (! $this->getRequest()->isPost()) {
             return $this->redirect()->toRoute('events');
         }
-        $validator = new \Laminas\Validator\Csrf('csrf', ['timeout' => 600]);
+        $validator = new \Laminas\Validator\Csrf('csrf', ['timeout' => 2700]);
         $token = $this->params()->fromPost('csrf');
         if (! $validator->isValid($token)) {
             return new JsonModel(['status' => 'error','message' =>
