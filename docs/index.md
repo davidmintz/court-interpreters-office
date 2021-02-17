@@ -15,7 +15,8 @@ the scheduling of interpreters.
 
 Developed over many years by the Interpreters of the US District Court, Southern District of New York, it 
 came into being because there was nothing else available that served our needs. You're welcome to 
-[read more about it](/about.html).
+[read more about it](/about.html).  If you prefer watching video, check out [this Youtube screencast](https://youtu.be/PN2BtS7oH7A)
+which provides an introduction to <span class="text-monospace">InterpretersOffice</span> and demonstrates its use.
 
 The source code is freely available on [github](https://github.com/davidmintz/court-interpreters-office).
 

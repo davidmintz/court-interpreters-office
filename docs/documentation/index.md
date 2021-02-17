@@ -7,12 +7,15 @@ title: documentation | InterpretersOffice.org
 
 ### user guide
 
-End user documentation has yet to be completed. We plan to record and publish some screencasts that demonstrate 
-the use of <span class="text-monospace">InterpretersOffice</span>.
+End user documentation is incomplete, but we do have a [Youtube screencast](https://youtu.be/PN2BtS7oH7A) that introduces 
+and demonstrates the use of <span class="text-monospace">InterpretersOffice</span>. We recommend viewing it in full-screen 
+mode on a device with a relatively large display.
 
-There is a demo installation available for you to test-drive. Please contact davidmintz@interpretersoffice.org for details.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PN2BtS7oH7A" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Finally, if you are truly curious and impatient, you can have a look at the technical documentation shown below. Although 
+There is also demo installation available for you to test-drive. Please contact davidmintz@interpretersoffice.org for details.
+
+Finally, you can have a look at the technical documentation shown below. Although 
 it assumes the reader's understanding of object-oriented PHP and relational databases, non-technical readers may nonetheless 
 wish to skim it to get a sense of the application's features and how it works.
 
