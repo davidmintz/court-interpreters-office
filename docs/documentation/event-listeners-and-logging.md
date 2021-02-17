@@ -177,8 +177,8 @@ amount of disk space. As we observed in the section on [setting up the applicati
 server, or else we throw an Exception.
 
 The database log writer is [<span class="text-monospace text-nowrap">module/Admin/src/Service/Log/Writer.php</span>]({{site.data.vars.github}}/module/Admin/src/Service/Log/Writer.php).
-It bypasses Doctrine to execute database inserts as quickly and simply as possible, using the same PDO object wrapped by Doctrine. The table it writes to 
-<span class="text-monospace">app_event_log</span>. 
+It bypasses Doctrine to execute database inserts as quickly and simply as possible, using the same PDO object wrapped by Doctrine, and it writes to 
+the <span class="text-monospace">app_event_log</span> table. 
 
 
 
