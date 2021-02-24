@@ -67,6 +67,37 @@ class ReportsController extends AbstractActionController
             'defaults'=>$this->getDefaults()
         ];
     }
+
+    /**
+     * custom CSV file download
+     *
+     * @return void
+     */
+    public function dataDumpAction()
+    {
+        $params = $this->params()->fromQuery();
+        if ($params) {
+            $input = $this->reports->getInputFilter();
+            $input->setData($params);
+            if (! $input->isValid()) {
+                return new JsonModel(['validation_errors'=>$input->getMessages()]);
+            }
+        }
+        $stream = fopen('php://output','w');
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="data.csv"');
+        $data = [
+            [ "value 1","value 2","value 3",  ],
+            [ "value 1","value 2","value 3",  ],
+            [ "value 1","value 2","value 3",  ],
+        ];
+        foreach($data as $record) {
+            fputcsv($stream,$record);
+        }
+        exit();
+        return false;
+    }
+
     /**
      * figures out default report settings
      * 

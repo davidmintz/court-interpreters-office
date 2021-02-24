@@ -12,7 +12,7 @@ $this->headStyle()->captureEnd()
 ?>
 <div style="max-width:800px" class="mx-auto">
     <h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs()?></h2>
-    <p class="alert alert-warning rounded border border-warning shadow-sm py-2 px-5 mx-auto mt-3">This is still in development.</p>
+    <p class="alert alert-warning rounded border border-warning shadow-sm py-2 px-5 mx-auto mt-3">This feature is experimental. Please contact support@interpretersoffice.org to report any issues.</p>
     <form action="<?php echo $this->url('reports') ?>">
     <div class="form-row mb-2">
         <label class="col-md-2 col-form-label float-sm-left" for="report">report</label><div class="col-md-7"><select name="report" id="report" class="custom-select form-control">
@@ -68,4 +68,7 @@ $this->headStyle()->captureEnd()
             <!-- <div style="max-width:50px" class="bg-primary mx-auto text-center"><span class="fa fa-cog fa-spin text-white" style="font-size:1.2em"></div></p> -->
         </div>  
     </div>
+</div>
+<div id="dump-dialog">
+    <!-- dialog for offering selection and order of fields to go here -->
 </div>

@@ -331,10 +331,15 @@ $(function () {
         $("input[name='page']").val(page);
         btn.trigger("click");
     });
+    $("#report").on("change",function(){
+        //console.log("shit has changed");
+        if ($("#report option:selected").text().includes("download")) { 
+            console.warn("boink!");
+        }
 
+    });
     btn.on("click", function (e) {
-        e.preventDefault();
-        // $("nav.pagination, p.pagination-head").empty();
+        e.preventDefault();       
         btn.html("<span class='fa fa-cog fa-spin'></span");
         var table = $("#table > table"); 
         table.children("tfoot").empty();
@@ -346,6 +351,9 @@ $(function () {
                     return displayValidationErrors(res.validation_errors);
                 }
                 $("form .validation-error").hide();
+
+
+
                 var data = res.result.data;               
                 switch (res.result.report_type) {
                 case "interpreter usage by language":

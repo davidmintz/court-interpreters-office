@@ -44,6 +44,7 @@ class ReportService
     const REPORT_CANCELLATIONS_BY_JUDGE = 3;
     const REPORT_BELATED_BY_JUDGE = 4;
     const REPORT_NON_SPANISH_WITH_LANGUAGE_CREDENTIAL = 5;
+    const REPORT_EVENT_DATA_DUMP = 6;
 
     /**
      * report id => label
@@ -55,6 +56,7 @@ class ReportService
         self::REPORT_CANCELLATIONS_BY_JUDGE => 'belated cancellations per judge',
         self::REPORT_BELATED_BY_JUDGE => 'belated in-court requests per judge',
         self::REPORT_NON_SPANISH_WITH_LANGUAGE_CREDENTIAL => 'non-Spanish events including language credential',
+        self::REPORT_EVENT_DATA_DUMP => 'customized event data for download...',
     ];
 
     /**
@@ -82,6 +84,12 @@ class ReportService
         $this->em = $em;
     }
 
+    /**
+     * creates a report
+     *
+     * @param Array $options
+     * @return void
+     */
     public function createReport(Array $options) {
         if (!isset($options['report'])) {
             throw new \RuntimeException(sprintf('missing report "report" option in %s',__FUNCTION__));
@@ -90,6 +98,11 @@ class ReportService
         $to = new \DateTime($options['date-to']);
         $qb = $this->em->createQueryBuilder();
         switch($options['report']) {
+            
+            case self::REPORT_EVENT_DATA_DUMP: // special case
+                return $this->dump($options);
+                break;
+
             case self::REPORT_USAGE_BY_LANGUAGE:                
                 $data = $this->createLanguageUsageQuery($qb)
                     ->where($qb->expr()->between('e.date',':from',':to'))
@@ -147,6 +160,16 @@ class ReportService
             'report_type' => self::$reports[$options['report']],
             'data' => $data,
         ];
+    }
+
+    /**
+     * customized data dump
+     *
+     * @param Array $params
+     * @return Array
+     */
+    public function dump(Array $params) : Array {
+        return [ 'status' => 'testing one two three'];
     }
 
     /**
