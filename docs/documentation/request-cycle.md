@@ -7,7 +7,7 @@ title: documentation | request cycle and application code organization | Interpr
 
 <span class="text-monospace">InterpretersOffice</span> uses the [Model-View-Controller](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)
 pattern and is built on the [Laminas MVC framework](https://docs.laminas.dev/mvc/), formerly know as Zend. Laminas/Zend now seems to be less 
-popular than some other PHP frameworks around, notably Laravel and Symfony. The MVC pattern also seems to be becoming passé, having been overtaken 
+popular than some other PHP frameworks around, notably Laravel and Symfonyg. The MVC pattern also seems to be becoming passé, having been overtaken 
 by the middleware paradigm. Laminas MVC is nevertheless a reasonable choice -- a quality framework with a strong user community 
 where you can find support if you need it.
 
