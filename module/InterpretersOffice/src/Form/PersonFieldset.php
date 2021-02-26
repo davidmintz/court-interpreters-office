@@ -232,7 +232,7 @@ class PersonFieldset extends Fieldset implements
             }
             $form_config = json_decode(file_get_contents($form_config_file), \JSON_OBJECT_AS_ARRAY)['users'] ?? null;
             if (! $form_config) {
-                throw new \RuntimeException('no key "user" found in form configuration data');
+                throw new \RuntimeException('no key "users" found in form configuration data');
             }
 
             $this->allow_email_domains = $form_config['allow_email_domains'];
