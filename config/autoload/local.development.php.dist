@@ -65,4 +65,18 @@ return [
     'security' => [
         'max_login_failures' => 6,        
     ],
+
+    // comment out any of the following optional modules that you do NOT want to enable
+    'optional_modules' => [
+        // Requests module, for allowing staff outside Interpreters office to 
+        // submit and manage their own requests -- strongly recommended
+        'InterpretersOffice\Requests',
+
+        // for posting messages for staff use, which are displayed in a box like a Post-it
+        // note and can be toggled on and off, resized and moved
+        'InterpretersOffice\Admin\Notes',
+        
+        // for managing certain tasks that rotate weekly among several people
+        'InterpretersOffice\Admin\Rotation',
+    ]
 ];
