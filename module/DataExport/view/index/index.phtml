@@ -1,0 +1,14 @@
+<?php /** module/DataExport/view/index/index.phtml */
+$this->headTitle('admin | data export');
+$this->headScript()->appendFile($this->basePath('js/admin/data-export.js'));
+?>
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <h2 class="text-center"><?php echo $this->navigation('admin-breadcrumbs')->breadcrumbs() ?></h2>
+    </div>
+    <div class="col-md-8 offset-2">
+        <form action="<?=$this->url('data-export')?>">
+            <input class="btn btn-success" type="submit" value="run">
+        </form>
+    </div>
+</div>
