@@ -55,7 +55,8 @@
             "InterpretersOffice\\Requests\\": "module/Requests/src/",
             "SDNY\\Vault\\": "module/Vault/src/",
             "InterpretersOffice\\Admin\\Notes\\": "module/Notes/src/",
-            "InterpretersOffice\\Admin\\Rotation\\": "module/Rotation/src/"
+            "InterpretersOffice\\Admin\\Rotation\\": "module/Rotation/src/",
+            "SDNY\\DataExport\\": "module/DataExport/src/"
         }
     },
     "autoload-dev": {
@@ -65,7 +66,8 @@
                 "module/Admin/test/",
                 "module/Requests/test/",
                 "module/Notes/test/",
-                "module/Rotation/test/"
+                "module/Rotation/test/",
+                "module/DataExport/test/"
             ],
             "SDNY\\Vault\\Test\\": "module/Vault/test/",
             "Sandbox\\": "module/Sandbox/src"
