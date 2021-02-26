@@ -35,3 +35,4 @@ buildfiles/
 .mysql/
 .docker-sync/
 .vscode
+bin/sdny/excel
