@@ -18,7 +18,7 @@ $style .= "width:{$size['width']};height:{$size['height']}";
     <span aria-hidden="true">&times;</span>
   </button></div>
     <div class="card-body pt-1" style="overflow:auto">
-        <?php if ($this->assignments && isset($this->assignments['motd'])):
+        <?php if ($this->assignments && !empty($this->assignments['motd'])):
             ?><div class="border rounded px-2 py-1"><?php
             foreach($this->assignments['motd'] as $task => $assignment):
                 echo $this->escapeHtml("$task: ");
