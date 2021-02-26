@@ -33,7 +33,8 @@
         "kriswallsmith/buzz": "^1.1",
         "nyholm/psr7": "^1.2",
         "guzzlehttp/guzzle": "~6.0",
-        "laminas/laminas-dependency-plugin": "^2.0"
+        "laminas/laminas-dependency-plugin": "^2.0",
+        "laminas/laminas-cli": "^1.0"
     },
     "scripts": {
         "zdt-on": "sed -i -e 's/false/true/' config/autoload/toolbar.enabled.php",
