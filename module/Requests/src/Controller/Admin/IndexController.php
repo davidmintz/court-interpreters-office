@@ -143,10 +143,15 @@ class IndexController extends AbstractActionController
             $data = $this->getRequest()->getPost();
             return new JsonModel($data);
         }
-        
+        $custom_config_file = $this->config_dir.'/custom.event-listeners.json';
+        $has_customization = file_exists($custom_config_file);
+        if ($has_customization and ! is_writable($custom_config_file)) {
+            $error = "Your configuration file <strong>$custom_config_file</strong> is not writeable. 
+            Please make this file server-writeable before proceeding."; 
+        }
         return new ViewModel(['form' => $form,'update_allowed' => $allowed,
-            'customized_settings' =>
-                file_exists($this->config_dir.'/custom.event-listeners.json')
+            'customized_settings' => $has_customization, 'error'=>$error ?? null
+                
         ]);
     }
     /**
@@ -156,29 +161,45 @@ class IndexController extends AbstractActionController
      */
     public function updateConfigAction()
     {
-        $data = $this->getRequest()->getPost()->toArray();
-        if (isset($data['restore-defaults']) && $data['restore-defaults']) {
-                return $this->restoreDefaults();
-        }
-        $defaults = json_decode(file_get_contents(
-            "{$this->config_dir}/default.event-listeners.json"
-        ), true);
-        $custom_settings_path = "{$this->config_dir}/custom.event-listeners.json";
-        $customized = file_exists($custom_settings_path);
-        $response = ['custom_settings_were_found' => $customized];
-
-        if ($defaults == $data) {
-            // remove the custom settings if they exist
-            if ($customized) {
-                unlink($custom_settings_path);
-                $response['deleted_custom_settings'] = true;
-            } else {
-                $response['deleted_custom_settings'] = false;
+        try {
+            if (! is_writable($this->config_dir)) {
+                throw new \RuntimeException("Request module cannot save configuration files. 
+                Please make sure $this->config_dir is server-writeable and try again.");
             }
-        } else {
-            file_put_contents($custom_settings_path, json_encode($data));
-            $what = $customized ? 'updated' : 'created';
-            $response["{$what}_custom_settings"] = true;
+            $data = $this->getRequest()->getPost()->toArray();
+            if (isset($data['restore-defaults']) && $data['restore-defaults']) {
+                    return $this->restoreDefaults();
+            }
+            $defaults = json_decode(file_get_contents(
+                "{$this->config_dir}/default.event-listeners.json"
+            ), true);
+            $custom_settings_path = "{$this->config_dir}/custom.event-listeners.json";
+            $customized = file_exists($custom_settings_path);
+            $response = ['custom_settings_were_found' => $customized];
+            
+            if ($defaults == $data) {
+                // remove the custom settings if they exist
+                if ($customized) {
+                    if (!unlink($custom_settings_path)) {
+                        throw new \RuntimeException('Request module configuration file is not writeable. '
+                    .  "Please make $this->config_dir server-writeable and try again.");
+                    }
+                    $response['deleted_custom_settings'] = true;
+                } else {
+                    $response['deleted_custom_settings'] = false;
+                }
+            } else {
+                if ( !is_writable($custom_settings_path) or 
+                    false === file_put_contents($custom_settings_path, json_encode($data))) {
+                    throw new \RuntimeException('Request module configuration file could not be written. '
+                    .  "Please make sure $this->config_dir is server-writeable and try again.");
+                }
+                $what = $customized ? 'updated' : 'created';
+                $response["{$what}_custom_settings"] = true;
+            }
+        } catch (\Exception $e) {
+            $response = ['error' => $e->getMessage()];
+            $this->getResponse()->setStatusCode(500);
         }
 
         return new JsonModel($response);

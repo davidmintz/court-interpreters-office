@@ -15,7 +15,9 @@ $this->headScript()->appendFile($this->basePath('js/requests/admin/config.js'));
         This form allows an administrator to configure these behaviors. For further
         explanation please <a href="#user-guide-requests-config">see below</a>.
     </p>
-
+    <?php if ($this->error): ?>
+        <p class="alert alert-warning border border-danger shadow"><?=$this->error?></p>
+        <?php endif; ?>
 <?php $this->form->prepare()?>
 <form action="<?php echo $this->url('admin-requests/update-config') ?>" method="post" id="config-form">
     <table class="table mb-3 table-bordered">
