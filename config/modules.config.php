@@ -19,11 +19,16 @@ $modules = [
     'Laminas\Navigation',
     'InterpretersOffice',
     'InterpretersOffice\Admin',
-    'InterpretersOffice\Admin\Notes',
-    'InterpretersOffice\Admin\Rotation',
-    'InterpretersOffice\Requests',
+    
 ];
+/** to do: treat this like the other optional modules */
 if (! getenv('TRAVIS')) {
     $modules[] = 'SDNY\Vault';
+}
+
+$optional_modules = require('module/Admin/config/optional_modules.php');
+while ($module = array_search(true,$optional_modules)) {
+    $modules[] = $module;
+    unset($optional_modules[$module]);
 }
 return $modules;
