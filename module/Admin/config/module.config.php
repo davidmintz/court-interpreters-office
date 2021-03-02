@@ -8,6 +8,7 @@ namespace InterpretersOffice\Admin;
 
 use InterpretersOffice\Entity\Listener;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use InterpretersOffice\Admin\Command\TestCommand;
 
 return [
 
@@ -74,6 +75,9 @@ return [
             Service\Log\Writer::class =>  Service\Factory\DbLogWriterFactory::class,
             Form\InterpreterForm::class => Form\InterpreterFormFactory::class,
             Form\EventForm::class => Form\EventFormFactory::class,
+
+            // a little learning exercise...
+            TestCommand::class =>  function($c)  { return new  TestCommand($c->get('entity-manager')); }
 
         ],
         'aliases' => [
