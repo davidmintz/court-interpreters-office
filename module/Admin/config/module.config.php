@@ -77,7 +77,7 @@ return [
             Form\EventForm::class => Form\EventFormFactory::class,
 
             // a little learning exercise...
-            TestCommand::class =>  function($c)  { return new  TestCommand($c->get('entity-manager')); }
+            // TestCommand::class =>  function($c)  { return new  TestCommand($c->get('entity-manager')); }
 
         ],
         'aliases' => [
