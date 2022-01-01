@@ -70,15 +70,16 @@ directories to be created and made server-writeable.
 
 # known issues and limitations
 
-The SDNY Interpreters Office has been successfully running `InterpretersOffice` since April 2020. It is stable and production-ready. 
+The SDNY Interpreters Office has been successfully running the current major version of`InterpretersOffice` since April 2020. It is stable and production-ready. 
 There are still a few ragged edges which, once smoothed out, should improve long-term maintainability and performance. The following 
 are for the most part invisible to end users:
 * The JQuery-based Javascript is somewhat old-school, and at this writing we still need to concatenate and minify Javascript and CSS assets.  
 * The ways in which similar problems are handled in various parts of the application are not always consistent, as I was 
 learning more about Doctrine ORM as the project progressed.
-*  `InterpretersOffice` is designed mainly with the US federal court system in mind. It is not currently well-suited to other 
+*  `InterpretersOffice` has been designed with the US federal court system in mind. It is not currently well-suited to other 
 judiciary systems, although we could and would change this in the future -- especially if there is interest.
 * The logic involved in email templating and the implementation of the Notes (MOTD/MOTW) module is needlessly complicated.
+* The web application framework that we use -- [Laminas](https://getlaminas.org/), formerly known as Zend -- is not as popular, well-known, and easy to use as its competitors. If I had it to do over, I would prefer [Symfony](https://symfony.com/).
 
 
 # demonstration
