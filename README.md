@@ -37,7 +37,7 @@ hardware and software for serving a web application. That means a computer on a 
 configured to allow web traffic; installed on that computer, a properly configured web
 server such as [Apache](https://httpd.apache.org/); [MySQL](https://www.mysql.com/) or [MariaDB](https://mariadb.org/) 
 as a database server (others will likely work, but we haven't gone there yet); and the programming language
-[PHP](http://php.net/), minimum version 7.2. On the client side, users will need no more than a
+[PHP](http://php.net/), minimum version 7.3. On the client side, users will need no more than a
 standard web browser and network access to the server where the application is installed.
 
 If you're planning to run InterpretersOffice on your court's intranet, your system administrators
