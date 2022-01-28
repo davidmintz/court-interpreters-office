@@ -22,5 +22,14 @@ return [
             'telephone' => '212 805-0084',
             'email' => 'interpreters@nysd.uscourts.gov',
         ],
-    ]
+    ],
+    'permissions' => [
+            'schedule' => [
+                'anonymous_ips_allowed' => [],
+                'host_domains_allowed' => [],
+            ],
+        ],
+        'security' => [
+            'max_login_failures' => 6,
+        ],
 ];
