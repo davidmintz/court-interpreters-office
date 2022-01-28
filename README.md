@@ -70,10 +70,11 @@ directories to be created and made server-writeable.
 
 # known issues and limitations
 
-The SDNY Interpreters Office has been successfully running the current major version of`InterpretersOffice` since April 2020. It is stable and production-ready. 
+The SDNY Interpreters Office has been successfully running the current major version of`InterpretersOffice` since April 2020; predecessor versions have been 
+in use since 2000. It is stable and production-ready. 
 There are still a few ragged edges which, once smoothed out, should improve long-term maintainability and performance. The following 
 are for the most part invisible to end users:
-* The JQuery-based Javascript is somewhat old-school, and at this writing we still need to concatenate and minify Javascript and CSS assets.  
+* The JQuery-based Javascript is old-school and though it works fine, it should be migrated to [webpack](https://webpack.js.org/).  
 * The ways in which similar problems are handled in various parts of the application are not always consistent, as I was 
 learning more about Doctrine ORM as the project progressed.
 *  `InterpretersOffice` has been designed with the US federal court system in mind. It is not currently well-suited to other 
