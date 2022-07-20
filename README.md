@@ -9,6 +9,12 @@ busy staff court interpreters office.
 We should also mention, though it may seem obvious, that this an Anglophone-centric project. Court interpreters are required 
 in a vast number of language combinations around the world. But this app assumes English as the language of the court.
 
+# please note
+This project needs updating but should be considered semi-abandoned. That means yours truly, the author, would like to work on it but has no plans to do so in the immediate future. That could change if someone were to express interest in using this application. Nevertheless...
+
+### it will install and run under PHP 8.1
+but you must install with the command <code>composer install --ignore-platform-reqs</code>.
+
 # features
 
 The administrative interface allows authenticated users to manage the calendar for their office: view, add, update and delete events involving court interpreters. Events have attributes like date, time, place, language, judge, docket number, type of proceeding or ancillary event (e.g., attorney-client interview), and of course, the interpreter(s) assigned. You can also record metadata such as the identity of the person making the request and the date and time it was made.
