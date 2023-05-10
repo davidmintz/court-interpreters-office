@@ -10,7 +10,7 @@ We should also mention, though it may seem obvious, that this an Anglophone-cent
 in a vast number of language combinations around the world. But this app assumes English as the language of the court.
 
 # please note
-This project needs updating but should be considered semi-abandoned. That means yours truly, the author, would like to work on it but has no plans to do so in the immediate future. That could change if someone were to express interest in using this application. Nevertheless...
+This project is out of date and should be considered semi-abandoned. That means yours truly, the author, would like to work on it but has no plans to do so in the immediate future. That could change if someone were to express interest in using this application. Nevertheless...
 
 ### it will install and run under PHP 8.1
 but you must install with the command <code>composer install --ignore-platform-reqs</code>.
